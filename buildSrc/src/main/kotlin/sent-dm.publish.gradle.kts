@@ -11,7 +11,7 @@ configure<PublishingExtension> {
             pom {
                 name.set("Public API - v1/v2")
                 description.set("An SDK library for sent-dm")
-                url.set("https://www.github.com/stainless-sdks/sent-dm-java")
+                url.set("https://www.github.com/sentdm/sent-dm-java")
 
                 licenses {
                     license {
@@ -26,9 +26,9 @@ configure<PublishingExtension> {
                 }
 
                 scm {
-                    connection.set("scm:git:git://github.com/stainless-sdks/sent-dm-java.git")
-                    developerConnection.set("scm:git:git://github.com/stainless-sdks/sent-dm-java.git")
-                    url.set("https://github.com/stainless-sdks/sent-dm-java")
+                    connection.set("scm:git:git://github.com/sentdm/sent-dm-java.git")
+                    developerConnection.set("scm:git:git://github.com/sentdm/sent-dm-java.git")
+                    url.set("https://github.com/sentdm/sent-dm-java")
                 }
 
                 versionMapping {
