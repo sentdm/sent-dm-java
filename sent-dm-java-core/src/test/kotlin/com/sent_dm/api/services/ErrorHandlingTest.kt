@@ -3,7 +3,7 @@
 package com.sent_dm.api.services
 
 import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
-import com.github.tomakehurst.wiremock.client.WireMock.delete
+import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.status
 import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo
@@ -21,6 +21,7 @@ import com.sent_dm.api.errors.RateLimitException
 import com.sent_dm.api.errors.UnauthorizedException
 import com.sent_dm.api.errors.UnexpectedStatusCodeException
 import com.sent_dm.api.errors.UnprocessableEntityException
+import com.sent_dm.api.models.messages.MessageSendToPhoneParams
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.jupiter.api.BeforeEach
@@ -52,16 +53,16 @@ internal class ErrorHandlingTest {
         client =
             SentDmOkHttpClient.builder()
                 .baseUrl(wmRuntimeInfo.httpBaseUrl)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
     }
 
     @Test
-    fun templatesDelete400() {
-        val templateService = client.templates()
+    fun messagesSendToPhone400() {
+        val messageService = client.messages()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(400).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -69,7 +70,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<BadRequestException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(400)
@@ -78,10 +92,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete400WithRawResponse() {
-        val templateService = client.templates().withRawResponse()
+    fun messagesSendToPhone400WithRawResponse() {
+        val messageService = client.messages().withRawResponse()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(400).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -89,7 +103,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<BadRequestException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(400)
@@ -98,10 +125,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete401() {
-        val templateService = client.templates()
+    fun messagesSendToPhone401() {
+        val messageService = client.messages()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(401).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -109,7 +136,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnauthorizedException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(401)
@@ -118,10 +158,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete401WithRawResponse() {
-        val templateService = client.templates().withRawResponse()
+    fun messagesSendToPhone401WithRawResponse() {
+        val messageService = client.messages().withRawResponse()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(401).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -129,7 +169,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnauthorizedException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(401)
@@ -138,10 +191,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete403() {
-        val templateService = client.templates()
+    fun messagesSendToPhone403() {
+        val messageService = client.messages()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(403).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -149,7 +202,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<PermissionDeniedException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(403)
@@ -158,10 +224,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete403WithRawResponse() {
-        val templateService = client.templates().withRawResponse()
+    fun messagesSendToPhone403WithRawResponse() {
+        val messageService = client.messages().withRawResponse()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(403).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -169,7 +235,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<PermissionDeniedException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(403)
@@ -178,10 +257,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete404() {
-        val templateService = client.templates()
+    fun messagesSendToPhone404() {
+        val messageService = client.messages()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(404).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -189,7 +268,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<NotFoundException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(404)
@@ -198,10 +290,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete404WithRawResponse() {
-        val templateService = client.templates().withRawResponse()
+    fun messagesSendToPhone404WithRawResponse() {
+        val messageService = client.messages().withRawResponse()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(404).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -209,7 +301,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<NotFoundException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(404)
@@ -218,10 +323,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete422() {
-        val templateService = client.templates()
+    fun messagesSendToPhone422() {
+        val messageService = client.messages()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(422).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -229,7 +334,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnprocessableEntityException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(422)
@@ -238,10 +356,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete422WithRawResponse() {
-        val templateService = client.templates().withRawResponse()
+    fun messagesSendToPhone422WithRawResponse() {
+        val messageService = client.messages().withRawResponse()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(422).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -249,7 +367,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnprocessableEntityException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(422)
@@ -258,10 +389,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete429() {
-        val templateService = client.templates()
+    fun messagesSendToPhone429() {
+        val messageService = client.messages()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(429).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -269,7 +400,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<RateLimitException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(429)
@@ -278,10 +422,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete429WithRawResponse() {
-        val templateService = client.templates().withRawResponse()
+    fun messagesSendToPhone429WithRawResponse() {
+        val messageService = client.messages().withRawResponse()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(429).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -289,7 +433,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<RateLimitException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(429)
@@ -298,10 +455,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete500() {
-        val templateService = client.templates()
+    fun messagesSendToPhone500() {
+        val messageService = client.messages()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(500).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -309,7 +466,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<InternalServerException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(500)
@@ -318,10 +488,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete500WithRawResponse() {
-        val templateService = client.templates().withRawResponse()
+    fun messagesSendToPhone500WithRawResponse() {
+        val messageService = client.messages().withRawResponse()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(500).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -329,7 +499,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<InternalServerException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(500)
@@ -338,10 +521,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete999() {
-        val templateService = client.templates()
+    fun messagesSendToPhone999() {
+        val messageService = client.messages()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(999).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -349,7 +532,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnexpectedStatusCodeException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(999)
@@ -358,10 +554,10 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun templatesDelete999WithRawResponse() {
-        val templateService = client.templates().withRawResponse()
+    fun messagesSendToPhone999WithRawResponse() {
+        val messageService = client.messages().withRawResponse()
         stubFor(
-            delete(anyUrl())
+            post(anyUrl())
                 .willReturn(
                     status(999).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
                 )
@@ -369,7 +565,20 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnexpectedStatusCodeException> {
-                templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                messageService.sendToPhone(
+                    MessageSendToPhoneParams.builder()
+                        .xApiKey("")
+                        .xSenderId("00000000-0000-0000-0000-000000000000")
+                        .phoneNumber("+1234567890")
+                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .templateVariables(
+                            MessageSendToPhoneParams.TemplateVariables.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
+                        .build()
+                )
             }
 
         assertThat(e.statusCode()).isEqualTo(999)

@@ -20,12 +20,20 @@ internal class ContactServiceTest {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val contactService = client.contacts()
 
-        val contacts = contactService.list(ContactListParams.builder().page(0).pageSize(0).build())
+        val contacts =
+            contactService.list(
+                ContactListParams.builder()
+                    .page(0)
+                    .pageSize(0)
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
+                    .build()
+            )
 
         contacts.validate()
     }
@@ -36,14 +44,18 @@ internal class ContactServiceTest {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val contactService = client.contacts()
 
         val contactListItem =
             contactService.retrieveByPhone(
-                ContactRetrieveByPhoneParams.builder().phoneNumber("phoneNumber").build()
+                ContactRetrieveByPhoneParams.builder()
+                    .phoneNumber("phoneNumber")
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
+                    .build()
             )
 
         contactListItem.validate()
@@ -55,13 +67,19 @@ internal class ContactServiceTest {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val contactService = client.contacts()
 
         val contactListItem =
-            contactService.retrieveId(ContactRetrieveIdParams.builder().id("id").build())
+            contactService.retrieveId(
+                ContactRetrieveIdParams.builder()
+                    .id("id")
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
+                    .build()
+            )
 
         contactListItem.validate()
     }

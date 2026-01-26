@@ -17,6 +17,8 @@ class ContactListParams
 private constructor(
     private val page: Int,
     private val pageSize: Int,
+    private val xApiKey: String,
+    private val xSenderId: String,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -26,6 +28,10 @@ private constructor(
 
     /** The number of items per page. Default is 20. */
     fun pageSize(): Int = pageSize
+
+    fun xApiKey(): String = xApiKey
+
+    fun xSenderId(): String = xSenderId
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -44,6 +50,8 @@ private constructor(
          * ```java
          * .page()
          * .pageSize()
+         * .xApiKey()
+         * .xSenderId()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -54,6 +62,8 @@ private constructor(
 
         private var page: Int? = null
         private var pageSize: Int? = null
+        private var xApiKey: String? = null
+        private var xSenderId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -61,6 +71,8 @@ private constructor(
         internal fun from(contactListParams: ContactListParams) = apply {
             page = contactListParams.page
             pageSize = contactListParams.pageSize
+            xApiKey = contactListParams.xApiKey
+            xSenderId = contactListParams.xSenderId
             additionalHeaders = contactListParams.additionalHeaders.toBuilder()
             additionalQueryParams = contactListParams.additionalQueryParams.toBuilder()
         }
@@ -70,6 +82,10 @@ private constructor(
 
         /** The number of items per page. Default is 20. */
         fun pageSize(pageSize: Int) = apply { this.pageSize = pageSize }
+
+        fun xApiKey(xApiKey: String) = apply { this.xApiKey = xApiKey }
+
+        fun xSenderId(xSenderId: String) = apply { this.xSenderId = xSenderId }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -178,6 +194,8 @@ private constructor(
          * ```java
          * .page()
          * .pageSize()
+         * .xApiKey()
+         * .xSenderId()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -186,12 +204,21 @@ private constructor(
             ContactListParams(
                 checkRequired("page", page),
                 checkRequired("pageSize", pageSize),
+                checkRequired("xApiKey", xApiKey),
+                checkRequired("xSenderId", xSenderId),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                put("x-api-key", xApiKey)
+                put("x-sender-id", xSenderId)
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
@@ -210,13 +237,15 @@ private constructor(
         return other is ContactListParams &&
             page == other.page &&
             pageSize == other.pageSize &&
+            xApiKey == other.xApiKey &&
+            xSenderId == other.xSenderId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(page, pageSize, additionalHeaders, additionalQueryParams)
+        Objects.hash(page, pageSize, xApiKey, xSenderId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ContactListParams{page=$page, pageSize=$pageSize, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ContactListParams{page=$page, pageSize=$pageSize, xApiKey=$xApiKey, xSenderId=$xSenderId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

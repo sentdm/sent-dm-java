@@ -18,14 +18,18 @@ internal class NumberLookupServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val numberLookupServiceAsync = client.numberLookup()
 
         val numberLookupFuture =
             numberLookupServiceAsync.retrieve(
-                NumberLookupRetrieveParams.builder().phoneNumber("phoneNumber").build()
+                NumberLookupRetrieveParams.builder()
+                    .phoneNumber("phoneNumber")
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
+                    .build()
             )
 
         val numberLookup = numberLookupFuture.get()

@@ -93,8 +93,8 @@ private constructor(
      * Defaults to 2.
      */
     @get:JvmName("maxRetries") val maxRetries: Int,
-    @get:JvmName("adminAuthScheme") val adminAuthScheme: String,
-    @get:JvmName("customerAuthScheme") val customerAuthScheme: String,
+    @get:JvmName("apiKey") val apiKey: String,
+    @get:JvmName("senderId") val senderId: String,
 ) {
 
     init {
@@ -122,8 +122,8 @@ private constructor(
          * The following fields are required:
          * ```java
          * .httpClient()
-         * .adminAuthScheme()
-         * .customerAuthScheme()
+         * .apiKey()
+         * .senderId()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -150,8 +150,8 @@ private constructor(
         private var responseValidation: Boolean = false
         private var timeout: Timeout = Timeout.default()
         private var maxRetries: Int = 2
-        private var adminAuthScheme: String? = null
-        private var customerAuthScheme: String? = null
+        private var apiKey: String? = null
+        private var senderId: String? = null
 
         @JvmSynthetic
         internal fun from(clientOptions: ClientOptions) = apply {
@@ -166,8 +166,8 @@ private constructor(
             responseValidation = clientOptions.responseValidation
             timeout = clientOptions.timeout
             maxRetries = clientOptions.maxRetries
-            adminAuthScheme = clientOptions.adminAuthScheme
-            customerAuthScheme = clientOptions.customerAuthScheme
+            apiKey = clientOptions.apiKey
+            senderId = clientOptions.senderId
         }
 
         /**
@@ -274,13 +274,9 @@ private constructor(
          */
         fun maxRetries(maxRetries: Int) = apply { this.maxRetries = maxRetries }
 
-        fun adminAuthScheme(adminAuthScheme: String) = apply {
-            this.adminAuthScheme = adminAuthScheme
-        }
+        fun apiKey(apiKey: String) = apply { this.apiKey = apiKey }
 
-        fun customerAuthScheme(customerAuthScheme: String) = apply {
-            this.customerAuthScheme = customerAuthScheme
-        }
+        fun senderId(senderId: String) = apply { this.senderId = senderId }
 
         fun headers(headers: Headers) = apply {
             this.headers.clear()
@@ -369,11 +365,11 @@ private constructor(
          *
          * See this table for the available options:
          *
-         * |Setter              |System property            |Environment variable          |Required|Default value          |
-         * |--------------------|---------------------------|------------------------------|--------|-----------------------|
-         * |`adminAuthScheme`   |`sentdm.adminAuthScheme`   |`SENT_DM_ADMIN_AUTH_SCHEME`   |true    |-                      |
-         * |`customerAuthScheme`|`sentdm.customerAuthScheme`|`SENT_DM_CUSTOMER_AUTH_SCHEME`|true    |-                      |
-         * |`baseUrl`           |`sentdm.baseUrl`           |`SENT_DM_BASE_URL`            |true    |`"https://api.sent.dm"`|
+         * |Setter    |System property  |Environment variable|Required|Default value          |
+         * |----------|-----------------|--------------------|--------|-----------------------|
+         * |`apiKey`  |`sentdm.apiKey`  |`SENT_DM_API_KEY`   |true    |-                      |
+         * |`senderId`|`sentdm.senderId`|`SENT_DM_SENDER_ID` |true    |-                      |
+         * |`baseUrl` |`sentdm.baseUrl` |`SENT_DM_BASE_URL`  |true    |`"https://api.sent.dm"`|
          *
          * System properties take precedence over environment variables.
          */
@@ -381,12 +377,12 @@ private constructor(
             (System.getProperty("sentdm.baseUrl") ?: System.getenv("SENT_DM_BASE_URL"))?.let {
                 baseUrl(it)
             }
-            (System.getProperty("sentdm.adminAuthScheme")
-                    ?: System.getenv("SENT_DM_ADMIN_AUTH_SCHEME"))
-                ?.let { adminAuthScheme(it) }
-            (System.getProperty("sentdm.customerAuthScheme")
-                    ?: System.getenv("SENT_DM_CUSTOMER_AUTH_SCHEME"))
-                ?.let { customerAuthScheme(it) }
+            (System.getProperty("sentdm.apiKey") ?: System.getenv("SENT_DM_API_KEY"))?.let {
+                apiKey(it)
+            }
+            (System.getProperty("sentdm.senderId") ?: System.getenv("SENT_DM_SENDER_ID"))?.let {
+                senderId(it)
+            }
         }
 
         /**
@@ -397,8 +393,8 @@ private constructor(
          * The following fields are required:
          * ```java
          * .httpClient()
-         * .adminAuthScheme()
-         * .customerAuthScheme()
+         * .apiKey()
+         * .senderId()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -406,8 +402,8 @@ private constructor(
         fun build(): ClientOptions {
             val httpClient = checkRequired("httpClient", httpClient)
             val sleeper = sleeper ?: PhantomReachableSleeper(DefaultSleeper())
-            val adminAuthScheme = checkRequired("adminAuthScheme", adminAuthScheme)
-            val customerAuthScheme = checkRequired("customerAuthScheme", customerAuthScheme)
+            val apiKey = checkRequired("apiKey", apiKey)
+            val senderId = checkRequired("senderId", senderId)
 
             val headers = Headers.builder()
             val queryParams = QueryParams.builder()
@@ -419,16 +415,6 @@ private constructor(
             headers.put("X-Stainless-Runtime", "JRE")
             headers.put("X-Stainless-Runtime-Version", getJavaVersion())
             headers.put("X-Stainless-Kotlin-Version", KotlinVersion.CURRENT.toString())
-            adminAuthScheme.let {
-                if (!it.isEmpty()) {
-                    headers.put("x-api-key", it)
-                }
-            }
-            customerAuthScheme.let {
-                if (!it.isEmpty()) {
-                    headers.put("x-sender-id", it)
-                }
-            }
             headers.replaceAll(this.headers.build())
             queryParams.replaceAll(this.queryParams.build())
 
@@ -450,8 +436,8 @@ private constructor(
                 responseValidation,
                 timeout,
                 maxRetries,
-                adminAuthScheme,
-                customerAuthScheme,
+                apiKey,
+                senderId,
             )
         }
     }

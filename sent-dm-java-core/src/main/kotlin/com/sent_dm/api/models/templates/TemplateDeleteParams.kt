@@ -4,6 +4,7 @@ package com.sent_dm.api.models.templates
 
 import com.sent_dm.api.core.JsonValue
 import com.sent_dm.api.core.Params
+import com.sent_dm.api.core.checkRequired
 import com.sent_dm.api.core.http.Headers
 import com.sent_dm.api.core.http.QueryParams
 import com.sent_dm.api.core.toImmutable
@@ -22,12 +23,18 @@ import kotlin.jvm.optionals.getOrNull
 class TemplateDeleteParams
 private constructor(
     private val id: String?,
+    private val xApiKey: String,
+    private val xSenderId: String,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
     fun id(): Optional<String> = Optional.ofNullable(id)
+
+    fun xApiKey(): String = xApiKey
+
+    fun xSenderId(): String = xSenderId
 
     /** Additional body properties to send with the request. */
     fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
@@ -42,9 +49,15 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): TemplateDeleteParams = builder().build()
-
-        /** Returns a mutable builder for constructing an instance of [TemplateDeleteParams]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [TemplateDeleteParams].
+         *
+         * The following fields are required:
+         * ```java
+         * .xApiKey()
+         * .xSenderId()
+         * ```
+         */
         @JvmStatic fun builder() = Builder()
     }
 
@@ -52,6 +65,8 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: String? = null
+        private var xApiKey: String? = null
+        private var xSenderId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
         private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -59,6 +74,8 @@ private constructor(
         @JvmSynthetic
         internal fun from(templateDeleteParams: TemplateDeleteParams) = apply {
             id = templateDeleteParams.id
+            xApiKey = templateDeleteParams.xApiKey
+            xSenderId = templateDeleteParams.xSenderId
             additionalHeaders = templateDeleteParams.additionalHeaders.toBuilder()
             additionalQueryParams = templateDeleteParams.additionalQueryParams.toBuilder()
             additionalBodyProperties = templateDeleteParams.additionalBodyProperties.toMutableMap()
@@ -68,6 +85,10 @@ private constructor(
 
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
         fun id(id: Optional<String>) = id(id.getOrNull())
+
+        fun xApiKey(xApiKey: String) = apply { this.xApiKey = xApiKey }
+
+        fun xSenderId(xSenderId: String) = apply { this.xSenderId = xSenderId }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -193,10 +214,20 @@ private constructor(
          * Returns an immutable instance of [TemplateDeleteParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .xApiKey()
+         * .xSenderId()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): TemplateDeleteParams =
             TemplateDeleteParams(
                 id,
+                checkRequired("xApiKey", xApiKey),
+                checkRequired("xSenderId", xSenderId),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
                 additionalBodyProperties.toImmutable(),
@@ -212,7 +243,14 @@ private constructor(
             else -> ""
         }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                put("x-api-key", xApiKey)
+                put("x-sender-id", xSenderId)
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
@@ -223,14 +261,23 @@ private constructor(
 
         return other is TemplateDeleteParams &&
             id == other.id &&
+            xApiKey == other.xApiKey &&
+            xSenderId == other.xSenderId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams &&
             additionalBodyProperties == other.additionalBodyProperties
     }
 
     override fun hashCode(): Int =
-        Objects.hash(id, additionalHeaders, additionalQueryParams, additionalBodyProperties)
+        Objects.hash(
+            id,
+            xApiKey,
+            xSenderId,
+            additionalHeaders,
+            additionalQueryParams,
+            additionalBodyProperties,
+        )
 
     override fun toString() =
-        "TemplateDeleteParams{id=$id, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
+        "TemplateDeleteParams{id=$id, xApiKey=$xApiKey, xSenderId=$xSenderId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
 }

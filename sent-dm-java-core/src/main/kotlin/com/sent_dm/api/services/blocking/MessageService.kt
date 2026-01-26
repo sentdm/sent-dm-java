@@ -34,34 +34,25 @@ interface MessageService {
      * contact information, and pricing. The customer ID is extracted from the authentication token
      * to ensure the message belongs to the authenticated customer.
      */
-    fun retrieve(id: String): MessageRetrieveResponse = retrieve(id, MessageRetrieveParams.none())
+    fun retrieve(id: String, params: MessageRetrieveParams): MessageRetrieveResponse =
+        retrieve(id, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
-        params: MessageRetrieveParams = MessageRetrieveParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageRetrieveResponse = retrieve(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see retrieve */
-    fun retrieve(
-        id: String,
-        params: MessageRetrieveParams = MessageRetrieveParams.none(),
-    ): MessageRetrieveResponse = retrieve(id, params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(
         params: MessageRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageRetrieveResponse
+    ): MessageRetrieveResponse = retrieve(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(params: MessageRetrieveParams): MessageRetrieveResponse =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(id: String, requestOptions: RequestOptions): MessageRetrieveResponse =
-        retrieve(id, MessageRetrieveParams.none(), requestOptions)
+    fun retrieve(
+        params: MessageRetrieveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): MessageRetrieveResponse
 
     /**
      * Sends a message to a phone number using the default template. This endpoint is rate limited
@@ -120,31 +111,19 @@ interface MessageService {
          * [MessageService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(id: String): HttpResponseFor<MessageRetrieveResponse> =
-            retrieve(id, MessageRetrieveParams.none())
-
-        /** @see retrieve */
-        @MustBeClosed
         fun retrieve(
             id: String,
-            params: MessageRetrieveParams = MessageRetrieveParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageRetrieveResponse> =
-            retrieve(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see retrieve */
-        @MustBeClosed
-        fun retrieve(
-            id: String,
-            params: MessageRetrieveParams = MessageRetrieveParams.none(),
+            params: MessageRetrieveParams,
         ): HttpResponseFor<MessageRetrieveResponse> = retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
+            id: String,
             params: MessageRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageRetrieveResponse>
+        ): HttpResponseFor<MessageRetrieveResponse> =
+            retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieve */
         @MustBeClosed
@@ -154,10 +133,9 @@ interface MessageService {
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
-            id: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<MessageRetrieveResponse> =
-            retrieve(id, MessageRetrieveParams.none(), requestOptions)
+            params: MessageRetrieveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<MessageRetrieveResponse>
 
         /**
          * Returns a raw HTTP response for `post /v2/messages/quick-message`, but is otherwise the

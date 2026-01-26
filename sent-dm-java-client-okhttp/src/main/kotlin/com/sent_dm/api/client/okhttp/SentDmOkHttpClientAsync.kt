@@ -216,13 +216,9 @@ class SentDmOkHttpClientAsync private constructor() {
          */
         fun maxRetries(maxRetries: Int) = apply { clientOptions.maxRetries(maxRetries) }
 
-        fun adminAuthScheme(adminAuthScheme: String) = apply {
-            clientOptions.adminAuthScheme(adminAuthScheme)
-        }
+        fun apiKey(apiKey: String) = apply { clientOptions.apiKey(apiKey) }
 
-        fun customerAuthScheme(customerAuthScheme: String) = apply {
-            clientOptions.customerAuthScheme(customerAuthScheme)
-        }
+        fun senderId(senderId: String) = apply { clientOptions.senderId(senderId) }
 
         fun headers(headers: Headers) = apply { clientOptions.headers(headers) }
 

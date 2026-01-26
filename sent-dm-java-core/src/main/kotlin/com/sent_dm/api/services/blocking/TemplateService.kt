@@ -49,34 +49,25 @@ interface TemplateService {
      * with comprehensive template definitions including headers, body, footer, and interactive
      * buttons. The customer ID is extracted from the authentication token.
      */
-    fun retrieve(id: String): TemplateResponse = retrieve(id, TemplateRetrieveParams.none())
+    fun retrieve(id: String, params: TemplateRetrieveParams): TemplateResponse =
+        retrieve(id, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
-        params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TemplateResponse = retrieve(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see retrieve */
-    fun retrieve(
-        id: String,
-        params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-    ): TemplateResponse = retrieve(id, params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(
         params: TemplateRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): TemplateResponse
+    ): TemplateResponse = retrieve(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(params: TemplateRetrieveParams): TemplateResponse =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(id: String, requestOptions: RequestOptions): TemplateResponse =
-        retrieve(id, TemplateRetrieveParams.none(), requestOptions)
+    fun retrieve(
+        params: TemplateRetrieveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): TemplateResponse
 
     /**
      * Retrieves all message templates available for the authenticated customer with comprehensive
@@ -100,28 +91,20 @@ interface TemplateService {
      * to the authenticated customer to be deleted successfully. The customer ID is extracted from
      * the authentication token.
      */
-    fun delete(id: String) = delete(id, TemplateDeleteParams.none())
+    fun delete(id: String, params: TemplateDeleteParams) = delete(id, params, RequestOptions.none())
 
     /** @see delete */
     fun delete(
         id: String,
-        params: TemplateDeleteParams = TemplateDeleteParams.none(),
+        params: TemplateDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ) = delete(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see delete */
-    fun delete(id: String, params: TemplateDeleteParams = TemplateDeleteParams.none()) =
-        delete(id, params, RequestOptions.none())
-
-    /** @see delete */
-    fun delete(params: TemplateDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
     fun delete(params: TemplateDeleteParams) = delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(id: String, requestOptions: RequestOptions) =
-        delete(id, TemplateDeleteParams.none(), requestOptions)
+    fun delete(params: TemplateDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** A view of [TemplateService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -153,31 +136,19 @@ interface TemplateService {
          * [TemplateService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(id: String): HttpResponseFor<TemplateResponse> =
-            retrieve(id, TemplateRetrieveParams.none())
-
-        /** @see retrieve */
-        @MustBeClosed
         fun retrieve(
             id: String,
-            params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TemplateResponse> =
-            retrieve(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see retrieve */
-        @MustBeClosed
-        fun retrieve(
-            id: String,
-            params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
+            params: TemplateRetrieveParams,
         ): HttpResponseFor<TemplateResponse> = retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
+            id: String,
             params: TemplateRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TemplateResponse>
+        ): HttpResponseFor<TemplateResponse> =
+            retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieve */
         @MustBeClosed
@@ -187,10 +158,9 @@ interface TemplateService {
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
-            id: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<TemplateResponse> =
-            retrieve(id, TemplateRetrieveParams.none(), requestOptions)
+            params: TemplateRetrieveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<TemplateResponse>
 
         /**
          * Returns a raw HTTP response for `get /v2/templates`, but is otherwise the same as
@@ -211,29 +181,17 @@ interface TemplateService {
          * Returns a raw HTTP response for `delete /v2/templates/{id}`, but is otherwise the same as
          * [TemplateService.delete].
          */
-        @MustBeClosed fun delete(id: String): HttpResponse = delete(id, TemplateDeleteParams.none())
+        @MustBeClosed
+        fun delete(id: String, params: TemplateDeleteParams): HttpResponse =
+            delete(id, params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed
         fun delete(
             id: String,
-            params: TemplateDeleteParams = TemplateDeleteParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse = delete(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see delete */
-        @MustBeClosed
-        fun delete(
-            id: String,
-            params: TemplateDeleteParams = TemplateDeleteParams.none(),
-        ): HttpResponse = delete(id, params, RequestOptions.none())
-
-        /** @see delete */
-        @MustBeClosed
-        fun delete(
             params: TemplateDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        ): HttpResponse = delete(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see delete */
         @MustBeClosed
@@ -242,7 +200,9 @@ interface TemplateService {
 
         /** @see delete */
         @MustBeClosed
-        fun delete(id: String, requestOptions: RequestOptions): HttpResponse =
-            delete(id, TemplateDeleteParams.none(), requestOptions)
+        fun delete(
+            params: TemplateDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponse
     }
 }

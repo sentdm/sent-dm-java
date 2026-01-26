@@ -5,6 +5,7 @@ package com.sent_dm.api.services.blocking
 import com.sent_dm.api.TestServerExtension
 import com.sent_dm.api.client.okhttp.SentDmOkHttpClient
 import com.sent_dm.api.core.JsonValue
+import com.sent_dm.api.models.messages.MessageRetrieveParams
 import com.sent_dm.api.models.messages.MessageSendQuickMessageParams
 import com.sent_dm.api.models.messages.MessageSendToContactParams
 import com.sent_dm.api.models.messages.MessageSendToPhoneParams
@@ -21,12 +22,19 @@ internal class MessageServiceTest {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val messageService = client.messages()
 
-        val message = messageService.retrieve("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+        val message =
+            messageService.retrieve(
+                MessageRetrieveParams.builder()
+                    .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
+                    .build()
+            )
 
         message.validate()
     }
@@ -37,13 +45,15 @@ internal class MessageServiceTest {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val messageService = client.messages()
 
         messageService.sendQuickMessage(
             MessageSendQuickMessageParams.builder()
+                .xApiKey("")
+                .xSenderId("00000000-0000-0000-0000-000000000000")
                 .customMessage("Hello, this is a test message!")
                 .phoneNumber("+1234567890")
                 .build()
@@ -56,13 +66,15 @@ internal class MessageServiceTest {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val messageService = client.messages()
 
         messageService.sendToContact(
             MessageSendToContactParams.builder()
+                .xApiKey("")
+                .xSenderId("00000000-0000-0000-0000-000000000000")
                 .contactId("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                 .templateVariables(
@@ -81,13 +93,15 @@ internal class MessageServiceTest {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val messageService = client.messages()
 
         messageService.sendToPhone(
             MessageSendToPhoneParams.builder()
+                .xApiKey("")
+                .xSenderId("00000000-0000-0000-0000-000000000000")
                 .phoneNumber("+1234567890")
                 .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                 .templateVariables(

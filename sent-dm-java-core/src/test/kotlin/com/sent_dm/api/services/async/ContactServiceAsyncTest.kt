@@ -20,13 +20,20 @@ internal class ContactServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val contactServiceAsync = client.contacts()
 
         val contactsFuture =
-            contactServiceAsync.list(ContactListParams.builder().page(0).pageSize(0).build())
+            contactServiceAsync.list(
+                ContactListParams.builder()
+                    .page(0)
+                    .pageSize(0)
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
+                    .build()
+            )
 
         val contacts = contactsFuture.get()
         contacts.validate()
@@ -38,14 +45,18 @@ internal class ContactServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val contactServiceAsync = client.contacts()
 
         val contactListItemFuture =
             contactServiceAsync.retrieveByPhone(
-                ContactRetrieveByPhoneParams.builder().phoneNumber("phoneNumber").build()
+                ContactRetrieveByPhoneParams.builder()
+                    .phoneNumber("phoneNumber")
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
+                    .build()
             )
 
         val contactListItem = contactListItemFuture.get()
@@ -58,13 +69,19 @@ internal class ContactServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val contactServiceAsync = client.contacts()
 
         val contactListItemFuture =
-            contactServiceAsync.retrieveId(ContactRetrieveIdParams.builder().id("id").build())
+            contactServiceAsync.retrieveId(
+                ContactRetrieveIdParams.builder()
+                    .id("id")
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
+                    .build()
+            )
 
         val contactListItem = contactListItemFuture.get()
         contactListItem.validate()

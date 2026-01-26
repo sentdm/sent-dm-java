@@ -21,8 +21,8 @@ internal class ClientOptionsTest {
         var clientOptions =
             ClientOptions.builder()
                 .httpClient(httpClient)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         verify(httpClient, never()).close()
 

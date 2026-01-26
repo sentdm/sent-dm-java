@@ -92,12 +92,7 @@ private constructor(@JvmSynthetic internal val okHttpClient: okhttp3.OkHttpClien
                 else -> null
             }
         if (logLevel != null) {
-            clientBuilder.addNetworkInterceptor(
-                HttpLoggingInterceptor().setLevel(logLevel).apply {
-                    redactHeader("x-api-key")
-                    redactHeader("x-sender-id")
-                }
-            )
+            clientBuilder.addNetworkInterceptor(HttpLoggingInterceptor().setLevel(logLevel))
         }
 
         requestOptions.timeout?.let {

@@ -48,13 +48,19 @@ This library requires Java 8 or later.
 ```java
 import com.sent_dm.api.client.SentDmClient;
 import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 
-// Configures using the `sentdm.adminAuthScheme`, `sentdm.customerAuthScheme` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_ADMIN_AUTH_SCHEME`, `SENT_DM_CUSTOMER_AUTH_SCHEME` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 
-client.templates().delete("REPLACE_ME");
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .xApiKey("")
+    .xSenderId("00000000-0000-0000-0000-000000000000")
+    .phoneNumber("+1234567890")
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .build();
+client.messages().sendToPhone(params);
 ```
 
 ## Client configuration
@@ -65,8 +71,8 @@ Configure the client using system properties or environment variables:
 import com.sent_dm.api.client.SentDmClient;
 import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
 
-// Configures using the `sentdm.adminAuthScheme`, `sentdm.customerAuthScheme` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_ADMIN_AUTH_SCHEME`, `SENT_DM_CUSTOMER_AUTH_SCHEME` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 ```
 
@@ -77,8 +83,8 @@ import com.sent_dm.api.client.SentDmClient;
 import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
 
 SentDmClient client = SentDmOkHttpClient.builder()
-    .adminAuthScheme("My Admin Auth Scheme")
-    .customerAuthScheme("My Customer Auth Scheme")
+    .apiKey("My API Key")
+    .senderId("My Sender ID")
     .build();
 ```
 
@@ -89,20 +95,20 @@ import com.sent_dm.api.client.SentDmClient;
 import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
 
 SentDmClient client = SentDmOkHttpClient.builder()
-    // Configures using the `sentdm.adminAuthScheme`, `sentdm.customerAuthScheme` and `sentdm.baseUrl` system properties
-    // Or configures using the `SENT_DM_ADMIN_AUTH_SCHEME`, `SENT_DM_CUSTOMER_AUTH_SCHEME` and `SENT_DM_BASE_URL` environment variables
+    // Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
+    // Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
     .fromEnv()
-    .adminAuthScheme("My Admin Auth Scheme")
+    .apiKey("My API Key")
     .build();
 ```
 
 See this table for the available options:
 
-| Setter               | System property             | Environment variable           | Required | Default value           |
-| -------------------- | --------------------------- | ------------------------------ | -------- | ----------------------- |
-| `adminAuthScheme`    | `sentdm.adminAuthScheme`    | `SENT_DM_ADMIN_AUTH_SCHEME`    | true     | -                       |
-| `customerAuthScheme` | `sentdm.customerAuthScheme` | `SENT_DM_CUSTOMER_AUTH_SCHEME` | true     | -                       |
-| `baseUrl`            | `sentdm.baseUrl`            | `SENT_DM_BASE_URL`             | true     | `"https://api.sent.dm"` |
+| Setter     | System property   | Environment variable | Required | Default value           |
+| ---------- | ----------------- | -------------------- | -------- | ----------------------- |
+| `apiKey`   | `sentdm.apiKey`   | `SENT_DM_API_KEY`    | true     | -                       |
+| `senderId` | `sentdm.senderId` | `SENT_DM_SENDER_ID`  | true     | -                       |
+| `baseUrl`  | `sentdm.baseUrl`  | `SENT_DM_BASE_URL`   | true     | `"https://api.sent.dm"` |
 
 System properties take precedence over environment variables.
 
@@ -146,14 +152,20 @@ The default client is synchronous. To switch to asynchronous execution, call the
 ```java
 import com.sent_dm.api.client.SentDmClient;
 import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `sentdm.adminAuthScheme`, `sentdm.customerAuthScheme` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_ADMIN_AUTH_SCHEME`, `SENT_DM_CUSTOMER_AUTH_SCHEME` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 
-CompletableFuture<Void?> future = client.async().templates().delete("REPLACE_ME");
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .xApiKey("")
+    .xSenderId("00000000-0000-0000-0000-000000000000")
+    .phoneNumber("+1234567890")
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .build();
+CompletableFuture<Void?> future = client.async().messages().sendToPhone(params);
 ```
 
 Or create an asynchronous client from the beginning:
@@ -161,14 +173,20 @@ Or create an asynchronous client from the beginning:
 ```java
 import com.sent_dm.api.client.SentDmClientAsync;
 import com.sent_dm.api.client.okhttp.SentDmOkHttpClientAsync;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `sentdm.adminAuthScheme`, `sentdm.customerAuthScheme` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_ADMIN_AUTH_SCHEME`, `SENT_DM_CUSTOMER_AUTH_SCHEME` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
 SentDmClientAsync client = SentDmOkHttpClientAsync.fromEnv();
 
-CompletableFuture<Void?> future = client.templates().delete("REPLACE_ME");
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .xApiKey("")
+    .xSenderId("00000000-0000-0000-0000-000000000000")
+    .phoneNumber("+1234567890")
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .build();
+CompletableFuture<Void?> future = client.messages().sendToPhone(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
@@ -182,9 +200,15 @@ To access this data, prefix any HTTP method call on a client or service with `wi
 ```java
 import com.sent_dm.api.core.http.Headers;
 import com.sent_dm.api.core.http.HttpResponse;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 
-HttpResponse response = client.templates().withRawResponse().delete("REPLACE_ME");
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .xApiKey("")
+    .xSenderId("00000000-0000-0000-0000-000000000000")
+    .phoneNumber("+1234567890")
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .build();
+HttpResponse response = client.messages().withRawResponse().sendToPhone(params);
 
 int statusCode = response.statusCode();
 Headers headers = response.headers();
@@ -285,7 +309,9 @@ Requests time out after 1 minute by default.
 To set a custom timeout, configure the method call using the `timeout` method:
 
 ```java
-client.templates().delete(RequestOptions.builder().timeout(Duration.ofSeconds(30)).build());
+client.messages().sendToPhone(
+  params, RequestOptions.builder().timeout(Duration.ofSeconds(30)).build()
+);
 ```
 
 Or configure the default for all method calls at the client level:
@@ -388,9 +414,9 @@ To set undocumented parameters, call the `putAdditionalHeader`, `putAdditionalQu
 
 ```java
 import com.sent_dm.api.core.JsonValue;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 
-TemplateDeleteParams params = TemplateDeleteParams.builder()
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
     .putAdditionalHeader("Secret-Header", "42")
     .putAdditionalQueryParam("secret_query_param", "42")
     .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))
@@ -418,9 +444,15 @@ These properties can be accessed on the nested built object later using the `_ad
 To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/core/Values.kt) object to its setter:
 
 ```java
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import com.sent_dm.api.core.JsonValue;
+import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 
-TemplateDeleteParams params = TemplateDeleteParams.builder().build();
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .xApiKey("")
+    .xSenderId("00000000-0000-0000-0000-000000000000")
+    .phoneNumber(JsonValue.from(42))
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .build();
 ```
 
 The most straightforward way to create a [`JsonValue`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/core/Values.kt) is using its `from(...)` method:
@@ -468,10 +500,13 @@ To forcibly omit a required parameter or property, pass [`JsonMissing`](sent-dm-
 
 ```java
 import com.sent_dm.api.core.JsonMissing;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 
-TemplateDeleteParams params = TemplateDeleteParams.builder()
-    .id(JsonMissing.of())
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .xApiKey("")
+    .xSenderId("00000000-0000-0000-0000-000000000000")
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .phoneNumber(JsonMissing.of())
     .build();
 ```
 
@@ -547,7 +582,9 @@ TemplateResponse templateResponse = client.templates().create(params).validate()
 Or configure the method call to validate the response using the `responseValidation` method:
 
 ```java
-client.templates().delete(RequestOptions.builder().responseValidation(true).build());
+client.messages().sendToPhone(
+  params, RequestOptions.builder().responseValidation(true).build()
+);
 ```
 
 Or configure the default for all method calls at the client level:

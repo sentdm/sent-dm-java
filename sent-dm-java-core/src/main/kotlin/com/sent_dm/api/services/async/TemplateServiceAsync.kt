@@ -49,36 +49,26 @@ interface TemplateServiceAsync {
      * with comprehensive template definitions including headers, body, footer, and interactive
      * buttons. The customer ID is extracted from the authentication token.
      */
-    fun retrieve(id: String): CompletableFuture<TemplateResponse> =
-        retrieve(id, TemplateRetrieveParams.none())
+    fun retrieve(id: String, params: TemplateRetrieveParams): CompletableFuture<TemplateResponse> =
+        retrieve(id, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
-        params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
+        params: TemplateRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<TemplateResponse> =
         retrieve(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see retrieve */
-    fun retrieve(
-        id: String,
-        params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-    ): CompletableFuture<TemplateResponse> = retrieve(id, params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(
-        params: TemplateRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<TemplateResponse>
 
     /** @see retrieve */
     fun retrieve(params: TemplateRetrieveParams): CompletableFuture<TemplateResponse> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(id: String, requestOptions: RequestOptions): CompletableFuture<TemplateResponse> =
-        retrieve(id, TemplateRetrieveParams.none(), requestOptions)
+    fun retrieve(
+        params: TemplateRetrieveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<TemplateResponse>
 
     /**
      * Retrieves all message templates available for the authenticated customer with comprehensive
@@ -103,34 +93,25 @@ interface TemplateServiceAsync {
      * to the authenticated customer to be deleted successfully. The customer ID is extracted from
      * the authentication token.
      */
-    fun delete(id: String): CompletableFuture<Void?> = delete(id, TemplateDeleteParams.none())
+    fun delete(id: String, params: TemplateDeleteParams): CompletableFuture<Void?> =
+        delete(id, params, RequestOptions.none())
 
     /** @see delete */
     fun delete(
         id: String,
-        params: TemplateDeleteParams = TemplateDeleteParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?> = delete(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see delete */
-    fun delete(
-        id: String,
-        params: TemplateDeleteParams = TemplateDeleteParams.none(),
-    ): CompletableFuture<Void?> = delete(id, params, RequestOptions.none())
-
-    /** @see delete */
-    fun delete(
         params: TemplateDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
+    ): CompletableFuture<Void?> = delete(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see delete */
     fun delete(params: TemplateDeleteParams): CompletableFuture<Void?> =
         delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(id: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
-        delete(id, TemplateDeleteParams.none(), requestOptions)
+    fun delete(
+        params: TemplateDeleteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?>
 
     /**
      * A view of [TemplateServiceAsync] that provides access to raw HTTP responses for each method.
@@ -165,29 +146,19 @@ interface TemplateServiceAsync {
          * Returns a raw HTTP response for `get /v2/templates/{id}`, but is otherwise the same as
          * [TemplateServiceAsync.retrieve].
          */
-        fun retrieve(id: String): CompletableFuture<HttpResponseFor<TemplateResponse>> =
-            retrieve(id, TemplateRetrieveParams.none())
-
-        /** @see retrieve */
         fun retrieve(
             id: String,
-            params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<TemplateResponse>> =
-            retrieve(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see retrieve */
-        fun retrieve(
-            id: String,
-            params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
+            params: TemplateRetrieveParams,
         ): CompletableFuture<HttpResponseFor<TemplateResponse>> =
             retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
+            id: String,
             params: TemplateRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<TemplateResponse>>
+        ): CompletableFuture<HttpResponseFor<TemplateResponse>> =
+            retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieve */
         fun retrieve(
@@ -197,10 +168,9 @@ interface TemplateServiceAsync {
 
         /** @see retrieve */
         fun retrieve(
-            id: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<TemplateResponse>> =
-            retrieve(id, TemplateRetrieveParams.none(), requestOptions)
+            params: TemplateRetrieveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<TemplateResponse>>
 
         /**
          * Returns a raw HTTP response for `get /v2/templates`, but is otherwise the same as
@@ -221,35 +191,25 @@ interface TemplateServiceAsync {
          * Returns a raw HTTP response for `delete /v2/templates/{id}`, but is otherwise the same as
          * [TemplateServiceAsync.delete].
          */
-        fun delete(id: String): CompletableFuture<HttpResponse> =
-            delete(id, TemplateDeleteParams.none())
+        fun delete(id: String, params: TemplateDeleteParams): CompletableFuture<HttpResponse> =
+            delete(id, params, RequestOptions.none())
 
         /** @see delete */
         fun delete(
             id: String,
-            params: TemplateDeleteParams = TemplateDeleteParams.none(),
+            params: TemplateDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponse> =
             delete(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see delete */
-        fun delete(
-            id: String,
-            params: TemplateDeleteParams = TemplateDeleteParams.none(),
-        ): CompletableFuture<HttpResponse> = delete(id, params, RequestOptions.none())
-
-        /** @see delete */
-        fun delete(
-            params: TemplateDeleteParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponse>
 
         /** @see delete */
         fun delete(params: TemplateDeleteParams): CompletableFuture<HttpResponse> =
             delete(params, RequestOptions.none())
 
         /** @see delete */
-        fun delete(id: String, requestOptions: RequestOptions): CompletableFuture<HttpResponse> =
-            delete(id, TemplateDeleteParams.none(), requestOptions)
+        fun delete(
+            params: TemplateDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponse>
     }
 }

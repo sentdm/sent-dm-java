@@ -7,7 +7,9 @@ import com.sent_dm.api.client.okhttp.SentDmOkHttpClientAsync
 import com.sent_dm.api.models.templates.TemplateBodyContent
 import com.sent_dm.api.models.templates.TemplateCreateParams
 import com.sent_dm.api.models.templates.TemplateDefinition
+import com.sent_dm.api.models.templates.TemplateDeleteParams
 import com.sent_dm.api.models.templates.TemplateListParams
+import com.sent_dm.api.models.templates.TemplateRetrieveParams
 import com.sent_dm.api.models.templates.TemplateVariable
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -22,14 +24,16 @@ internal class TemplateServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val templateServiceAsync = client.templates()
 
         val templateResponseFuture =
             templateServiceAsync.create(
                 TemplateCreateParams.builder()
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
                     .definition(
                         TemplateDefinition.builder()
                             .body(
@@ -200,13 +204,19 @@ internal class TemplateServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val templateServiceAsync = client.templates()
 
         val templateResponseFuture =
-            templateServiceAsync.retrieve("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+            templateServiceAsync.retrieve(
+                TemplateRetrieveParams.builder()
+                    .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
+                    .build()
+            )
 
         val templateResponse = templateResponseFuture.get()
         templateResponse.validate()
@@ -218,8 +228,8 @@ internal class TemplateServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val templateServiceAsync = client.templates()
 
@@ -228,6 +238,8 @@ internal class TemplateServiceAsyncTest {
                 TemplateListParams.builder()
                     .page(0)
                     .pageSize(0)
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
                     .category("category")
                     .search("search")
                     .status("status")
@@ -244,12 +256,19 @@ internal class TemplateServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val templateServiceAsync = client.templates()
 
-        val future = templateServiceAsync.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+        val future =
+            templateServiceAsync.delete(
+                TemplateDeleteParams.builder()
+                    .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                    .xApiKey("")
+                    .xSenderId("00000000-0000-0000-0000-000000000000")
+                    .build()
+            )
 
         val response = future.get()
     }

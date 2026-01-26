@@ -55,28 +55,18 @@ interface OrganizationService {
      * Retrieves all sender profiles within an organization that the authenticated user has access
      * to. Returns filtered list based on user's permissions.
      */
-    fun retrieveProfiles(orgId: String): OrganizationRetrieveProfilesResponse =
-        retrieveProfiles(orgId, OrganizationRetrieveProfilesParams.none())
-
-    /** @see retrieveProfiles */
     fun retrieveProfiles(
         orgId: String,
-        params: OrganizationRetrieveProfilesParams = OrganizationRetrieveProfilesParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): OrganizationRetrieveProfilesResponse =
-        retrieveProfiles(params.toBuilder().orgId(orgId).build(), requestOptions)
-
-    /** @see retrieveProfiles */
-    fun retrieveProfiles(
-        orgId: String,
-        params: OrganizationRetrieveProfilesParams = OrganizationRetrieveProfilesParams.none(),
+        params: OrganizationRetrieveProfilesParams,
     ): OrganizationRetrieveProfilesResponse = retrieveProfiles(orgId, params, RequestOptions.none())
 
     /** @see retrieveProfiles */
     fun retrieveProfiles(
+        orgId: String,
         params: OrganizationRetrieveProfilesParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): OrganizationRetrieveProfilesResponse
+    ): OrganizationRetrieveProfilesResponse =
+        retrieveProfiles(params.toBuilder().orgId(orgId).build(), requestOptions)
 
     /** @see retrieveProfiles */
     fun retrieveProfiles(
@@ -85,10 +75,9 @@ interface OrganizationService {
 
     /** @see retrieveProfiles */
     fun retrieveProfiles(
-        orgId: String,
-        requestOptions: RequestOptions,
-    ): OrganizationRetrieveProfilesResponse =
-        retrieveProfiles(orgId, OrganizationRetrieveProfilesParams.none(), requestOptions)
+        params: OrganizationRetrieveProfilesParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): OrganizationRetrieveProfilesResponse
 
     /**
      * A view of [OrganizationService] that provides access to raw HTTP responses for each method.
@@ -136,32 +125,20 @@ interface OrganizationService {
          * otherwise the same as [OrganizationService.retrieveProfiles].
          */
         @MustBeClosed
-        fun retrieveProfiles(orgId: String): HttpResponseFor<OrganizationRetrieveProfilesResponse> =
-            retrieveProfiles(orgId, OrganizationRetrieveProfilesParams.none())
-
-        /** @see retrieveProfiles */
-        @MustBeClosed
         fun retrieveProfiles(
             orgId: String,
-            params: OrganizationRetrieveProfilesParams = OrganizationRetrieveProfilesParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<OrganizationRetrieveProfilesResponse> =
-            retrieveProfiles(params.toBuilder().orgId(orgId).build(), requestOptions)
-
-        /** @see retrieveProfiles */
-        @MustBeClosed
-        fun retrieveProfiles(
-            orgId: String,
-            params: OrganizationRetrieveProfilesParams = OrganizationRetrieveProfilesParams.none(),
+            params: OrganizationRetrieveProfilesParams,
         ): HttpResponseFor<OrganizationRetrieveProfilesResponse> =
             retrieveProfiles(orgId, params, RequestOptions.none())
 
         /** @see retrieveProfiles */
         @MustBeClosed
         fun retrieveProfiles(
+            orgId: String,
             params: OrganizationRetrieveProfilesParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<OrganizationRetrieveProfilesResponse>
+        ): HttpResponseFor<OrganizationRetrieveProfilesResponse> =
+            retrieveProfiles(params.toBuilder().orgId(orgId).build(), requestOptions)
 
         /** @see retrieveProfiles */
         @MustBeClosed
@@ -173,9 +150,8 @@ interface OrganizationService {
         /** @see retrieveProfiles */
         @MustBeClosed
         fun retrieveProfiles(
-            orgId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<OrganizationRetrieveProfilesResponse> =
-            retrieveProfiles(orgId, OrganizationRetrieveProfilesParams.none(), requestOptions)
+            params: OrganizationRetrieveProfilesParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<OrganizationRetrieveProfilesResponse>
     }
 }

@@ -16,11 +16,17 @@ import java.util.Objects
 class NumberLookupRetrieveParams
 private constructor(
     private val phoneNumber: String,
+    private val xApiKey: String,
+    private val xSenderId: String,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
     fun phoneNumber(): String = phoneNumber
+
+    fun xApiKey(): String = xApiKey
+
+    fun xSenderId(): String = xSenderId
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -38,6 +44,8 @@ private constructor(
          * The following fields are required:
          * ```java
          * .phoneNumber()
+         * .xApiKey()
+         * .xSenderId()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -47,17 +55,25 @@ private constructor(
     class Builder internal constructor() {
 
         private var phoneNumber: String? = null
+        private var xApiKey: String? = null
+        private var xSenderId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(numberLookupRetrieveParams: NumberLookupRetrieveParams) = apply {
             phoneNumber = numberLookupRetrieveParams.phoneNumber
+            xApiKey = numberLookupRetrieveParams.xApiKey
+            xSenderId = numberLookupRetrieveParams.xSenderId
             additionalHeaders = numberLookupRetrieveParams.additionalHeaders.toBuilder()
             additionalQueryParams = numberLookupRetrieveParams.additionalQueryParams.toBuilder()
         }
 
         fun phoneNumber(phoneNumber: String) = apply { this.phoneNumber = phoneNumber }
+
+        fun xApiKey(xApiKey: String) = apply { this.xApiKey = xApiKey }
+
+        fun xSenderId(xSenderId: String) = apply { this.xSenderId = xSenderId }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -165,6 +181,8 @@ private constructor(
          * The following fields are required:
          * ```java
          * .phoneNumber()
+         * .xApiKey()
+         * .xSenderId()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -172,12 +190,21 @@ private constructor(
         fun build(): NumberLookupRetrieveParams =
             NumberLookupRetrieveParams(
                 checkRequired("phoneNumber", phoneNumber),
+                checkRequired("xApiKey", xApiKey),
+                checkRequired("xSenderId", xSenderId),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                put("x-api-key", xApiKey)
+                put("x-sender-id", xSenderId)
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
@@ -194,13 +221,15 @@ private constructor(
 
         return other is NumberLookupRetrieveParams &&
             phoneNumber == other.phoneNumber &&
+            xApiKey == other.xApiKey &&
+            xSenderId == other.xSenderId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(phoneNumber, additionalHeaders, additionalQueryParams)
+        Objects.hash(phoneNumber, xApiKey, xSenderId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "NumberLookupRetrieveParams{phoneNumber=$phoneNumber, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "NumberLookupRetrieveParams{phoneNumber=$phoneNumber, xApiKey=$xApiKey, xSenderId=$xSenderId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
