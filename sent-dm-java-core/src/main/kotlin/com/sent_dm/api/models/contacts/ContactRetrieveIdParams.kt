@@ -16,18 +16,12 @@ import java.util.Objects
 class ContactRetrieveIdParams
 private constructor(
     private val id: String,
-    private val xApiKey: String,
-    private val xSenderId: String,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
     /** The unique identifier (GUID) of the resource to retrieve */
     fun id(): String = id
-
-    fun xApiKey(): String = xApiKey
-
-    fun xSenderId(): String = xSenderId
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -45,8 +39,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .id()
-         * .xApiKey()
-         * .xSenderId()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -56,26 +48,18 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: String? = null
-        private var xApiKey: String? = null
-        private var xSenderId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(contactRetrieveIdParams: ContactRetrieveIdParams) = apply {
             id = contactRetrieveIdParams.id
-            xApiKey = contactRetrieveIdParams.xApiKey
-            xSenderId = contactRetrieveIdParams.xSenderId
             additionalHeaders = contactRetrieveIdParams.additionalHeaders.toBuilder()
             additionalQueryParams = contactRetrieveIdParams.additionalQueryParams.toBuilder()
         }
 
         /** The unique identifier (GUID) of the resource to retrieve */
         fun id(id: String) = apply { this.id = id }
-
-        fun xApiKey(xApiKey: String) = apply { this.xApiKey = xApiKey }
-
-        fun xSenderId(xSenderId: String) = apply { this.xSenderId = xSenderId }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -183,8 +167,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .id()
-         * .xApiKey()
-         * .xSenderId()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -192,21 +174,12 @@ private constructor(
         fun build(): ContactRetrieveIdParams =
             ContactRetrieveIdParams(
                 checkRequired("id", id),
-                checkRequired("xApiKey", xApiKey),
-                checkRequired("xSenderId", xSenderId),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
 
-    override fun _headers(): Headers =
-        Headers.builder()
-            .apply {
-                put("x-api-key", xApiKey)
-                put("x-sender-id", xSenderId)
-                putAll(additionalHeaders)
-            }
-            .build()
+    override fun _headers(): Headers = additionalHeaders
 
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
@@ -223,15 +196,12 @@ private constructor(
 
         return other is ContactRetrieveIdParams &&
             id == other.id &&
-            xApiKey == other.xApiKey &&
-            xSenderId == other.xSenderId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int =
-        Objects.hash(id, xApiKey, xSenderId, additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int = Objects.hash(id, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ContactRetrieveIdParams{id=$id, xApiKey=$xApiKey, xSenderId=$xSenderId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ContactRetrieveIdParams{id=$id, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

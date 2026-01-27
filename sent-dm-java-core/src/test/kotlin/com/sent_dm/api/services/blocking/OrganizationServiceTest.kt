@@ -4,7 +4,6 @@ package com.sent_dm.api.services.blocking
 
 import com.sent_dm.api.TestServerExtension
 import com.sent_dm.api.client.okhttp.SentDmOkHttpClient
-import com.sent_dm.api.models.organizations.OrganizationRetrieveProfilesParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -39,14 +38,7 @@ internal class OrganizationServiceTest {
                 .build()
         val organizationService = client.organizations()
 
-        val response =
-            organizationService.retrieveProfiles(
-                OrganizationRetrieveProfilesParams.builder()
-                    .orgId("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
-                    .xApiKey("")
-                    .xSenderId("00000000-0000-0000-0000-000000000000")
-                    .build()
-            )
+        val response = organizationService.retrieveProfiles("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
 
         response.validate()
     }

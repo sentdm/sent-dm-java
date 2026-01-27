@@ -26,14 +26,7 @@ internal class ContactServiceAsyncTest {
         val contactServiceAsync = client.contacts()
 
         val contactsFuture =
-            contactServiceAsync.list(
-                ContactListParams.builder()
-                    .page(0)
-                    .pageSize(0)
-                    .xApiKey("")
-                    .xSenderId("00000000-0000-0000-0000-000000000000")
-                    .build()
-            )
+            contactServiceAsync.list(ContactListParams.builder().page(0).pageSize(0).build())
 
         val contacts = contactsFuture.get()
         contacts.validate()
@@ -52,11 +45,7 @@ internal class ContactServiceAsyncTest {
 
         val contactListItemFuture =
             contactServiceAsync.retrieveByPhone(
-                ContactRetrieveByPhoneParams.builder()
-                    .phoneNumber("phoneNumber")
-                    .xApiKey("")
-                    .xSenderId("00000000-0000-0000-0000-000000000000")
-                    .build()
+                ContactRetrieveByPhoneParams.builder().phoneNumber("phoneNumber").build()
             )
 
         val contactListItem = contactListItemFuture.get()
@@ -75,13 +64,7 @@ internal class ContactServiceAsyncTest {
         val contactServiceAsync = client.contacts()
 
         val contactListItemFuture =
-            contactServiceAsync.retrieveId(
-                ContactRetrieveIdParams.builder()
-                    .id("id")
-                    .xApiKey("")
-                    .xSenderId("00000000-0000-0000-0000-000000000000")
-                    .build()
-            )
+            contactServiceAsync.retrieveId(ContactRetrieveIdParams.builder().id("id").build())
 
         val contactListItem = contactListItemFuture.get()
         contactListItem.validate()

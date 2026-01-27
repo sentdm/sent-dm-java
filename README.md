@@ -55,8 +55,6 @@ import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 
 MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .xApiKey("")
-    .xSenderId("00000000-0000-0000-0000-000000000000")
     .phoneNumber("+1234567890")
     .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
     .build();
@@ -160,8 +158,6 @@ import java.util.concurrent.CompletableFuture;
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 
 MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .xApiKey("")
-    .xSenderId("00000000-0000-0000-0000-000000000000")
     .phoneNumber("+1234567890")
     .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
     .build();
@@ -181,8 +177,6 @@ import java.util.concurrent.CompletableFuture;
 SentDmClientAsync client = SentDmOkHttpClientAsync.fromEnv();
 
 MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .xApiKey("")
-    .xSenderId("00000000-0000-0000-0000-000000000000")
     .phoneNumber("+1234567890")
     .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
     .build();
@@ -203,8 +197,6 @@ import com.sent_dm.api.core.http.HttpResponse;
 import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 
 MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .xApiKey("")
-    .xSenderId("00000000-0000-0000-0000-000000000000")
     .phoneNumber("+1234567890")
     .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
     .build();
@@ -448,8 +440,6 @@ import com.sent_dm.api.core.JsonValue;
 import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 
 MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .xApiKey("")
-    .xSenderId("00000000-0000-0000-0000-000000000000")
     .phoneNumber(JsonValue.from(42))
     .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
     .build();
@@ -503,8 +493,6 @@ import com.sent_dm.api.core.JsonMissing;
 import com.sent_dm.api.models.messages.MessageSendToPhoneParams;
 
 MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .xApiKey("")
-    .xSenderId("00000000-0000-0000-0000-000000000000")
     .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
     .phoneNumber(JsonMissing.of())
     .build();

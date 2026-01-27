@@ -3,7 +3,6 @@
 package com.sent_dm.api.models.messages
 
 import com.sent_dm.api.core.Params
-import com.sent_dm.api.core.checkRequired
 import com.sent_dm.api.core.http.Headers
 import com.sent_dm.api.core.http.QueryParams
 import java.util.Objects
@@ -19,17 +18,11 @@ import kotlin.jvm.optionals.getOrNull
 class MessageRetrieveParams
 private constructor(
     private val id: String?,
-    private val xApiKey: String,
-    private val xSenderId: String,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
     fun id(): Optional<String> = Optional.ofNullable(id)
-
-    fun xApiKey(): String = xApiKey
-
-    fun xSenderId(): String = xSenderId
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -41,15 +34,9 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [MessageRetrieveParams].
-         *
-         * The following fields are required:
-         * ```java
-         * .xApiKey()
-         * .xSenderId()
-         * ```
-         */
+        @JvmStatic fun none(): MessageRetrieveParams = builder().build()
+
+        /** Returns a mutable builder for constructing an instance of [MessageRetrieveParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
@@ -57,16 +44,12 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: String? = null
-        private var xApiKey: String? = null
-        private var xSenderId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(messageRetrieveParams: MessageRetrieveParams) = apply {
             id = messageRetrieveParams.id
-            xApiKey = messageRetrieveParams.xApiKey
-            xSenderId = messageRetrieveParams.xSenderId
             additionalHeaders = messageRetrieveParams.additionalHeaders.toBuilder()
             additionalQueryParams = messageRetrieveParams.additionalQueryParams.toBuilder()
         }
@@ -75,10 +58,6 @@ private constructor(
 
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
         fun id(id: Optional<String>) = id(id.getOrNull())
-
-        fun xApiKey(xApiKey: String) = apply { this.xApiKey = xApiKey }
-
-        fun xSenderId(xSenderId: String) = apply { this.xSenderId = xSenderId }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -182,23 +161,9 @@ private constructor(
          * Returns an immutable instance of [MessageRetrieveParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .xApiKey()
-         * .xSenderId()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): MessageRetrieveParams =
-            MessageRetrieveParams(
-                id,
-                checkRequired("xApiKey", xApiKey),
-                checkRequired("xSenderId", xSenderId),
-                additionalHeaders.build(),
-                additionalQueryParams.build(),
-            )
+            MessageRetrieveParams(id, additionalHeaders.build(), additionalQueryParams.build())
     }
 
     fun _pathParam(index: Int): String =
@@ -207,14 +172,7 @@ private constructor(
             else -> ""
         }
 
-    override fun _headers(): Headers =
-        Headers.builder()
-            .apply {
-                put("x-api-key", xApiKey)
-                put("x-sender-id", xSenderId)
-                putAll(additionalHeaders)
-            }
-            .build()
+    override fun _headers(): Headers = additionalHeaders
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
@@ -225,15 +183,12 @@ private constructor(
 
         return other is MessageRetrieveParams &&
             id == other.id &&
-            xApiKey == other.xApiKey &&
-            xSenderId == other.xSenderId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int =
-        Objects.hash(id, xApiKey, xSenderId, additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int = Objects.hash(id, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "MessageRetrieveParams{id=$id, xApiKey=$xApiKey, xSenderId=$xSenderId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "MessageRetrieveParams{id=$id, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

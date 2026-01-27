@@ -9,7 +9,7 @@ configure<PublishingExtension> {
             from(components["java"])
 
             pom {
-                name.set("Public API - v1/v2")
+                name.set("Public API")
                 description.set("An SDK library for sent-dm")
                 url.set("https://www.github.com/sentdm/sent-dm-java")
 

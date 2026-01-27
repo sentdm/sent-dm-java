@@ -3,7 +3,6 @@
 package com.sent_dm.api.models.organizations
 
 import com.sent_dm.api.core.Params
-import com.sent_dm.api.core.checkRequired
 import com.sent_dm.api.core.http.Headers
 import com.sent_dm.api.core.http.QueryParams
 import java.util.Objects
@@ -17,17 +16,11 @@ import kotlin.jvm.optionals.getOrNull
 class OrganizationRetrieveProfilesParams
 private constructor(
     private val orgId: String?,
-    private val xApiKey: String,
-    private val xSenderId: String,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
     fun orgId(): Optional<String> = Optional.ofNullable(orgId)
-
-    fun xApiKey(): String = xApiKey
-
-    fun xSenderId(): String = xSenderId
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -39,15 +32,11 @@ private constructor(
 
     companion object {
 
+        @JvmStatic fun none(): OrganizationRetrieveProfilesParams = builder().build()
+
         /**
          * Returns a mutable builder for constructing an instance of
          * [OrganizationRetrieveProfilesParams].
-         *
-         * The following fields are required:
-         * ```java
-         * .xApiKey()
-         * .xSenderId()
-         * ```
          */
         @JvmStatic fun builder() = Builder()
     }
@@ -56,8 +45,6 @@ private constructor(
     class Builder internal constructor() {
 
         private var orgId: String? = null
-        private var xApiKey: String? = null
-        private var xSenderId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -65,8 +52,6 @@ private constructor(
         internal fun from(organizationRetrieveProfilesParams: OrganizationRetrieveProfilesParams) =
             apply {
                 orgId = organizationRetrieveProfilesParams.orgId
-                xApiKey = organizationRetrieveProfilesParams.xApiKey
-                xSenderId = organizationRetrieveProfilesParams.xSenderId
                 additionalHeaders = organizationRetrieveProfilesParams.additionalHeaders.toBuilder()
                 additionalQueryParams =
                     organizationRetrieveProfilesParams.additionalQueryParams.toBuilder()
@@ -76,10 +61,6 @@ private constructor(
 
         /** Alias for calling [Builder.orgId] with `orgId.orElse(null)`. */
         fun orgId(orgId: Optional<String>) = orgId(orgId.getOrNull())
-
-        fun xApiKey(xApiKey: String) = apply { this.xApiKey = xApiKey }
-
-        fun xSenderId(xSenderId: String) = apply { this.xSenderId = xSenderId }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -183,20 +164,10 @@ private constructor(
          * Returns an immutable instance of [OrganizationRetrieveProfilesParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .xApiKey()
-         * .xSenderId()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): OrganizationRetrieveProfilesParams =
             OrganizationRetrieveProfilesParams(
                 orgId,
-                checkRequired("xApiKey", xApiKey),
-                checkRequired("xSenderId", xSenderId),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -208,14 +179,7 @@ private constructor(
             else -> ""
         }
 
-    override fun _headers(): Headers =
-        Headers.builder()
-            .apply {
-                put("x-api-key", xApiKey)
-                put("x-sender-id", xSenderId)
-                putAll(additionalHeaders)
-            }
-            .build()
+    override fun _headers(): Headers = additionalHeaders
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
@@ -226,15 +190,12 @@ private constructor(
 
         return other is OrganizationRetrieveProfilesParams &&
             orgId == other.orgId &&
-            xApiKey == other.xApiKey &&
-            xSenderId == other.xSenderId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int =
-        Objects.hash(orgId, xApiKey, xSenderId, additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int = Objects.hash(orgId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "OrganizationRetrieveProfilesParams{orgId=$orgId, xApiKey=$xApiKey, xSenderId=$xSenderId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "OrganizationRetrieveProfilesParams{orgId=$orgId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

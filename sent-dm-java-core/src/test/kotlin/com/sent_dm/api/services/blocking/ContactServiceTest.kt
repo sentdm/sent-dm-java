@@ -25,15 +25,7 @@ internal class ContactServiceTest {
                 .build()
         val contactService = client.contacts()
 
-        val contacts =
-            contactService.list(
-                ContactListParams.builder()
-                    .page(0)
-                    .pageSize(0)
-                    .xApiKey("")
-                    .xSenderId("00000000-0000-0000-0000-000000000000")
-                    .build()
-            )
+        val contacts = contactService.list(ContactListParams.builder().page(0).pageSize(0).build())
 
         contacts.validate()
     }
@@ -51,11 +43,7 @@ internal class ContactServiceTest {
 
         val contactListItem =
             contactService.retrieveByPhone(
-                ContactRetrieveByPhoneParams.builder()
-                    .phoneNumber("phoneNumber")
-                    .xApiKey("")
-                    .xSenderId("00000000-0000-0000-0000-000000000000")
-                    .build()
+                ContactRetrieveByPhoneParams.builder().phoneNumber("phoneNumber").build()
             )
 
         contactListItem.validate()
@@ -73,13 +61,7 @@ internal class ContactServiceTest {
         val contactService = client.contacts()
 
         val contactListItem =
-            contactService.retrieveId(
-                ContactRetrieveIdParams.builder()
-                    .id("id")
-                    .xApiKey("")
-                    .xSenderId("00000000-0000-0000-0000-000000000000")
-                    .build()
-            )
+            contactService.retrieveId(ContactRetrieveIdParams.builder().id("id").build())
 
         contactListItem.validate()
     }

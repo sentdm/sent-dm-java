@@ -45,8 +45,6 @@ internal class ServiceParamsTest {
 
         messageService.sendToPhone(
             MessageSendToPhoneParams.builder()
-                .xApiKey("")
-                .xSenderId("00000000-0000-0000-0000-000000000000")
                 .phoneNumber("+1234567890")
                 .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                 .templateVariables(

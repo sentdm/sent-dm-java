@@ -28,16 +28,10 @@ import kotlin.jvm.optionals.getOrNull
  */
 class TemplateCreateParams
 private constructor(
-    private val xApiKey: String,
-    private val xSenderId: String,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
-
-    fun xApiKey(): String = xApiKey
-
-    fun xSenderId(): String = xSenderId
 
     /**
      * Template definition containing header, body, footer, and buttons
@@ -119,8 +113,6 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .xApiKey()
-         * .xSenderId()
          * .definition()
          * ```
          */
@@ -130,24 +122,16 @@ private constructor(
     /** A builder for [TemplateCreateParams]. */
     class Builder internal constructor() {
 
-        private var xApiKey: String? = null
-        private var xSenderId: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(templateCreateParams: TemplateCreateParams) = apply {
-            xApiKey = templateCreateParams.xApiKey
-            xSenderId = templateCreateParams.xSenderId
             body = templateCreateParams.body.toBuilder()
             additionalHeaders = templateCreateParams.additionalHeaders.toBuilder()
             additionalQueryParams = templateCreateParams.additionalQueryParams.toBuilder()
         }
-
-        fun xApiKey(xApiKey: String) = apply { this.xApiKey = xApiKey }
-
-        fun xSenderId(xSenderId: String) = apply { this.xSenderId = xSenderId }
 
         /**
          * Sets the entire request body.
@@ -352,8 +336,6 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .xApiKey()
-         * .xSenderId()
          * .definition()
          * ```
          *
@@ -361,8 +343,6 @@ private constructor(
          */
         fun build(): TemplateCreateParams =
             TemplateCreateParams(
-                checkRequired("xApiKey", xApiKey),
-                checkRequired("xSenderId", xSenderId),
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -371,14 +351,7 @@ private constructor(
 
     fun _body(): Body = body
 
-    override fun _headers(): Headers =
-        Headers.builder()
-            .apply {
-                put("x-api-key", xApiKey)
-                put("x-sender-id", xSenderId)
-                putAll(additionalHeaders)
-            }
-            .build()
+    override fun _headers(): Headers = additionalHeaders
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
@@ -692,16 +665,13 @@ private constructor(
         }
 
         return other is TemplateCreateParams &&
-            xApiKey == other.xApiKey &&
-            xSenderId == other.xSenderId &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int =
-        Objects.hash(xApiKey, xSenderId, body, additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int = Objects.hash(body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "TemplateCreateParams{xApiKey=$xApiKey, xSenderId=$xSenderId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TemplateCreateParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

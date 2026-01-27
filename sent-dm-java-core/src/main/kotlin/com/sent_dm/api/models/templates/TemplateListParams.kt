@@ -20,8 +20,6 @@ class TemplateListParams
 private constructor(
     private val page: Int,
     private val pageSize: Int,
-    private val xApiKey: String,
-    private val xSenderId: String,
     private val category: String?,
     private val search: String?,
     private val status: String?,
@@ -34,10 +32,6 @@ private constructor(
 
     /** The number of items per page (1-1000). Default is 100. */
     fun pageSize(): Int = pageSize
-
-    fun xApiKey(): String = xApiKey
-
-    fun xSenderId(): String = xSenderId
 
     /** Optional filter by template category (e.g., MARKETING, UTILITY, AUTHENTICATION) */
     fun category(): Optional<String> = Optional.ofNullable(category)
@@ -65,8 +59,6 @@ private constructor(
          * ```java
          * .page()
          * .pageSize()
-         * .xApiKey()
-         * .xSenderId()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -77,8 +69,6 @@ private constructor(
 
         private var page: Int? = null
         private var pageSize: Int? = null
-        private var xApiKey: String? = null
-        private var xSenderId: String? = null
         private var category: String? = null
         private var search: String? = null
         private var status: String? = null
@@ -89,8 +79,6 @@ private constructor(
         internal fun from(templateListParams: TemplateListParams) = apply {
             page = templateListParams.page
             pageSize = templateListParams.pageSize
-            xApiKey = templateListParams.xApiKey
-            xSenderId = templateListParams.xSenderId
             category = templateListParams.category
             search = templateListParams.search
             status = templateListParams.status
@@ -103,10 +91,6 @@ private constructor(
 
         /** The number of items per page (1-1000). Default is 100. */
         fun pageSize(pageSize: Int) = apply { this.pageSize = pageSize }
-
-        fun xApiKey(xApiKey: String) = apply { this.xApiKey = xApiKey }
-
-        fun xSenderId(xSenderId: String) = apply { this.xSenderId = xSenderId }
 
         /** Optional filter by template category (e.g., MARKETING, UTILITY, AUTHENTICATION) */
         fun category(category: String?) = apply { this.category = category }
@@ -233,8 +217,6 @@ private constructor(
          * ```java
          * .page()
          * .pageSize()
-         * .xApiKey()
-         * .xSenderId()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -243,8 +225,6 @@ private constructor(
             TemplateListParams(
                 checkRequired("page", page),
                 checkRequired("pageSize", pageSize),
-                checkRequired("xApiKey", xApiKey),
-                checkRequired("xSenderId", xSenderId),
                 category,
                 search,
                 status,
@@ -253,14 +233,7 @@ private constructor(
             )
     }
 
-    override fun _headers(): Headers =
-        Headers.builder()
-            .apply {
-                put("x-api-key", xApiKey)
-                put("x-sender-id", xSenderId)
-                putAll(additionalHeaders)
-            }
-            .build()
+    override fun _headers(): Headers = additionalHeaders
 
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
@@ -282,8 +255,6 @@ private constructor(
         return other is TemplateListParams &&
             page == other.page &&
             pageSize == other.pageSize &&
-            xApiKey == other.xApiKey &&
-            xSenderId == other.xSenderId &&
             category == other.category &&
             search == other.search &&
             status == other.status &&
@@ -295,8 +266,6 @@ private constructor(
         Objects.hash(
             page,
             pageSize,
-            xApiKey,
-            xSenderId,
             category,
             search,
             status,
@@ -305,5 +274,5 @@ private constructor(
         )
 
     override fun toString() =
-        "TemplateListParams{page=$page, pageSize=$pageSize, xApiKey=$xApiKey, xSenderId=$xSenderId, category=$category, search=$search, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TemplateListParams{page=$page, pageSize=$pageSize, category=$category, search=$search, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

@@ -34,18 +34,28 @@ interface MessageServiceAsync {
      * contact information, and pricing. The customer ID is extracted from the authentication token
      * to ensure the message belongs to the authenticated customer.
      */
-    fun retrieve(
-        id: String,
-        params: MessageRetrieveParams,
-    ): CompletableFuture<MessageRetrieveResponse> = retrieve(id, params, RequestOptions.none())
+    fun retrieve(id: String): CompletableFuture<MessageRetrieveResponse> =
+        retrieve(id, MessageRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
-        params: MessageRetrieveParams,
+        params: MessageRetrieveParams = MessageRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<MessageRetrieveResponse> =
         retrieve(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see retrieve */
+    fun retrieve(
+        id: String,
+        params: MessageRetrieveParams = MessageRetrieveParams.none(),
+    ): CompletableFuture<MessageRetrieveResponse> = retrieve(id, params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        params: MessageRetrieveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<MessageRetrieveResponse>
 
     /** @see retrieve */
     fun retrieve(params: MessageRetrieveParams): CompletableFuture<MessageRetrieveResponse> =
@@ -53,9 +63,10 @@ interface MessageServiceAsync {
 
     /** @see retrieve */
     fun retrieve(
-        params: MessageRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageRetrieveResponse>
+        id: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<MessageRetrieveResponse> =
+        retrieve(id, MessageRetrieveParams.none(), requestOptions)
 
     /**
      * Sends a message to a phone number using the default template. This endpoint is rate limited
@@ -118,19 +129,29 @@ interface MessageServiceAsync {
          * Returns a raw HTTP response for `get /v2/messages/{id}`, but is otherwise the same as
          * [MessageServiceAsync.retrieve].
          */
+        fun retrieve(id: String): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> =
+            retrieve(id, MessageRetrieveParams.none())
+
+        /** @see retrieve */
         fun retrieve(
             id: String,
-            params: MessageRetrieveParams,
+            params: MessageRetrieveParams = MessageRetrieveParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> =
+            retrieve(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see retrieve */
+        fun retrieve(
+            id: String,
+            params: MessageRetrieveParams = MessageRetrieveParams.none(),
         ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> =
             retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
-            id: String,
             params: MessageRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> =
-            retrieve(params.toBuilder().id(id).build(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>>
 
         /** @see retrieve */
         fun retrieve(
@@ -140,9 +161,10 @@ interface MessageServiceAsync {
 
         /** @see retrieve */
         fun retrieve(
-            params: MessageRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>>
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> =
+            retrieve(id, MessageRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /v2/messages/quick-message`, but is otherwise the

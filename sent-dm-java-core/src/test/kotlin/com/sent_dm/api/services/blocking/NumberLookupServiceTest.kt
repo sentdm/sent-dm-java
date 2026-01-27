@@ -25,11 +25,7 @@ internal class NumberLookupServiceTest {
 
         val numberLookup =
             numberLookupService.retrieve(
-                NumberLookupRetrieveParams.builder()
-                    .phoneNumber("phoneNumber")
-                    .xApiKey("")
-                    .xSenderId("00000000-0000-0000-0000-000000000000")
-                    .build()
+                NumberLookupRetrieveParams.builder().phoneNumber("phoneNumber").build()
             )
 
         numberLookup.validate()

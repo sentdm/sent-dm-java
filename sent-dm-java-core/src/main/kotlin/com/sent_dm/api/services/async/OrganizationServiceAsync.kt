@@ -55,19 +55,29 @@ interface OrganizationServiceAsync {
      * Retrieves all sender profiles within an organization that the authenticated user has access
      * to. Returns filtered list based on user's permissions.
      */
+    fun retrieveProfiles(orgId: String): CompletableFuture<OrganizationRetrieveProfilesResponse> =
+        retrieveProfiles(orgId, OrganizationRetrieveProfilesParams.none())
+
+    /** @see retrieveProfiles */
     fun retrieveProfiles(
         orgId: String,
-        params: OrganizationRetrieveProfilesParams,
+        params: OrganizationRetrieveProfilesParams = OrganizationRetrieveProfilesParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<OrganizationRetrieveProfilesResponse> =
+        retrieveProfiles(params.toBuilder().orgId(orgId).build(), requestOptions)
+
+    /** @see retrieveProfiles */
+    fun retrieveProfiles(
+        orgId: String,
+        params: OrganizationRetrieveProfilesParams = OrganizationRetrieveProfilesParams.none(),
     ): CompletableFuture<OrganizationRetrieveProfilesResponse> =
         retrieveProfiles(orgId, params, RequestOptions.none())
 
     /** @see retrieveProfiles */
     fun retrieveProfiles(
-        orgId: String,
         params: OrganizationRetrieveProfilesParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<OrganizationRetrieveProfilesResponse> =
-        retrieveProfiles(params.toBuilder().orgId(orgId).build(), requestOptions)
+    ): CompletableFuture<OrganizationRetrieveProfilesResponse>
 
     /** @see retrieveProfiles */
     fun retrieveProfiles(
@@ -77,9 +87,10 @@ interface OrganizationServiceAsync {
 
     /** @see retrieveProfiles */
     fun retrieveProfiles(
-        params: OrganizationRetrieveProfilesParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<OrganizationRetrieveProfilesResponse>
+        orgId: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<OrganizationRetrieveProfilesResponse> =
+        retrieveProfiles(orgId, OrganizationRetrieveProfilesParams.none(), requestOptions)
 
     /**
      * A view of [OrganizationServiceAsync] that provides access to raw HTTP responses for each
@@ -128,18 +139,30 @@ interface OrganizationServiceAsync {
          * otherwise the same as [OrganizationServiceAsync.retrieveProfiles].
          */
         fun retrieveProfiles(
+            orgId: String
+        ): CompletableFuture<HttpResponseFor<OrganizationRetrieveProfilesResponse>> =
+            retrieveProfiles(orgId, OrganizationRetrieveProfilesParams.none())
+
+        /** @see retrieveProfiles */
+        fun retrieveProfiles(
             orgId: String,
-            params: OrganizationRetrieveProfilesParams,
+            params: OrganizationRetrieveProfilesParams = OrganizationRetrieveProfilesParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<OrganizationRetrieveProfilesResponse>> =
+            retrieveProfiles(params.toBuilder().orgId(orgId).build(), requestOptions)
+
+        /** @see retrieveProfiles */
+        fun retrieveProfiles(
+            orgId: String,
+            params: OrganizationRetrieveProfilesParams = OrganizationRetrieveProfilesParams.none(),
         ): CompletableFuture<HttpResponseFor<OrganizationRetrieveProfilesResponse>> =
             retrieveProfiles(orgId, params, RequestOptions.none())
 
         /** @see retrieveProfiles */
         fun retrieveProfiles(
-            orgId: String,
             params: OrganizationRetrieveProfilesParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<OrganizationRetrieveProfilesResponse>> =
-            retrieveProfiles(params.toBuilder().orgId(orgId).build(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<OrganizationRetrieveProfilesResponse>>
 
         /** @see retrieveProfiles */
         fun retrieveProfiles(
@@ -149,8 +172,9 @@ interface OrganizationServiceAsync {
 
         /** @see retrieveProfiles */
         fun retrieveProfiles(
-            params: OrganizationRetrieveProfilesParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<OrganizationRetrieveProfilesResponse>>
+            orgId: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<OrganizationRetrieveProfilesResponse>> =
+            retrieveProfiles(orgId, OrganizationRetrieveProfilesParams.none(), requestOptions)
     }
 }
