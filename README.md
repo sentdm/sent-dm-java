@@ -1,31 +1,43 @@
 # Sent Dm Java API Library
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.sent_dm.api/sent-dm-java)](https://central.sonatype.com/artifact/com.sent_dm.api/sent-dm-java/0.0.1)
-[![javadoc](https://javadoc.io/badge2/com.sent_dm.api/sent-dm-java/0.0.1/javadoc.svg)](https://javadoc.io/doc/com.sent_dm.api/sent-dm-java/0.0.1)
+<!-- x-release-please-start-version -->
+
+[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-dm-java)](https://central.sonatype.com/artifact/dm.sent/sent-dm-java/0.1.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-dm-java/0.1.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-dm-java/0.1.0)
+
+<!-- x-release-please-end -->
 
 The Sent Dm Java SDK provides convenient access to the Sent Dm REST API from applications written in Java.
 
 It is generated with [Stainless](https://www.stainless.com/).
 
-Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.sent_dm.api/sent-dm-java/0.0.1).
+<!-- x-release-please-start-version -->
+
+Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.1.0).
+
+<!-- x-release-please-end -->
 
 ## Installation
+
+<!-- x-release-please-start-version -->
 
 ### Gradle
 
 ```kotlin
-implementation("com.sent_dm.api:sent-dm-java:0.0.1")
+implementation("dm.sent:sent-dm-java:0.1.0")
 ```
 
 ### Maven
 
 ```xml
 <dependency>
-  <groupId>com.sent_dm.api</groupId>
+  <groupId>dm.sent</groupId>
   <artifactId>sent-dm-java</artifactId>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
 </dependency>
 ```
+
+<!-- x-release-please-end -->
 
 ## Requirements
 
@@ -34,15 +46,24 @@ This library requires Java 8 or later.
 ## Usage
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
+import dm.sent.core.JsonValue;
+import dm.sent.models.messages.MessageSendToPhoneParams;
 
-// Configures using the `sentdm.adminAuthScheme`, `sentdm.customerAuthScheme` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_ADMIN_AUTH_SCHEME`, `SENT_DM_CUSTOMER_AUTH_SCHEME` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 
-client.templates().delete("REPLACE_ME");
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .phoneNumber("+1234567890")
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .templateVariables(MessageSendToPhoneParams.TemplateVariables.builder()
+        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+        .build())
+    .build();
+client.messages().sendToPhone(params);
 ```
 
 ## Client configuration
@@ -50,47 +71,47 @@ client.templates().delete("REPLACE_ME");
 Configure the client using system properties or environment variables:
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
 
-// Configures using the `sentdm.adminAuthScheme`, `sentdm.customerAuthScheme` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_ADMIN_AUTH_SCHEME`, `SENT_DM_CUSTOMER_AUTH_SCHEME` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 ```
 
 Or manually:
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
 
 SentDmClient client = SentDmOkHttpClient.builder()
-    .adminAuthScheme("My Admin Auth Scheme")
-    .customerAuthScheme("My Customer Auth Scheme")
+    .apiKey("My API Key")
+    .senderId("My Sender ID")
     .build();
 ```
 
 Or using a combination of the two approaches:
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
 
 SentDmClient client = SentDmOkHttpClient.builder()
-    // Configures using the `sentdm.adminAuthScheme`, `sentdm.customerAuthScheme` and `sentdm.baseUrl` system properties
-    // Or configures using the `SENT_DM_ADMIN_AUTH_SCHEME`, `SENT_DM_CUSTOMER_AUTH_SCHEME` and `SENT_DM_BASE_URL` environment variables
+    // Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
+    // Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
     .fromEnv()
-    .adminAuthScheme("My Admin Auth Scheme")
+    .apiKey("My API Key")
     .build();
 ```
 
 See this table for the available options:
 
-| Setter               | System property             | Environment variable           | Required | Default value           |
-| -------------------- | --------------------------- | ------------------------------ | -------- | ----------------------- |
-| `adminAuthScheme`    | `sentdm.adminAuthScheme`    | `SENT_DM_ADMIN_AUTH_SCHEME`    | true     | -                       |
-| `customerAuthScheme` | `sentdm.customerAuthScheme` | `SENT_DM_CUSTOMER_AUTH_SCHEME` | true     | -                       |
-| `baseUrl`            | `sentdm.baseUrl`            | `SENT_DM_BASE_URL`             | true     | `"https://api.sent.dm"` |
+| Setter     | System property   | Environment variable | Required | Default value           |
+| ---------- | ----------------- | -------------------- | -------- | ----------------------- |
+| `apiKey`   | `sentdm.apiKey`   | `SENT_DM_API_KEY`    | true     | -                       |
+| `senderId` | `sentdm.senderId` | `SENT_DM_SENDER_ID`  | true     | -                       |
+| `baseUrl`  | `sentdm.baseUrl`  | `SENT_DM_BASE_URL`   | true     | `"https://api.sent.dm"` |
 
 System properties take precedence over environment variables.
 
@@ -103,7 +124,7 @@ System properties take precedence over environment variables.
 To temporarily use a modified client configuration, while reusing the same connection and thread pools, call `withOptions()` on any client or service:
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
+import dm.sent.client.SentDmClient;
 
 SentDmClient clientWithOptions = client.withOptions(optionsBuilder -> {
     optionsBuilder.baseUrl("https://example.com");
@@ -132,31 +153,49 @@ Because each class is immutable, builder modification will _never_ affect alread
 The default client is synchronous. To switch to asynchronous execution, call the `async()` method:
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
+import dm.sent.core.JsonValue;
+import dm.sent.models.messages.MessageSendToPhoneParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `sentdm.adminAuthScheme`, `sentdm.customerAuthScheme` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_ADMIN_AUTH_SCHEME`, `SENT_DM_CUSTOMER_AUTH_SCHEME` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 
-CompletableFuture<Void?> future = client.async().templates().delete("REPLACE_ME");
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .phoneNumber("+1234567890")
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .templateVariables(MessageSendToPhoneParams.TemplateVariables.builder()
+        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+        .build())
+    .build();
+CompletableFuture<Void?> future = client.async().messages().sendToPhone(params);
 ```
 
 Or create an asynchronous client from the beginning:
 
 ```java
-import com.sent_dm.api.client.SentDmClientAsync;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClientAsync;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import dm.sent.client.SentDmClientAsync;
+import dm.sent.client.okhttp.SentDmOkHttpClientAsync;
+import dm.sent.core.JsonValue;
+import dm.sent.models.messages.MessageSendToPhoneParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `sentdm.adminAuthScheme`, `sentdm.customerAuthScheme` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_ADMIN_AUTH_SCHEME`, `SENT_DM_CUSTOMER_AUTH_SCHEME` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
 SentDmClientAsync client = SentDmOkHttpClientAsync.fromEnv();
 
-CompletableFuture<Void?> future = client.templates().delete("REPLACE_ME");
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .phoneNumber("+1234567890")
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .templateVariables(MessageSendToPhoneParams.TemplateVariables.builder()
+        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+        .build())
+    .build();
+CompletableFuture<Void?> future = client.messages().sendToPhone(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
@@ -168,11 +207,20 @@ The SDK defines methods that deserialize responses into instances of Java classe
 To access this data, prefix any HTTP method call on a client or service with `withRawResponse()`:
 
 ```java
-import com.sent_dm.api.core.http.Headers;
-import com.sent_dm.api.core.http.HttpResponse;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import dm.sent.core.JsonValue;
+import dm.sent.core.http.Headers;
+import dm.sent.core.http.HttpResponse;
+import dm.sent.models.messages.MessageSendToPhoneParams;
 
-HttpResponse response = client.templates().withRawResponse().delete("REPLACE_ME");
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .phoneNumber("+1234567890")
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .templateVariables(MessageSendToPhoneParams.TemplateVariables.builder()
+        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+        .build())
+    .build();
+HttpResponse response = client.messages().withRawResponse().sendToPhone(params);
 
 int statusCode = response.statusCode();
 Headers headers = response.headers();
@@ -182,26 +230,26 @@ Headers headers = response.headers();
 
 The SDK throws custom unchecked exception types:
 
-- [`SentDmServiceException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/SentDmServiceException.kt): Base class for HTTP errors. See this table for which exception subclass is thrown for each HTTP status code:
+- [`SentDmServiceException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/SentDmServiceException.kt): Base class for HTTP errors. See this table for which exception subclass is thrown for each HTTP status code:
 
-  | Status | Exception                                                                                                                    |
-  | ------ | ---------------------------------------------------------------------------------------------------------------------------- |
-  | 400    | [`BadRequestException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/BadRequestException.kt)                     |
-  | 401    | [`UnauthorizedException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/UnauthorizedException.kt)                 |
-  | 403    | [`PermissionDeniedException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/PermissionDeniedException.kt)         |
-  | 404    | [`NotFoundException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/NotFoundException.kt)                         |
-  | 422    | [`UnprocessableEntityException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/UnprocessableEntityException.kt)   |
-  | 429    | [`RateLimitException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/RateLimitException.kt)                       |
-  | 5xx    | [`InternalServerException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/InternalServerException.kt)             |
-  | others | [`UnexpectedStatusCodeException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/UnexpectedStatusCodeException.kt) |
+  | Status | Exception                                                                                                            |
+  | ------ | -------------------------------------------------------------------------------------------------------------------- |
+  | 400    | [`BadRequestException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/BadRequestException.kt)                     |
+  | 401    | [`UnauthorizedException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/UnauthorizedException.kt)                 |
+  | 403    | [`PermissionDeniedException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/PermissionDeniedException.kt)         |
+  | 404    | [`NotFoundException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/NotFoundException.kt)                         |
+  | 422    | [`UnprocessableEntityException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/UnprocessableEntityException.kt)   |
+  | 429    | [`RateLimitException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/RateLimitException.kt)                       |
+  | 5xx    | [`InternalServerException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/InternalServerException.kt)             |
+  | others | [`UnexpectedStatusCodeException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/UnexpectedStatusCodeException.kt) |
 
-- [`SentDmIoException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/SentDmIoException.kt): I/O networking errors.
+- [`SentDmIoException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/SentDmIoException.kt): I/O networking errors.
 
-- [`SentDmRetryableException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/SentDmRetryableException.kt): Generic error indicating a failure that could be retried by the client.
+- [`SentDmRetryableException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/SentDmRetryableException.kt): Generic error indicating a failure that could be retried by the client.
 
-- [`SentDmInvalidDataException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/SentDmInvalidDataException.kt): Failure to interpret successfully parsed data. For example, when accessing a property that's supposed to be required, but the API unexpectedly omitted it from the response.
+- [`SentDmInvalidDataException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/SentDmInvalidDataException.kt): Failure to interpret successfully parsed data. For example, when accessing a property that's supposed to be required, but the API unexpectedly omitted it from the response.
 
-- [`SentDmException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/SentDmException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
+- [`SentDmException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/SentDmException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
 
 ## Logging
 
@@ -231,7 +279,7 @@ The SDK depends on [Jackson](https://github.com/FasterXML/jackson) for JSON seri
 
 The SDK throws an exception if it detects an incompatible Jackson version at runtime (e.g. if the default version was overridden in your Maven or Gradle config).
 
-If the SDK threw an exception, but you're _certain_ the version is compatible, then disable the version check using the `checkJacksonVersionCompatibility` on [`SentDmOkHttpClient`](sent-dm-java-client-okhttp/src/main/kotlin/com/sent_dm/api/client/okhttp/SentDmOkHttpClient.kt) or [`SentDmOkHttpClientAsync`](sent-dm-java-client-okhttp/src/main/kotlin/com/sent_dm/api/client/okhttp/SentDmOkHttpClientAsync.kt).
+If the SDK threw an exception, but you're _certain_ the version is compatible, then disable the version check using the `checkJacksonVersionCompatibility` on [`SentDmOkHttpClient`](sent-dm-java-client-okhttp/src/main/kotlin/dm/sent/client/okhttp/SentDmOkHttpClient.kt) or [`SentDmOkHttpClientAsync`](sent-dm-java-client-okhttp/src/main/kotlin/dm/sent/client/okhttp/SentDmOkHttpClientAsync.kt).
 
 > [!CAUTION]
 > We make no guarantee that the SDK works correctly when the Jackson version check is disabled.
@@ -257,8 +305,8 @@ The API may also explicitly instruct the SDK to retry or not retry a request.
 To set a custom number of retries, configure the client using the `maxRetries` method:
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
 
 SentDmClient client = SentDmOkHttpClient.builder()
     .fromEnv()
@@ -273,14 +321,16 @@ Requests time out after 1 minute by default.
 To set a custom timeout, configure the method call using the `timeout` method:
 
 ```java
-client.templates().delete(RequestOptions.builder().timeout(Duration.ofSeconds(30)).build());
+client.messages().sendToPhone(
+  params, RequestOptions.builder().timeout(Duration.ofSeconds(30)).build()
+);
 ```
 
 Or configure the default for all method calls at the client level:
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
 import java.time.Duration;
 
 SentDmClient client = SentDmOkHttpClient.builder()
@@ -294,8 +344,8 @@ SentDmClient client = SentDmOkHttpClient.builder()
 To route requests through a proxy, configure the client using the `proxy` method:
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 
@@ -318,8 +368,8 @@ SentDmClient client = SentDmOkHttpClient.builder()
 To configure how HTTPS connections are secured, configure the client using the `sslSocketFactory`, `trustManager`, and `hostnameVerifier` methods:
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
 
 SentDmClient client = SentDmOkHttpClient.builder()
     .fromEnv()
@@ -337,10 +387,10 @@ The SDK consists of three artifacts:
 - `sent-dm-java-core`
   - Contains core SDK logic
   - Does not depend on [OkHttp](https://square.github.io/okhttp)
-  - Exposes [`SentDmClient`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/client/SentDmClient.kt), [`SentDmClientAsync`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/client/SentDmClientAsync.kt), [`SentDmClientImpl`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/client/SentDmClientImpl.kt), and [`SentDmClientAsyncImpl`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/client/SentDmClientAsyncImpl.kt), all of which can work with any HTTP client
+  - Exposes [`SentDmClient`](sent-dm-java-core/src/main/kotlin/dm/sent/client/SentDmClient.kt), [`SentDmClientAsync`](sent-dm-java-core/src/main/kotlin/dm/sent/client/SentDmClientAsync.kt), [`SentDmClientImpl`](sent-dm-java-core/src/main/kotlin/dm/sent/client/SentDmClientImpl.kt), and [`SentDmClientAsyncImpl`](sent-dm-java-core/src/main/kotlin/dm/sent/client/SentDmClientAsyncImpl.kt), all of which can work with any HTTP client
 - `sent-dm-java-client-okhttp`
   - Depends on [OkHttp](https://square.github.io/okhttp)
-  - Exposes [`SentDmOkHttpClient`](sent-dm-java-client-okhttp/src/main/kotlin/com/sent_dm/api/client/okhttp/SentDmOkHttpClient.kt) and [`SentDmOkHttpClientAsync`](sent-dm-java-client-okhttp/src/main/kotlin/com/sent_dm/api/client/okhttp/SentDmOkHttpClientAsync.kt), which provide a way to construct [`SentDmClientImpl`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/client/SentDmClientImpl.kt) and [`SentDmClientAsyncImpl`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/client/SentDmClientAsyncImpl.kt), respectively, using OkHttp
+  - Exposes [`SentDmOkHttpClient`](sent-dm-java-client-okhttp/src/main/kotlin/dm/sent/client/okhttp/SentDmOkHttpClient.kt) and [`SentDmOkHttpClientAsync`](sent-dm-java-client-okhttp/src/main/kotlin/dm/sent/client/okhttp/SentDmOkHttpClientAsync.kt), which provide a way to construct [`SentDmClientImpl`](sent-dm-java-core/src/main/kotlin/dm/sent/client/SentDmClientImpl.kt) and [`SentDmClientAsyncImpl`](sent-dm-java-core/src/main/kotlin/dm/sent/client/SentDmClientAsyncImpl.kt), respectively, using OkHttp
 - `sent-dm-java`
   - Depends on and exposes the APIs of both `sent-dm-java-core` and `sent-dm-java-client-okhttp`
   - Does not have its own logic
@@ -355,16 +405,16 @@ This structure allows replacing the SDK's default HTTP client without pulling in
 To use a customized `OkHttpClient`:
 
 1. Replace your [`sent-dm-java` dependency](#installation) with `sent-dm-java-core`
-2. Copy `sent-dm-java-client-okhttp`'s [`OkHttpClient`](sent-dm-java-client-okhttp/src/main/kotlin/com/sent_dm/api/client/okhttp/OkHttpClient.kt) class into your code and customize it
-3. Construct [`SentDmClientImpl`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/client/SentDmClientImpl.kt) or [`SentDmClientAsyncImpl`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/client/SentDmClientAsyncImpl.kt), similarly to [`SentDmOkHttpClient`](sent-dm-java-client-okhttp/src/main/kotlin/com/sent_dm/api/client/okhttp/SentDmOkHttpClient.kt) or [`SentDmOkHttpClientAsync`](sent-dm-java-client-okhttp/src/main/kotlin/com/sent_dm/api/client/okhttp/SentDmOkHttpClientAsync.kt), using your customized client
+2. Copy `sent-dm-java-client-okhttp`'s [`OkHttpClient`](sent-dm-java-client-okhttp/src/main/kotlin/dm/sent/client/okhttp/OkHttpClient.kt) class into your code and customize it
+3. Construct [`SentDmClientImpl`](sent-dm-java-core/src/main/kotlin/dm/sent/client/SentDmClientImpl.kt) or [`SentDmClientAsyncImpl`](sent-dm-java-core/src/main/kotlin/dm/sent/client/SentDmClientAsyncImpl.kt), similarly to [`SentDmOkHttpClient`](sent-dm-java-client-okhttp/src/main/kotlin/dm/sent/client/okhttp/SentDmOkHttpClient.kt) or [`SentDmOkHttpClientAsync`](sent-dm-java-client-okhttp/src/main/kotlin/dm/sent/client/okhttp/SentDmOkHttpClientAsync.kt), using your customized client
 
 ### Completely custom HTTP client
 
 To use a completely custom HTTP client:
 
 1. Replace your [`sent-dm-java` dependency](#installation) with `sent-dm-java-core`
-2. Write a class that implements the [`HttpClient`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/core/http/HttpClient.kt) interface
-3. Construct [`SentDmClientImpl`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/client/SentDmClientImpl.kt) or [`SentDmClientAsyncImpl`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/client/SentDmClientAsyncImpl.kt), similarly to [`SentDmOkHttpClient`](sent-dm-java-client-okhttp/src/main/kotlin/com/sent_dm/api/client/okhttp/SentDmOkHttpClient.kt) or [`SentDmOkHttpClientAsync`](sent-dm-java-client-okhttp/src/main/kotlin/com/sent_dm/api/client/okhttp/SentDmOkHttpClientAsync.kt), using your new client class
+2. Write a class that implements the [`HttpClient`](sent-dm-java-core/src/main/kotlin/dm/sent/core/http/HttpClient.kt) interface
+3. Construct [`SentDmClientImpl`](sent-dm-java-core/src/main/kotlin/dm/sent/client/SentDmClientImpl.kt) or [`SentDmClientAsyncImpl`](sent-dm-java-core/src/main/kotlin/dm/sent/client/SentDmClientAsyncImpl.kt), similarly to [`SentDmOkHttpClient`](sent-dm-java-client-okhttp/src/main/kotlin/dm/sent/client/okhttp/SentDmOkHttpClient.kt) or [`SentDmOkHttpClientAsync`](sent-dm-java-client-okhttp/src/main/kotlin/dm/sent/client/okhttp/SentDmOkHttpClientAsync.kt), using your new client class
 
 ## Undocumented API functionality
 
@@ -375,10 +425,10 @@ The SDK is typed for convenient usage of the documented API. However, it also su
 To set undocumented parameters, call the `putAdditionalHeader`, `putAdditionalQueryParam`, or `putAdditionalBodyProperty` methods on any `Params` class:
 
 ```java
-import com.sent_dm.api.core.JsonValue;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import dm.sent.core.JsonValue;
+import dm.sent.models.messages.MessageSendToPhoneParams;
 
-TemplateDeleteParams params = TemplateDeleteParams.builder()
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
     .putAdditionalHeader("Secret-Header", "42")
     .putAdditionalQueryParam("secret_query_param", "42")
     .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))
@@ -390,9 +440,9 @@ These can be accessed on the built object later using the `_additionalHeaders()`
 To set undocumented parameters on _nested_ headers, query params, or body classes, call the `putAdditionalProperty` method on the nested class:
 
 ```java
-import com.sent_dm.api.core.JsonValue;
-import com.sent_dm.api.models.templates.TemplateCreateParams;
-import com.sent_dm.api.models.templates.TemplateDefinition;
+import dm.sent.core.JsonValue;
+import dm.sent.models.templates.TemplateCreateParams;
+import dm.sent.models.templates.TemplateDefinition;
 
 TemplateCreateParams params = TemplateCreateParams.builder()
     .definition(TemplateDefinition.builder()
@@ -403,18 +453,26 @@ TemplateCreateParams params = TemplateCreateParams.builder()
 
 These properties can be accessed on the nested built object later using the `_additionalProperties()` method.
 
-To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/core/Values.kt) object to its setter:
+To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](sent-dm-java-core/src/main/kotlin/dm/sent/core/Values.kt) object to its setter:
 
 ```java
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import dm.sent.core.JsonValue;
+import dm.sent.models.messages.MessageSendToPhoneParams;
 
-TemplateDeleteParams params = TemplateDeleteParams.builder().build();
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .phoneNumber(JsonValue.from(42))
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .templateVariables(MessageSendToPhoneParams.TemplateVariables.builder()
+        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+        .build())
+    .build();
 ```
 
-The most straightforward way to create a [`JsonValue`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/core/Values.kt) is using its `from(...)` method:
+The most straightforward way to create a [`JsonValue`](sent-dm-java-core/src/main/kotlin/dm/sent/core/Values.kt) is using its `from(...)` method:
 
 ```java
-import com.sent_dm.api.core.JsonValue;
+import dm.sent.core.JsonValue;
 import java.util.List;
 import java.util.Map;
 
@@ -452,14 +510,15 @@ JsonValue complexValue = JsonValue.from(Map.of(
 
 Normally a `Builder` class's `build` method will throw [`IllegalStateException`](https://docs.oracle.com/javase/8/docs/api/java/lang/IllegalStateException.html) if any required parameter or property is unset.
 
-To forcibly omit a required parameter or property, pass [`JsonMissing`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/core/Values.kt):
+To forcibly omit a required parameter or property, pass [`JsonMissing`](sent-dm-java-core/src/main/kotlin/dm/sent/core/Values.kt):
 
 ```java
-import com.sent_dm.api.core.JsonMissing;
-import com.sent_dm.api.models.templates.TemplateDeleteParams;
+import dm.sent.core.JsonMissing;
+import dm.sent.models.messages.MessageSendToPhoneParams;
 
-TemplateDeleteParams params = TemplateDeleteParams.builder()
-    .id(JsonMissing.of())
+MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+    .phoneNumber(JsonMissing.of())
     .build();
 ```
 
@@ -468,7 +527,7 @@ TemplateDeleteParams params = TemplateDeleteParams.builder()
 To access undocumented response properties, call the `_additionalProperties()` method:
 
 ```java
-import com.sent_dm.api.core.JsonValue;
+import dm.sent.core.JsonValue;
 import java.util.Map;
 
 Map<String, JsonValue> additionalProperties = client.templates().create(params)._additionalProperties();
@@ -498,8 +557,8 @@ String result = secretPropertyValue.accept(new JsonValue.Visitor<>() {
 To access a property's raw JSON value, which may be undocumented, call its `_` prefixed method:
 
 ```java
-import com.sent_dm.api.core.JsonField;
-import com.sent_dm.api.models.templates.TemplateDefinition;
+import dm.sent.core.JsonField;
+import dm.sent.models.templates.TemplateDefinition;
 import java.util.Optional;
 
 JsonField<TemplateDefinition> definition = client.templates().create(params)._definition();
@@ -522,12 +581,12 @@ if (definition.isMissing()) {
 
 In rare cases, the API may return a response that doesn't match the expected type. For example, the SDK may expect a property to contain a `String`, but the API could return something else.
 
-By default, the SDK will not throw an exception in this case. It will throw [`SentDmInvalidDataException`](sent-dm-java-core/src/main/kotlin/com/sent_dm/api/errors/SentDmInvalidDataException.kt) only if you directly access the property.
+By default, the SDK will not throw an exception in this case. It will throw [`SentDmInvalidDataException`](sent-dm-java-core/src/main/kotlin/dm/sent/errors/SentDmInvalidDataException.kt) only if you directly access the property.
 
 If you would prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
 ```java
-import com.sent_dm.api.models.templates.TemplateResponse;
+import dm.sent.models.templates.TemplateResponse;
 
 TemplateResponse templateResponse = client.templates().create(params).validate();
 ```
@@ -535,14 +594,16 @@ TemplateResponse templateResponse = client.templates().create(params).validate()
 Or configure the method call to validate the response using the `responseValidation` method:
 
 ```java
-client.templates().delete(RequestOptions.builder().responseValidation(true).build());
+client.messages().sendToPhone(
+  params, RequestOptions.builder().responseValidation(true).build()
+);
 ```
 
 Or configure the default for all method calls at the client level:
 
 ```java
-import com.sent_dm.api.client.SentDmClient;
-import com.sent_dm.api.client.okhttp.SentDmOkHttpClient;
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
 
 SentDmClient client = SentDmOkHttpClient.builder()
     .fromEnv()
@@ -588,4 +649,4 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/sent-dm-java/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/sentdm/sent-dm-java/issues) with questions, bugs, or suggestions.

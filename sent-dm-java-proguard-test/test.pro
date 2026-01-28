@@ -1,5 +1,5 @@
 # Specify the entrypoint where ProGuard starts to determine what's reachable.
--keep class com.sent_dm.api.proguard.** { *; }
+-keep class dm.sent.proguard.** { *; }
 
 # For the testing framework.
 -keep class org.junit.** { *; }
