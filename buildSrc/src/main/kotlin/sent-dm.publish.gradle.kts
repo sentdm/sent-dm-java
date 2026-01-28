@@ -55,6 +55,7 @@ configure<MavenPublishBaseExtension> {
         developers {
             developer {
                 name.set("Sent Dm")
+                email.set("support@sent.dm")
             }
         }
 
