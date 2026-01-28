@@ -7,13 +7,13 @@
 
 <!-- x-release-please-end -->
 
-The Sent Dm Java SDK provides convenient access to the Sent Dm REST API from applications written in Java.
+The Sent Dm Java SDK provides convenient access to the [Sent Dm REST API](https://docs.sent.dm) from applications written in Java.
 
 It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.1.0).
+The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.1.0).
 
 <!-- x-release-please-end -->
 
