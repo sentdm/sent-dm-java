@@ -14,7 +14,7 @@ internal class ProfileSummaryTest {
     fun create() {
         val profileSummary =
             ProfileSummary.builder()
-                .id("id")
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .description("description")
                 .icon("icon")
@@ -22,7 +22,7 @@ internal class ProfileSummaryTest {
                 .shortName("shortName")
                 .build()
 
-        assertThat(profileSummary.id()).contains("id")
+        assertThat(profileSummary.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(profileSummary.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(profileSummary.description()).contains("description")
@@ -36,7 +36,7 @@ internal class ProfileSummaryTest {
         val jsonMapper = jsonMapper()
         val profileSummary =
             ProfileSummary.builder()
-                .id("id")
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .description("description")
                 .icon("icon")

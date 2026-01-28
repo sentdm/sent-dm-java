@@ -13,7 +13,7 @@ internal class ContactListItemTest {
     fun create() {
         val contactListItem =
             ContactListItem.builder()
-                .id("id")
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .availableChannels("availableChannels")
                 .countryCode("countryCode")
                 .defaultChannel("defaultChannel")
@@ -25,7 +25,7 @@ internal class ContactListItemTest {
                 .regionCode("regionCode")
                 .build()
 
-        assertThat(contactListItem.id()).contains("id")
+        assertThat(contactListItem.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(contactListItem.availableChannels()).contains("availableChannels")
         assertThat(contactListItem.countryCode()).contains("countryCode")
         assertThat(contactListItem.defaultChannel()).contains("defaultChannel")
@@ -42,7 +42,7 @@ internal class ContactListItemTest {
         val jsonMapper = jsonMapper()
         val contactListItem =
             ContactListItem.builder()
-                .id("id")
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .availableChannels("availableChannels")
                 .countryCode("countryCode")
                 .defaultChannel("defaultChannel")

@@ -5,8 +5,8 @@ package com.sent_dm.api.proguard
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.sent_dm.api.client.okhttp.SentDmOkHttpClient
 import com.sent_dm.api.core.jsonMapper
-import com.sent_dm.api.models.templates.TemplateBodyContent
-import com.sent_dm.api.models.templates.TemplateVariable
+import com.sent_dm.api.models.messages.MessageRetrieveResponse
+import java.time.OffsetDateTime
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
 import org.assertj.core.api.Assertions.assertThat
@@ -46,10 +46,7 @@ internal class ProGuardCompatibilityTest {
     @Test
     fun client() {
         val client =
-            SentDmOkHttpClient.builder()
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
-                .build()
+            SentDmOkHttpClient.builder().apiKey("My API Key").senderId("My Sender ID").build()
 
         assertThat(client).isNotNull()
         assertThat(client.templates()).isNotNull()
@@ -60,37 +57,51 @@ internal class ProGuardCompatibilityTest {
     }
 
     @Test
-    fun templateBodyContentRoundtrip() {
+    fun messageRetrieveResponseRoundtrip() {
         val jsonMapper = jsonMapper()
-        val templateBodyContent =
-            TemplateBodyContent.builder()
-                .template("template")
-                .type("type")
-                .addVariable(
-                    TemplateVariable.builder()
-                        .id(0)
-                        .name("name")
-                        .props(
-                            TemplateVariable.Props.builder()
-                                .alt("alt")
-                                .mediaType("mediaType")
-                                .sample("sample")
-                                .shortUrl("shortUrl")
-                                .url("url")
-                                .variableType("variableType")
-                                .build()
-                        )
-                        .type("type")
+        val messageRetrieveResponse =
+            MessageRetrieveResponse.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .channel("channel")
+                .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .correctedPrice(0.0)
+                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addEvent(
+                    MessageRetrieveResponse.Event.builder()
+                        .description("description")
+                        .status("status")
+                        .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .build()
                 )
+                .messageBody(
+                    MessageRetrieveResponse.MessageBody.builder()
+                        .addButton(
+                            MessageRetrieveResponse.MessageBody.Button.builder()
+                                .type("type")
+                                .value("value")
+                                .build()
+                        )
+                        .content("content")
+                        .footer("footer")
+                        .header("header")
+                        .build()
+                )
+                .phoneNumber("phoneNumber")
+                .phoneNumberInternational("phoneNumberInternational")
+                .regionCode("regionCode")
+                .status("status")
+                .templateCategory("templateCategory")
+                .templateId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .templateName("templateName")
                 .build()
 
-        val roundtrippedTemplateBodyContent =
+        val roundtrippedMessageRetrieveResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(templateBodyContent),
-                jacksonTypeRef<TemplateBodyContent>(),
+                jsonMapper.writeValueAsString(messageRetrieveResponse),
+                jacksonTypeRef<MessageRetrieveResponse>(),
             )
 
-        assertThat(roundtrippedTemplateBodyContent).isEqualTo(templateBodyContent)
+        assertThat(roundtrippedMessageRetrieveResponse).isEqualTo(messageRetrieveResponse)
     }
 }

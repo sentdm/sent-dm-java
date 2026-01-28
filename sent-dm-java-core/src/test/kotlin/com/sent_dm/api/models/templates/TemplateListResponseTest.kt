@@ -17,7 +17,7 @@ internal class TemplateListResponseTest {
             TemplateListResponse.builder()
                 .addItem(
                     TemplateResponse.builder()
-                        .id("id")
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .category("category")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .definition(
@@ -190,7 +190,7 @@ internal class TemplateListResponseTest {
         assertThat(templateListResponse.items().getOrNull())
             .containsExactly(
                 TemplateResponse.builder()
-                    .id("id")
+                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .category("category")
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .definition(
@@ -367,7 +367,7 @@ internal class TemplateListResponseTest {
             TemplateListResponse.builder()
                 .addItem(
                     TemplateResponse.builder()
-                        .id("id")
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .category("category")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .definition(

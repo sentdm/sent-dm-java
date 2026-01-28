@@ -14,7 +14,7 @@ internal class TemplateResponseTest {
     fun create() {
         val templateResponse =
             TemplateResponse.builder()
-                .id("id")
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .category("category")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .definition(
@@ -178,7 +178,7 @@ internal class TemplateResponseTest {
                 .whatsappTemplateName("whatsappTemplateName")
                 .build()
 
-        assertThat(templateResponse.id()).contains("id")
+        assertThat(templateResponse.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(templateResponse.category()).contains("category")
         assertThat(templateResponse.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -350,7 +350,7 @@ internal class TemplateResponseTest {
         val jsonMapper = jsonMapper()
         val templateResponse =
             TemplateResponse.builder()
-                .id("id")
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .category("category")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .definition(

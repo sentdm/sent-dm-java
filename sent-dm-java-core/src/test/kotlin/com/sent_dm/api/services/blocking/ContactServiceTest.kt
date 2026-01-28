@@ -20,8 +20,8 @@ internal class ContactServiceTest {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val contactService = client.contacts()
 
@@ -36,8 +36,8 @@ internal class ContactServiceTest {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val contactService = client.contacts()
 
@@ -55,13 +55,15 @@ internal class ContactServiceTest {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val contactService = client.contacts()
 
         val contactListItem =
-            contactService.retrieveId(ContactRetrieveIdParams.builder().id("id").build())
+            contactService.retrieveId(
+                ContactRetrieveIdParams.builder().id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+            )
 
         contactListItem.validate()
     }

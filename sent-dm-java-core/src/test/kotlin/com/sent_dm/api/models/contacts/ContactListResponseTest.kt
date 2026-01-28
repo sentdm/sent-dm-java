@@ -16,7 +16,7 @@ internal class ContactListResponseTest {
             ContactListResponse.builder()
                 .addItem(
                     ContactListItem.builder()
-                        .id("id")
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .availableChannels("availableChannels")
                         .countryCode("countryCode")
                         .defaultChannel("defaultChannel")
@@ -37,7 +37,7 @@ internal class ContactListResponseTest {
         assertThat(contactListResponse.items().getOrNull())
             .containsExactly(
                 ContactListItem.builder()
-                    .id("id")
+                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .availableChannels("availableChannels")
                     .countryCode("countryCode")
                     .defaultChannel("defaultChannel")
@@ -62,7 +62,7 @@ internal class ContactListResponseTest {
             ContactListResponse.builder()
                 .addItem(
                     ContactListItem.builder()
-                        .id("id")
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .availableChannels("availableChannels")
                         .countryCode("countryCode")
                         .defaultChannel("defaultChannel")

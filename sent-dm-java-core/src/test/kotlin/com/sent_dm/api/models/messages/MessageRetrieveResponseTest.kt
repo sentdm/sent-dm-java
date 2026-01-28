@@ -15,12 +15,12 @@ internal class MessageRetrieveResponseTest {
     fun create() {
         val messageRetrieveResponse =
             MessageRetrieveResponse.builder()
-                .id("id")
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .channel("channel")
-                .contactId("contactId")
+                .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .correctedPrice(0.0)
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .customerId("customerId")
+                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addEvent(
                     MessageRetrieveResponse.Event.builder()
                         .description("description")
@@ -46,17 +46,19 @@ internal class MessageRetrieveResponseTest {
                 .regionCode("regionCode")
                 .status("status")
                 .templateCategory("templateCategory")
-                .templateId("templateId")
+                .templateId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .templateName("templateName")
                 .build()
 
-        assertThat(messageRetrieveResponse.id()).contains("id")
+        assertThat(messageRetrieveResponse.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(messageRetrieveResponse.channel()).contains("channel")
-        assertThat(messageRetrieveResponse.contactId()).contains("contactId")
+        assertThat(messageRetrieveResponse.contactId())
+            .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(messageRetrieveResponse.correctedPrice()).contains(0.0)
         assertThat(messageRetrieveResponse.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(messageRetrieveResponse.customerId()).contains("customerId")
+        assertThat(messageRetrieveResponse.customerId())
+            .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(messageRetrieveResponse.events().getOrNull())
             .containsExactly(
                 MessageRetrieveResponse.Event.builder()
@@ -85,7 +87,8 @@ internal class MessageRetrieveResponseTest {
         assertThat(messageRetrieveResponse.regionCode()).contains("regionCode")
         assertThat(messageRetrieveResponse.status()).contains("status")
         assertThat(messageRetrieveResponse.templateCategory()).contains("templateCategory")
-        assertThat(messageRetrieveResponse.templateId()).contains("templateId")
+        assertThat(messageRetrieveResponse.templateId())
+            .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(messageRetrieveResponse.templateName()).contains("templateName")
     }
 
@@ -94,12 +97,12 @@ internal class MessageRetrieveResponseTest {
         val jsonMapper = jsonMapper()
         val messageRetrieveResponse =
             MessageRetrieveResponse.builder()
-                .id("id")
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .channel("channel")
-                .contactId("contactId")
+                .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .correctedPrice(0.0)
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .customerId("customerId")
+                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addEvent(
                     MessageRetrieveResponse.Event.builder()
                         .description("description")
@@ -125,7 +128,7 @@ internal class MessageRetrieveResponseTest {
                 .regionCode("regionCode")
                 .status("status")
                 .templateCategory("templateCategory")
-                .templateId("templateId")
+                .templateId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .templateName("templateName")
                 .build()
 

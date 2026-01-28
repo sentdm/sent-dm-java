@@ -22,8 +22,8 @@ internal class TemplateServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val templateServiceAsync = client.templates()
 
@@ -200,8 +200,8 @@ internal class TemplateServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val templateServiceAsync = client.templates()
 
@@ -218,8 +218,8 @@ internal class TemplateServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val templateServiceAsync = client.templates()
 
@@ -244,8 +244,8 @@ internal class TemplateServiceAsyncTest {
         val client =
             SentDmOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
-                .adminAuthScheme("My Admin Auth Scheme")
-                .customerAuthScheme("My Customer Auth Scheme")
+                .apiKey("My API Key")
+                .senderId("My Sender ID")
                 .build()
         val templateServiceAsync = client.templates()
 

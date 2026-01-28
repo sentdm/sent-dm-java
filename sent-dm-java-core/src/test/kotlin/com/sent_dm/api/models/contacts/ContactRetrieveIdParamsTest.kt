@@ -10,15 +10,19 @@ internal class ContactRetrieveIdParamsTest {
 
     @Test
     fun create() {
-        ContactRetrieveIdParams.builder().id("id").build()
+        ContactRetrieveIdParams.builder().id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
     }
 
     @Test
     fun queryParams() {
-        val params = ContactRetrieveIdParams.builder().id("id").build()
+        val params =
+            ContactRetrieveIdParams.builder().id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
 
         val queryParams = params._queryParams()
 
-        assertThat(queryParams).isEqualTo(QueryParams.builder().put("id", "id").build())
+        assertThat(queryParams)
+            .isEqualTo(
+                QueryParams.builder().put("id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+            )
     }
 }

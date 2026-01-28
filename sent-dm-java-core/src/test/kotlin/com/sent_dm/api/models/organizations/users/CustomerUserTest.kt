@@ -14,9 +14,9 @@ internal class CustomerUserTest {
     fun create() {
         val customerUser =
             CustomerUser.builder()
-                .id("id")
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .customerId("customerId")
+                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .email("email")
                 .invitationSentAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .invitationToken("invitationToken")
@@ -28,10 +28,10 @@ internal class CustomerUserTest {
                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
 
-        assertThat(customerUser.id()).contains("id")
+        assertThat(customerUser.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(customerUser.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(customerUser.customerId()).contains("customerId")
+        assertThat(customerUser.customerId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(customerUser.email()).contains("email")
         assertThat(customerUser.invitationSentAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -52,9 +52,9 @@ internal class CustomerUserTest {
         val jsonMapper = jsonMapper()
         val customerUser =
             CustomerUser.builder()
-                .id("id")
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .customerId("customerId")
+                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .email("email")
                 .invitationSentAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .invitationToken("invitationToken")

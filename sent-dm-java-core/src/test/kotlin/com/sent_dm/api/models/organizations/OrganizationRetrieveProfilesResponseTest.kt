@@ -15,10 +15,10 @@ internal class OrganizationRetrieveProfilesResponseTest {
     fun create() {
         val organizationRetrieveProfilesResponse =
             OrganizationRetrieveProfilesResponse.builder()
-                .organizationId("organizationId")
+                .organizationId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addProfile(
                     ProfileSummary.builder()
-                        .id("id")
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .description("description")
                         .icon("icon")
@@ -28,11 +28,12 @@ internal class OrganizationRetrieveProfilesResponseTest {
                 )
                 .build()
 
-        assertThat(organizationRetrieveProfilesResponse.organizationId()).contains("organizationId")
+        assertThat(organizationRetrieveProfilesResponse.organizationId())
+            .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(organizationRetrieveProfilesResponse.profiles().getOrNull())
             .containsExactly(
                 ProfileSummary.builder()
-                    .id("id")
+                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .description("description")
                     .icon("icon")
@@ -47,10 +48,10 @@ internal class OrganizationRetrieveProfilesResponseTest {
         val jsonMapper = jsonMapper()
         val organizationRetrieveProfilesResponse =
             OrganizationRetrieveProfilesResponse.builder()
-                .organizationId("organizationId")
+                .organizationId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addProfile(
                     ProfileSummary.builder()
-                        .id("id")
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .description("description")
                         .icon("icon")
