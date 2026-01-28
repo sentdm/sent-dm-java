@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-dm-java)](https://central.sonatype.com/artifact/dm.sent/sent-dm-java/0.2.0)
-[![javadoc](https://javadoc.io/badge2/dm.sent/sent-dm-java/0.2.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-dm-java/0.2.0)
+[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-dm-java)](https://central.sonatype.com/artifact/dm.sent/sent-dm-java/0.3.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-dm-java/0.3.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-dm-java/0.3.0)
 
 <!-- x-release-please-end -->
 
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.2.0).
+The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.3.0).
 
 <!-- x-release-please-end -->
 
@@ -24,7 +24,7 @@ The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm).
 ### Gradle
 
 ```kotlin
-implementation("dm.sent:sent-dm-java:0.2.0")
+implementation("dm.sent:sent-dm-java:0.3.0")
 ```
 
 ### Maven
@@ -33,7 +33,7 @@ implementation("dm.sent:sent-dm-java:0.2.0")
 <dependency>
   <groupId>dm.sent</groupId>
   <artifactId>sent-dm-java</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
