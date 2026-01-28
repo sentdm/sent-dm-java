@@ -7,7 +7,7 @@ repositories {
 }
 
 allprojects {
-    group = "com.sent_dm.api"
+    group = "dm.sent"
     version = "0.0.1" // x-release-please-version
 }
 
