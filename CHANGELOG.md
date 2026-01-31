@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.1 (2026-01-31)
+
+Full Changelog: [v0.3.0...v0.3.1](https://github.com/sentdm/sent-dm-java/compare/v0.3.0...v0.3.1)
+
+### Chores
+
+* **internal:** allow passing args to `./scripts/test` ([fb18602](https://github.com/sentdm/sent-dm-java/commit/fb18602f34404e6daabbaf88b9f26cb07bc476d4))
+
 ## 0.3.0 (2026-01-28)
 
 Full Changelog: [v0.2.0...v0.3.0](https://github.com/sentdm/sent-dm-java/compare/v0.2.0...v0.3.0)
