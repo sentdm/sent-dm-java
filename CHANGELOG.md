@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.0 (2026-02-10)
+
+Full Changelog: [v0.3.1...v0.4.0](https://github.com/sentdm/sent-dm-java/compare/v0.3.1...v0.4.0)
+
+### Features
+
+* **api:** api update ([49c75f5](https://github.com/sentdm/sent-dm-java/commit/49c75f5106f5b85cd66a6cf576f25d7460a7afa1))
+
+
+### Chores
+
+* **internal:** upgrade AssertJ ([8b5c109](https://github.com/sentdm/sent-dm-java/commit/8b5c109da6252630a58cb670fa4176d4964b800a))
+
 ## 0.3.1 (2026-01-31)
 
 Full Changelog: [v0.3.0...v0.3.1](https://github.com/sentdm/sent-dm-java/compare/v0.3.0...v0.3.1)
