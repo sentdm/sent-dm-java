@@ -42,8 +42,8 @@ configure<MavenPublishBaseExtension> {
     )
 
     pom {
-        name.set("Public API - v1/v2")
-        description.set("An SDK library for sent-dm")
+        name.set("Sent DM API - v2")
+        description.set("Legacy Sent DM API (v2). These endpoints are maintained for backward\ncompatibility. New integrations should use the v3 API.\n\n## Authentication\n\nRequests require authentication via the `x-api-key` and `x-sender-id` headers.")
         url.set("https://docs.sent.dm")
 
         licenses {
