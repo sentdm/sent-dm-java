@@ -6,7 +6,6 @@ import dm.sent.core.ClientOptions
 import dm.sent.services.async.ContactServiceAsync
 import dm.sent.services.async.MessageServiceAsync
 import dm.sent.services.async.NumberLookupServiceAsync
-import dm.sent.services.async.OrganizationServiceAsync
 import dm.sent.services.async.TemplateServiceAsync
 import java.util.function.Consumer
 
@@ -46,15 +45,13 @@ interface SentDmClientAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClientAsync
 
-    fun templates(): TemplateServiceAsync
-
     fun contacts(): ContactServiceAsync
 
     fun messages(): MessageServiceAsync
 
-    fun numberLookup(): NumberLookupServiceAsync
+    fun templates(): TemplateServiceAsync
 
-    fun organizations(): OrganizationServiceAsync
+    fun numberLookup(): NumberLookupServiceAsync
 
     /**
      * Closes this client, relinquishing any underlying resources.
@@ -81,14 +78,12 @@ interface SentDmClientAsync {
             modifier: Consumer<ClientOptions.Builder>
         ): SentDmClientAsync.WithRawResponse
 
-        fun templates(): TemplateServiceAsync.WithRawResponse
-
         fun contacts(): ContactServiceAsync.WithRawResponse
 
         fun messages(): MessageServiceAsync.WithRawResponse
 
-        fun numberLookup(): NumberLookupServiceAsync.WithRawResponse
+        fun templates(): TemplateServiceAsync.WithRawResponse
 
-        fun organizations(): OrganizationServiceAsync.WithRawResponse
+        fun numberLookup(): NumberLookupServiceAsync.WithRawResponse
     }
 }

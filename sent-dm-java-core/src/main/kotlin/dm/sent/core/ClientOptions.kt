@@ -93,9 +93,15 @@ private constructor(
      * Defaults to 2.
      */
     @get:JvmName("maxRetries") val maxRetries: Int,
-    /** Customer API key for authentication */
+    /**
+     * Customer API key for authentication. Use `sk_live_*` keys for production and `sk_test_*` keys
+     * for sandbox/testing. Pass via the `x-api-key` header.
+     */
     @get:JvmName("apiKey") val apiKey: String,
-    /** Customer sender ID (GUID) identifying the customer account */
+    /**
+     * Customer sender ID (UUID) identifying the customer account. Obtain this from your account
+     * settings. Pass via the `x-sender-id` header.
+     */
     @get:JvmName("senderId") val senderId: String,
 ) {
 
@@ -276,10 +282,16 @@ private constructor(
          */
         fun maxRetries(maxRetries: Int) = apply { this.maxRetries = maxRetries }
 
-        /** Customer API key for authentication */
+        /**
+         * Customer API key for authentication. Use `sk_live_*` keys for production and `sk_test_*`
+         * keys for sandbox/testing. Pass via the `x-api-key` header.
+         */
         fun apiKey(apiKey: String) = apply { this.apiKey = apiKey }
 
-        /** Customer sender ID (GUID) identifying the customer account */
+        /**
+         * Customer sender ID (UUID) identifying the customer account. Obtain this from your account
+         * settings. Pass via the `x-sender-id` header.
+         */
         fun senderId(senderId: String) = apply { this.senderId = senderId }
 
         fun headers(headers: Headers) = apply {

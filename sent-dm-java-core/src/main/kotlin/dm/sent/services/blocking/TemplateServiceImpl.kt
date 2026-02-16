@@ -21,7 +21,7 @@ import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateListResponse
-import dm.sent.models.templates.TemplateResponse
+import dm.sent.models.templates.TemplateResponseV2
 import dm.sent.models.templates.TemplateRetrieveParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -41,14 +41,14 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
     override fun create(
         params: TemplateCreateParams,
         requestOptions: RequestOptions,
-    ): TemplateResponse =
+    ): TemplateResponseV2 =
         // post /v2/templates
         withRawResponse().create(params, requestOptions).parse()
 
     override fun retrieve(
         params: TemplateRetrieveParams,
         requestOptions: RequestOptions,
-    ): TemplateResponse =
+    ): TemplateResponseV2 =
         // get /v2/templates/{id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
@@ -77,13 +77,13 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<TemplateResponse> =
-            jsonHandler<TemplateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<TemplateResponseV2> =
+            jsonHandler<TemplateResponseV2>(clientOptions.jsonMapper)
 
         override fun create(
             params: TemplateCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TemplateResponse> {
+        ): HttpResponseFor<TemplateResponseV2> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -105,13 +105,13 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
             }
         }
 
-        private val retrieveHandler: Handler<TemplateResponse> =
-            jsonHandler<TemplateResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<TemplateResponseV2> =
+            jsonHandler<TemplateResponseV2>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: TemplateRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TemplateResponse> {
+        ): HttpResponseFor<TemplateResponseV2> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

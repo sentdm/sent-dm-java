@@ -27,7 +27,7 @@ internal class TemplateServiceAsyncTest {
                 .build()
         val templateServiceAsync = client.templates()
 
-        val templateResponseFuture =
+        val templateResponseV2Future =
             templateServiceAsync.create(
                 TemplateCreateParams.builder()
                     .definition(
@@ -190,8 +190,8 @@ internal class TemplateServiceAsyncTest {
                     .build()
             )
 
-        val templateResponse = templateResponseFuture.get()
-        templateResponse.validate()
+        val templateResponseV2 = templateResponseV2Future.get()
+        templateResponseV2.validate()
     }
 
     @Disabled("Prism tests are disabled")
@@ -205,11 +205,11 @@ internal class TemplateServiceAsyncTest {
                 .build()
         val templateServiceAsync = client.templates()
 
-        val templateResponseFuture =
+        val templateResponseV2Future =
             templateServiceAsync.retrieve("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
 
-        val templateResponse = templateResponseFuture.get()
-        templateResponse.validate()
+        val templateResponseV2 = templateResponseV2Future.get()
+        templateResponseV2.validate()
     }
 
     @Disabled("Prism tests are disabled")

@@ -21,7 +21,7 @@ import kotlin.jvm.optionals.getOrNull
 class TemplateListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val items: JsonField<List<TemplateResponse>>,
+    private val items: JsonField<List<TemplateResponseV2>>,
     private val page: JsonField<Int>,
     private val pageSize: JsonField<Int>,
     private val totalCount: JsonField<Int>,
@@ -33,7 +33,7 @@ private constructor(
     private constructor(
         @JsonProperty("items")
         @ExcludeMissing
-        items: JsonField<List<TemplateResponse>> = JsonMissing.of(),
+        items: JsonField<List<TemplateResponseV2>> = JsonMissing.of(),
         @JsonProperty("page") @ExcludeMissing page: JsonField<Int> = JsonMissing.of(),
         @JsonProperty("pageSize") @ExcludeMissing pageSize: JsonField<Int> = JsonMissing.of(),
         @JsonProperty("totalCount") @ExcludeMissing totalCount: JsonField<Int> = JsonMissing.of(),
@@ -44,7 +44,7 @@ private constructor(
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun items(): Optional<List<TemplateResponse>> = items.getOptional("items")
+    fun items(): Optional<List<TemplateResponseV2>> = items.getOptional("items")
 
     /**
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -75,7 +75,7 @@ private constructor(
      *
      * Unlike [items], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<TemplateResponse>> = items
+    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<TemplateResponseV2>> = items
 
     /**
      * Returns the raw JSON value of [page].
@@ -126,7 +126,7 @@ private constructor(
     /** A builder for [TemplateListResponse]. */
     class Builder internal constructor() {
 
-        private var items: JsonField<MutableList<TemplateResponse>>? = null
+        private var items: JsonField<MutableList<TemplateResponseV2>>? = null
         private var page: JsonField<Int> = JsonMissing.of()
         private var pageSize: JsonField<Int> = JsonMissing.of()
         private var totalCount: JsonField<Int> = JsonMissing.of()
@@ -143,25 +143,25 @@ private constructor(
             additionalProperties = templateListResponse.additionalProperties.toMutableMap()
         }
 
-        fun items(items: List<TemplateResponse>) = items(JsonField.of(items))
+        fun items(items: List<TemplateResponseV2>) = items(JsonField.of(items))
 
         /**
          * Sets [Builder.items] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.items] with a well-typed `List<TemplateResponse>` value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.items] with a well-typed `List<TemplateResponseV2>`
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
          */
-        fun items(items: JsonField<List<TemplateResponse>>) = apply {
+        fun items(items: JsonField<List<TemplateResponseV2>>) = apply {
             this.items = items.map { it.toMutableList() }
         }
 
         /**
-         * Adds a single [TemplateResponse] to [items].
+         * Adds a single [TemplateResponseV2] to [items].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addItem(item: TemplateResponse) = apply {
+        fun addItem(item: TemplateResponseV2) = apply {
             items =
                 (items ?: JsonField.of(mutableListOf())).also { checkKnown("items", it).add(item) }
         }
