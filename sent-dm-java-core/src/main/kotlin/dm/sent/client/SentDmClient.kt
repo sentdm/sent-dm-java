@@ -6,7 +6,6 @@ import dm.sent.core.ClientOptions
 import dm.sent.services.blocking.ContactService
 import dm.sent.services.blocking.MessageService
 import dm.sent.services.blocking.NumberLookupService
-import dm.sent.services.blocking.OrganizationService
 import dm.sent.services.blocking.TemplateService
 import java.util.function.Consumer
 
@@ -46,15 +45,13 @@ interface SentDmClient {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClient
 
-    fun templates(): TemplateService
-
     fun contacts(): ContactService
 
     fun messages(): MessageService
 
-    fun numberLookup(): NumberLookupService
+    fun templates(): TemplateService
 
-    fun organizations(): OrganizationService
+    fun numberLookup(): NumberLookupService
 
     /**
      * Closes this client, relinquishing any underlying resources.
@@ -79,14 +76,12 @@ interface SentDmClient {
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClient.WithRawResponse
 
-        fun templates(): TemplateService.WithRawResponse
-
         fun contacts(): ContactService.WithRawResponse
 
         fun messages(): MessageService.WithRawResponse
 
-        fun numberLookup(): NumberLookupService.WithRawResponse
+        fun templates(): TemplateService.WithRawResponse
 
-        fun organizations(): OrganizationService.WithRawResponse
+        fun numberLookup(): NumberLookupService.WithRawResponse
     }
 }

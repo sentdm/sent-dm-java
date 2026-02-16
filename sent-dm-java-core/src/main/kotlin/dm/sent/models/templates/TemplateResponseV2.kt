@@ -18,7 +18,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Represents a message template with comprehensive metadata including definition structure */
-class TemplateResponse
+class TemplateResponseV2
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
@@ -272,11 +272,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [TemplateResponse]. */
+        /** Returns a mutable builder for constructing an instance of [TemplateResponseV2]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [TemplateResponse]. */
+    /** A builder for [TemplateResponseV2]. */
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
@@ -293,19 +293,19 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(templateResponse: TemplateResponse) = apply {
-            id = templateResponse.id
-            category = templateResponse.category
-            createdAt = templateResponse.createdAt
-            definition = templateResponse.definition
-            displayName = templateResponse.displayName
-            isPublished = templateResponse.isPublished
-            language = templateResponse.language
-            status = templateResponse.status
-            updatedAt = templateResponse.updatedAt
-            whatsappTemplateId = templateResponse.whatsappTemplateId
-            whatsappTemplateName = templateResponse.whatsappTemplateName
-            additionalProperties = templateResponse.additionalProperties.toMutableMap()
+        internal fun from(templateResponseV2: TemplateResponseV2) = apply {
+            id = templateResponseV2.id
+            category = templateResponseV2.category
+            createdAt = templateResponseV2.createdAt
+            definition = templateResponseV2.definition
+            displayName = templateResponseV2.displayName
+            isPublished = templateResponseV2.isPublished
+            language = templateResponseV2.language
+            status = templateResponseV2.status
+            updatedAt = templateResponseV2.updatedAt
+            whatsappTemplateId = templateResponseV2.whatsappTemplateId
+            whatsappTemplateName = templateResponseV2.whatsappTemplateName
+            additionalProperties = templateResponseV2.additionalProperties.toMutableMap()
         }
 
         /** The unique identifier of the template */
@@ -467,12 +467,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [TemplateResponse].
+         * Returns an immutable instance of [TemplateResponseV2].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): TemplateResponse =
-            TemplateResponse(
+        fun build(): TemplateResponseV2 =
+            TemplateResponseV2(
                 id,
                 category,
                 createdAt,
@@ -490,7 +490,7 @@ private constructor(
 
     private var validated: Boolean = false
 
-    fun validate(): TemplateResponse = apply {
+    fun validate(): TemplateResponseV2 = apply {
         if (validated) {
             return@apply
         }
@@ -541,7 +541,7 @@ private constructor(
             return true
         }
 
-        return other is TemplateResponse &&
+        return other is TemplateResponseV2 &&
             id == other.id &&
             category == other.category &&
             createdAt == other.createdAt &&
@@ -576,5 +576,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TemplateResponse{id=$id, category=$category, createdAt=$createdAt, definition=$definition, displayName=$displayName, isPublished=$isPublished, language=$language, status=$status, updatedAt=$updatedAt, whatsappTemplateId=$whatsappTemplateId, whatsappTemplateName=$whatsappTemplateName, additionalProperties=$additionalProperties}"
+        "TemplateResponseV2{id=$id, category=$category, createdAt=$createdAt, definition=$definition, displayName=$displayName, isPublished=$isPublished, language=$language, status=$status, updatedAt=$updatedAt, whatsappTemplateId=$whatsappTemplateId, whatsappTemplateName=$whatsappTemplateName, additionalProperties=$additionalProperties}"
 }

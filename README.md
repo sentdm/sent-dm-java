@@ -138,7 +138,7 @@ The `withOptions()` method does not affect the original client or service.
 
 To send a request to the Sent Dm API, build an instance of some `Params` class and pass it to the corresponding client method. When the response is received, it will be deserialized into an instance of a Java class.
 
-For example, `client.templates().create(...)` should be called with an instance of `TemplateCreateParams`, and it will return an instance of `TemplateResponse`.
+For example, `client.contacts().list(...)` should be called with an instance of `ContactListParams`, and it will return an instance of `ContactListResponse`.
 
 ## Immutability
 
@@ -530,7 +530,7 @@ To access undocumented response properties, call the `_additionalProperties()` m
 import dm.sent.core.JsonValue;
 import java.util.Map;
 
-Map<String, JsonValue> additionalProperties = client.templates().create(params)._additionalProperties();
+Map<String, JsonValue> additionalProperties = client.contacts().list(params)._additionalProperties();
 JsonValue secretPropertyValue = additionalProperties.get("secretProperty");
 
 String result = secretPropertyValue.accept(new JsonValue.Visitor<>() {
@@ -558,22 +558,21 @@ To access a property's raw JSON value, which may be undocumented, call its `_` p
 
 ```java
 import dm.sent.core.JsonField;
-import dm.sent.models.templates.TemplateDefinition;
 import java.util.Optional;
 
-JsonField<TemplateDefinition> definition = client.templates().create(params)._definition();
+JsonField<Object> field = client.contacts().list(params)._field();
 
-if (definition.isMissing()) {
+if (field.isMissing()) {
   // The property is absent from the JSON response
-} else if (definition.isNull()) {
+} else if (field.isNull()) {
   // The property was set to literal null
 } else {
   // Check if value was provided as a string
   // Other methods include `asNumber()`, `asBoolean()`, etc.
-  Optional<String> jsonString = definition.asString();
+  Optional<String> jsonString = field.asString();
 
   // Try to deserialize into a custom type
-  MyClass myObject = definition.asUnknown().orElseThrow().convert(MyClass.class);
+  MyClass myObject = field.asUnknown().orElseThrow().convert(MyClass.class);
 }
 ```
 
@@ -586,9 +585,9 @@ By default, the SDK will not throw an exception in this case. It will throw [`Se
 If you would prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
 ```java
-import dm.sent.models.templates.TemplateResponse;
+import dm.sent.models.contacts.ContactListResponse;
 
-TemplateResponse templateResponse = client.templates().create(params).validate();
+ContactListResponse contacts = client.contacts().list(params).validate();
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:
