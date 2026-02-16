@@ -49,11 +49,10 @@ internal class ProGuardCompatibilityTest {
             SentDmOkHttpClient.builder().apiKey("My API Key").senderId("My Sender ID").build()
 
         assertThat(client).isNotNull()
-        assertThat(client.templates()).isNotNull()
         assertThat(client.contacts()).isNotNull()
         assertThat(client.messages()).isNotNull()
+        assertThat(client.templates()).isNotNull()
         assertThat(client.numberLookup()).isNotNull()
-        assertThat(client.organizations()).isNotNull()
     }
 
     @Test

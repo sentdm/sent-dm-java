@@ -8,12 +8,12 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class TemplateResponseTest {
+internal class TemplateResponseV2Test {
 
     @Test
     fun create() {
-        val templateResponse =
-            TemplateResponse.builder()
+        val templateResponseV2 =
+            TemplateResponseV2.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .category("category")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -178,11 +178,11 @@ internal class TemplateResponseTest {
                 .whatsappTemplateName("whatsappTemplateName")
                 .build()
 
-        assertThat(templateResponse.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-        assertThat(templateResponse.category()).contains("category")
-        assertThat(templateResponse.createdAt())
+        assertThat(templateResponseV2.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(templateResponseV2.category()).contains("category")
+        assertThat(templateResponseV2.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(templateResponse.definition())
+        assertThat(templateResponseV2.definition())
             .contains(
                 TemplateDefinition.builder()
                     .body(
@@ -335,21 +335,21 @@ internal class TemplateResponseTest {
                     )
                     .build()
             )
-        assertThat(templateResponse.displayName()).contains("displayName")
-        assertThat(templateResponse.isPublished()).contains(true)
-        assertThat(templateResponse.language()).contains("language")
-        assertThat(templateResponse.status()).contains("status")
-        assertThat(templateResponse.updatedAt())
+        assertThat(templateResponseV2.displayName()).contains("displayName")
+        assertThat(templateResponseV2.isPublished()).contains(true)
+        assertThat(templateResponseV2.language()).contains("language")
+        assertThat(templateResponseV2.status()).contains("status")
+        assertThat(templateResponseV2.updatedAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(templateResponse.whatsappTemplateId()).contains("whatsappTemplateId")
-        assertThat(templateResponse.whatsappTemplateName()).contains("whatsappTemplateName")
+        assertThat(templateResponseV2.whatsappTemplateId()).contains("whatsappTemplateId")
+        assertThat(templateResponseV2.whatsappTemplateName()).contains("whatsappTemplateName")
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val templateResponse =
-            TemplateResponse.builder()
+        val templateResponseV2 =
+            TemplateResponseV2.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .category("category")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -514,12 +514,12 @@ internal class TemplateResponseTest {
                 .whatsappTemplateName("whatsappTemplateName")
                 .build()
 
-        val roundtrippedTemplateResponse =
+        val roundtrippedTemplateResponseV2 =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(templateResponse),
-                jacksonTypeRef<TemplateResponse>(),
+                jsonMapper.writeValueAsString(templateResponseV2),
+                jacksonTypeRef<TemplateResponseV2>(),
             )
 
-        assertThat(roundtrippedTemplateResponse).isEqualTo(templateResponse)
+        assertThat(roundtrippedTemplateResponseV2).isEqualTo(templateResponseV2)
     }
 }

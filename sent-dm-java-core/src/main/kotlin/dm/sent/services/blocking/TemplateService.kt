@@ -11,7 +11,7 @@ import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateListResponse
-import dm.sent.models.templates.TemplateResponse
+import dm.sent.models.templates.TemplateResponseV2
 import dm.sent.models.templates.TemplateRetrieveParams
 import java.util.function.Consumer
 
@@ -35,47 +35,47 @@ interface TemplateService {
      * metadata generation using AI (display name, language, category). Optionally submits the
      * template for WhatsApp review. The customer ID is extracted from the authentication token.
      */
-    fun create(params: TemplateCreateParams): TemplateResponse =
+    fun create(params: TemplateCreateParams): TemplateResponseV2 =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: TemplateCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): TemplateResponse
+    ): TemplateResponseV2
 
     /**
      * Retrieves a specific message template by its unique identifier for the authenticated customer
      * with comprehensive template definitions including headers, body, footer, and interactive
      * buttons. The customer ID is extracted from the authentication token.
      */
-    fun retrieve(id: String): TemplateResponse = retrieve(id, TemplateRetrieveParams.none())
+    fun retrieve(id: String): TemplateResponseV2 = retrieve(id, TemplateRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): TemplateResponse = retrieve(params.toBuilder().id(id).build(), requestOptions)
+    ): TemplateResponseV2 = retrieve(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-    ): TemplateResponse = retrieve(id, params, RequestOptions.none())
+    ): TemplateResponseV2 = retrieve(id, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: TemplateRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): TemplateResponse
+    ): TemplateResponseV2
 
     /** @see retrieve */
-    fun retrieve(params: TemplateRetrieveParams): TemplateResponse =
+    fun retrieve(params: TemplateRetrieveParams): TemplateResponseV2 =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(id: String, requestOptions: RequestOptions): TemplateResponse =
+    fun retrieve(id: String, requestOptions: RequestOptions): TemplateResponseV2 =
         retrieve(id, TemplateRetrieveParams.none(), requestOptions)
 
     /**
@@ -138,7 +138,7 @@ interface TemplateService {
          * [TemplateService.create].
          */
         @MustBeClosed
-        fun create(params: TemplateCreateParams): HttpResponseFor<TemplateResponse> =
+        fun create(params: TemplateCreateParams): HttpResponseFor<TemplateResponseV2> =
             create(params, RequestOptions.none())
 
         /** @see create */
@@ -146,14 +146,14 @@ interface TemplateService {
         fun create(
             params: TemplateCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TemplateResponse>
+        ): HttpResponseFor<TemplateResponseV2>
 
         /**
          * Returns a raw HTTP response for `get /v2/templates/{id}`, but is otherwise the same as
          * [TemplateService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(id: String): HttpResponseFor<TemplateResponse> =
+        fun retrieve(id: String): HttpResponseFor<TemplateResponseV2> =
             retrieve(id, TemplateRetrieveParams.none())
 
         /** @see retrieve */
@@ -162,7 +162,7 @@ interface TemplateService {
             id: String,
             params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TemplateResponse> =
+        ): HttpResponseFor<TemplateResponseV2> =
             retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieve */
@@ -170,18 +170,18 @@ interface TemplateService {
         fun retrieve(
             id: String,
             params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-        ): HttpResponseFor<TemplateResponse> = retrieve(id, params, RequestOptions.none())
+        ): HttpResponseFor<TemplateResponseV2> = retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: TemplateRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TemplateResponse>
+        ): HttpResponseFor<TemplateResponseV2>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(params: TemplateRetrieveParams): HttpResponseFor<TemplateResponse> =
+        fun retrieve(params: TemplateRetrieveParams): HttpResponseFor<TemplateResponseV2> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
@@ -189,7 +189,7 @@ interface TemplateService {
         fun retrieve(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TemplateResponse> =
+        ): HttpResponseFor<TemplateResponseV2> =
             retrieve(id, TemplateRetrieveParams.none(), requestOptions)
 
         /**
