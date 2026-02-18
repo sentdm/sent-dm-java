@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.1 (2026-02-18)
+
+Full Changelog: [v0.5.0...v0.5.1](https://github.com/sentdm/sent-dm-java/compare/v0.5.0...v0.5.1)
+
+### Chores
+
+* **internal:** update `TestServerExtension` comment ([ebdbdfc](https://github.com/sentdm/sent-dm-java/commit/ebdbdfc15f9900261bec381d1bcd52809e56b686))
+
 ## 0.5.0 (2026-02-16)
 
 Full Changelog: [v0.4.0...v0.5.0](https://github.com/sentdm/sent-dm-java/compare/v0.4.0...v0.5.0)
