@@ -15,7 +15,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest
 import dm.sent.client.SentDmClient
 import dm.sent.client.okhttp.SentDmOkHttpClient
 import dm.sent.core.JsonValue
-import dm.sent.models.messages.MessageSendToPhoneParams
+import dm.sent.models.messages.MessageSendParams
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -33,26 +33,35 @@ internal class ServiceParamsTest {
             SentDmOkHttpClient.builder()
                 .baseUrl(wmRuntimeInfo.httpBaseUrl)
                 .apiKey("My API Key")
-                .senderId("My Sender ID")
                 .build()
     }
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun sendToPhone() {
+    fun send() {
         val messageService = client.messages()
         stubFor(post(anyUrl()).willReturn(ok("{}")))
 
-        messageService.sendToPhone(
-            MessageSendToPhoneParams.builder()
-                .phoneNumber("+1234567890")
-                .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                .templateVariables(
-                    MessageSendToPhoneParams.TemplateVariables.builder()
-                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+        messageService.send(
+            MessageSendParams.builder()
+                .idempotencyKey("req_abc123_retry1")
+                .testMode(false)
+                .addChannel("sms")
+                .addChannel("whatsapp")
+                .template(
+                    MessageSendParams.Template.builder()
+                        .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                        .name("order_confirmation")
+                        .parameters(
+                            MessageSendParams.Template.Parameters.builder()
+                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                .build()
+                        )
                         .build()
                 )
+                .addTo("+14155551234")
+                .addTo("+14155555678")
                 .putAdditionalHeader("Secret-Header", "42")
                 .putAdditionalQueryParam("secret_query_param", "42")
                 .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))

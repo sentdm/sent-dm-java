@@ -10,11 +10,42 @@ internal class ContactListParamsTest {
 
     @Test
     fun create() {
-        ContactListParams.builder().page(0).pageSize(0).build()
+        ContactListParams.builder()
+            .page(0)
+            .pageSize(0)
+            .channel("channel")
+            .phone("phone")
+            .search("search")
+            .build()
     }
 
     @Test
     fun queryParams() {
+        val params =
+            ContactListParams.builder()
+                .page(0)
+                .pageSize(0)
+                .channel("channel")
+                .phone("phone")
+                .search("search")
+                .build()
+
+        val queryParams = params._queryParams()
+
+        assertThat(queryParams)
+            .isEqualTo(
+                QueryParams.builder()
+                    .put("page", "0")
+                    .put("pageSize", "0")
+                    .put("channel", "channel")
+                    .put("phone", "phone")
+                    .put("search", "search")
+                    .build()
+            )
+    }
+
+    @Test
+    fun queryParamsWithoutOptionalFields() {
         val params = ContactListParams.builder().page(0).pageSize(0).build()
 
         val queryParams = params._queryParams()

@@ -4,8 +4,12 @@ package dm.sent.proguard
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.client.okhttp.SentDmOkHttpClient
+import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.messages.MessageRetrieveResponse
+import dm.sent.models.brands.TcrBrandRelationship
+import dm.sent.models.messages.MessageRetrieveActivitiesResponse
+import dm.sent.models.webhooks.ApiError
+import dm.sent.models.webhooks.ApiMeta
 import java.time.OffsetDateTime
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
@@ -45,62 +49,82 @@ internal class ProGuardCompatibilityTest {
 
     @Test
     fun client() {
-        val client =
-            SentDmOkHttpClient.builder().apiKey("My API Key").senderId("My Sender ID").build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
 
         assertThat(client).isNotNull()
-        assertThat(client.contacts()).isNotNull()
-        assertThat(client.messages()).isNotNull()
+        assertThat(client.webhooks()).isNotNull()
+        assertThat(client.users()).isNotNull()
         assertThat(client.templates()).isNotNull()
-        assertThat(client.numberLookup()).isNotNull()
+        assertThat(client.profiles()).isNotNull()
+        assertThat(client.messages()).isNotNull()
+        assertThat(client.lookup()).isNotNull()
+        assertThat(client.contacts()).isNotNull()
+        assertThat(client.brands()).isNotNull()
+        assertThat(client.me()).isNotNull()
     }
 
     @Test
-    fun messageRetrieveResponseRoundtrip() {
+    fun messageRetrieveActivitiesResponseRoundtrip() {
         val jsonMapper = jsonMapper()
-        val messageRetrieveResponse =
-            MessageRetrieveResponse.builder()
-                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .channel("channel")
-                .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .correctedPrice(0.0)
-                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .addEvent(
-                    MessageRetrieveResponse.Event.builder()
-                        .description("description")
-                        .status("status")
-                        .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .build()
-                )
-                .messageBody(
-                    MessageRetrieveResponse.MessageBody.builder()
-                        .addButton(
-                            MessageRetrieveResponse.MessageBody.Button.builder()
-                                .type("type")
-                                .value("value")
+        val messageRetrieveActivitiesResponse =
+            MessageRetrieveActivitiesResponse.builder()
+                .data(
+                    MessageRetrieveActivitiesResponse.Data.builder()
+                        .addActivity(
+                            MessageRetrieveActivitiesResponse.Data.Activity.builder()
+                                .content("content")
+                                .description("description")
+                                .status("status")
+                                .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .build()
                         )
-                        .content("content")
-                        .footer("footer")
-                        .header("header")
+                        .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .build()
                 )
-                .phoneNumber("phoneNumber")
-                .phoneNumberInternational("phoneNumberInternational")
-                .regionCode("regionCode")
-                .status("status")
-                .templateCategory("templateCategory")
-                .templateId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .templateName("templateName")
+                .error(
+                    ApiError.builder()
+                        .code("code")
+                        .details(
+                            ApiError.Details.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                                .build()
+                        )
+                        .docUrl("doc_url")
+                        .message("message")
+                        .build()
+                )
+                .meta(
+                    ApiMeta.builder()
+                        .requestId("request_id")
+                        .responseTimeMs(0L)
+                        .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .version("version")
+                        .build()
+                )
+                .success(true)
                 .build()
 
-        val roundtrippedMessageRetrieveResponse =
+        val roundtrippedMessageRetrieveActivitiesResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(messageRetrieveResponse),
-                jacksonTypeRef<MessageRetrieveResponse>(),
+                jsonMapper.writeValueAsString(messageRetrieveActivitiesResponse),
+                jacksonTypeRef<MessageRetrieveActivitiesResponse>(),
             )
 
-        assertThat(roundtrippedMessageRetrieveResponse).isEqualTo(messageRetrieveResponse)
+        assertThat(roundtrippedMessageRetrieveActivitiesResponse)
+            .isEqualTo(messageRetrieveActivitiesResponse)
+    }
+
+    @Test
+    fun tcrBrandRelationshipRoundtrip() {
+        val jsonMapper = jsonMapper()
+        val tcrBrandRelationship = TcrBrandRelationship.BASIC_ACCOUNT
+
+        val roundtrippedTcrBrandRelationship =
+            jsonMapper.readValue(
+                jsonMapper.writeValueAsString(tcrBrandRelationship),
+                jacksonTypeRef<TcrBrandRelationship>(),
+            )
+
+        assertThat(roundtrippedTcrBrandRelationship).isEqualTo(tcrBrandRelationship)
     }
 }

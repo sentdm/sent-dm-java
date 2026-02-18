@@ -5,7 +5,6 @@ package dm.sent.services.blocking
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.checkRequired
-import dm.sent.core.handlers.emptyHandler
 import dm.sent.core.handlers.errorBodyHandler
 import dm.sent.core.handlers.errorHandler
 import dm.sent.core.handlers.jsonHandler
@@ -17,11 +16,12 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
-import dm.sent.models.messages.MessageRetrieveParams
-import dm.sent.models.messages.MessageRetrieveResponse
-import dm.sent.models.messages.MessageSendQuickMessageParams
-import dm.sent.models.messages.MessageSendToContactParams
-import dm.sent.models.messages.MessageSendToPhoneParams
+import dm.sent.models.messages.MessageRetrieveActivitiesParams
+import dm.sent.models.messages.MessageRetrieveActivitiesResponse
+import dm.sent.models.messages.MessageRetrieveStatusParams
+import dm.sent.models.messages.MessageRetrieveStatusResponse
+import dm.sent.models.messages.MessageSendParams
+import dm.sent.models.messages.MessageSendResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -37,30 +37,26 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): MessageService =
         MessageServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun retrieve(
-        params: MessageRetrieveParams,
+    override fun retrieveActivities(
+        params: MessageRetrieveActivitiesParams,
         requestOptions: RequestOptions,
-    ): MessageRetrieveResponse =
-        // get /v2/messages/{id}
-        withRawResponse().retrieve(params, requestOptions).parse()
+    ): MessageRetrieveActivitiesResponse =
+        // get /v3/messages/{id}/activities
+        withRawResponse().retrieveActivities(params, requestOptions).parse()
 
-    override fun sendQuickMessage(
-        params: MessageSendQuickMessageParams,
+    override fun retrieveStatus(
+        params: MessageRetrieveStatusParams,
         requestOptions: RequestOptions,
-    ) {
-        // post /v2/messages/quick-message
-        withRawResponse().sendQuickMessage(params, requestOptions)
-    }
+    ): MessageRetrieveStatusResponse =
+        // get /v3/messages/{id}
+        withRawResponse().retrieveStatus(params, requestOptions).parse()
 
-    override fun sendToContact(params: MessageSendToContactParams, requestOptions: RequestOptions) {
-        // post /v2/messages/contact
-        withRawResponse().sendToContact(params, requestOptions)
-    }
-
-    override fun sendToPhone(params: MessageSendToPhoneParams, requestOptions: RequestOptions) {
-        // post /v2/messages/phone
-        withRawResponse().sendToPhone(params, requestOptions)
-    }
+    override fun send(
+        params: MessageSendParams,
+        requestOptions: RequestOptions,
+    ): MessageSendResponse =
+        // post /v3/messages
+        withRawResponse().send(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         MessageService.WithRawResponse {
@@ -75,13 +71,13 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val retrieveHandler: Handler<MessageRetrieveResponse> =
-            jsonHandler<MessageRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveActivitiesHandler: Handler<MessageRetrieveActivitiesResponse> =
+            jsonHandler<MessageRetrieveActivitiesResponse>(clientOptions.jsonMapper)
 
-        override fun retrieve(
-            params: MessageRetrieveParams,
+        override fun retrieveActivities(
+            params: MessageRetrieveActivitiesParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<MessageRetrieveResponse> {
+        ): HttpResponseFor<MessageRetrieveActivitiesResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -89,14 +85,14 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "messages", params._pathParam(0))
+                    .addPathSegments("v3", "messages", params._pathParam(0), "activities")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { retrieveHandler.handle(it) }
+                    .use { retrieveActivitiesHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
@@ -105,66 +101,61 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val sendQuickMessageHandler: Handler<Void?> = emptyHandler()
+        private val retrieveStatusHandler: Handler<MessageRetrieveStatusResponse> =
+            jsonHandler<MessageRetrieveStatusResponse>(clientOptions.jsonMapper)
 
-        override fun sendQuickMessage(
-            params: MessageSendQuickMessageParams,
+        override fun retrieveStatus(
+            params: MessageRetrieveStatusParams,
             requestOptions: RequestOptions,
-        ): HttpResponse {
+        ): HttpResponseFor<MessageRetrieveStatusResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
             val request =
                 HttpRequest.builder()
-                    .method(HttpMethod.POST)
+                    .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "messages", "quick-message")
-                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .addPathSegments("v3", "messages", params._pathParam(0))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
-                response.use { sendQuickMessageHandler.handle(it) }
+                response
+                    .use { retrieveStatusHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
             }
         }
 
-        private val sendToContactHandler: Handler<Void?> = emptyHandler()
+        private val sendHandler: Handler<MessageSendResponse> =
+            jsonHandler<MessageSendResponse>(clientOptions.jsonMapper)
 
-        override fun sendToContact(
-            params: MessageSendToContactParams,
+        override fun send(
+            params: MessageSendParams,
             requestOptions: RequestOptions,
-        ): HttpResponse {
+        ): HttpResponseFor<MessageSendResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "messages", "contact")
+                    .addPathSegments("v3", "messages")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
-                response.use { sendToContactHandler.handle(it) }
-            }
-        }
-
-        private val sendToPhoneHandler: Handler<Void?> = emptyHandler()
-
-        override fun sendToPhone(
-            params: MessageSendToPhoneParams,
-            requestOptions: RequestOptions,
-        ): HttpResponse {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "messages", "phone")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response.use { sendToPhoneHandler.handle(it) }
+                response
+                    .use { sendHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
             }
         }
     }

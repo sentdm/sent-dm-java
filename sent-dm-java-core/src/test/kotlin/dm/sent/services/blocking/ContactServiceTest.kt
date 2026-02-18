@@ -4,9 +4,10 @@ package dm.sent.services.blocking
 
 import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClient
+import dm.sent.models.contacts.ContactCreateParams
+import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
-import dm.sent.models.contacts.ContactRetrieveByPhoneParams
-import dm.sent.models.contacts.ContactRetrieveIdParams
+import dm.sent.models.contacts.ContactUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -16,55 +17,104 @@ internal class ContactServiceTest {
 
     @Disabled("Prism tests are disabled")
     @Test
+    fun create() {
+        val client =
+            SentDmOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
+        val contactService = client.contacts()
+
+        val apiResponseContact =
+            contactService.create(
+                ContactCreateParams.builder()
+                    .idempotencyKey("req_abc123_retry1")
+                    .testMode(false)
+                    .phoneNumber("+1234567890")
+                    .build()
+            )
+
+        apiResponseContact.validate()
+    }
+
+    @Disabled("Prism tests are disabled")
+    @Test
+    fun retrieve() {
+        val client =
+            SentDmOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
+        val contactService = client.contacts()
+
+        val apiResponseContact = contactService.retrieve("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+
+        apiResponseContact.validate()
+    }
+
+    @Disabled("Prism tests are disabled")
+    @Test
+    fun update() {
+        val client =
+            SentDmOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
+        val contactService = client.contacts()
+
+        val apiResponseContact =
+            contactService.update(
+                ContactUpdateParams.builder()
+                    .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+                    .idempotencyKey("req_abc123_retry1")
+                    .testMode(false)
+                    .defaultChannel("whatsapp")
+                    .optOut(false)
+                    .build()
+            )
+
+        apiResponseContact.validate()
+    }
+
+    @Disabled("Prism tests are disabled")
+    @Test
     fun list() {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .senderId("My Sender ID")
                 .build()
         val contactService = client.contacts()
 
-        val contacts = contactService.list(ContactListParams.builder().page(0).pageSize(0).build())
+        val contacts =
+            contactService.list(
+                ContactListParams.builder()
+                    .page(0)
+                    .pageSize(0)
+                    .channel("channel")
+                    .phone("phone")
+                    .search("search")
+                    .build()
+            )
 
         contacts.validate()
     }
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieveByPhone() {
+    fun delete() {
         val client =
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .senderId("My Sender ID")
                 .build()
         val contactService = client.contacts()
 
-        val contactListItem =
-            contactService.retrieveByPhone(
-                ContactRetrieveByPhoneParams.builder().phoneNumber("phoneNumber").build()
-            )
-
-        contactListItem.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun retrieveId() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .senderId("My Sender ID")
+        contactService.delete(
+            ContactDeleteParams.builder()
+                .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+                .testMode(false)
                 .build()
-        val contactService = client.contacts()
-
-        val contactListItem =
-            contactService.retrieveId(
-                ContactRetrieveIdParams.builder().id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
-            )
-
-        contactListItem.validate()
+        )
     }
 }

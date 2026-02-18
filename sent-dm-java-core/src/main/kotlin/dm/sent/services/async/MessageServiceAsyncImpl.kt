@@ -5,7 +5,6 @@ package dm.sent.services.async
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.checkRequired
-import dm.sent.core.handlers.emptyHandler
 import dm.sent.core.handlers.errorBodyHandler
 import dm.sent.core.handlers.errorHandler
 import dm.sent.core.handlers.jsonHandler
@@ -17,11 +16,12 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
-import dm.sent.models.messages.MessageRetrieveParams
-import dm.sent.models.messages.MessageRetrieveResponse
-import dm.sent.models.messages.MessageSendQuickMessageParams
-import dm.sent.models.messages.MessageSendToContactParams
-import dm.sent.models.messages.MessageSendToPhoneParams
+import dm.sent.models.messages.MessageRetrieveActivitiesParams
+import dm.sent.models.messages.MessageRetrieveActivitiesResponse
+import dm.sent.models.messages.MessageRetrieveStatusParams
+import dm.sent.models.messages.MessageRetrieveStatusResponse
+import dm.sent.models.messages.MessageSendParams
+import dm.sent.models.messages.MessageSendResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -38,33 +38,26 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): MessageServiceAsync =
         MessageServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun retrieve(
-        params: MessageRetrieveParams,
+    override fun retrieveActivities(
+        params: MessageRetrieveActivitiesParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<MessageRetrieveResponse> =
-        // get /v2/messages/{id}
-        withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
+    ): CompletableFuture<MessageRetrieveActivitiesResponse> =
+        // get /v3/messages/{id}/activities
+        withRawResponse().retrieveActivities(params, requestOptions).thenApply { it.parse() }
 
-    override fun sendQuickMessage(
-        params: MessageSendQuickMessageParams,
+    override fun retrieveStatus(
+        params: MessageRetrieveStatusParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<Void?> =
-        // post /v2/messages/quick-message
-        withRawResponse().sendQuickMessage(params, requestOptions).thenAccept {}
+    ): CompletableFuture<MessageRetrieveStatusResponse> =
+        // get /v3/messages/{id}
+        withRawResponse().retrieveStatus(params, requestOptions).thenApply { it.parse() }
 
-    override fun sendToContact(
-        params: MessageSendToContactParams,
+    override fun send(
+        params: MessageSendParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<Void?> =
-        // post /v2/messages/contact
-        withRawResponse().sendToContact(params, requestOptions).thenAccept {}
-
-    override fun sendToPhone(
-        params: MessageSendToPhoneParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<Void?> =
-        // post /v2/messages/phone
-        withRawResponse().sendToPhone(params, requestOptions).thenAccept {}
+    ): CompletableFuture<MessageSendResponse> =
+        // post /v3/messages
+        withRawResponse().send(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         MessageServiceAsync.WithRawResponse {
@@ -79,13 +72,13 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val retrieveHandler: Handler<MessageRetrieveResponse> =
-            jsonHandler<MessageRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveActivitiesHandler: Handler<MessageRetrieveActivitiesResponse> =
+            jsonHandler<MessageRetrieveActivitiesResponse>(clientOptions.jsonMapper)
 
-        override fun retrieve(
-            params: MessageRetrieveParams,
+        override fun retrieveActivities(
+            params: MessageRetrieveActivitiesParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> {
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -93,7 +86,7 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "messages", params._pathParam(0))
+                    .addPathSegments("v3", "messages", params._pathParam(0), "activities")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -102,7 +95,7 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { retrieveHandler.handle(it) }
+                            .use { retrieveActivitiesHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
@@ -112,18 +105,21 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val sendQuickMessageHandler: Handler<Void?> = emptyHandler()
+        private val retrieveStatusHandler: Handler<MessageRetrieveStatusResponse> =
+            jsonHandler<MessageRetrieveStatusResponse>(clientOptions.jsonMapper)
 
-        override fun sendQuickMessage(
-            params: MessageSendQuickMessageParams,
+        override fun retrieveStatus(
+            params: MessageRetrieveStatusParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponse> {
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
             val request =
                 HttpRequest.builder()
-                    .method(HttpMethod.POST)
+                    .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "messages", "quick-message")
-                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .addPathSegments("v3", "messages", params._pathParam(0))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -131,22 +127,29 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
-                        response.use { sendQuickMessageHandler.handle(it) }
+                        response
+                            .use { retrieveStatusHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
                     }
                 }
         }
 
-        private val sendToContactHandler: Handler<Void?> = emptyHandler()
+        private val sendHandler: Handler<MessageSendResponse> =
+            jsonHandler<MessageSendResponse>(clientOptions.jsonMapper)
 
-        override fun sendToContact(
-            params: MessageSendToContactParams,
+        override fun send(
+            params: MessageSendParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponse> {
+        ): CompletableFuture<HttpResponseFor<MessageSendResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "messages", "contact")
+                    .addPathSegments("v3", "messages")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -155,31 +158,13 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
-                        response.use { sendToContactHandler.handle(it) }
-                    }
-                }
-        }
-
-        private val sendToPhoneHandler: Handler<Void?> = emptyHandler()
-
-        override fun sendToPhone(
-            params: MessageSendToPhoneParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "messages", "phone")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response.use { sendToPhoneHandler.handle(it) }
+                        response
+                            .use { sendHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
                     }
                 }
         }

@@ -4,13 +4,13 @@ package dm.sent.services.async
 
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
-import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.messages.MessageRetrieveParams
-import dm.sent.models.messages.MessageRetrieveResponse
-import dm.sent.models.messages.MessageSendQuickMessageParams
-import dm.sent.models.messages.MessageSendToContactParams
-import dm.sent.models.messages.MessageSendToPhoneParams
+import dm.sent.models.messages.MessageRetrieveActivitiesParams
+import dm.sent.models.messages.MessageRetrieveActivitiesResponse
+import dm.sent.models.messages.MessageRetrieveStatusParams
+import dm.sent.models.messages.MessageRetrieveStatusResponse
+import dm.sent.models.messages.MessageSendParams
+import dm.sent.models.messages.MessageSendResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -29,87 +29,109 @@ interface MessageServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): MessageServiceAsync
 
     /**
-     * Retrieves comprehensive details about a specific message using the message ID. Returns
-     * complete message data including delivery status, channel information, template details,
-     * contact information, and pricing. The customer ID is extracted from the authentication token
-     * to ensure the message belongs to the authenticated customer.
+     * Retrieves the activity log for a specific message. Activities track the message lifecycle
+     * including acceptance, processing, sending, delivery, and any errors.
      */
-    fun retrieve(id: String): CompletableFuture<MessageRetrieveResponse> =
-        retrieve(id, MessageRetrieveParams.none())
+    fun retrieveActivities(id: String): CompletableFuture<MessageRetrieveActivitiesResponse> =
+        retrieveActivities(id, MessageRetrieveActivitiesParams.none())
 
-    /** @see retrieve */
-    fun retrieve(
+    /** @see retrieveActivities */
+    fun retrieveActivities(
         id: String,
-        params: MessageRetrieveParams = MessageRetrieveParams.none(),
+        params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageRetrieveResponse> =
-        retrieve(params.toBuilder().id(id).build(), requestOptions)
+    ): CompletableFuture<MessageRetrieveActivitiesResponse> =
+        retrieveActivities(params.toBuilder().id(id).build(), requestOptions)
 
-    /** @see retrieve */
-    fun retrieve(
+    /** @see retrieveActivities */
+    fun retrieveActivities(
         id: String,
-        params: MessageRetrieveParams = MessageRetrieveParams.none(),
-    ): CompletableFuture<MessageRetrieveResponse> = retrieve(id, params, RequestOptions.none())
+        params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
+    ): CompletableFuture<MessageRetrieveActivitiesResponse> =
+        retrieveActivities(id, params, RequestOptions.none())
 
-    /** @see retrieve */
-    fun retrieve(
-        params: MessageRetrieveParams,
+    /** @see retrieveActivities */
+    fun retrieveActivities(
+        params: MessageRetrieveActivitiesParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageRetrieveResponse>
+    ): CompletableFuture<MessageRetrieveActivitiesResponse>
 
-    /** @see retrieve */
-    fun retrieve(params: MessageRetrieveParams): CompletableFuture<MessageRetrieveResponse> =
-        retrieve(params, RequestOptions.none())
+    /** @see retrieveActivities */
+    fun retrieveActivities(
+        params: MessageRetrieveActivitiesParams
+    ): CompletableFuture<MessageRetrieveActivitiesResponse> =
+        retrieveActivities(params, RequestOptions.none())
 
-    /** @see retrieve */
-    fun retrieve(
+    /** @see retrieveActivities */
+    fun retrieveActivities(
         id: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<MessageRetrieveResponse> =
-        retrieve(id, MessageRetrieveParams.none(), requestOptions)
+    ): CompletableFuture<MessageRetrieveActivitiesResponse> =
+        retrieveActivities(id, MessageRetrieveActivitiesParams.none(), requestOptions)
 
     /**
-     * Sends a message to a phone number using the default template. This endpoint is rate limited
-     * to 5 messages per customer per day. The customer ID is extracted from the authentication
-     * token.
+     * Retrieves the current status and details of a message by ID. Includes delivery status,
+     * timestamps, and error information if applicable.
      */
-    fun sendQuickMessage(params: MessageSendQuickMessageParams): CompletableFuture<Void?> =
-        sendQuickMessage(params, RequestOptions.none())
+    fun retrieveStatus(id: String): CompletableFuture<MessageRetrieveStatusResponse> =
+        retrieveStatus(id, MessageRetrieveStatusParams.none())
 
-    /** @see sendQuickMessage */
-    fun sendQuickMessage(
-        params: MessageSendQuickMessageParams,
+    /** @see retrieveStatus */
+    fun retrieveStatus(
+        id: String,
+        params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
+    ): CompletableFuture<MessageRetrieveStatusResponse> =
+        retrieveStatus(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see retrieveStatus */
+    fun retrieveStatus(
+        id: String,
+        params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
+    ): CompletableFuture<MessageRetrieveStatusResponse> =
+        retrieveStatus(id, params, RequestOptions.none())
+
+    /** @see retrieveStatus */
+    fun retrieveStatus(
+        params: MessageRetrieveStatusParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<MessageRetrieveStatusResponse>
+
+    /** @see retrieveStatus */
+    fun retrieveStatus(
+        params: MessageRetrieveStatusParams
+    ): CompletableFuture<MessageRetrieveStatusResponse> =
+        retrieveStatus(params, RequestOptions.none())
+
+    /** @see retrieveStatus */
+    fun retrieveStatus(
+        id: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<MessageRetrieveStatusResponse> =
+        retrieveStatus(id, MessageRetrieveStatusParams.none(), requestOptions)
 
     /**
-     * Sends a message to a specific contact using a template. The message can be sent via SMS or
-     * WhatsApp depending on the contact's capabilities. Optionally specify a webhook URL to receive
-     * delivery status updates. The customer ID is extracted from the authentication token.
+     * Sends a message to one or more recipients using a template. Supports multi-channel broadcast
+     * — when multiple channels are specified (e.g. ["sms", "whatsapp"]), a separate message is
+     * created for each (recipient, channel) pair. Returns immediately with per-recipient message
+     * IDs for async tracking via webhooks or the GET /messages/{id} endpoint.
      */
-    fun sendToContact(params: MessageSendToContactParams): CompletableFuture<Void?> =
-        sendToContact(params, RequestOptions.none())
+    fun send(): CompletableFuture<MessageSendResponse> = send(MessageSendParams.none())
 
-    /** @see sendToContact */
-    fun sendToContact(
-        params: MessageSendToContactParams,
+    /** @see send */
+    fun send(
+        params: MessageSendParams = MessageSendParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
+    ): CompletableFuture<MessageSendResponse>
 
-    /**
-     * Sends a message to a phone number using a template. The phone number doesn't need to be a
-     * pre-existing contact. The message can be sent via SMS or WhatsApp. Optionally specify a
-     * webhook URL to receive delivery status updates. The customer ID is extracted from the
-     * authentication token.
-     */
-    fun sendToPhone(params: MessageSendToPhoneParams): CompletableFuture<Void?> =
-        sendToPhone(params, RequestOptions.none())
+    /** @see send */
+    fun send(
+        params: MessageSendParams = MessageSendParams.none()
+    ): CompletableFuture<MessageSendResponse> = send(params, RequestOptions.none())
 
-    /** @see sendToPhone */
-    fun sendToPhone(
-        params: MessageSendToPhoneParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
+    /** @see send */
+    fun send(requestOptions: RequestOptions): CompletableFuture<MessageSendResponse> =
+        send(MessageSendParams.none(), requestOptions)
 
     /**
      * A view of [MessageServiceAsync] that provides access to raw HTTP responses for each method.
@@ -126,84 +148,114 @@ interface MessageServiceAsync {
         ): MessageServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v2/messages/{id}`, but is otherwise the same as
-         * [MessageServiceAsync.retrieve].
+         * Returns a raw HTTP response for `get /v3/messages/{id}/activities`, but is otherwise the
+         * same as [MessageServiceAsync.retrieveActivities].
          */
-        fun retrieve(id: String): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> =
-            retrieve(id, MessageRetrieveParams.none())
+        fun retrieveActivities(
+            id: String
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> =
+            retrieveActivities(id, MessageRetrieveActivitiesParams.none())
 
-        /** @see retrieve */
-        fun retrieve(
+        /** @see retrieveActivities */
+        fun retrieveActivities(
             id: String,
-            params: MessageRetrieveParams = MessageRetrieveParams.none(),
+            params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> =
-            retrieve(params.toBuilder().id(id).build(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> =
+            retrieveActivities(params.toBuilder().id(id).build(), requestOptions)
 
-        /** @see retrieve */
-        fun retrieve(
+        /** @see retrieveActivities */
+        fun retrieveActivities(
             id: String,
-            params: MessageRetrieveParams = MessageRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> =
-            retrieve(id, params, RequestOptions.none())
+            params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> =
+            retrieveActivities(id, params, RequestOptions.none())
 
-        /** @see retrieve */
-        fun retrieve(
-            params: MessageRetrieveParams,
+        /** @see retrieveActivities */
+        fun retrieveActivities(
+            params: MessageRetrieveActivitiesParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>>
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>>
 
-        /** @see retrieve */
-        fun retrieve(
-            params: MessageRetrieveParams
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> =
-            retrieve(params, RequestOptions.none())
+        /** @see retrieveActivities */
+        fun retrieveActivities(
+            params: MessageRetrieveActivitiesParams
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> =
+            retrieveActivities(params, RequestOptions.none())
 
-        /** @see retrieve */
-        fun retrieve(
+        /** @see retrieveActivities */
+        fun retrieveActivities(
             id: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveResponse>> =
-            retrieve(id, MessageRetrieveParams.none(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> =
+            retrieveActivities(id, MessageRetrieveActivitiesParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/messages/quick-message`, but is otherwise the
-         * same as [MessageServiceAsync.sendQuickMessage].
+         * Returns a raw HTTP response for `get /v3/messages/{id}`, but is otherwise the same as
+         * [MessageServiceAsync.retrieveStatus].
          */
-        fun sendQuickMessage(
-            params: MessageSendQuickMessageParams
-        ): CompletableFuture<HttpResponse> = sendQuickMessage(params, RequestOptions.none())
+        fun retrieveStatus(
+            id: String
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> =
+            retrieveStatus(id, MessageRetrieveStatusParams.none())
 
-        /** @see sendQuickMessage */
-        fun sendQuickMessage(
-            params: MessageSendQuickMessageParams,
+        /** @see retrieveStatus */
+        fun retrieveStatus(
+            id: String,
+            params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponse>
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> =
+            retrieveStatus(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see retrieveStatus */
+        fun retrieveStatus(
+            id: String,
+            params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> =
+            retrieveStatus(id, params, RequestOptions.none())
+
+        /** @see retrieveStatus */
+        fun retrieveStatus(
+            params: MessageRetrieveStatusParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>>
+
+        /** @see retrieveStatus */
+        fun retrieveStatus(
+            params: MessageRetrieveStatusParams
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> =
+            retrieveStatus(params, RequestOptions.none())
+
+        /** @see retrieveStatus */
+        fun retrieveStatus(
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> =
+            retrieveStatus(id, MessageRetrieveStatusParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/messages/contact`, but is otherwise the same as
-         * [MessageServiceAsync.sendToContact].
+         * Returns a raw HTTP response for `post /v3/messages`, but is otherwise the same as
+         * [MessageServiceAsync.send].
          */
-        fun sendToContact(params: MessageSendToContactParams): CompletableFuture<HttpResponse> =
-            sendToContact(params, RequestOptions.none())
+        fun send(): CompletableFuture<HttpResponseFor<MessageSendResponse>> =
+            send(MessageSendParams.none())
 
-        /** @see sendToContact */
-        fun sendToContact(
-            params: MessageSendToContactParams,
+        /** @see send */
+        fun send(
+            params: MessageSendParams = MessageSendParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponse>
+        ): CompletableFuture<HttpResponseFor<MessageSendResponse>>
 
-        /**
-         * Returns a raw HTTP response for `post /v2/messages/phone`, but is otherwise the same as
-         * [MessageServiceAsync.sendToPhone].
-         */
-        fun sendToPhone(params: MessageSendToPhoneParams): CompletableFuture<HttpResponse> =
-            sendToPhone(params, RequestOptions.none())
+        /** @see send */
+        fun send(
+            params: MessageSendParams = MessageSendParams.none()
+        ): CompletableFuture<HttpResponseFor<MessageSendResponse>> =
+            send(params, RequestOptions.none())
 
-        /** @see sendToPhone */
-        fun sendToPhone(
-            params: MessageSendToPhoneParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponse>
+        /** @see send */
+        fun send(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<MessageSendResponse>> =
+            send(MessageSendParams.none(), requestOptions)
     }
 }

@@ -18,10 +18,11 @@ import dm.sent.errors.InternalServerException
 import dm.sent.errors.NotFoundException
 import dm.sent.errors.PermissionDeniedException
 import dm.sent.errors.RateLimitException
+import dm.sent.errors.SentDmException
 import dm.sent.errors.UnauthorizedException
 import dm.sent.errors.UnexpectedStatusCodeException
 import dm.sent.errors.UnprocessableEntityException
-import dm.sent.models.messages.MessageSendToPhoneParams
+import dm.sent.models.messages.MessageSendParams
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.jupiter.api.BeforeEach
@@ -54,12 +55,11 @@ internal class ErrorHandlingTest {
             SentDmOkHttpClient.builder()
                 .baseUrl(wmRuntimeInfo.httpBaseUrl)
                 .apiKey("My API Key")
-                .senderId("My Sender ID")
                 .build()
     }
 
     @Test
-    fun messagesSendToPhone400() {
+    fun messagesSend400() {
         val messageService = client.messages()
         stubFor(
             post(anyUrl())
@@ -70,16 +70,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<BadRequestException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -90,7 +100,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone400WithRawResponse() {
+    fun messagesSend400WithRawResponse() {
         val messageService = client.messages().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -101,16 +111,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<BadRequestException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -121,7 +141,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone401() {
+    fun messagesSend401() {
         val messageService = client.messages()
         stubFor(
             post(anyUrl())
@@ -132,16 +152,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnauthorizedException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -152,7 +182,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone401WithRawResponse() {
+    fun messagesSend401WithRawResponse() {
         val messageService = client.messages().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -163,16 +193,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnauthorizedException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -183,7 +223,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone403() {
+    fun messagesSend403() {
         val messageService = client.messages()
         stubFor(
             post(anyUrl())
@@ -194,16 +234,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<PermissionDeniedException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -214,7 +264,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone403WithRawResponse() {
+    fun messagesSend403WithRawResponse() {
         val messageService = client.messages().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -225,16 +275,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<PermissionDeniedException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -245,7 +305,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone404() {
+    fun messagesSend404() {
         val messageService = client.messages()
         stubFor(
             post(anyUrl())
@@ -256,16 +316,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<NotFoundException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -276,7 +346,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone404WithRawResponse() {
+    fun messagesSend404WithRawResponse() {
         val messageService = client.messages().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -287,16 +357,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<NotFoundException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -307,7 +387,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone422() {
+    fun messagesSend422() {
         val messageService = client.messages()
         stubFor(
             post(anyUrl())
@@ -318,16 +398,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnprocessableEntityException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -338,7 +428,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone422WithRawResponse() {
+    fun messagesSend422WithRawResponse() {
         val messageService = client.messages().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -349,16 +439,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnprocessableEntityException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -369,7 +469,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone429() {
+    fun messagesSend429() {
         val messageService = client.messages()
         stubFor(
             post(anyUrl())
@@ -380,16 +480,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<RateLimitException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -400,7 +510,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone429WithRawResponse() {
+    fun messagesSend429WithRawResponse() {
         val messageService = client.messages().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -411,16 +521,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<RateLimitException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -431,7 +551,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone500() {
+    fun messagesSend500() {
         val messageService = client.messages()
         stubFor(
             post(anyUrl())
@@ -442,16 +562,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<InternalServerException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -462,7 +592,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone500WithRawResponse() {
+    fun messagesSend500WithRawResponse() {
         val messageService = client.messages().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -473,16 +603,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<InternalServerException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -493,7 +633,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone999() {
+    fun messagesSend999() {
         val messageService = client.messages()
         stubFor(
             post(anyUrl())
@@ -504,16 +644,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnexpectedStatusCodeException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -524,7 +674,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun messagesSendToPhone999WithRawResponse() {
+    fun messagesSend999WithRawResponse() {
         val messageService = client.messages().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -535,16 +685,26 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnexpectedStatusCodeException> {
-                messageService.sendToPhone(
-                    MessageSendToPhoneParams.builder()
-                        .phoneNumber("+1234567890")
-                        .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                        .templateVariables(
-                            MessageSendToPhoneParams.TemplateVariables.builder()
-                                .putAdditionalProperty("name", JsonValue.from("John Doe"))
-                                .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
                                 .build()
                         )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
                         .build()
                 )
             }
@@ -552,6 +712,43 @@ internal class ErrorHandlingTest {
         assertThat(e.statusCode()).isEqualTo(999)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
         assertThat(e.body()).isEqualTo(ERROR_JSON)
+    }
+
+    @Test
+    fun messagesSendInvalidJsonBody() {
+        val messageService = client.messages()
+        stubFor(
+            post(anyUrl())
+                .willReturn(status(200).withHeader(HEADER_NAME, HEADER_VALUE).withBody(NOT_JSON))
+        )
+
+        val e =
+            assertThrows<SentDmException> {
+                messageService.send(
+                    MessageSendParams.builder()
+                        .idempotencyKey("req_abc123_retry1")
+                        .testMode(false)
+                        .addChannel("sms")
+                        .addChannel("whatsapp")
+                        .template(
+                            MessageSendParams.Template.builder()
+                                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                                .name("order_confirmation")
+                                .parameters(
+                                    MessageSendParams.Template.Parameters.builder()
+                                        .putAdditionalProperty("name", JsonValue.from("John Doe"))
+                                        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .addTo("+14155551234")
+                        .addTo("+14155555678")
+                        .build()
+                )
+            }
+
+        assertThat(e).hasMessage("Error reading response")
     }
 
     private fun Headers.toMap(): Map<String, List<String>> =

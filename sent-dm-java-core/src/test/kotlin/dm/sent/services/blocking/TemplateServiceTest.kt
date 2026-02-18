@@ -4,10 +4,18 @@ package dm.sent.services.blocking
 
 import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClient
+import dm.sent.models.templates.SentDmServicesCommonContractsPocOsAuthenticationConfig
+import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateBody
+import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateButton
+import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateButtonProps
+import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateFooter
+import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateHeader
 import dm.sent.models.templates.TemplateBodyContent
 import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDefinition
+import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateListParams
+import dm.sent.models.templates.TemplateUpdateParams
 import dm.sent.models.templates.TemplateVariable
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -23,32 +31,52 @@ internal class TemplateServiceTest {
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .senderId("My Sender ID")
                 .build()
         val templateService = client.templates()
 
-        val templateResponseV2 =
+        val apiResponseTemplate =
             templateService.create(
                 TemplateCreateParams.builder()
+                    .idempotencyKey("req_abc123_retry1")
+                    .testMode(false)
+                    .category("MARKETING")
+                    .creationSource(null)
                     .definition(
                         TemplateDefinition.builder()
                             .body(
-                                TemplateDefinition.Body.builder()
+                                SentDmServicesCommonContractsPocOsTemplateBody.builder()
                                     .multiChannel(
                                         TemplateBodyContent.builder()
                                             .template(
-                                                "Hello {{1:variable}}, thank you for joining our service. We're excited to help you with your messaging needs!"
+                                                "Hello {{0:variable}}! Welcome to {{1:variable}}."
                                             )
                                             .type(null)
                                             .addVariable(
                                                 TemplateVariable.builder()
-                                                    .id(1)
-                                                    .name("customerName")
+                                                    .id(0)
+                                                    .name("name")
                                                     .props(
                                                         TemplateVariable.Props.builder()
                                                             .alt(null)
                                                             .mediaType(null)
-                                                            .sample("John Doe")
+                                                            .sample("John")
+                                                            .shortUrl(null)
+                                                            .url(null)
+                                                            .variableType("text")
+                                                            .build()
+                                                    )
+                                                    .type("variable")
+                                                    .build()
+                                            )
+                                            .addVariable(
+                                                TemplateVariable.builder()
+                                                    .id(1)
+                                                    .name("company")
+                                                    .props(
+                                                        TemplateVariable.Props.builder()
+                                                            .alt(null)
+                                                            .mediaType(null)
+                                                            .sample("SentDM")
                                                             .shortUrl(null)
                                                             .url(null)
                                                             .variableType("text")
@@ -108,16 +136,17 @@ internal class TemplateServiceTest {
                                     .build()
                             )
                             .authenticationConfig(
-                                TemplateDefinition.AuthenticationConfig.builder()
+                                SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
                                     .addSecurityRecommendation(true)
                                     .codeExpirationMinutes(0)
                                     .build()
                             )
                             .addButton(
-                                TemplateDefinition.Button.builder()
+                                SentDmServicesCommonContractsPocOsTemplateButton.builder()
                                     .id(0)
                                     .props(
-                                        TemplateDefinition.Button.Props.builder()
+                                        SentDmServicesCommonContractsPocOsTemplateButtonProps
+                                            .builder()
                                             .activeFor(0)
                                             .autofillText("autofillText")
                                             .countryCode("countryCode")
@@ -137,9 +166,9 @@ internal class TemplateServiceTest {
                             )
                             .definitionVersion("1.0")
                             .footer(
-                                TemplateDefinition.Footer.builder()
-                                    .template("Best regards, The SentDM Team")
-                                    .type("text")
+                                SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                                    .template("template")
+                                    .type("type")
                                     .addVariable(
                                         TemplateVariable.builder()
                                             .id(0)
@@ -160,37 +189,36 @@ internal class TemplateServiceTest {
                                     .build()
                             )
                             .header(
-                                TemplateDefinition.Header.builder()
-                                    .template("Welcome to {{1:variable}}!")
-                                    .type("text")
+                                SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                                    .template("template")
+                                    .type("type")
                                     .addVariable(
                                         TemplateVariable.builder()
-                                            .id(1)
-                                            .name("companyName")
+                                            .id(0)
+                                            .name("name")
                                             .props(
                                                 TemplateVariable.Props.builder()
-                                                    .alt(null)
-                                                    .mediaType(null)
-                                                    .sample("SentDM")
-                                                    .shortUrl(null)
-                                                    .url(null)
-                                                    .variableType("text")
+                                                    .alt("alt")
+                                                    .mediaType("mediaType")
+                                                    .sample("sample")
+                                                    .shortUrl("shortUrl")
+                                                    .url("url")
+                                                    .variableType("variableType")
                                                     .build()
                                             )
-                                            .type("variable")
+                                            .type("type")
                                             .build()
                                     )
                                     .build()
                             )
                             .build()
                     )
-                    .category("MARKETING")
                     .language("en_US")
                     .submitForReview(false)
                     .build()
             )
 
-        templateResponseV2.validate()
+        apiResponseTemplate.validate()
     }
 
     @Disabled("Prism tests are disabled")
@@ -200,13 +228,191 @@ internal class TemplateServiceTest {
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .senderId("My Sender ID")
                 .build()
         val templateService = client.templates()
 
-        val templateResponseV2 = templateService.retrieve("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+        val apiResponseTemplate = templateService.retrieve("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
 
-        templateResponseV2.validate()
+        apiResponseTemplate.validate()
+    }
+
+    @Disabled("Prism tests are disabled")
+    @Test
+    fun update() {
+        val client =
+            SentDmOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .build()
+        val templateService = client.templates()
+
+        val apiResponseTemplate =
+            templateService.update(
+                TemplateUpdateParams.builder()
+                    .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                    .idempotencyKey("req_abc123_retry1")
+                    .testMode(false)
+                    .category("MARKETING")
+                    .definition(
+                        TemplateDefinition.builder()
+                            .body(
+                                SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                                    .multiChannel(
+                                        TemplateBodyContent.builder()
+                                            .template("template")
+                                            .type("type")
+                                            .addVariable(
+                                                TemplateVariable.builder()
+                                                    .id(0)
+                                                    .name("name")
+                                                    .props(
+                                                        TemplateVariable.Props.builder()
+                                                            .alt("alt")
+                                                            .mediaType("mediaType")
+                                                            .sample("sample")
+                                                            .shortUrl("shortUrl")
+                                                            .url("url")
+                                                            .variableType("variableType")
+                                                            .build()
+                                                    )
+                                                    .type("type")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .sms(
+                                        TemplateBodyContent.builder()
+                                            .template("template")
+                                            .type("type")
+                                            .addVariable(
+                                                TemplateVariable.builder()
+                                                    .id(0)
+                                                    .name("name")
+                                                    .props(
+                                                        TemplateVariable.Props.builder()
+                                                            .alt("alt")
+                                                            .mediaType("mediaType")
+                                                            .sample("sample")
+                                                            .shortUrl("shortUrl")
+                                                            .url("url")
+                                                            .variableType("variableType")
+                                                            .build()
+                                                    )
+                                                    .type("type")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .whatsapp(
+                                        TemplateBodyContent.builder()
+                                            .template("template")
+                                            .type("type")
+                                            .addVariable(
+                                                TemplateVariable.builder()
+                                                    .id(0)
+                                                    .name("name")
+                                                    .props(
+                                                        TemplateVariable.Props.builder()
+                                                            .alt("alt")
+                                                            .mediaType("mediaType")
+                                                            .sample("sample")
+                                                            .shortUrl("shortUrl")
+                                                            .url("url")
+                                                            .variableType("variableType")
+                                                            .build()
+                                                    )
+                                                    .type("type")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .authenticationConfig(
+                                SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                                    .addSecurityRecommendation(true)
+                                    .codeExpirationMinutes(0)
+                                    .build()
+                            )
+                            .addButton(
+                                SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                                    .id(0)
+                                    .props(
+                                        SentDmServicesCommonContractsPocOsTemplateButtonProps
+                                            .builder()
+                                            .activeFor(0)
+                                            .autofillText("autofillText")
+                                            .countryCode("countryCode")
+                                            .offerCode("offerCode")
+                                            .otpType("otpType")
+                                            .packageName("packageName")
+                                            .phoneNumber("phoneNumber")
+                                            .quickReplyType("quickReplyType")
+                                            .signatureHash("signatureHash")
+                                            .text("text")
+                                            .url("url")
+                                            .urlType("urlType")
+                                            .build()
+                                    )
+                                    .type("type")
+                                    .build()
+                            )
+                            .definitionVersion("definitionVersion")
+                            .footer(
+                                SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                                    .template("template")
+                                    .type("type")
+                                    .addVariable(
+                                        TemplateVariable.builder()
+                                            .id(0)
+                                            .name("name")
+                                            .props(
+                                                TemplateVariable.Props.builder()
+                                                    .alt("alt")
+                                                    .mediaType("mediaType")
+                                                    .sample("sample")
+                                                    .shortUrl("shortUrl")
+                                                    .url("url")
+                                                    .variableType("variableType")
+                                                    .build()
+                                            )
+                                            .type("type")
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .header(
+                                SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                                    .template("template")
+                                    .type("type")
+                                    .addVariable(
+                                        TemplateVariable.builder()
+                                            .id(0)
+                                            .name("name")
+                                            .props(
+                                                TemplateVariable.Props.builder()
+                                                    .alt("alt")
+                                                    .mediaType("mediaType")
+                                                    .sample("sample")
+                                                    .shortUrl("shortUrl")
+                                                    .url("url")
+                                                    .variableType("variableType")
+                                                    .build()
+                                            )
+                                            .type("type")
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .language(null)
+                    .name("Updated Welcome Message")
+                    .submitForReview(false)
+                    .build()
+            )
+
+        apiResponseTemplate.validate()
     }
 
     @Disabled("Prism tests are disabled")
@@ -216,7 +422,6 @@ internal class TemplateServiceTest {
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .senderId("My Sender ID")
                 .build()
         val templateService = client.templates()
 
@@ -241,10 +446,15 @@ internal class TemplateServiceTest {
             SentDmOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .senderId("My Sender ID")
                 .build()
         val templateService = client.templates()
 
-        templateService.delete("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+        templateService.delete(
+            TemplateDeleteParams.builder()
+                .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                .testMode(false)
+                .deleteFromMeta(false)
+                .build()
+        )
     }
 }

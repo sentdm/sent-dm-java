@@ -2,35 +2,70 @@
 
 package dm.sent.models.templates
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+import dm.sent.core.ExcludeMissing
+import dm.sent.core.JsonField
+import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
-import dm.sent.core.toImmutable
+import dm.sent.errors.SentDmInvalidDataException
+import dm.sent.models.webhooks.MutationRequest
+import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Deletes a specific message template by its unique identifier for the authenticated customer with
- * smart deletion strategy. Deletion behavior: - If template has NO messages: Permanently deleted
- * from database (hard delete). - If template has messages: Marked as deleted but preserved for
- * message history (soft delete with snapshot). The template must exist and belong to the
- * authenticated customer to be deleted successfully. The customer ID is extracted from the
- * authentication token.
+ * Deletes a template by ID. Optionally, you can also delete the template from WhatsApp/Meta by
+ * setting delete_from_meta=true.
  */
 class TemplateDeleteParams
 private constructor(
     private val id: String?,
+    private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
-    private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
     fun id(): Optional<String> = Optional.ofNullable(id)
 
-    /** Additional body properties to send with the request. */
-    fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
+    /**
+     * Test mode flag - when true, the operation is simulated without side effects Useful for
+     * testing integrations without actual execution
+     *
+     * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun testMode(): Optional<Boolean> = body.testMode()
+
+    /**
+     * Whether to also delete the template from WhatsApp/Meta (optional, defaults to false)
+     *
+     * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun deleteFromMeta(): Optional<Boolean> = body.deleteFromMeta()
+
+    /**
+     * Returns the raw JSON value of [testMode].
+     *
+     * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _testMode(): JsonField<Boolean> = body._testMode()
+
+    /**
+     * Returns the raw JSON value of [deleteFromMeta].
+     *
+     * Unlike [deleteFromMeta], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _deleteFromMeta(): JsonField<Boolean> = body._deleteFromMeta()
+
+    fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -52,22 +87,91 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: String? = null
+        private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
-        private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(templateDeleteParams: TemplateDeleteParams) = apply {
             id = templateDeleteParams.id
+            body = templateDeleteParams.body.toBuilder()
             additionalHeaders = templateDeleteParams.additionalHeaders.toBuilder()
             additionalQueryParams = templateDeleteParams.additionalQueryParams.toBuilder()
-            additionalBodyProperties = templateDeleteParams.additionalBodyProperties.toMutableMap()
         }
 
         fun id(id: String?) = apply { this.id = id }
 
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
         fun id(id: Optional<String>) = id(id.getOrNull())
+
+        /**
+         * Sets the entire request body.
+         *
+         * This is generally only useful if you are already constructing the body separately.
+         * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [testMode]
+         * - [deleteFromMeta]
+         */
+        fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        /**
+         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         */
+        fun testMode(testMode: Boolean) = apply { body.testMode(testMode) }
+
+        /**
+         * Sets [Builder.testMode] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun testMode(testMode: JsonField<Boolean>) = apply { body.testMode(testMode) }
+
+        /** Whether to also delete the template from WhatsApp/Meta (optional, defaults to false) */
+        fun deleteFromMeta(deleteFromMeta: Boolean?) = apply { body.deleteFromMeta(deleteFromMeta) }
+
+        /**
+         * Alias for [Builder.deleteFromMeta].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun deleteFromMeta(deleteFromMeta: Boolean) = deleteFromMeta(deleteFromMeta as Boolean?)
+
+        /** Alias for calling [Builder.deleteFromMeta] with `deleteFromMeta.orElse(null)`. */
+        fun deleteFromMeta(deleteFromMeta: Optional<Boolean>) =
+            deleteFromMeta(deleteFromMeta.getOrNull())
+
+        /**
+         * Sets [Builder.deleteFromMeta] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.deleteFromMeta] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun deleteFromMeta(deleteFromMeta: JsonField<Boolean>) = apply {
+            body.deleteFromMeta(deleteFromMeta)
+        }
+
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
+            body.additionalProperties(additionalBodyProperties)
+        }
+
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
+            body.putAdditionalProperty(key, value)
+        }
+
+        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply {
+                body.putAllAdditionalProperties(additionalBodyProperties)
+            }
+
+        fun removeAdditionalBodyProperty(key: String) = apply { body.removeAdditionalProperty(key) }
+
+        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
+            body.removeAllAdditionalProperties(keys)
+        }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -167,28 +271,6 @@ private constructor(
             additionalQueryParams.removeAll(keys)
         }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            putAllAdditionalBodyProperties(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            additionalBodyProperties.put(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
-
-        fun removeAdditionalBodyProperty(key: String) = apply {
-            additionalBodyProperties.remove(key)
-        }
-
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            keys.forEach(::removeAdditionalBodyProperty)
-        }
-
         /**
          * Returns an immutable instance of [TemplateDeleteParams].
          *
@@ -197,14 +279,13 @@ private constructor(
         fun build(): TemplateDeleteParams =
             TemplateDeleteParams(
                 id,
+                body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
-                additionalBodyProperties.toImmutable(),
             )
     }
 
-    fun _body(): Optional<Map<String, JsonValue>> =
-        Optional.ofNullable(additionalBodyProperties.ifEmpty { null })
+    fun _body(): Body = body
 
     fun _pathParam(index: Int): String =
         when (index) {
@@ -216,6 +297,216 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
+    /** Request to delete a template */
+    class Body
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val testMode: JsonField<Boolean>,
+        private val deleteFromMeta: JsonField<Boolean>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("test_mode")
+            @ExcludeMissing
+            testMode: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("delete_from_meta")
+            @ExcludeMissing
+            deleteFromMeta: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(testMode, deleteFromMeta, mutableMapOf())
+
+        fun toMutationRequest(): MutationRequest =
+            MutationRequest.builder().testMode(testMode).build()
+
+        /**
+         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         *
+         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun testMode(): Optional<Boolean> = testMode.getOptional("test_mode")
+
+        /**
+         * Whether to also delete the template from WhatsApp/Meta (optional, defaults to false)
+         *
+         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun deleteFromMeta(): Optional<Boolean> = deleteFromMeta.getOptional("delete_from_meta")
+
+        /**
+         * Returns the raw JSON value of [testMode].
+         *
+         * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("test_mode") @ExcludeMissing fun _testMode(): JsonField<Boolean> = testMode
+
+        /**
+         * Returns the raw JSON value of [deleteFromMeta].
+         *
+         * Unlike [deleteFromMeta], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("delete_from_meta")
+        @ExcludeMissing
+        fun _deleteFromMeta(): JsonField<Boolean> = deleteFromMeta
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Body]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Body]. */
+        class Builder internal constructor() {
+
+            private var testMode: JsonField<Boolean> = JsonMissing.of()
+            private var deleteFromMeta: JsonField<Boolean> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(body: Body) = apply {
+                testMode = body.testMode
+                deleteFromMeta = body.deleteFromMeta
+                additionalProperties = body.additionalProperties.toMutableMap()
+            }
+
+            /**
+             * Test mode flag - when true, the operation is simulated without side effects Useful
+             * for testing integrations without actual execution
+             */
+            fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
+
+            /**
+             * Sets [Builder.testMode] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun testMode(testMode: JsonField<Boolean>) = apply { this.testMode = testMode }
+
+            /**
+             * Whether to also delete the template from WhatsApp/Meta (optional, defaults to false)
+             */
+            fun deleteFromMeta(deleteFromMeta: Boolean?) =
+                deleteFromMeta(JsonField.ofNullable(deleteFromMeta))
+
+            /**
+             * Alias for [Builder.deleteFromMeta].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun deleteFromMeta(deleteFromMeta: Boolean) = deleteFromMeta(deleteFromMeta as Boolean?)
+
+            /** Alias for calling [Builder.deleteFromMeta] with `deleteFromMeta.orElse(null)`. */
+            fun deleteFromMeta(deleteFromMeta: Optional<Boolean>) =
+                deleteFromMeta(deleteFromMeta.getOrNull())
+
+            /**
+             * Sets [Builder.deleteFromMeta] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.deleteFromMeta] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun deleteFromMeta(deleteFromMeta: JsonField<Boolean>) = apply {
+                this.deleteFromMeta = deleteFromMeta
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Body].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Body = Body(testMode, deleteFromMeta, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Body = apply {
+            if (validated) {
+                return@apply
+            }
+
+            testMode()
+            deleteFromMeta()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentDmInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (testMode.asKnown().isPresent) 1 else 0) +
+                (if (deleteFromMeta.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Body &&
+                testMode == other.testMode &&
+                deleteFromMeta == other.deleteFromMeta &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(testMode, deleteFromMeta, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Body{testMode=$testMode, deleteFromMeta=$deleteFromMeta, additionalProperties=$additionalProperties}"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -223,14 +514,13 @@ private constructor(
 
         return other is TemplateDeleteParams &&
             id == other.id &&
+            body == other.body &&
             additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams &&
-            additionalBodyProperties == other.additionalBodyProperties
+            additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int =
-        Objects.hash(id, additionalHeaders, additionalQueryParams, additionalBodyProperties)
+    override fun hashCode(): Int = Objects.hash(id, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "TemplateDeleteParams{id=$id, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
+        "TemplateDeleteParams{id=$id, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

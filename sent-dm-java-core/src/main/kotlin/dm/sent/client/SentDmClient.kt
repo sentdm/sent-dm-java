@@ -3,10 +3,15 @@
 package dm.sent.client
 
 import dm.sent.core.ClientOptions
+import dm.sent.services.blocking.BrandService
 import dm.sent.services.blocking.ContactService
+import dm.sent.services.blocking.LookupService
+import dm.sent.services.blocking.MeService
 import dm.sent.services.blocking.MessageService
-import dm.sent.services.blocking.NumberLookupService
+import dm.sent.services.blocking.ProfileService
 import dm.sent.services.blocking.TemplateService
+import dm.sent.services.blocking.UserService
+import dm.sent.services.blocking.WebhookService
 import java.util.function.Consumer
 
 /**
@@ -45,13 +50,23 @@ interface SentDmClient {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClient
 
-    fun contacts(): ContactService
+    fun webhooks(): WebhookService
 
-    fun messages(): MessageService
+    fun users(): UserService
 
     fun templates(): TemplateService
 
-    fun numberLookup(): NumberLookupService
+    fun profiles(): ProfileService
+
+    fun messages(): MessageService
+
+    fun lookup(): LookupService
+
+    fun contacts(): ContactService
+
+    fun brands(): BrandService
+
+    fun me(): MeService
 
     /**
      * Closes this client, relinquishing any underlying resources.
@@ -76,12 +91,22 @@ interface SentDmClient {
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClient.WithRawResponse
 
-        fun contacts(): ContactService.WithRawResponse
+        fun webhooks(): WebhookService.WithRawResponse
 
-        fun messages(): MessageService.WithRawResponse
+        fun users(): UserService.WithRawResponse
 
         fun templates(): TemplateService.WithRawResponse
 
-        fun numberLookup(): NumberLookupService.WithRawResponse
+        fun profiles(): ProfileService.WithRawResponse
+
+        fun messages(): MessageService.WithRawResponse
+
+        fun lookup(): LookupService.WithRawResponse
+
+        fun contacts(): ContactService.WithRawResponse
+
+        fun brands(): BrandService.WithRawResponse
+
+        fun me(): MeService.WithRawResponse
     }
 }

@@ -10,9 +10,8 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Retrieves a specific message template by its unique identifier for the authenticated customer
- * with comprehensive template definitions including headers, body, footer, and interactive buttons.
- * The customer ID is extracted from the authentication token.
+ * Retrieves a specific template by its ID. Returns template details including name, category,
+ * language, status, and definition.
  */
 class TemplateRetrieveParams
 private constructor(

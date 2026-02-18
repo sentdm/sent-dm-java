@@ -98,11 +98,6 @@ private constructor(
      * for sandbox/testing. Pass via the `x-api-key` header.
      */
     @get:JvmName("apiKey") val apiKey: String,
-    /**
-     * Customer sender ID (UUID) identifying the customer account. Obtain this from your account
-     * settings. Pass via the `x-sender-id` header.
-     */
-    @get:JvmName("senderId") val senderId: String,
 ) {
 
     init {
@@ -131,7 +126,6 @@ private constructor(
          * ```java
          * .httpClient()
          * .apiKey()
-         * .senderId()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -159,7 +153,6 @@ private constructor(
         private var timeout: Timeout = Timeout.default()
         private var maxRetries: Int = 2
         private var apiKey: String? = null
-        private var senderId: String? = null
 
         @JvmSynthetic
         internal fun from(clientOptions: ClientOptions) = apply {
@@ -175,7 +168,6 @@ private constructor(
             timeout = clientOptions.timeout
             maxRetries = clientOptions.maxRetries
             apiKey = clientOptions.apiKey
-            senderId = clientOptions.senderId
         }
 
         /**
@@ -288,12 +280,6 @@ private constructor(
          */
         fun apiKey(apiKey: String) = apply { this.apiKey = apiKey }
 
-        /**
-         * Customer sender ID (UUID) identifying the customer account. Obtain this from your account
-         * settings. Pass via the `x-sender-id` header.
-         */
-        fun senderId(senderId: String) = apply { this.senderId = senderId }
-
         fun headers(headers: Headers) = apply {
             this.headers.clear()
             putAllHeaders(headers)
@@ -381,11 +367,10 @@ private constructor(
          *
          * See this table for the available options:
          *
-         * |Setter    |System property  |Environment variable|Required|Default value          |
-         * |----------|-----------------|--------------------|--------|-----------------------|
-         * |`apiKey`  |`sentdm.apiKey`  |`SENT_DM_API_KEY`   |true    |-                      |
-         * |`senderId`|`sentdm.senderId`|`SENT_DM_SENDER_ID` |true    |-                      |
-         * |`baseUrl` |`sentdm.baseUrl` |`SENT_DM_BASE_URL`  |true    |`"https://api.sent.dm"`|
+         * | Setter    | System property  | Environment variable | Required | Default value           |
+         * |-----------|------------------|----------------------|----------|-------------------------|
+         * | `apiKey`  | `sentdm.apiKey`  | `SENT_DM_API_KEY`    | true     | -                       |
+         * | `baseUrl` | `sentdm.baseUrl` | `SENT_DM_BASE_URL`   | true     | `"https://api.sent.dm"` |
          *
          * System properties take precedence over environment variables.
          */
@@ -395,9 +380,6 @@ private constructor(
             }
             (System.getProperty("sentdm.apiKey") ?: System.getenv("SENT_DM_API_KEY"))?.let {
                 apiKey(it)
-            }
-            (System.getProperty("sentdm.senderId") ?: System.getenv("SENT_DM_SENDER_ID"))?.let {
-                senderId(it)
             }
         }
 
@@ -410,7 +392,6 @@ private constructor(
          * ```java
          * .httpClient()
          * .apiKey()
-         * .senderId()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -419,7 +400,6 @@ private constructor(
             val httpClient = checkRequired("httpClient", httpClient)
             val sleeper = sleeper ?: PhantomReachableSleeper(DefaultSleeper())
             val apiKey = checkRequired("apiKey", apiKey)
-            val senderId = checkRequired("senderId", senderId)
 
             val headers = Headers.builder()
             val queryParams = QueryParams.builder()
@@ -434,11 +414,6 @@ private constructor(
             apiKey.let {
                 if (!it.isEmpty()) {
                     headers.put("x-api-key", it)
-                }
-            }
-            senderId.let {
-                if (!it.isEmpty()) {
-                    headers.put("x-sender-id", it)
                 }
             }
             headers.replaceAll(this.headers.build())
@@ -463,7 +438,6 @@ private constructor(
                 timeout,
                 maxRetries,
                 apiKey,
-                senderId,
             )
         }
     }

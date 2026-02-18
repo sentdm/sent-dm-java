@@ -6,12 +6,13 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.templates.ApiResponseTemplate
 import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateListResponse
-import dm.sent.models.templates.TemplateResponseV2
 import dm.sent.models.templates.TemplateRetrieveParams
+import dm.sent.models.templates.TemplateUpdateParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -30,26 +31,31 @@ interface TemplateServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): TemplateServiceAsync
 
     /**
-     * Creates a new message template for the authenticated customer with comprehensive template
-     * definitions including headers, body, footer, and interactive buttons. Supports automatic
-     * metadata generation using AI (display name, language, category). Optionally submits the
-     * template for WhatsApp review. The customer ID is extracted from the authentication token.
+     * Creates a new message template with header, body, footer, and buttons. The template can be
+     * submitted for review immediately or saved as draft for later submission.
      */
-    fun create(params: TemplateCreateParams): CompletableFuture<TemplateResponseV2> =
-        create(params, RequestOptions.none())
+    fun create(): CompletableFuture<ApiResponseTemplate> = create(TemplateCreateParams.none())
 
     /** @see create */
     fun create(
-        params: TemplateCreateParams,
+        params: TemplateCreateParams = TemplateCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<TemplateResponseV2>
+    ): CompletableFuture<ApiResponseTemplate>
+
+    /** @see create */
+    fun create(
+        params: TemplateCreateParams = TemplateCreateParams.none()
+    ): CompletableFuture<ApiResponseTemplate> = create(params, RequestOptions.none())
+
+    /** @see create */
+    fun create(requestOptions: RequestOptions): CompletableFuture<ApiResponseTemplate> =
+        create(TemplateCreateParams.none(), requestOptions)
 
     /**
-     * Retrieves a specific message template by its unique identifier for the authenticated customer
-     * with comprehensive template definitions including headers, body, footer, and interactive
-     * buttons. The customer ID is extracted from the authentication token.
+     * Retrieves a specific template by its ID. Returns template details including name, category,
+     * language, status, and definition.
      */
-    fun retrieve(id: String): CompletableFuture<TemplateResponseV2> =
+    fun retrieve(id: String): CompletableFuture<ApiResponseTemplate> =
         retrieve(id, TemplateRetrieveParams.none())
 
     /** @see retrieve */
@@ -57,37 +63,70 @@ interface TemplateServiceAsync {
         id: String,
         params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<TemplateResponseV2> =
+    ): CompletableFuture<ApiResponseTemplate> =
         retrieve(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-    ): CompletableFuture<TemplateResponseV2> = retrieve(id, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseTemplate> = retrieve(id, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: TemplateRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<TemplateResponseV2>
+    ): CompletableFuture<ApiResponseTemplate>
 
     /** @see retrieve */
-    fun retrieve(params: TemplateRetrieveParams): CompletableFuture<TemplateResponseV2> =
+    fun retrieve(params: TemplateRetrieveParams): CompletableFuture<ApiResponseTemplate> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<TemplateResponseV2> =
+    ): CompletableFuture<ApiResponseTemplate> =
         retrieve(id, TemplateRetrieveParams.none(), requestOptions)
 
     /**
-     * Retrieves all message templates available for the authenticated customer with comprehensive
-     * template definitions including headers, body, footer, and interactive buttons. Supports
-     * advanced filtering by search term, status, and category, plus pagination. The customer ID is
-     * extracted from the authentication token.
+     * Updates an existing template's name, category, language, definition, or submits it for
+     * review.
+     */
+    fun update(id: String): CompletableFuture<ApiResponseTemplate> =
+        update(id, TemplateUpdateParams.none())
+
+    /** @see update */
+    fun update(
+        id: String,
+        params: TemplateUpdateParams = TemplateUpdateParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ApiResponseTemplate> =
+        update(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see update */
+    fun update(
+        id: String,
+        params: TemplateUpdateParams = TemplateUpdateParams.none(),
+    ): CompletableFuture<ApiResponseTemplate> = update(id, params, RequestOptions.none())
+
+    /** @see update */
+    fun update(
+        params: TemplateUpdateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ApiResponseTemplate>
+
+    /** @see update */
+    fun update(params: TemplateUpdateParams): CompletableFuture<ApiResponseTemplate> =
+        update(params, RequestOptions.none())
+
+    /** @see update */
+    fun update(id: String, requestOptions: RequestOptions): CompletableFuture<ApiResponseTemplate> =
+        update(id, TemplateUpdateParams.none(), requestOptions)
+
+    /**
+     * Retrieves a paginated list of message templates for the authenticated customer. Supports
+     * filtering by status, category, and search term.
      */
     fun list(params: TemplateListParams): CompletableFuture<TemplateListResponse> =
         list(params, RequestOptions.none())
@@ -99,12 +138,8 @@ interface TemplateServiceAsync {
     ): CompletableFuture<TemplateListResponse>
 
     /**
-     * Deletes a specific message template by its unique identifier for the authenticated customer
-     * with smart deletion strategy. Deletion behavior: - If template has NO messages: Permanently
-     * deleted from database (hard delete). - If template has messages: Marked as deleted but
-     * preserved for message history (soft delete with snapshot). The template must exist and belong
-     * to the authenticated customer to be deleted successfully. The customer ID is extracted from
-     * the authentication token.
+     * Deletes a template by ID. Optionally, you can also delete the template from WhatsApp/Meta by
+     * setting delete_from_meta=true.
      */
     fun delete(id: String): CompletableFuture<Void?> = delete(id, TemplateDeleteParams.none())
 
@@ -150,25 +185,35 @@ interface TemplateServiceAsync {
         ): TemplateServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/templates`, but is otherwise the same as
+         * Returns a raw HTTP response for `post /v3/templates`, but is otherwise the same as
          * [TemplateServiceAsync.create].
          */
+        fun create(): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
+            create(TemplateCreateParams.none())
+
+        /** @see create */
         fun create(
-            params: TemplateCreateParams
-        ): CompletableFuture<HttpResponseFor<TemplateResponseV2>> =
+            params: TemplateCreateParams = TemplateCreateParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>>
+
+        /** @see create */
+        fun create(
+            params: TemplateCreateParams = TemplateCreateParams.none()
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
-            params: TemplateCreateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<TemplateResponseV2>>
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
+            create(TemplateCreateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/templates/{id}`, but is otherwise the same as
+         * Returns a raw HTTP response for `get /v3/templates/{id}`, but is otherwise the same as
          * [TemplateServiceAsync.retrieve].
          */
-        fun retrieve(id: String): CompletableFuture<HttpResponseFor<TemplateResponseV2>> =
+        fun retrieve(id: String): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
             retrieve(id, TemplateRetrieveParams.none())
 
         /** @see retrieve */
@@ -176,37 +221,78 @@ interface TemplateServiceAsync {
             id: String,
             params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<TemplateResponseV2>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
             retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieve */
         fun retrieve(
             id: String,
             params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<TemplateResponseV2>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
             retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             params: TemplateRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<TemplateResponseV2>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>>
 
         /** @see retrieve */
         fun retrieve(
             params: TemplateRetrieveParams
-        ): CompletableFuture<HttpResponseFor<TemplateResponseV2>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             id: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<TemplateResponseV2>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
             retrieve(id, TemplateRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/templates`, but is otherwise the same as
+         * Returns a raw HTTP response for `put /v3/templates/{id}`, but is otherwise the same as
+         * [TemplateServiceAsync.update].
+         */
+        fun update(id: String): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
+            update(id, TemplateUpdateParams.none())
+
+        /** @see update */
+        fun update(
+            id: String,
+            params: TemplateUpdateParams = TemplateUpdateParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
+            update(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see update */
+        fun update(
+            id: String,
+            params: TemplateUpdateParams = TemplateUpdateParams.none(),
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
+            update(id, params, RequestOptions.none())
+
+        /** @see update */
+        fun update(
+            params: TemplateUpdateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>>
+
+        /** @see update */
+        fun update(
+            params: TemplateUpdateParams
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
+            update(params, RequestOptions.none())
+
+        /** @see update */
+        fun update(
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<ApiResponseTemplate>> =
+            update(id, TemplateUpdateParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /v3/templates`, but is otherwise the same as
          * [TemplateServiceAsync.list].
          */
         fun list(
@@ -221,7 +307,7 @@ interface TemplateServiceAsync {
         ): CompletableFuture<HttpResponseFor<TemplateListResponse>>
 
         /**
-         * Returns a raw HTTP response for `delete /v2/templates/{id}`, but is otherwise the same as
+         * Returns a raw HTTP response for `delete /v3/templates/{id}`, but is otherwise the same as
          * [TemplateServiceAsync.delete].
          */
         fun delete(id: String): CompletableFuture<HttpResponse> =

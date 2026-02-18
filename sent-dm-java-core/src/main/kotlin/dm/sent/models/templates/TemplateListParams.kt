@@ -11,10 +11,8 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Retrieves all message templates available for the authenticated customer with comprehensive
- * template definitions including headers, body, footer, and interactive buttons. Supports advanced
- * filtering by search term, status, and category, plus pagination. The customer ID is extracted
- * from the authentication token.
+ * Retrieves a paginated list of message templates for the authenticated customer. Supports
+ * filtering by status, category, and search term.
  */
 class TemplateListParams
 private constructor(
@@ -27,19 +25,18 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** The page number (zero-indexed). Default is 0. */
+    /** Page number (1-indexed) */
     fun page(): Int = page
 
-    /** The number of items per page (1-1000). Default is 100. */
     fun pageSize(): Int = pageSize
 
-    /** Optional filter by template category (e.g., MARKETING, UTILITY, AUTHENTICATION) */
+    /** Optional category filter: MARKETING, UTILITY, AUTHENTICATION */
     fun category(): Optional<String> = Optional.ofNullable(category)
 
-    /** Optional search term to filter templates by name or content */
+    /** Optional search term for filtering templates */
     fun search(): Optional<String> = Optional.ofNullable(search)
 
-    /** Optional filter by template status (e.g., APPROVED, PENDING, REJECTED, DRAFT) */
+    /** Optional status filter: APPROVED, PENDING, REJECTED */
     fun status(): Optional<String> = Optional.ofNullable(status)
 
     /** Additional headers to send with the request. */
@@ -86,25 +83,24 @@ private constructor(
             additionalQueryParams = templateListParams.additionalQueryParams.toBuilder()
         }
 
-        /** The page number (zero-indexed). Default is 0. */
+        /** Page number (1-indexed) */
         fun page(page: Int) = apply { this.page = page }
 
-        /** The number of items per page (1-1000). Default is 100. */
         fun pageSize(pageSize: Int) = apply { this.pageSize = pageSize }
 
-        /** Optional filter by template category (e.g., MARKETING, UTILITY, AUTHENTICATION) */
+        /** Optional category filter: MARKETING, UTILITY, AUTHENTICATION */
         fun category(category: String?) = apply { this.category = category }
 
         /** Alias for calling [Builder.category] with `category.orElse(null)`. */
         fun category(category: Optional<String>) = category(category.getOrNull())
 
-        /** Optional search term to filter templates by name or content */
+        /** Optional search term for filtering templates */
         fun search(search: String?) = apply { this.search = search }
 
         /** Alias for calling [Builder.search] with `search.orElse(null)`. */
         fun search(search: Optional<String>) = search(search.getOrNull())
 
-        /** Optional filter by template status (e.g., APPROVED, PENDING, REJECTED, DRAFT) */
+        /** Optional status filter: APPROVED, PENDING, REJECTED */
         fun status(status: String?) = apply { this.status = status }
 
         /** Alias for calling [Builder.status] with `status.orElse(null)`. */

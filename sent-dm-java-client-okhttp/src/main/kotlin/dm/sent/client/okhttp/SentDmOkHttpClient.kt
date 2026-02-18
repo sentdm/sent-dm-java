@@ -222,12 +222,6 @@ class SentDmOkHttpClient private constructor() {
          */
         fun apiKey(apiKey: String) = apply { clientOptions.apiKey(apiKey) }
 
-        /**
-         * Customer sender ID (UUID) identifying the customer account. Obtain this from your account
-         * settings. Pass via the `x-sender-id` header.
-         */
-        fun senderId(senderId: String) = apply { clientOptions.senderId(senderId) }
-
         fun headers(headers: Headers) = apply { clientOptions.headers(headers) }
 
         fun headers(headers: Map<String, Iterable<String>>) = apply {

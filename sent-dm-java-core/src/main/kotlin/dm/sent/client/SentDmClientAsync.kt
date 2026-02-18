@@ -3,10 +3,15 @@
 package dm.sent.client
 
 import dm.sent.core.ClientOptions
+import dm.sent.services.async.BrandServiceAsync
 import dm.sent.services.async.ContactServiceAsync
+import dm.sent.services.async.LookupServiceAsync
+import dm.sent.services.async.MeServiceAsync
 import dm.sent.services.async.MessageServiceAsync
-import dm.sent.services.async.NumberLookupServiceAsync
+import dm.sent.services.async.ProfileServiceAsync
 import dm.sent.services.async.TemplateServiceAsync
+import dm.sent.services.async.UserServiceAsync
+import dm.sent.services.async.WebhookServiceAsync
 import java.util.function.Consumer
 
 /**
@@ -45,13 +50,23 @@ interface SentDmClientAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClientAsync
 
-    fun contacts(): ContactServiceAsync
+    fun webhooks(): WebhookServiceAsync
 
-    fun messages(): MessageServiceAsync
+    fun users(): UserServiceAsync
 
     fun templates(): TemplateServiceAsync
 
-    fun numberLookup(): NumberLookupServiceAsync
+    fun profiles(): ProfileServiceAsync
+
+    fun messages(): MessageServiceAsync
+
+    fun lookup(): LookupServiceAsync
+
+    fun contacts(): ContactServiceAsync
+
+    fun brands(): BrandServiceAsync
+
+    fun me(): MeServiceAsync
 
     /**
      * Closes this client, relinquishing any underlying resources.
@@ -78,12 +93,22 @@ interface SentDmClientAsync {
             modifier: Consumer<ClientOptions.Builder>
         ): SentDmClientAsync.WithRawResponse
 
-        fun contacts(): ContactServiceAsync.WithRawResponse
+        fun webhooks(): WebhookServiceAsync.WithRawResponse
 
-        fun messages(): MessageServiceAsync.WithRawResponse
+        fun users(): UserServiceAsync.WithRawResponse
 
         fun templates(): TemplateServiceAsync.WithRawResponse
 
-        fun numberLookup(): NumberLookupServiceAsync.WithRawResponse
+        fun profiles(): ProfileServiceAsync.WithRawResponse
+
+        fun messages(): MessageServiceAsync.WithRawResponse
+
+        fun lookup(): LookupServiceAsync.WithRawResponse
+
+        fun contacts(): ContactServiceAsync.WithRawResponse
+
+        fun brands(): BrandServiceAsync.WithRawResponse
+
+        fun me(): MeServiceAsync.WithRawResponse
     }
 }

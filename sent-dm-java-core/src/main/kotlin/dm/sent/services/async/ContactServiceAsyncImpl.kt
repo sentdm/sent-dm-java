@@ -4,6 +4,8 @@ package dm.sent.services.async
 
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
+import dm.sent.core.checkRequired
+import dm.sent.core.handlers.emptyHandler
 import dm.sent.core.handlers.errorBodyHandler
 import dm.sent.core.handlers.errorHandler
 import dm.sent.core.handlers.jsonHandler
@@ -12,15 +14,19 @@ import dm.sent.core.http.HttpRequest
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponse.Handler
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
-import dm.sent.models.contacts.ContactListItem
+import dm.sent.models.contacts.ApiResponseContact
+import dm.sent.models.contacts.ContactCreateParams
+import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactListResponse
-import dm.sent.models.contacts.ContactRetrieveByPhoneParams
-import dm.sent.models.contacts.ContactRetrieveIdParams
+import dm.sent.models.contacts.ContactRetrieveParams
+import dm.sent.models.contacts.ContactUpdateParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
+import kotlin.jvm.optionals.getOrNull
 
 class ContactServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     ContactServiceAsync {
@@ -34,26 +40,40 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ContactServiceAsync =
         ContactServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    override fun create(
+        params: ContactCreateParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ApiResponseContact> =
+        // post /v3/contacts
+        withRawResponse().create(params, requestOptions).thenApply { it.parse() }
+
+    override fun retrieve(
+        params: ContactRetrieveParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ApiResponseContact> =
+        // get /v3/contacts/{id}
+        withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
+
+    override fun update(
+        params: ContactUpdateParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ApiResponseContact> =
+        // patch /v3/contacts/{id}
+        withRawResponse().update(params, requestOptions).thenApply { it.parse() }
+
     override fun list(
         params: ContactListParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ContactListResponse> =
-        // get /v2/contacts
+        // get /v3/contacts
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
-    override fun retrieveByPhone(
-        params: ContactRetrieveByPhoneParams,
+    override fun delete(
+        params: ContactDeleteParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ContactListItem> =
-        // get /v2/contacts/phone
-        withRawResponse().retrieveByPhone(params, requestOptions).thenApply { it.parse() }
-
-    override fun retrieveId(
-        params: ContactRetrieveIdParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<ContactListItem> =
-        // get /v2/contacts/id
-        withRawResponse().retrieveId(params, requestOptions).thenApply { it.parse() }
+    ): CompletableFuture<Void?> =
+        // delete /v3/contacts/{id}
+        withRawResponse().delete(params, requestOptions).thenAccept {}
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ContactServiceAsync.WithRawResponse {
@@ -68,6 +88,104 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
+        private val createHandler: Handler<ApiResponseContact> =
+            jsonHandler<ApiResponseContact>(clientOptions.jsonMapper)
+
+        override fun create(
+            params: ContactCreateParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v3", "contacts")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { createHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val retrieveHandler: Handler<ApiResponseContact> =
+            jsonHandler<ApiResponseContact>(clientOptions.jsonMapper)
+
+        override fun retrieve(
+            params: ContactRetrieveParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v3", "contacts", params._pathParam(0))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { retrieveHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val updateHandler: Handler<ApiResponseContact> =
+            jsonHandler<ApiResponseContact>(clientOptions.jsonMapper)
+
+        override fun update(
+            params: ContactUpdateParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v3", "contacts", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { updateHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
         private val listHandler: Handler<ContactListResponse> =
             jsonHandler<ContactListResponse>(clientOptions.jsonMapper)
 
@@ -79,7 +197,7 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "contacts")
+                    .addPathSegments("v3", "contacts")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -98,18 +216,21 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val retrieveByPhoneHandler: Handler<ContactListItem> =
-            jsonHandler<ContactListItem>(clientOptions.jsonMapper)
+        private val deleteHandler: Handler<Void?> = emptyHandler()
 
-        override fun retrieveByPhone(
-            params: ContactRetrieveByPhoneParams,
+        override fun delete(
+            params: ContactDeleteParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ContactListItem>> {
+        ): CompletableFuture<HttpResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
             val request =
                 HttpRequest.builder()
-                    .method(HttpMethod.GET)
+                    .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "contacts", "phone")
+                    .addPathSegments("v3", "contacts", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -117,43 +238,7 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
-                        response
-                            .use { retrieveByPhoneHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val retrieveIdHandler: Handler<ContactListItem> =
-            jsonHandler<ContactListItem>(clientOptions.jsonMapper)
-
-        override fun retrieveId(
-            params: ContactRetrieveIdParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ContactListItem>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "contacts", "id")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { retrieveIdHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
+                        response.use { deleteHandler.handle(it) }
                     }
                 }
         }

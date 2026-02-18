@@ -93,10 +93,7 @@ private constructor(@JvmSynthetic internal val okHttpClient: okhttp3.OkHttpClien
             }
         if (logLevel != null) {
             clientBuilder.addNetworkInterceptor(
-                HttpLoggingInterceptor().setLevel(logLevel).apply {
-                    redactHeader("x-api-key")
-                    redactHeader("x-sender-id")
-                }
+                HttpLoggingInterceptor().setLevel(logLevel).apply { redactHeader("x-api-key") }
             )
         }
 

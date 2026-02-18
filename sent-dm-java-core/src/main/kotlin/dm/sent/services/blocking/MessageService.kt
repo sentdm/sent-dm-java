@@ -5,13 +5,13 @@ package dm.sent.services.blocking
 import com.google.errorprone.annotations.MustBeClosed
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
-import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.messages.MessageRetrieveParams
-import dm.sent.models.messages.MessageRetrieveResponse
-import dm.sent.models.messages.MessageSendQuickMessageParams
-import dm.sent.models.messages.MessageSendToContactParams
-import dm.sent.models.messages.MessageSendToPhoneParams
+import dm.sent.models.messages.MessageRetrieveActivitiesParams
+import dm.sent.models.messages.MessageRetrieveActivitiesResponse
+import dm.sent.models.messages.MessageRetrieveStatusParams
+import dm.sent.models.messages.MessageRetrieveStatusResponse
+import dm.sent.models.messages.MessageSendParams
+import dm.sent.models.messages.MessageSendResponse
 import java.util.function.Consumer
 
 interface MessageService {
@@ -29,81 +29,100 @@ interface MessageService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): MessageService
 
     /**
-     * Retrieves comprehensive details about a specific message using the message ID. Returns
-     * complete message data including delivery status, channel information, template details,
-     * contact information, and pricing. The customer ID is extracted from the authentication token
-     * to ensure the message belongs to the authenticated customer.
+     * Retrieves the activity log for a specific message. Activities track the message lifecycle
+     * including acceptance, processing, sending, delivery, and any errors.
      */
-    fun retrieve(id: String): MessageRetrieveResponse = retrieve(id, MessageRetrieveParams.none())
+    fun retrieveActivities(id: String): MessageRetrieveActivitiesResponse =
+        retrieveActivities(id, MessageRetrieveActivitiesParams.none())
 
-    /** @see retrieve */
-    fun retrieve(
+    /** @see retrieveActivities */
+    fun retrieveActivities(
         id: String,
-        params: MessageRetrieveParams = MessageRetrieveParams.none(),
+        params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageRetrieveResponse = retrieve(params.toBuilder().id(id).build(), requestOptions)
+    ): MessageRetrieveActivitiesResponse =
+        retrieveActivities(params.toBuilder().id(id).build(), requestOptions)
 
-    /** @see retrieve */
-    fun retrieve(
+    /** @see retrieveActivities */
+    fun retrieveActivities(
         id: String,
-        params: MessageRetrieveParams = MessageRetrieveParams.none(),
-    ): MessageRetrieveResponse = retrieve(id, params, RequestOptions.none())
+        params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
+    ): MessageRetrieveActivitiesResponse = retrieveActivities(id, params, RequestOptions.none())
 
-    /** @see retrieve */
-    fun retrieve(
-        params: MessageRetrieveParams,
+    /** @see retrieveActivities */
+    fun retrieveActivities(
+        params: MessageRetrieveActivitiesParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageRetrieveResponse
+    ): MessageRetrieveActivitiesResponse
 
-    /** @see retrieve */
-    fun retrieve(params: MessageRetrieveParams): MessageRetrieveResponse =
-        retrieve(params, RequestOptions.none())
+    /** @see retrieveActivities */
+    fun retrieveActivities(
+        params: MessageRetrieveActivitiesParams
+    ): MessageRetrieveActivitiesResponse = retrieveActivities(params, RequestOptions.none())
 
-    /** @see retrieve */
-    fun retrieve(id: String, requestOptions: RequestOptions): MessageRetrieveResponse =
-        retrieve(id, MessageRetrieveParams.none(), requestOptions)
+    /** @see retrieveActivities */
+    fun retrieveActivities(
+        id: String,
+        requestOptions: RequestOptions,
+    ): MessageRetrieveActivitiesResponse =
+        retrieveActivities(id, MessageRetrieveActivitiesParams.none(), requestOptions)
 
     /**
-     * Sends a message to a phone number using the default template. This endpoint is rate limited
-     * to 5 messages per customer per day. The customer ID is extracted from the authentication
-     * token.
+     * Retrieves the current status and details of a message by ID. Includes delivery status,
+     * timestamps, and error information if applicable.
      */
-    fun sendQuickMessage(params: MessageSendQuickMessageParams) =
-        sendQuickMessage(params, RequestOptions.none())
+    fun retrieveStatus(id: String): MessageRetrieveStatusResponse =
+        retrieveStatus(id, MessageRetrieveStatusParams.none())
 
-    /** @see sendQuickMessage */
-    fun sendQuickMessage(
-        params: MessageSendQuickMessageParams,
+    /** @see retrieveStatus */
+    fun retrieveStatus(
+        id: String,
+        params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    )
+    ): MessageRetrieveStatusResponse =
+        retrieveStatus(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see retrieveStatus */
+    fun retrieveStatus(
+        id: String,
+        params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
+    ): MessageRetrieveStatusResponse = retrieveStatus(id, params, RequestOptions.none())
+
+    /** @see retrieveStatus */
+    fun retrieveStatus(
+        params: MessageRetrieveStatusParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): MessageRetrieveStatusResponse
+
+    /** @see retrieveStatus */
+    fun retrieveStatus(params: MessageRetrieveStatusParams): MessageRetrieveStatusResponse =
+        retrieveStatus(params, RequestOptions.none())
+
+    /** @see retrieveStatus */
+    fun retrieveStatus(id: String, requestOptions: RequestOptions): MessageRetrieveStatusResponse =
+        retrieveStatus(id, MessageRetrieveStatusParams.none(), requestOptions)
 
     /**
-     * Sends a message to a specific contact using a template. The message can be sent via SMS or
-     * WhatsApp depending on the contact's capabilities. Optionally specify a webhook URL to receive
-     * delivery status updates. The customer ID is extracted from the authentication token.
+     * Sends a message to one or more recipients using a template. Supports multi-channel broadcast
+     * — when multiple channels are specified (e.g. ["sms", "whatsapp"]), a separate message is
+     * created for each (recipient, channel) pair. Returns immediately with per-recipient message
+     * IDs for async tracking via webhooks or the GET /messages/{id} endpoint.
      */
-    fun sendToContact(params: MessageSendToContactParams) =
-        sendToContact(params, RequestOptions.none())
+    fun send(): MessageSendResponse = send(MessageSendParams.none())
 
-    /** @see sendToContact */
-    fun sendToContact(
-        params: MessageSendToContactParams,
+    /** @see send */
+    fun send(
+        params: MessageSendParams = MessageSendParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    )
+    ): MessageSendResponse
 
-    /**
-     * Sends a message to a phone number using a template. The phone number doesn't need to be a
-     * pre-existing contact. The message can be sent via SMS or WhatsApp. Optionally specify a
-     * webhook URL to receive delivery status updates. The customer ID is extracted from the
-     * authentication token.
-     */
-    fun sendToPhone(params: MessageSendToPhoneParams) = sendToPhone(params, RequestOptions.none())
+    /** @see send */
+    fun send(params: MessageSendParams = MessageSendParams.none()): MessageSendResponse =
+        send(params, RequestOptions.none())
 
-    /** @see sendToPhone */
-    fun sendToPhone(
-        params: MessageSendToPhoneParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    )
+    /** @see send */
+    fun send(requestOptions: RequestOptions): MessageSendResponse =
+        send(MessageSendParams.none(), requestOptions)
 
     /** A view of [MessageService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -116,92 +135,122 @@ interface MessageService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): MessageService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v2/messages/{id}`, but is otherwise the same as
-         * [MessageService.retrieve].
+         * Returns a raw HTTP response for `get /v3/messages/{id}/activities`, but is otherwise the
+         * same as [MessageService.retrieveActivities].
          */
         @MustBeClosed
-        fun retrieve(id: String): HttpResponseFor<MessageRetrieveResponse> =
-            retrieve(id, MessageRetrieveParams.none())
+        fun retrieveActivities(id: String): HttpResponseFor<MessageRetrieveActivitiesResponse> =
+            retrieveActivities(id, MessageRetrieveActivitiesParams.none())
 
-        /** @see retrieve */
+        /** @see retrieveActivities */
         @MustBeClosed
-        fun retrieve(
+        fun retrieveActivities(
             id: String,
-            params: MessageRetrieveParams = MessageRetrieveParams.none(),
+            params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageRetrieveResponse> =
-            retrieve(params.toBuilder().id(id).build(), requestOptions)
+        ): HttpResponseFor<MessageRetrieveActivitiesResponse> =
+            retrieveActivities(params.toBuilder().id(id).build(), requestOptions)
 
-        /** @see retrieve */
+        /** @see retrieveActivities */
         @MustBeClosed
-        fun retrieve(
+        fun retrieveActivities(
             id: String,
-            params: MessageRetrieveParams = MessageRetrieveParams.none(),
-        ): HttpResponseFor<MessageRetrieveResponse> = retrieve(id, params, RequestOptions.none())
+            params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
+        ): HttpResponseFor<MessageRetrieveActivitiesResponse> =
+            retrieveActivities(id, params, RequestOptions.none())
 
-        /** @see retrieve */
+        /** @see retrieveActivities */
         @MustBeClosed
-        fun retrieve(
-            params: MessageRetrieveParams,
+        fun retrieveActivities(
+            params: MessageRetrieveActivitiesParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageRetrieveResponse>
+        ): HttpResponseFor<MessageRetrieveActivitiesResponse>
 
-        /** @see retrieve */
+        /** @see retrieveActivities */
         @MustBeClosed
-        fun retrieve(params: MessageRetrieveParams): HttpResponseFor<MessageRetrieveResponse> =
-            retrieve(params, RequestOptions.none())
+        fun retrieveActivities(
+            params: MessageRetrieveActivitiesParams
+        ): HttpResponseFor<MessageRetrieveActivitiesResponse> =
+            retrieveActivities(params, RequestOptions.none())
 
-        /** @see retrieve */
+        /** @see retrieveActivities */
         @MustBeClosed
-        fun retrieve(
+        fun retrieveActivities(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<MessageRetrieveResponse> =
-            retrieve(id, MessageRetrieveParams.none(), requestOptions)
+        ): HttpResponseFor<MessageRetrieveActivitiesResponse> =
+            retrieveActivities(id, MessageRetrieveActivitiesParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/messages/quick-message`, but is otherwise the
-         * same as [MessageService.sendQuickMessage].
+         * Returns a raw HTTP response for `get /v3/messages/{id}`, but is otherwise the same as
+         * [MessageService.retrieveStatus].
          */
         @MustBeClosed
-        fun sendQuickMessage(params: MessageSendQuickMessageParams): HttpResponse =
-            sendQuickMessage(params, RequestOptions.none())
+        fun retrieveStatus(id: String): HttpResponseFor<MessageRetrieveStatusResponse> =
+            retrieveStatus(id, MessageRetrieveStatusParams.none())
 
-        /** @see sendQuickMessage */
+        /** @see retrieveStatus */
         @MustBeClosed
-        fun sendQuickMessage(
-            params: MessageSendQuickMessageParams,
+        fun retrieveStatus(
+            id: String,
+            params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        ): HttpResponseFor<MessageRetrieveStatusResponse> =
+            retrieveStatus(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see retrieveStatus */
+        @MustBeClosed
+        fun retrieveStatus(
+            id: String,
+            params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
+        ): HttpResponseFor<MessageRetrieveStatusResponse> =
+            retrieveStatus(id, params, RequestOptions.none())
+
+        /** @see retrieveStatus */
+        @MustBeClosed
+        fun retrieveStatus(
+            params: MessageRetrieveStatusParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<MessageRetrieveStatusResponse>
+
+        /** @see retrieveStatus */
+        @MustBeClosed
+        fun retrieveStatus(
+            params: MessageRetrieveStatusParams
+        ): HttpResponseFor<MessageRetrieveStatusResponse> =
+            retrieveStatus(params, RequestOptions.none())
+
+        /** @see retrieveStatus */
+        @MustBeClosed
+        fun retrieveStatus(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<MessageRetrieveStatusResponse> =
+            retrieveStatus(id, MessageRetrieveStatusParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/messages/contact`, but is otherwise the same as
-         * [MessageService.sendToContact].
+         * Returns a raw HTTP response for `post /v3/messages`, but is otherwise the same as
+         * [MessageService.send].
          */
         @MustBeClosed
-        fun sendToContact(params: MessageSendToContactParams): HttpResponse =
-            sendToContact(params, RequestOptions.none())
+        fun send(): HttpResponseFor<MessageSendResponse> = send(MessageSendParams.none())
 
-        /** @see sendToContact */
+        /** @see send */
         @MustBeClosed
-        fun sendToContact(
-            params: MessageSendToContactParams,
+        fun send(
+            params: MessageSendParams = MessageSendParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        ): HttpResponseFor<MessageSendResponse>
 
-        /**
-         * Returns a raw HTTP response for `post /v2/messages/phone`, but is otherwise the same as
-         * [MessageService.sendToPhone].
-         */
+        /** @see send */
         @MustBeClosed
-        fun sendToPhone(params: MessageSendToPhoneParams): HttpResponse =
-            sendToPhone(params, RequestOptions.none())
+        fun send(
+            params: MessageSendParams = MessageSendParams.none()
+        ): HttpResponseFor<MessageSendResponse> = send(params, RequestOptions.none())
 
-        /** @see sendToPhone */
+        /** @see send */
         @MustBeClosed
-        fun sendToPhone(
-            params: MessageSendToPhoneParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        fun send(requestOptions: RequestOptions): HttpResponseFor<MessageSendResponse> =
+            send(MessageSendParams.none(), requestOptions)
     }
 }

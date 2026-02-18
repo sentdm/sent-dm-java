@@ -17,12 +17,13 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
+import dm.sent.models.templates.ApiResponseTemplate
 import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateListResponse
-import dm.sent.models.templates.TemplateResponseV2
 import dm.sent.models.templates.TemplateRetrieveParams
+import dm.sent.models.templates.TemplateUpdateParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -41,26 +42,33 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
     override fun create(
         params: TemplateCreateParams,
         requestOptions: RequestOptions,
-    ): TemplateResponseV2 =
-        // post /v2/templates
+    ): ApiResponseTemplate =
+        // post /v3/templates
         withRawResponse().create(params, requestOptions).parse()
 
     override fun retrieve(
         params: TemplateRetrieveParams,
         requestOptions: RequestOptions,
-    ): TemplateResponseV2 =
-        // get /v2/templates/{id}
+    ): ApiResponseTemplate =
+        // get /v3/templates/{id}
         withRawResponse().retrieve(params, requestOptions).parse()
+
+    override fun update(
+        params: TemplateUpdateParams,
+        requestOptions: RequestOptions,
+    ): ApiResponseTemplate =
+        // put /v3/templates/{id}
+        withRawResponse().update(params, requestOptions).parse()
 
     override fun list(
         params: TemplateListParams,
         requestOptions: RequestOptions,
     ): TemplateListResponse =
-        // get /v2/templates
+        // get /v3/templates
         withRawResponse().list(params, requestOptions).parse()
 
     override fun delete(params: TemplateDeleteParams, requestOptions: RequestOptions) {
-        // delete /v2/templates/{id}
+        // delete /v3/templates/{id}
         withRawResponse().delete(params, requestOptions)
     }
 
@@ -77,18 +85,18 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<TemplateResponseV2> =
-            jsonHandler<TemplateResponseV2>(clientOptions.jsonMapper)
+        private val createHandler: Handler<ApiResponseTemplate> =
+            jsonHandler<ApiResponseTemplate>(clientOptions.jsonMapper)
 
         override fun create(
             params: TemplateCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TemplateResponseV2> {
+        ): HttpResponseFor<ApiResponseTemplate> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "templates")
+                    .addPathSegments("v3", "templates")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -105,13 +113,13 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
             }
         }
 
-        private val retrieveHandler: Handler<TemplateResponseV2> =
-            jsonHandler<TemplateResponseV2>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<ApiResponseTemplate> =
+            jsonHandler<ApiResponseTemplate>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: TemplateRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TemplateResponseV2> {
+        ): HttpResponseFor<ApiResponseTemplate> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -119,7 +127,7 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "templates", params._pathParam(0))
+                    .addPathSegments("v3", "templates", params._pathParam(0))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -127,6 +135,37 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
             return errorHandler.handle(response).parseable {
                 response
                     .use { retrieveHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val updateHandler: Handler<ApiResponseTemplate> =
+            jsonHandler<ApiResponseTemplate>(clientOptions.jsonMapper)
+
+        override fun update(
+            params: TemplateUpdateParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ApiResponseTemplate> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PUT)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v3", "templates", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { updateHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
@@ -146,7 +185,7 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "templates")
+                    .addPathSegments("v3", "templates")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -175,8 +214,8 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "templates", params._pathParam(0))
-                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .addPathSegments("v3", "templates", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

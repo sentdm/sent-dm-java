@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-dm-java)](https://central.sonatype.com/artifact/dm.sent/sent-dm-java/0.5.1)
-[![javadoc](https://javadoc.io/badge2/dm.sent/sent-dm-java/0.5.1/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-dm-java/0.5.1)
+[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-dm-java)](https://central.sonatype.com/artifact/dm.sent/sent-dm-java/0.6.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-dm-java/0.6.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-dm-java/0.6.0)
 
 <!-- x-release-please-end -->
 
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.5.1).
+The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.6.0).
 
 <!-- x-release-please-end -->
 
@@ -24,7 +24,7 @@ The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm).
 ### Gradle
 
 ```kotlin
-implementation("dm.sent:sent-dm-java:0.5.1")
+implementation("dm.sent:sent-dm-java:0.6.0")
 ```
 
 ### Maven
@@ -33,7 +33,7 @@ implementation("dm.sent:sent-dm-java:0.5.1")
 <dependency>
   <groupId>dm.sent</groupId>
   <artifactId>sent-dm-java</artifactId>
-  <version>0.5.1</version>
+  <version>0.6.0</version>
 </dependency>
 ```
 
@@ -49,21 +49,28 @@ This library requires Java 8 or later.
 import dm.sent.client.SentDmClient;
 import dm.sent.client.okhttp.SentDmOkHttpClient;
 import dm.sent.core.JsonValue;
-import dm.sent.models.messages.MessageSendToPhoneParams;
+import dm.sent.models.messages.MessageSendParams;
+import dm.sent.models.messages.MessageSendResponse;
 
-// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY` and `SENT_DM_BASE_URL` environment variables
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 
-MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .phoneNumber("+1234567890")
-    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-    .templateVariables(MessageSendToPhoneParams.TemplateVariables.builder()
-        .putAdditionalProperty("name", JsonValue.from("John Doe"))
-        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+MessageSendParams params = MessageSendParams.builder()
+    .addChannel("sms")
+    .addChannel("whatsapp")
+    .template(MessageSendParams.Template.builder()
+        .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+        .name("order_confirmation")
+        .parameters(MessageSendParams.Template.Parameters.builder()
+            .putAdditionalProperty("name", JsonValue.from("John Doe"))
+            .putAdditionalProperty("order_id", JsonValue.from("12345"))
+            .build())
         .build())
+    .addTo("+14155551234")
+    .addTo("+14155555678")
     .build();
-client.messages().sendToPhone(params);
+MessageSendResponse response = client.messages().send(params);
 ```
 
 ## Client configuration
@@ -74,8 +81,8 @@ Configure the client using system properties or environment variables:
 import dm.sent.client.SentDmClient;
 import dm.sent.client.okhttp.SentDmOkHttpClient;
 
-// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY` and `SENT_DM_BASE_URL` environment variables
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 ```
 
@@ -87,7 +94,6 @@ import dm.sent.client.okhttp.SentDmOkHttpClient;
 
 SentDmClient client = SentDmOkHttpClient.builder()
     .apiKey("My API Key")
-    .senderId("My Sender ID")
     .build();
 ```
 
@@ -98,8 +104,8 @@ import dm.sent.client.SentDmClient;
 import dm.sent.client.okhttp.SentDmOkHttpClient;
 
 SentDmClient client = SentDmOkHttpClient.builder()
-    // Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
-    // Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
+    // Configures using the `sentdm.apiKey` and `sentdm.baseUrl` system properties
+    // Or configures using the `SENT_DM_API_KEY` and `SENT_DM_BASE_URL` environment variables
     .fromEnv()
     .apiKey("My API Key")
     .build();
@@ -107,11 +113,10 @@ SentDmClient client = SentDmOkHttpClient.builder()
 
 See this table for the available options:
 
-| Setter     | System property   | Environment variable | Required | Default value           |
-| ---------- | ----------------- | -------------------- | -------- | ----------------------- |
-| `apiKey`   | `sentdm.apiKey`   | `SENT_DM_API_KEY`    | true     | -                       |
-| `senderId` | `sentdm.senderId` | `SENT_DM_SENDER_ID`  | true     | -                       |
-| `baseUrl`  | `sentdm.baseUrl`  | `SENT_DM_BASE_URL`   | true     | `"https://api.sent.dm"` |
+| Setter    | System property  | Environment variable | Required | Default value           |
+| --------- | ---------------- | -------------------- | -------- | ----------------------- |
+| `apiKey`  | `sentdm.apiKey`  | `SENT_DM_API_KEY`    | true     | -                       |
+| `baseUrl` | `sentdm.baseUrl` | `SENT_DM_BASE_URL`   | true     | `"https://api.sent.dm"` |
 
 System properties take precedence over environment variables.
 
@@ -138,7 +143,7 @@ The `withOptions()` method does not affect the original client or service.
 
 To send a request to the Sent Dm API, build an instance of some `Params` class and pass it to the corresponding client method. When the response is received, it will be deserialized into an instance of a Java class.
 
-For example, `client.contacts().list(...)` should be called with an instance of `ContactListParams`, and it will return an instance of `ContactListResponse`.
+For example, `client.messages().send(...)` should be called with an instance of `MessageSendParams`, and it will return an instance of `MessageSendResponse`.
 
 ## Immutability
 
@@ -156,22 +161,29 @@ The default client is synchronous. To switch to asynchronous execution, call the
 import dm.sent.client.SentDmClient;
 import dm.sent.client.okhttp.SentDmOkHttpClient;
 import dm.sent.core.JsonValue;
-import dm.sent.models.messages.MessageSendToPhoneParams;
+import dm.sent.models.messages.MessageSendParams;
+import dm.sent.models.messages.MessageSendResponse;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY` and `SENT_DM_BASE_URL` environment variables
 SentDmClient client = SentDmOkHttpClient.fromEnv();
 
-MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .phoneNumber("+1234567890")
-    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-    .templateVariables(MessageSendToPhoneParams.TemplateVariables.builder()
-        .putAdditionalProperty("name", JsonValue.from("John Doe"))
-        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+MessageSendParams params = MessageSendParams.builder()
+    .addChannel("sms")
+    .addChannel("whatsapp")
+    .template(MessageSendParams.Template.builder()
+        .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+        .name("order_confirmation")
+        .parameters(MessageSendParams.Template.Parameters.builder()
+            .putAdditionalProperty("name", JsonValue.from("John Doe"))
+            .putAdditionalProperty("order_id", JsonValue.from("12345"))
+            .build())
         .build())
+    .addTo("+14155551234")
+    .addTo("+14155555678")
     .build();
-CompletableFuture<Void?> future = client.async().messages().sendToPhone(params);
+CompletableFuture<MessageSendResponse> response = client.async().messages().send(params);
 ```
 
 Or create an asynchronous client from the beginning:
@@ -180,22 +192,29 @@ Or create an asynchronous client from the beginning:
 import dm.sent.client.SentDmClientAsync;
 import dm.sent.client.okhttp.SentDmOkHttpClientAsync;
 import dm.sent.core.JsonValue;
-import dm.sent.models.messages.MessageSendToPhoneParams;
+import dm.sent.models.messages.MessageSendParams;
+import dm.sent.models.messages.MessageSendResponse;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `sentdm.apiKey`, `sentdm.senderId` and `sentdm.baseUrl` system properties
-// Or configures using the `SENT_DM_API_KEY`, `SENT_DM_SENDER_ID` and `SENT_DM_BASE_URL` environment variables
+// Configures using the `sentdm.apiKey` and `sentdm.baseUrl` system properties
+// Or configures using the `SENT_DM_API_KEY` and `SENT_DM_BASE_URL` environment variables
 SentDmClientAsync client = SentDmOkHttpClientAsync.fromEnv();
 
-MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .phoneNumber("+1234567890")
-    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-    .templateVariables(MessageSendToPhoneParams.TemplateVariables.builder()
-        .putAdditionalProperty("name", JsonValue.from("John Doe"))
-        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+MessageSendParams params = MessageSendParams.builder()
+    .addChannel("sms")
+    .addChannel("whatsapp")
+    .template(MessageSendParams.Template.builder()
+        .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+        .name("order_confirmation")
+        .parameters(MessageSendParams.Template.Parameters.builder()
+            .putAdditionalProperty("name", JsonValue.from("John Doe"))
+            .putAdditionalProperty("order_id", JsonValue.from("12345"))
+            .build())
         .build())
+    .addTo("+14155551234")
+    .addTo("+14155555678")
     .build();
-CompletableFuture<Void?> future = client.messages().sendToPhone(params);
+CompletableFuture<MessageSendResponse> response = client.messages().send(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
@@ -209,21 +228,34 @@ To access this data, prefix any HTTP method call on a client or service with `wi
 ```java
 import dm.sent.core.JsonValue;
 import dm.sent.core.http.Headers;
-import dm.sent.core.http.HttpResponse;
-import dm.sent.models.messages.MessageSendToPhoneParams;
+import dm.sent.core.http.HttpResponseFor;
+import dm.sent.models.messages.MessageSendParams;
+import dm.sent.models.messages.MessageSendResponse;
 
-MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .phoneNumber("+1234567890")
-    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-    .templateVariables(MessageSendToPhoneParams.TemplateVariables.builder()
-        .putAdditionalProperty("name", JsonValue.from("John Doe"))
-        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+MessageSendParams params = MessageSendParams.builder()
+    .addChannel("sms")
+    .template(MessageSendParams.Template.builder()
+        .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+        .name("order_confirmation")
+        .parameters(MessageSendParams.Template.Parameters.builder()
+            .putAdditionalProperty("name", JsonValue.from("John Doe"))
+            .putAdditionalProperty("order_id", JsonValue.from("12345"))
+            .build())
         .build())
+    .addTo("+14155551234")
     .build();
-HttpResponse response = client.messages().withRawResponse().sendToPhone(params);
+HttpResponseFor<MessageSendResponse> response = client.messages().withRawResponse().send(params);
 
 int statusCode = response.statusCode();
 Headers headers = response.headers();
+```
+
+You can still deserialize the response into an instance of a Java class if needed:
+
+```java
+import dm.sent.models.messages.MessageSendResponse;
+
+MessageSendResponse parsedResponse = response.parse();
 ```
 
 ## Error handling
@@ -321,9 +353,9 @@ Requests time out after 1 minute by default.
 To set a custom timeout, configure the method call using the `timeout` method:
 
 ```java
-client.messages().sendToPhone(
-  params, RequestOptions.builder().timeout(Duration.ofSeconds(30)).build()
-);
+import dm.sent.models.messages.MessageSendResponse;
+
+MessageSendResponse response = client.messages().send(RequestOptions.builder().timeout(Duration.ofSeconds(30)).build());
 ```
 
 Or configure the default for all method calls at the client level:
@@ -426,9 +458,9 @@ To set undocumented parameters, call the `putAdditionalHeader`, `putAdditionalQu
 
 ```java
 import dm.sent.core.JsonValue;
-import dm.sent.models.messages.MessageSendToPhoneParams;
+import dm.sent.models.messages.MessageSendParams;
 
-MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
+MessageSendParams params = MessageSendParams.builder()
     .putAdditionalHeader("Secret-Header", "42")
     .putAdditionalQueryParam("secret_query_param", "42")
     .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))
@@ -441,11 +473,10 @@ To set undocumented parameters on _nested_ headers, query params, or body classe
 
 ```java
 import dm.sent.core.JsonValue;
-import dm.sent.models.templates.TemplateCreateParams;
-import dm.sent.models.templates.TemplateDefinition;
+import dm.sent.models.messages.MessageSendParams;
 
-TemplateCreateParams params = TemplateCreateParams.builder()
-    .definition(TemplateDefinition.builder()
+MessageSendParams params = MessageSendParams.builder()
+    .template(MessageSendParams.Template.builder()
         .putAdditionalProperty("secretProperty", JsonValue.from("42"))
         .build())
     .build();
@@ -457,15 +488,20 @@ To set a documented parameter or property to an undocumented or not yet supporte
 
 ```java
 import dm.sent.core.JsonValue;
-import dm.sent.models.messages.MessageSendToPhoneParams;
+import dm.sent.models.messages.MessageSendParams;
 
-MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .phoneNumber(JsonValue.from(42))
-    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-    .templateVariables(MessageSendToPhoneParams.TemplateVariables.builder()
-        .putAdditionalProperty("name", JsonValue.from("John Doe"))
-        .putAdditionalProperty("order_id", JsonValue.from("12345"))
+MessageSendParams params = MessageSendParams.builder()
+    .channel(JsonValue.from(42))
+    .template(MessageSendParams.Template.builder()
+        .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+        .name("order_confirmation")
+        .parameters(MessageSendParams.Template.Parameters.builder()
+            .putAdditionalProperty("name", JsonValue.from("John Doe"))
+            .putAdditionalProperty("order_id", JsonValue.from("12345"))
+            .build())
         .build())
+    .addTo("+14155551234")
+    .addTo("+14155555678")
     .build();
 ```
 
@@ -514,11 +550,11 @@ To forcibly omit a required parameter or property, pass [`JsonMissing`](sent-dm-
 
 ```java
 import dm.sent.core.JsonMissing;
-import dm.sent.models.messages.MessageSendToPhoneParams;
+import dm.sent.models.messages.MessageSendParams;
+import dm.sent.models.webhooks.WebhookRetrieveParams;
 
-MessageSendToPhoneParams params = MessageSendToPhoneParams.builder()
-    .templateId("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-    .phoneNumber(JsonMissing.of())
+MessageSendParams params = WebhookRetrieveParams.builder()
+    .id(JsonMissing.of())
     .build();
 ```
 
@@ -530,7 +566,7 @@ To access undocumented response properties, call the `_additionalProperties()` m
 import dm.sent.core.JsonValue;
 import java.util.Map;
 
-Map<String, JsonValue> additionalProperties = client.contacts().list(params)._additionalProperties();
+Map<String, JsonValue> additionalProperties = client.messages().send(params)._additionalProperties();
 JsonValue secretPropertyValue = additionalProperties.get("secretProperty");
 
 String result = secretPropertyValue.accept(new JsonValue.Visitor<>() {
@@ -560,19 +596,19 @@ To access a property's raw JSON value, which may be undocumented, call its `_` p
 import dm.sent.core.JsonField;
 import java.util.Optional;
 
-JsonField<Object> field = client.contacts().list(params)._field();
+JsonField<Boolean> testMode = client.messages().send(params)._testMode();
 
-if (field.isMissing()) {
+if (testMode.isMissing()) {
   // The property is absent from the JSON response
-} else if (field.isNull()) {
+} else if (testMode.isNull()) {
   // The property was set to literal null
 } else {
   // Check if value was provided as a string
   // Other methods include `asNumber()`, `asBoolean()`, etc.
-  Optional<String> jsonString = field.asString();
+  Optional<String> jsonString = testMode.asString();
 
   // Try to deserialize into a custom type
-  MyClass myObject = field.asUnknown().orElseThrow().convert(MyClass.class);
+  MyClass myObject = testMode.asUnknown().orElseThrow().convert(MyClass.class);
 }
 ```
 
@@ -585,17 +621,17 @@ By default, the SDK will not throw an exception in this case. It will throw [`Se
 If you would prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
 ```java
-import dm.sent.models.contacts.ContactListResponse;
+import dm.sent.models.messages.MessageSendResponse;
 
-ContactListResponse contacts = client.contacts().list(params).validate();
+MessageSendResponse response = client.messages().send(params).validate();
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:
 
 ```java
-client.messages().sendToPhone(
-  params, RequestOptions.builder().responseValidation(true).build()
-);
+import dm.sent.models.messages.MessageSendResponse;
+
+MessageSendResponse response = client.messages().send(RequestOptions.builder().responseValidation(true).build());
 ```
 
 Or configure the default for all method calls at the client level:

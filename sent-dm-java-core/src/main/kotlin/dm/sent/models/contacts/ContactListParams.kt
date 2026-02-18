@@ -7,25 +7,37 @@ import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import java.util.Objects
+import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 /**
- * Retrieves a paginated list of contacts for the authenticated customer. Supports server-side
- * pagination with configurable page size. The customer ID is extracted from the authentication
- * token.
+ * Retrieves a paginated list of contacts for the authenticated customer. Supports filtering by
+ * search term, channel, or phone number.
  */
 class ContactListParams
 private constructor(
     private val page: Int,
     private val pageSize: Int,
+    private val channel: String?,
+    private val phone: String?,
+    private val search: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** The page number (zero-indexed). Default is 0. */
+    /** Page number (1-indexed) */
     fun page(): Int = page
 
-    /** The number of items per page. Default is 20. */
     fun pageSize(): Int = pageSize
+
+    /** Optional channel filter (sms, whatsapp) */
+    fun channel(): Optional<String> = Optional.ofNullable(channel)
+
+    /** Optional phone number filter (alternative to list view) */
+    fun phone(): Optional<String> = Optional.ofNullable(phone)
+
+    /** Optional search term for filtering contacts */
+    fun search(): Optional<String> = Optional.ofNullable(search)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -54,6 +66,9 @@ private constructor(
 
         private var page: Int? = null
         private var pageSize: Int? = null
+        private var channel: String? = null
+        private var phone: String? = null
+        private var search: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -61,15 +76,35 @@ private constructor(
         internal fun from(contactListParams: ContactListParams) = apply {
             page = contactListParams.page
             pageSize = contactListParams.pageSize
+            channel = contactListParams.channel
+            phone = contactListParams.phone
+            search = contactListParams.search
             additionalHeaders = contactListParams.additionalHeaders.toBuilder()
             additionalQueryParams = contactListParams.additionalQueryParams.toBuilder()
         }
 
-        /** The page number (zero-indexed). Default is 0. */
+        /** Page number (1-indexed) */
         fun page(page: Int) = apply { this.page = page }
 
-        /** The number of items per page. Default is 20. */
         fun pageSize(pageSize: Int) = apply { this.pageSize = pageSize }
+
+        /** Optional channel filter (sms, whatsapp) */
+        fun channel(channel: String?) = apply { this.channel = channel }
+
+        /** Alias for calling [Builder.channel] with `channel.orElse(null)`. */
+        fun channel(channel: Optional<String>) = channel(channel.getOrNull())
+
+        /** Optional phone number filter (alternative to list view) */
+        fun phone(phone: String?) = apply { this.phone = phone }
+
+        /** Alias for calling [Builder.phone] with `phone.orElse(null)`. */
+        fun phone(phone: Optional<String>) = phone(phone.getOrNull())
+
+        /** Optional search term for filtering contacts */
+        fun search(search: String?) = apply { this.search = search }
+
+        /** Alias for calling [Builder.search] with `search.orElse(null)`. */
+        fun search(search: Optional<String>) = search(search.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -186,6 +221,9 @@ private constructor(
             ContactListParams(
                 checkRequired("page", page),
                 checkRequired("pageSize", pageSize),
+                channel,
+                phone,
+                search,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -198,6 +236,9 @@ private constructor(
             .apply {
                 put("page", page.toString())
                 put("pageSize", pageSize.toString())
+                channel?.let { put("channel", it) }
+                phone?.let { put("phone", it) }
+                search?.let { put("search", it) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -210,13 +251,24 @@ private constructor(
         return other is ContactListParams &&
             page == other.page &&
             pageSize == other.pageSize &&
+            channel == other.channel &&
+            phone == other.phone &&
+            search == other.search &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(page, pageSize, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            page,
+            pageSize,
+            channel,
+            phone,
+            search,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "ContactListParams{page=$page, pageSize=$pageSize, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ContactListParams{page=$page, pageSize=$pageSize, channel=$channel, phone=$phone, search=$search, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

@@ -13,97 +13,92 @@ import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentDmInvalidDataException
+import dm.sent.models.webhooks.ApiError
+import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.PaginationMeta
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
+/** Standard API response envelope for all v3 endpoints */
 class TemplateListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val items: JsonField<List<TemplateResponseV2>>,
-    private val page: JsonField<Int>,
-    private val pageSize: JsonField<Int>,
-    private val totalCount: JsonField<Int>,
-    private val totalPages: JsonField<Int>,
+    private val data: JsonField<Data>,
+    private val error: JsonField<ApiError>,
+    private val meta: JsonField<ApiMeta>,
+    private val success: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
-        @JsonProperty("items")
-        @ExcludeMissing
-        items: JsonField<List<TemplateResponseV2>> = JsonMissing.of(),
-        @JsonProperty("page") @ExcludeMissing page: JsonField<Int> = JsonMissing.of(),
-        @JsonProperty("pageSize") @ExcludeMissing pageSize: JsonField<Int> = JsonMissing.of(),
-        @JsonProperty("totalCount") @ExcludeMissing totalCount: JsonField<Int> = JsonMissing.of(),
-        @JsonProperty("totalPages") @ExcludeMissing totalPages: JsonField<Int> = JsonMissing.of(),
-    ) : this(items, page, pageSize, totalCount, totalPages, mutableMapOf())
+        @JsonProperty("data") @ExcludeMissing data: JsonField<Data> = JsonMissing.of(),
+        @JsonProperty("error") @ExcludeMissing error: JsonField<ApiError> = JsonMissing.of(),
+        @JsonProperty("meta") @ExcludeMissing meta: JsonField<ApiMeta> = JsonMissing.of(),
+        @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
+    ) : this(data, error, meta, success, mutableMapOf())
 
     /**
+     * The response data (null if error)
+     *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun items(): Optional<List<TemplateResponseV2>> = items.getOptional("items")
+    fun data(): Optional<Data> = data.getOptional("data")
 
     /**
+     * Error details (null if successful)
+     *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun page(): Optional<Int> = page.getOptional("page")
+    fun error(): Optional<ApiError> = error.getOptional("error")
 
     /**
+     * Metadata about the request and response
+     *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun pageSize(): Optional<Int> = pageSize.getOptional("pageSize")
+    fun meta(): Optional<ApiMeta> = meta.getOptional("meta")
 
     /**
+     * Indicates whether the request was successful
+     *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun totalCount(): Optional<Int> = totalCount.getOptional("totalCount")
+    fun success(): Optional<Boolean> = success.getOptional("success")
 
     /**
-     * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun totalPages(): Optional<Int> = totalPages.getOptional("totalPages")
-
-    /**
-     * Returns the raw JSON value of [items].
+     * Returns the raw JSON value of [data].
      *
-     * Unlike [items], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [data], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<TemplateResponseV2>> = items
+    @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<Data> = data
 
     /**
-     * Returns the raw JSON value of [page].
+     * Returns the raw JSON value of [error].
      *
-     * Unlike [page], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [error], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("page") @ExcludeMissing fun _page(): JsonField<Int> = page
+    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<ApiError> = error
 
     /**
-     * Returns the raw JSON value of [pageSize].
+     * Returns the raw JSON value of [meta].
      *
-     * Unlike [pageSize], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [meta], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("pageSize") @ExcludeMissing fun _pageSize(): JsonField<Int> = pageSize
+    @JsonProperty("meta") @ExcludeMissing fun _meta(): JsonField<ApiMeta> = meta
 
     /**
-     * Returns the raw JSON value of [totalCount].
+     * Returns the raw JSON value of [success].
      *
-     * Unlike [totalCount], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [success], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("totalCount") @ExcludeMissing fun _totalCount(): JsonField<Int> = totalCount
-
-    /**
-     * Returns the raw JSON value of [totalPages].
-     *
-     * Unlike [totalPages], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("totalPages") @ExcludeMissing fun _totalPages(): JsonField<Int> = totalPages
+    @JsonProperty("success") @ExcludeMissing fun _success(): JsonField<Boolean> = success
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -126,85 +121,70 @@ private constructor(
     /** A builder for [TemplateListResponse]. */
     class Builder internal constructor() {
 
-        private var items: JsonField<MutableList<TemplateResponseV2>>? = null
-        private var page: JsonField<Int> = JsonMissing.of()
-        private var pageSize: JsonField<Int> = JsonMissing.of()
-        private var totalCount: JsonField<Int> = JsonMissing.of()
-        private var totalPages: JsonField<Int> = JsonMissing.of()
+        private var data: JsonField<Data> = JsonMissing.of()
+        private var error: JsonField<ApiError> = JsonMissing.of()
+        private var meta: JsonField<ApiMeta> = JsonMissing.of()
+        private var success: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(templateListResponse: TemplateListResponse) = apply {
-            items = templateListResponse.items.map { it.toMutableList() }
-            page = templateListResponse.page
-            pageSize = templateListResponse.pageSize
-            totalCount = templateListResponse.totalCount
-            totalPages = templateListResponse.totalPages
+            data = templateListResponse.data
+            error = templateListResponse.error
+            meta = templateListResponse.meta
+            success = templateListResponse.success
             additionalProperties = templateListResponse.additionalProperties.toMutableMap()
         }
 
-        fun items(items: List<TemplateResponseV2>) = items(JsonField.of(items))
+        /** The response data (null if error) */
+        fun data(data: Data?) = data(JsonField.ofNullable(data))
+
+        /** Alias for calling [Builder.data] with `data.orElse(null)`. */
+        fun data(data: Optional<Data>) = data(data.getOrNull())
 
         /**
-         * Sets [Builder.items] to an arbitrary JSON value.
+         * Sets [Builder.data] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.items] with a well-typed `List<TemplateResponseV2>`
-         * value instead. This method is primarily for setting the field to an undocumented or not
-         * yet supported value.
-         */
-        fun items(items: JsonField<List<TemplateResponseV2>>) = apply {
-            this.items = items.map { it.toMutableList() }
-        }
-
-        /**
-         * Adds a single [TemplateResponseV2] to [items].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addItem(item: TemplateResponseV2) = apply {
-            items =
-                (items ?: JsonField.of(mutableListOf())).also { checkKnown("items", it).add(item) }
-        }
-
-        fun page(page: Int) = page(JsonField.of(page))
-
-        /**
-         * Sets [Builder.page] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.page] with a well-typed [Int] value instead. This method
-         * is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun page(page: JsonField<Int>) = apply { this.page = page }
-
-        fun pageSize(pageSize: Int) = pageSize(JsonField.of(pageSize))
-
-        /**
-         * Sets [Builder.pageSize] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.pageSize] with a well-typed [Int] value instead. This
+         * You should usually call [Builder.data] with a well-typed [Data] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun pageSize(pageSize: JsonField<Int>) = apply { this.pageSize = pageSize }
+        fun data(data: JsonField<Data>) = apply { this.data = data }
 
-        fun totalCount(totalCount: Int) = totalCount(JsonField.of(totalCount))
+        /** Error details (null if successful) */
+        fun error(error: ApiError?) = error(JsonField.ofNullable(error))
 
-        /**
-         * Sets [Builder.totalCount] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.totalCount] with a well-typed [Int] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun totalCount(totalCount: JsonField<Int>) = apply { this.totalCount = totalCount }
-
-        fun totalPages(totalPages: Int) = totalPages(JsonField.of(totalPages))
+        /** Alias for calling [Builder.error] with `error.orElse(null)`. */
+        fun error(error: Optional<ApiError>) = error(error.getOrNull())
 
         /**
-         * Sets [Builder.totalPages] to an arbitrary JSON value.
+         * Sets [Builder.error] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.totalPages] with a well-typed [Int] value instead. This
+         * You should usually call [Builder.error] with a well-typed [ApiError] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun totalPages(totalPages: JsonField<Int>) = apply { this.totalPages = totalPages }
+        fun error(error: JsonField<ApiError>) = apply { this.error = error }
+
+        /** Metadata about the request and response */
+        fun meta(meta: ApiMeta) = meta(JsonField.of(meta))
+
+        /**
+         * Sets [Builder.meta] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.meta] with a well-typed [ApiMeta] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun meta(meta: JsonField<ApiMeta>) = apply { this.meta = meta }
+
+        /** Indicates whether the request was successful */
+        fun success(success: Boolean) = success(JsonField.of(success))
+
+        /**
+         * Sets [Builder.success] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.success] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun success(success: JsonField<Boolean>) = apply { this.success = success }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -231,14 +211,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): TemplateListResponse =
-            TemplateListResponse(
-                (items ?: JsonMissing.of()).map { it.toImmutable() },
-                page,
-                pageSize,
-                totalCount,
-                totalPages,
-                additionalProperties.toMutableMap(),
-            )
+            TemplateListResponse(data, error, meta, success, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
@@ -248,11 +221,10 @@ private constructor(
             return@apply
         }
 
-        items().ifPresent { it.forEach { it.validate() } }
-        page()
-        pageSize()
-        totalCount()
-        totalPages()
+        data().ifPresent { it.validate() }
+        error().ifPresent { it.validate() }
+        meta().ifPresent { it.validate() }
+        success()
         validated = true
     }
 
@@ -271,11 +243,219 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (items.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
-            (if (page.asKnown().isPresent) 1 else 0) +
-            (if (pageSize.asKnown().isPresent) 1 else 0) +
-            (if (totalCount.asKnown().isPresent) 1 else 0) +
-            (if (totalPages.asKnown().isPresent) 1 else 0)
+        (data.asKnown().getOrNull()?.validity() ?: 0) +
+            (error.asKnown().getOrNull()?.validity() ?: 0) +
+            (meta.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (success.asKnown().isPresent) 1 else 0)
+
+    /** The response data (null if error) */
+    class Data
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val pagination: JsonField<PaginationMeta>,
+        private val templates: JsonField<List<Template>>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("pagination")
+            @ExcludeMissing
+            pagination: JsonField<PaginationMeta> = JsonMissing.of(),
+            @JsonProperty("templates")
+            @ExcludeMissing
+            templates: JsonField<List<Template>> = JsonMissing.of(),
+        ) : this(pagination, templates, mutableMapOf())
+
+        /**
+         * Pagination metadata
+         *
+         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun pagination(): Optional<PaginationMeta> = pagination.getOptional("pagination")
+
+        /**
+         * List of templates
+         *
+         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun templates(): Optional<List<Template>> = templates.getOptional("templates")
+
+        /**
+         * Returns the raw JSON value of [pagination].
+         *
+         * Unlike [pagination], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("pagination")
+        @ExcludeMissing
+        fun _pagination(): JsonField<PaginationMeta> = pagination
+
+        /**
+         * Returns the raw JSON value of [templates].
+         *
+         * Unlike [templates], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("templates")
+        @ExcludeMissing
+        fun _templates(): JsonField<List<Template>> = templates
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Data]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Data]. */
+        class Builder internal constructor() {
+
+            private var pagination: JsonField<PaginationMeta> = JsonMissing.of()
+            private var templates: JsonField<MutableList<Template>>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(data: Data) = apply {
+                pagination = data.pagination
+                templates = data.templates.map { it.toMutableList() }
+                additionalProperties = data.additionalProperties.toMutableMap()
+            }
+
+            /** Pagination metadata */
+            fun pagination(pagination: PaginationMeta) = pagination(JsonField.of(pagination))
+
+            /**
+             * Sets [Builder.pagination] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.pagination] with a well-typed [PaginationMeta] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun pagination(pagination: JsonField<PaginationMeta>) = apply {
+                this.pagination = pagination
+            }
+
+            /** List of templates */
+            fun templates(templates: List<Template>) = templates(JsonField.of(templates))
+
+            /**
+             * Sets [Builder.templates] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.templates] with a well-typed `List<Template>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun templates(templates: JsonField<List<Template>>) = apply {
+                this.templates = templates.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [Template] to [templates].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addTemplate(template: Template) = apply {
+                templates =
+                    (templates ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("templates", it).add(template)
+                    }
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Data].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Data =
+                Data(
+                    pagination,
+                    (templates ?: JsonMissing.of()).map { it.toImmutable() },
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Data = apply {
+            if (validated) {
+                return@apply
+            }
+
+            pagination().ifPresent { it.validate() }
+            templates().ifPresent { it.forEach { it.validate() } }
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentDmInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (pagination.asKnown().getOrNull()?.validity() ?: 0) +
+                (templates.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Data &&
+                pagination == other.pagination &&
+                templates == other.templates &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(pagination, templates, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Data{pagination=$pagination, templates=$templates, additionalProperties=$additionalProperties}"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -283,20 +463,19 @@ private constructor(
         }
 
         return other is TemplateListResponse &&
-            items == other.items &&
-            page == other.page &&
-            pageSize == other.pageSize &&
-            totalCount == other.totalCount &&
-            totalPages == other.totalPages &&
+            data == other.data &&
+            error == other.error &&
+            meta == other.meta &&
+            success == other.success &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(items, page, pageSize, totalCount, totalPages, additionalProperties)
+        Objects.hash(data, error, meta, success, additionalProperties)
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TemplateListResponse{items=$items, page=$page, pageSize=$pageSize, totalCount=$totalCount, totalPages=$totalPages, additionalProperties=$additionalProperties}"
+        "TemplateListResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
 }
