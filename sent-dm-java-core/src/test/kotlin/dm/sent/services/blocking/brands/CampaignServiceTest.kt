@@ -9,6 +9,7 @@ import dm.sent.models.brands.campaigns.CampaignData
 import dm.sent.models.brands.campaigns.CampaignDeleteParams
 import dm.sent.models.brands.campaigns.CampaignUpdateParams
 import dm.sent.models.brands.campaigns.MessagingUseCaseUs
+import dm.sent.models.brands.campaigns.SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -38,7 +39,8 @@ internal class CampaignServiceTest {
                             .name("Customer Notifications")
                             .type("App")
                             .addUseCase(
-                                CampaignData.UseCase.builder()
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+                                    .builder()
                                     .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                     .addSampleMessage(
                                         "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -96,7 +98,8 @@ internal class CampaignServiceTest {
                             .name("Customer Notifications Updated")
                             .type("App")
                             .addUseCase(
-                                CampaignData.UseCase.builder()
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+                                    .builder()
                                     .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                     .addSampleMessage(
                                         "Hi {name}, your appointment is confirmed for {date} at {time}."
