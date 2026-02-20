@@ -2,7 +2,6 @@
 
 package dm.sent.services.blocking
 
-import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClient
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCreateParams
@@ -10,19 +9,13 @@ import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class ProfileServiceTest {
 
     @Disabled("Prism tests are disabled")
     @Test
     fun create() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val profileService = client.profiles()
 
         val apiResponseOfProfileDetail =
@@ -50,11 +43,7 @@ internal class ProfileServiceTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun retrieve() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val profileService = client.profiles()
 
         val apiResponseOfProfileDetail =
@@ -66,11 +55,7 @@ internal class ProfileServiceTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun update() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val profileService = client.profiles()
 
         val apiResponseOfProfileDetail =
@@ -105,11 +90,7 @@ internal class ProfileServiceTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun list() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val profileService = client.profiles()
 
         val profiles = profileService.list()
@@ -120,11 +101,7 @@ internal class ProfileServiceTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun delete() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val profileService = client.profiles()
 
         profileService.delete(
@@ -139,11 +116,7 @@ internal class ProfileServiceTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun complete() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val profileService = client.profiles()
 
         val response =

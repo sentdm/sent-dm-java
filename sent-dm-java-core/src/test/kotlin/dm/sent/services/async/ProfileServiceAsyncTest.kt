@@ -2,7 +2,6 @@
 
 package dm.sent.services.async
 
-import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClientAsync
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCreateParams
@@ -10,19 +9,13 @@ import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class ProfileServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
     fun create() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val profileServiceAsync = client.profiles()
 
         val apiResponseOfProfileDetailFuture =
@@ -51,11 +44,7 @@ internal class ProfileServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun retrieve() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val profileServiceAsync = client.profiles()
 
         val apiResponseOfProfileDetailFuture =
@@ -68,11 +57,7 @@ internal class ProfileServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun update() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val profileServiceAsync = client.profiles()
 
         val apiResponseOfProfileDetailFuture =
@@ -108,11 +93,7 @@ internal class ProfileServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun list() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val profileServiceAsync = client.profiles()
 
         val profilesFuture = profileServiceAsync.list()
@@ -124,11 +105,7 @@ internal class ProfileServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun delete() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val profileServiceAsync = client.profiles()
 
         val future =
@@ -146,11 +123,7 @@ internal class ProfileServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun complete() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val profileServiceAsync = client.profiles()
 
         val responseFuture =

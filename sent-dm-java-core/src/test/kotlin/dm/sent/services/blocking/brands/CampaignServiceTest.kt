@@ -2,7 +2,6 @@
 
 package dm.sent.services.blocking.brands
 
-import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClient
 import dm.sent.models.brands.campaigns.CampaignCreateParams
 import dm.sent.models.brands.campaigns.CampaignData
@@ -12,19 +11,13 @@ import dm.sent.models.brands.campaigns.MessagingUseCaseUs
 import dm.sent.models.brands.campaigns.SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class CampaignServiceTest {
 
     @Disabled("Prism tests are disabled")
     @Test
     fun create() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val campaignService = client.brands().campaigns()
 
         val apiResponseTcrCampaignWithUseCases =
@@ -78,11 +71,7 @@ internal class CampaignServiceTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun update() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val campaignService = client.brands().campaigns()
 
         val apiResponseTcrCampaignWithUseCases =
@@ -131,11 +120,7 @@ internal class CampaignServiceTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun list() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val campaignService = client.brands().campaigns()
 
         val campaigns = campaignService.list("a1b2c3d4-e5f6-7890-abcd-ef1234567890")
@@ -146,11 +131,7 @@ internal class CampaignServiceTest {
     @Disabled("Prism tests are disabled")
     @Test
     fun delete() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val campaignService = client.brands().campaigns()
 
         campaignService.delete(
