@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 internal class MeServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
