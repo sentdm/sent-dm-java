@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 internal class UserServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
@@ -22,7 +22,7 @@ internal class UserServiceTest {
         apiResponseOfUser.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
@@ -33,7 +33,7 @@ internal class UserServiceTest {
         users.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun invite() {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
@@ -53,7 +53,7 @@ internal class UserServiceTest {
         apiResponseOfUser.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun remove() {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
@@ -68,7 +68,7 @@ internal class UserServiceTest {
         )
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun updateRole() {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()

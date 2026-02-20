@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 
 internal class WebhookServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -39,7 +39,7 @@ internal class WebhookServiceAsyncTest {
         apiResponseWebhook.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -52,7 +52,7 @@ internal class WebhookServiceAsyncTest {
         apiResponseWebhook.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -77,7 +77,7 @@ internal class WebhookServiceAsyncTest {
         apiResponseWebhook.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -97,7 +97,7 @@ internal class WebhookServiceAsyncTest {
         webhooks.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -108,7 +108,7 @@ internal class WebhookServiceAsyncTest {
         val response = future.get()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun listEventTypes() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -120,7 +120,7 @@ internal class WebhookServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun listEvents() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -140,7 +140,7 @@ internal class WebhookServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun rotateSecret() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -159,7 +159,7 @@ internal class WebhookServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun test() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -179,7 +179,7 @@ internal class WebhookServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun toggleStatus() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()

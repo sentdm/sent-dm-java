@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 
 internal class CampaignServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -69,7 +69,7 @@ internal class CampaignServiceAsyncTest {
         apiResponseTcrCampaignWithUseCases.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -119,7 +119,7 @@ internal class CampaignServiceAsyncTest {
         apiResponseTcrCampaignWithUseCases.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -131,7 +131,7 @@ internal class CampaignServiceAsyncTest {
         campaigns.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()

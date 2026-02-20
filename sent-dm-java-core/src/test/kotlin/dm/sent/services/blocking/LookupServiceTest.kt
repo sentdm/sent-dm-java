@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 internal class LookupServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrievePhoneInfo() {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
