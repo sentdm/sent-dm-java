@@ -2,25 +2,18 @@
 
 package dm.sent.services.async
 
-import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClientAsync
 import dm.sent.core.JsonValue
 import dm.sent.models.messages.MessageSendParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class MessageServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveActivities() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val messageServiceAsync = client.messages()
 
         val responseFuture =
@@ -30,14 +23,10 @@ internal class MessageServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveStatus() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val messageServiceAsync = client.messages()
 
         val responseFuture =
@@ -47,14 +36,10 @@ internal class MessageServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun send() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val messageServiceAsync = client.messages()
 
         val responseFuture =

@@ -2,7 +2,6 @@
 
 package dm.sent.services.blocking
 
-import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClient
 import dm.sent.models.brands.BrandCreateParams
 import dm.sent.models.brands.BrandData
@@ -13,19 +12,13 @@ import dm.sent.models.brands.TcrBrandRelationship
 import dm.sent.models.brands.TcrVertical
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class BrandServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val brandService = client.brands()
 
         val apiResponseBrandWithKyc =
@@ -71,14 +64,10 @@ internal class BrandServiceTest {
         apiResponseBrandWithKyc.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val brandService = client.brands()
 
         val apiResponseBrandWithKyc =
@@ -125,14 +114,10 @@ internal class BrandServiceTest {
         apiResponseBrandWithKyc.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val brandService = client.brands()
 
         val brands = brandService.list()
@@ -140,14 +125,10 @@ internal class BrandServiceTest {
         brands.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val brandService = client.brands()
 
         brandService.delete(

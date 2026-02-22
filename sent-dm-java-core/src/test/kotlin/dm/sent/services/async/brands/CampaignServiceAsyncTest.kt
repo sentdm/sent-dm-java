@@ -2,7 +2,6 @@
 
 package dm.sent.services.async.brands
 
-import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClientAsync
 import dm.sent.models.brands.campaigns.CampaignCreateParams
 import dm.sent.models.brands.campaigns.CampaignData
@@ -12,19 +11,13 @@ import dm.sent.models.brands.campaigns.MessagingUseCaseUs
 import dm.sent.models.brands.campaigns.SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class CampaignServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.brands().campaigns()
 
         val apiResponseTcrCampaignWithUseCasesFuture =
@@ -76,14 +69,10 @@ internal class CampaignServiceAsyncTest {
         apiResponseTcrCampaignWithUseCases.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.brands().campaigns()
 
         val apiResponseTcrCampaignWithUseCasesFuture =
@@ -130,14 +119,10 @@ internal class CampaignServiceAsyncTest {
         apiResponseTcrCampaignWithUseCases.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.brands().campaigns()
 
         val campaignsFuture = campaignServiceAsync.list("a1b2c3d4-e5f6-7890-abcd-ef1234567890")
@@ -146,14 +131,10 @@ internal class CampaignServiceAsyncTest {
         campaigns.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.brands().campaigns()
 
         val future =

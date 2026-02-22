@@ -8,7 +8,7 @@ repositories {
 
 allprojects {
     group = "dm.sent"
-    version = "0.6.0" // x-release-please-version
+    version = "0.7.0" // x-release-please-version
 }
 
 subprojects {

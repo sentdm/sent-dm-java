@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-dm-java)](https://central.sonatype.com/artifact/dm.sent/sent-dm-java/0.6.0)
-[![javadoc](https://javadoc.io/badge2/dm.sent/sent-dm-java/0.6.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-dm-java/0.6.0)
+[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-dm-java)](https://central.sonatype.com/artifact/dm.sent/sent-dm-java/0.7.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-dm-java/0.7.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-dm-java/0.7.0)
 
 <!-- x-release-please-end -->
 
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.6.0).
+The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.7.0).
 
 <!-- x-release-please-end -->
 
@@ -24,7 +24,7 @@ The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm).
 ### Gradle
 
 ```kotlin
-implementation("dm.sent:sent-dm-java:0.6.0")
+implementation("dm.sent:sent-dm-java:0.7.0")
 ```
 
 ### Maven
@@ -33,7 +33,7 @@ implementation("dm.sent:sent-dm-java:0.6.0")
 <dependency>
   <groupId>dm.sent</groupId>
   <artifactId>sent-dm-java</artifactId>
-  <version>0.6.0</version>
+  <version>0.7.0</version>
 </dependency>
 ```
 
@@ -390,6 +390,25 @@ SentDmClient client = SentDmOkHttpClient.builder()
     ))
     .build();
 ```
+
+### Connection pooling
+
+To customize the underlying OkHttp connection pool, configure the client using the `maxIdleConnections` and `keepAliveDuration` methods:
+
+```java
+import dm.sent.client.SentDmClient;
+import dm.sent.client.okhttp.SentDmOkHttpClient;
+import java.time.Duration;
+
+SentDmClient client = SentDmOkHttpClient.builder()
+    .fromEnv()
+    // If `maxIdleConnections` is set, then `keepAliveDuration` must be set, and vice versa.
+    .maxIdleConnections(10)
+    .keepAliveDuration(Duration.ofMinutes(2))
+    .build();
+```
+
+If both options are unset, OkHttp's default connection pool settings are used.
 
 ### HTTPS
 

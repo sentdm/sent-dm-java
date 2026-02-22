@@ -2,7 +2,6 @@
 
 package dm.sent.services.async
 
-import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClientAsync
 import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookListEventsParams
@@ -13,19 +12,13 @@ import dm.sent.models.webhooks.WebhookToggleStatusParams
 import dm.sent.models.webhooks.WebhookUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class WebhookServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
         val apiResponseWebhookFuture =
@@ -46,14 +39,10 @@ internal class WebhookServiceAsyncTest {
         apiResponseWebhook.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
         val apiResponseWebhookFuture =
@@ -63,14 +52,10 @@ internal class WebhookServiceAsyncTest {
         apiResponseWebhook.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
         val apiResponseWebhookFuture =
@@ -92,14 +77,10 @@ internal class WebhookServiceAsyncTest {
         apiResponseWebhook.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
         val webhooksFuture =
@@ -116,14 +97,10 @@ internal class WebhookServiceAsyncTest {
         webhooks.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
         val future = webhookServiceAsync.delete("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
@@ -131,14 +108,10 @@ internal class WebhookServiceAsyncTest {
         val response = future.get()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun listEventTypes() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
         val responseFuture = webhookServiceAsync.listEventTypes()
@@ -147,14 +120,10 @@ internal class WebhookServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun listEvents() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
         val responseFuture =
@@ -171,14 +140,10 @@ internal class WebhookServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun rotateSecret() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
         val responseFuture =
@@ -194,14 +159,10 @@ internal class WebhookServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun test() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
         val responseFuture =
@@ -218,14 +179,10 @@ internal class WebhookServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun toggleStatus() {
-        val client =
-            SentDmOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
         val apiResponseWebhookFuture =
