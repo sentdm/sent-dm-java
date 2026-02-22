@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.7.0 (2026-02-22)
+
+Full Changelog: [v0.6.0...v0.7.0](https://github.com/sentdm/sent-dm-java/compare/v0.6.0...v0.7.0)
+
+### Features
+
+* **client:** add connection pooling option ([7d04245](https://github.com/sentdm/sent-dm-java/commit/7d04245815d1ad0a7690adf6f53ae98e574bc56c))
+
+
+### Chores
+
+* **internal:** make `OkHttp` constructor internal ([6389eb0](https://github.com/sentdm/sent-dm-java/commit/6389eb0a1cebb8e7291af86de87578f426601c14))
+* **internal:** remove mock server code ([d81a366](https://github.com/sentdm/sent-dm-java/commit/d81a3667dd4f8d761f6f4e5ff90dc2fcb3882a1c))
+* update mock server docs ([e1413d2](https://github.com/sentdm/sent-dm-java/commit/e1413d2932000755edf64a0422f5cd99a9f82544))
+
 ## 0.6.0 (2026-02-18)
 
 Full Changelog: [v0.5.1...v0.6.0](https://github.com/sentdm/sent-dm-java/compare/v0.5.1...v0.6.0)
