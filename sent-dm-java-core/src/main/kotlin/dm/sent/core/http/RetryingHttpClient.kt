@@ -1,3 +1,5 @@
+// File generated from our OpenAPI spec by Stainless.
+
 package dm.sent.core.http
 
 import dm.sent.core.DefaultSleeper
