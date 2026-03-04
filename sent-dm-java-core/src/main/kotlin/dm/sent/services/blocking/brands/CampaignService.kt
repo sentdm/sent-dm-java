@@ -15,6 +15,7 @@ import dm.sent.models.brands.campaigns.CampaignListResponse
 import dm.sent.models.brands.campaigns.CampaignUpdateParams
 import java.util.function.Consumer
 
+/** Register and manage 10DLC brands for SMS compliance */
 interface CampaignService {
 
     /**

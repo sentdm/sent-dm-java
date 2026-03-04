@@ -26,6 +26,7 @@ import dm.sent.models.brands.campaigns.CampaignUpdateParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Register and manage 10DLC brands for SMS compliance */
 class CampaignServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     CampaignService {
 

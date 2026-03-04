@@ -68,22 +68,30 @@ class SentDmClientImpl(private val clientOptions: ClientOptions) : SentDmClient 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClient =
         SentDmClientImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    /** Configure webhook endpoints for real-time event delivery */
     override fun webhooks(): WebhookService = webhooks
 
+    /** Invite, update, and manage organization users and roles */
     override fun users(): UserService = users
 
+    /** Manage message templates with variable substitution */
     override fun templates(): TemplateService = templates
 
+    /** Manage organization profiles */
     override fun profiles(): ProfileService = profiles
 
+    /** Send and track SMS and WhatsApp messages */
     override fun messages(): MessageService = messages
 
     override fun lookup(): LookupService = lookup
 
+    /** Create, update, and manage customer contact lists */
     override fun contacts(): ContactService = contacts
 
+    /** Register and manage 10DLC brands for SMS compliance */
     override fun brands(): BrandService = brands
 
+    /** Retrieve account details */
     override fun me(): MeService = me
 
     override fun close() = clientOptions.close()
@@ -134,22 +142,30 @@ class SentDmClientImpl(private val clientOptions: ClientOptions) : SentDmClient 
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
+        /** Configure webhook endpoints for real-time event delivery */
         override fun webhooks(): WebhookService.WithRawResponse = webhooks
 
+        /** Invite, update, and manage organization users and roles */
         override fun users(): UserService.WithRawResponse = users
 
+        /** Manage message templates with variable substitution */
         override fun templates(): TemplateService.WithRawResponse = templates
 
+        /** Manage organization profiles */
         override fun profiles(): ProfileService.WithRawResponse = profiles
 
+        /** Send and track SMS and WhatsApp messages */
         override fun messages(): MessageService.WithRawResponse = messages
 
         override fun lookup(): LookupService.WithRawResponse = lookup
 
+        /** Create, update, and manage customer contact lists */
         override fun contacts(): ContactService.WithRawResponse = contacts
 
+        /** Register and manage 10DLC brands for SMS compliance */
         override fun brands(): BrandService.WithRawResponse = brands
 
+        /** Retrieve account details */
         override fun me(): MeService.WithRawResponse = me
     }
 }

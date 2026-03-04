@@ -18,6 +18,7 @@ import dm.sent.models.me.MeRetrieveParams
 import dm.sent.models.me.MeRetrieveResponse
 import java.util.function.Consumer
 
+/** Retrieve account details */
 class MeServiceImpl internal constructor(private val clientOptions: ClientOptions) : MeService {
 
     private val withRawResponse: MeService.WithRawResponse by lazy {

@@ -16,6 +16,7 @@ import dm.sent.models.users.UserUpdateRoleParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** Invite, update, and manage organization users and roles */
 interface UserServiceAsync {
 
     /**

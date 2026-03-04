@@ -25,6 +25,7 @@ import dm.sent.models.webhooks.WebhookToggleStatusParams
 import dm.sent.models.webhooks.WebhookUpdateParams
 import java.util.function.Consumer
 
+/** Configure webhook endpoints for real-time event delivery */
 interface WebhookService {
 
     /**

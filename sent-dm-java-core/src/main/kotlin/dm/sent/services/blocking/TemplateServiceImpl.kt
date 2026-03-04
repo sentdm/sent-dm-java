@@ -27,6 +27,7 @@ import dm.sent.models.templates.TemplateUpdateParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Manage message templates with variable substitution */
 class TemplateServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     TemplateService {
 

@@ -28,6 +28,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Manage message templates with variable substitution */
 class TemplateServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     TemplateServiceAsync {
 
