@@ -80,22 +80,30 @@ class SentDmClientAsyncImpl(private val clientOptions: ClientOptions) : SentDmCl
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClientAsync =
         SentDmClientAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    /** Configure webhook endpoints for real-time event delivery */
     override fun webhooks(): WebhookServiceAsync = webhooks
 
+    /** Invite, update, and manage organization users and roles */
     override fun users(): UserServiceAsync = users
 
+    /** Manage message templates with variable substitution */
     override fun templates(): TemplateServiceAsync = templates
 
+    /** Manage organization profiles */
     override fun profiles(): ProfileServiceAsync = profiles
 
+    /** Send and track SMS and WhatsApp messages */
     override fun messages(): MessageServiceAsync = messages
 
     override fun lookup(): LookupServiceAsync = lookup
 
+    /** Create, update, and manage customer contact lists */
     override fun contacts(): ContactServiceAsync = contacts
 
+    /** Register and manage 10DLC brands for SMS compliance */
     override fun brands(): BrandServiceAsync = brands
 
+    /** Retrieve account details */
     override fun me(): MeServiceAsync = me
 
     override fun close() = clientOptions.close()
@@ -146,22 +154,30 @@ class SentDmClientAsyncImpl(private val clientOptions: ClientOptions) : SentDmCl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
+        /** Configure webhook endpoints for real-time event delivery */
         override fun webhooks(): WebhookServiceAsync.WithRawResponse = webhooks
 
+        /** Invite, update, and manage organization users and roles */
         override fun users(): UserServiceAsync.WithRawResponse = users
 
+        /** Manage message templates with variable substitution */
         override fun templates(): TemplateServiceAsync.WithRawResponse = templates
 
+        /** Manage organization profiles */
         override fun profiles(): ProfileServiceAsync.WithRawResponse = profiles
 
+        /** Send and track SMS and WhatsApp messages */
         override fun messages(): MessageServiceAsync.WithRawResponse = messages
 
         override fun lookup(): LookupServiceAsync.WithRawResponse = lookup
 
+        /** Create, update, and manage customer contact lists */
         override fun contacts(): ContactServiceAsync.WithRawResponse = contacts
 
+        /** Register and manage 10DLC brands for SMS compliance */
         override fun brands(): BrandServiceAsync.WithRawResponse = brands
 
+        /** Retrieve account details */
         override fun me(): MeServiceAsync.WithRawResponse = me
     }
 }

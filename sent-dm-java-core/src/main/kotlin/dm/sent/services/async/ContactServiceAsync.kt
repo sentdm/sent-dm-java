@@ -16,6 +16,7 @@ import dm.sent.models.contacts.ContactUpdateParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** Create, update, and manage customer contact lists */
 interface ContactServiceAsync {
 
     /**

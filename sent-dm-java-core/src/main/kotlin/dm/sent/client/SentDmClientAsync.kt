@@ -50,22 +50,30 @@ interface SentDmClientAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClientAsync
 
+    /** Configure webhook endpoints for real-time event delivery */
     fun webhooks(): WebhookServiceAsync
 
+    /** Invite, update, and manage organization users and roles */
     fun users(): UserServiceAsync
 
+    /** Manage message templates with variable substitution */
     fun templates(): TemplateServiceAsync
 
+    /** Manage organization profiles */
     fun profiles(): ProfileServiceAsync
 
+    /** Send and track SMS and WhatsApp messages */
     fun messages(): MessageServiceAsync
 
     fun lookup(): LookupServiceAsync
 
+    /** Create, update, and manage customer contact lists */
     fun contacts(): ContactServiceAsync
 
+    /** Register and manage 10DLC brands for SMS compliance */
     fun brands(): BrandServiceAsync
 
+    /** Retrieve account details */
     fun me(): MeServiceAsync
 
     /**
@@ -93,22 +101,30 @@ interface SentDmClientAsync {
             modifier: Consumer<ClientOptions.Builder>
         ): SentDmClientAsync.WithRawResponse
 
+        /** Configure webhook endpoints for real-time event delivery */
         fun webhooks(): WebhookServiceAsync.WithRawResponse
 
+        /** Invite, update, and manage organization users and roles */
         fun users(): UserServiceAsync.WithRawResponse
 
+        /** Manage message templates with variable substitution */
         fun templates(): TemplateServiceAsync.WithRawResponse
 
+        /** Manage organization profiles */
         fun profiles(): ProfileServiceAsync.WithRawResponse
 
+        /** Send and track SMS and WhatsApp messages */
         fun messages(): MessageServiceAsync.WithRawResponse
 
         fun lookup(): LookupServiceAsync.WithRawResponse
 
+        /** Create, update, and manage customer contact lists */
         fun contacts(): ContactServiceAsync.WithRawResponse
 
+        /** Register and manage 10DLC brands for SMS compliance */
         fun brands(): BrandServiceAsync.WithRawResponse
 
+        /** Retrieve account details */
         fun me(): MeServiceAsync.WithRawResponse
     }
 }

@@ -27,6 +27,7 @@ import dm.sent.models.contacts.ContactUpdateParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Create, update, and manage customer contact lists */
 class ContactServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     ContactService {
 

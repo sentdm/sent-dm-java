@@ -16,6 +16,7 @@ import dm.sent.models.brands.BrandUpdateParams
 import dm.sent.services.blocking.brands.CampaignService
 import java.util.function.Consumer
 
+/** Register and manage 10DLC brands for SMS compliance */
 interface BrandService {
 
     /**
@@ -30,6 +31,7 @@ interface BrandService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): BrandService
 
+    /** Register and manage 10DLC brands for SMS compliance */
     fun campaigns(): CampaignService
 
     /**
@@ -123,6 +125,7 @@ interface BrandService {
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): BrandService.WithRawResponse
 
+        /** Register and manage 10DLC brands for SMS compliance */
         fun campaigns(): CampaignService.WithRawResponse
 
         /**

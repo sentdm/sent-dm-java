@@ -19,6 +19,7 @@ import dm.sent.models.me.MeRetrieveResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** Retrieve account details */
 class MeServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     MeServiceAsync {
 

@@ -18,6 +18,7 @@ import dm.sent.models.profiles.ProfileUpdateParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** Manage organization profiles */
 interface ProfileServiceAsync {
 
     /**

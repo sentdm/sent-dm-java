@@ -50,22 +50,30 @@ interface SentDmClient {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClient
 
+    /** Configure webhook endpoints for real-time event delivery */
     fun webhooks(): WebhookService
 
+    /** Invite, update, and manage organization users and roles */
     fun users(): UserService
 
+    /** Manage message templates with variable substitution */
     fun templates(): TemplateService
 
+    /** Manage organization profiles */
     fun profiles(): ProfileService
 
+    /** Send and track SMS and WhatsApp messages */
     fun messages(): MessageService
 
     fun lookup(): LookupService
 
+    /** Create, update, and manage customer contact lists */
     fun contacts(): ContactService
 
+    /** Register and manage 10DLC brands for SMS compliance */
     fun brands(): BrandService
 
+    /** Retrieve account details */
     fun me(): MeService
 
     /**
@@ -91,22 +99,30 @@ interface SentDmClient {
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): SentDmClient.WithRawResponse
 
+        /** Configure webhook endpoints for real-time event delivery */
         fun webhooks(): WebhookService.WithRawResponse
 
+        /** Invite, update, and manage organization users and roles */
         fun users(): UserService.WithRawResponse
 
+        /** Manage message templates with variable substitution */
         fun templates(): TemplateService.WithRawResponse
 
+        /** Manage organization profiles */
         fun profiles(): ProfileService.WithRawResponse
 
+        /** Send and track SMS and WhatsApp messages */
         fun messages(): MessageService.WithRawResponse
 
         fun lookup(): LookupService.WithRawResponse
 
+        /** Create, update, and manage customer contact lists */
         fun contacts(): ContactService.WithRawResponse
 
+        /** Register and manage 10DLC brands for SMS compliance */
         fun brands(): BrandService.WithRawResponse
 
+        /** Retrieve account details */
         fun me(): MeService.WithRawResponse
     }
 }
