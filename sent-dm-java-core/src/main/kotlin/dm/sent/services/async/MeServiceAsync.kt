@@ -10,6 +10,7 @@ import dm.sent.models.me.MeRetrieveResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** Retrieve account details */
 interface MeServiceAsync {
 
     /**

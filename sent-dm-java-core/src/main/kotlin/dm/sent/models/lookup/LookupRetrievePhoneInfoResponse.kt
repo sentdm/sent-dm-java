@@ -262,7 +262,7 @@ private constructor(
     private constructor(
         private val carrierName: JsonField<String>,
         private val isPorted: JsonField<Boolean>,
-        private val isValid: JsonField<Boolean>,
+        private val isValid_: JsonField<Boolean>,
         private val isVoip: JsonField<Boolean>,
         private val lineType: JsonField<String>,
         private val mobileCountryCode: JsonField<String>,
@@ -280,7 +280,9 @@ private constructor(
             @JsonProperty("isPorted")
             @ExcludeMissing
             isPorted: JsonField<Boolean> = JsonMissing.of(),
-            @JsonProperty("isValid") @ExcludeMissing isValid: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("isValid")
+            @ExcludeMissing
+            isValid_: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("isVoip") @ExcludeMissing isVoip: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("lineType")
             @ExcludeMissing
@@ -298,7 +300,7 @@ private constructor(
         ) : this(
             carrierName,
             isPorted,
-            isValid,
+            isValid_,
             isVoip,
             lineType,
             mobileCountryCode,
@@ -324,7 +326,7 @@ private constructor(
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun isValid(): Optional<Boolean> = isValid.getOptional("isValid")
+        fun isValid_(): Optional<Boolean> = isValid_.getOptional("isValid")
 
         /**
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -381,11 +383,11 @@ private constructor(
         @JsonProperty("isPorted") @ExcludeMissing fun _isPorted(): JsonField<Boolean> = isPorted
 
         /**
-         * Returns the raw JSON value of [isValid].
+         * Returns the raw JSON value of [isValid_].
          *
-         * Unlike [isValid], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [isValid_], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("isValid") @ExcludeMissing fun _isValid(): JsonField<Boolean> = isValid
+        @JsonProperty("isValid") @ExcludeMissing fun _isValid_(): JsonField<Boolean> = isValid_
 
         /**
          * Returns the raw JSON value of [isVoip].
@@ -460,7 +462,7 @@ private constructor(
 
             private var carrierName: JsonField<String> = JsonMissing.of()
             private var isPorted: JsonField<Boolean> = JsonMissing.of()
-            private var isValid: JsonField<Boolean> = JsonMissing.of()
+            private var isValid_: JsonField<Boolean> = JsonMissing.of()
             private var isVoip: JsonField<Boolean> = JsonMissing.of()
             private var lineType: JsonField<String> = JsonMissing.of()
             private var mobileCountryCode: JsonField<String> = JsonMissing.of()
@@ -473,7 +475,7 @@ private constructor(
             internal fun from(data: Data) = apply {
                 carrierName = data.carrierName
                 isPorted = data.isPorted
-                isValid = data.isValid
+                isValid_ = data.isValid_
                 isVoip = data.isVoip
                 lineType = data.lineType
                 mobileCountryCode = data.mobileCountryCode
@@ -520,16 +522,16 @@ private constructor(
              */
             fun isPorted(isPorted: JsonField<Boolean>) = apply { this.isPorted = isPorted }
 
-            fun isValid(isValid: Boolean) = isValid(JsonField.of(isValid))
+            fun isValid_(isValid_: Boolean) = isValid_(JsonField.of(isValid_))
 
             /**
-             * Sets [Builder.isValid] to an arbitrary JSON value.
+             * Sets [Builder.isValid_] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.isValid] with a well-typed [Boolean] value instead.
+             * You should usually call [Builder.isValid_] with a well-typed [Boolean] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun isValid(isValid: JsonField<Boolean>) = apply { this.isValid = isValid }
+            fun isValid_(isValid_: JsonField<Boolean>) = apply { this.isValid_ = isValid_ }
 
             fun isVoip(isVoip: Boolean?) = isVoip(JsonField.ofNullable(isVoip))
 
@@ -658,7 +660,7 @@ private constructor(
                 Data(
                     carrierName,
                     isPorted,
-                    isValid,
+                    isValid_,
                     isVoip,
                     lineType,
                     mobileCountryCode,
@@ -678,7 +680,7 @@ private constructor(
 
             carrierName()
             isPorted()
-            isValid()
+            isValid_()
             isVoip()
             lineType()
             mobileCountryCode()
@@ -706,7 +708,7 @@ private constructor(
         internal fun validity(): Int =
             (if (carrierName.asKnown().isPresent) 1 else 0) +
                 (if (isPorted.asKnown().isPresent) 1 else 0) +
-                (if (isValid.asKnown().isPresent) 1 else 0) +
+                (if (isValid_.asKnown().isPresent) 1 else 0) +
                 (if (isVoip.asKnown().isPresent) 1 else 0) +
                 (if (lineType.asKnown().isPresent) 1 else 0) +
                 (if (mobileCountryCode.asKnown().isPresent) 1 else 0) +
@@ -722,7 +724,7 @@ private constructor(
             return other is Data &&
                 carrierName == other.carrierName &&
                 isPorted == other.isPorted &&
-                isValid == other.isValid &&
+                isValid_ == other.isValid_ &&
                 isVoip == other.isVoip &&
                 lineType == other.lineType &&
                 mobileCountryCode == other.mobileCountryCode &&
@@ -736,7 +738,7 @@ private constructor(
             Objects.hash(
                 carrierName,
                 isPorted,
-                isValid,
+                isValid_,
                 isVoip,
                 lineType,
                 mobileCountryCode,
@@ -750,7 +752,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{carrierName=$carrierName, isPorted=$isPorted, isValid=$isValid, isVoip=$isVoip, lineType=$lineType, mobileCountryCode=$mobileCountryCode, mobileNetworkCode=$mobileNetworkCode, phoneNumber=$phoneNumber, provider=$provider, additionalProperties=$additionalProperties}"
+            "Data{carrierName=$carrierName, isPorted=$isPorted, isValid_=$isValid_, isVoip=$isVoip, lineType=$lineType, mobileCountryCode=$mobileCountryCode, mobileNetworkCode=$mobileNetworkCode, phoneNumber=$phoneNumber, provider=$provider, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

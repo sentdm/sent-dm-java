@@ -27,6 +27,7 @@ import dm.sent.models.users.UserUpdateRoleParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Invite, update, and manage organization users and roles */
 class UserServiceImpl internal constructor(private val clientOptions: ClientOptions) : UserService {
 
     private val withRawResponse: UserService.WithRawResponse by lazy {

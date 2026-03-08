@@ -18,6 +18,7 @@ import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
 import java.util.function.Consumer
 
+/** Manage organization profiles */
 interface ProfileService {
 
     /**

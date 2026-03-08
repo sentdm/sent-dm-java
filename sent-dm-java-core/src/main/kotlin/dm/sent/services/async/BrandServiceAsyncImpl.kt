@@ -29,6 +29,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Register and manage 10DLC brands for SMS compliance */
 class BrandServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     BrandServiceAsync {
 
@@ -43,6 +44,7 @@ class BrandServiceAsyncImpl internal constructor(private val clientOptions: Clie
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): BrandServiceAsync =
         BrandServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    /** Register and manage 10DLC brands for SMS compliance */
     override fun campaigns(): CampaignServiceAsync = campaigns
 
     override fun create(
@@ -90,6 +92,7 @@ class BrandServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
+        /** Register and manage 10DLC brands for SMS compliance */
         override fun campaigns(): CampaignServiceAsync.WithRawResponse = campaigns
 
         private val createHandler: Handler<ApiResponseBrandWithKyc> =

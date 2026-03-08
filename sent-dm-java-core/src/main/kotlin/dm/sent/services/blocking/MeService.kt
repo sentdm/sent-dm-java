@@ -10,6 +10,7 @@ import dm.sent.models.me.MeRetrieveParams
 import dm.sent.models.me.MeRetrieveResponse
 import java.util.function.Consumer
 
+/** Retrieve account details */
 interface MeService {
 
     /**

@@ -16,6 +16,7 @@ import dm.sent.services.async.brands.CampaignServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** Register and manage 10DLC brands for SMS compliance */
 interface BrandServiceAsync {
 
     /**
@@ -30,6 +31,7 @@ interface BrandServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): BrandServiceAsync
 
+    /** Register and manage 10DLC brands for SMS compliance */
     fun campaigns(): CampaignServiceAsync
 
     /**
@@ -137,6 +139,7 @@ interface BrandServiceAsync {
             modifier: Consumer<ClientOptions.Builder>
         ): BrandServiceAsync.WithRawResponse
 
+        /** Register and manage 10DLC brands for SMS compliance */
         fun campaigns(): CampaignServiceAsync.WithRawResponse
 
         /**

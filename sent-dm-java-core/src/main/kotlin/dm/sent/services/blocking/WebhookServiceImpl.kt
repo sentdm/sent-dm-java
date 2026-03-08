@@ -36,6 +36,7 @@ import dm.sent.models.webhooks.WebhookUpdateParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Configure webhook endpoints for real-time event delivery */
 class WebhookServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     WebhookService {
 

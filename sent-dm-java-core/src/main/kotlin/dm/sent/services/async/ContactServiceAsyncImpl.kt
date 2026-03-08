@@ -28,6 +28,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Create, update, and manage customer contact lists */
 class ContactServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     ContactServiceAsync {
 

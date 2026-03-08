@@ -29,6 +29,7 @@ import dm.sent.models.profiles.ProfileUpdateParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Manage organization profiles */
 class ProfileServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     ProfileService {
 

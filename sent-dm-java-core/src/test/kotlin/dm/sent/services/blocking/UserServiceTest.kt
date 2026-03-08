@@ -2,26 +2,19 @@
 
 package dm.sent.services.blocking
 
-import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClient
 import dm.sent.models.users.UserInviteParams
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserUpdateRoleParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class UserServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
         val apiResponseOfUser = userService.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -29,14 +22,10 @@ internal class UserServiceTest {
         apiResponseOfUser.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
         val users = userService.list()
@@ -44,14 +33,10 @@ internal class UserServiceTest {
         users.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun invite() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
         val apiResponseOfUser =
@@ -68,14 +53,10 @@ internal class UserServiceTest {
         apiResponseOfUser.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun remove() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
         userService.remove(
@@ -87,14 +68,10 @@ internal class UserServiceTest {
         )
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun updateRole() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
         val apiResponseOfUser =

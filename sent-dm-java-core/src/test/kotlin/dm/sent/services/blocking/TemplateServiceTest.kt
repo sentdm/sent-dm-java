@@ -2,7 +2,6 @@
 
 package dm.sent.services.blocking
 
-import dm.sent.TestServerExtension
 import dm.sent.client.okhttp.SentDmOkHttpClient
 import dm.sent.models.templates.SentDmServicesCommonContractsPocOsAuthenticationConfig
 import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateBody
@@ -19,19 +18,13 @@ import dm.sent.models.templates.TemplateUpdateParams
 import dm.sent.models.templates.TemplateVariable
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class TemplateServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
         val apiResponseTemplate =
@@ -221,14 +214,10 @@ internal class TemplateServiceTest {
         apiResponseTemplate.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
         val apiResponseTemplate = templateService.retrieve("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -236,14 +225,10 @@ internal class TemplateServiceTest {
         apiResponseTemplate.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
         val apiResponseTemplate =
@@ -415,14 +400,10 @@ internal class TemplateServiceTest {
         apiResponseTemplate.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
         val templates =
@@ -439,14 +420,10 @@ internal class TemplateServiceTest {
         templates.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
-        val client =
-            SentDmOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
         templateService.delete(
