@@ -14,7 +14,8 @@ internal class BrandsBrandDataTest {
         val brandsBrandData =
             BrandsBrandData.builder()
                 .compliance(
-                    BrandsBrandData.Compliance.builder()
+                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                        .builder()
                         .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                         .vertical(TcrVertical.PROFESSIONAL)
                         .addDestinationCountry(
@@ -28,7 +29,8 @@ internal class BrandsBrandDataTest {
                         .build()
                 )
                 .contact(
-                    BrandsBrandData.Contact.builder()
+                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                        .builder()
                         .name("x")
                         .businessName("businessName")
                         .email("dev@stainless.com")
@@ -38,11 +40,16 @@ internal class BrandsBrandDataTest {
                         .build()
                 )
                 .business(
-                    BrandsBrandData.Business.builder()
+                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                        .builder()
                         .city("city")
                         .country("country")
                         .countryOfRegistration("countryOfRegistration")
-                        .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
+                        .entityType(
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                .EntityType
+                                .PRIVATE_PROFIT
+                        )
                         .legalName("legalName")
                         .postalCode("postalCode")
                         .state("state")
@@ -56,7 +63,8 @@ internal class BrandsBrandDataTest {
 
         assertThat(brandsBrandData.compliance())
             .isEqualTo(
-                BrandsBrandData.Compliance.builder()
+                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                    .builder()
                     .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                     .vertical(TcrVertical.PROFESSIONAL)
                     .addDestinationCountry(
@@ -71,7 +79,8 @@ internal class BrandsBrandDataTest {
             )
         assertThat(brandsBrandData.contact())
             .isEqualTo(
-                BrandsBrandData.Contact.builder()
+                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                    .builder()
                     .name("x")
                     .businessName("businessName")
                     .email("dev@stainless.com")
@@ -82,11 +91,16 @@ internal class BrandsBrandDataTest {
             )
         assertThat(brandsBrandData.business())
             .contains(
-                BrandsBrandData.Business.builder()
+                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                    .builder()
                     .city("city")
                     .country("country")
                     .countryOfRegistration("countryOfRegistration")
-                    .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
+                    .entityType(
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                            .EntityType
+                            .PRIVATE_PROFIT
+                    )
                     .legalName("legalName")
                     .postalCode("postalCode")
                     .state("state")
@@ -104,7 +118,8 @@ internal class BrandsBrandDataTest {
         val brandsBrandData =
             BrandsBrandData.builder()
                 .compliance(
-                    BrandsBrandData.Compliance.builder()
+                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                        .builder()
                         .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                         .vertical(TcrVertical.PROFESSIONAL)
                         .addDestinationCountry(
@@ -118,7 +133,8 @@ internal class BrandsBrandDataTest {
                         .build()
                 )
                 .contact(
-                    BrandsBrandData.Contact.builder()
+                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                        .builder()
                         .name("x")
                         .businessName("businessName")
                         .email("dev@stainless.com")
@@ -128,11 +144,16 @@ internal class BrandsBrandDataTest {
                         .build()
                 )
                 .business(
-                    BrandsBrandData.Business.builder()
+                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                        .builder()
                         .city("city")
                         .country("country")
                         .countryOfRegistration("countryOfRegistration")
-                        .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
+                        .entityType(
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                .EntityType
+                                .PRIVATE_PROFIT
+                        )
                         .legalName("legalName")
                         .postalCode("postalCode")
                         .state("state")
