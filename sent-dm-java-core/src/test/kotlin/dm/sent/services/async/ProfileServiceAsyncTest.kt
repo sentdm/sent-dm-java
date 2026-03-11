@@ -13,6 +13,9 @@ import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
+import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
 import dm.sent.models.profiles.TcrBrandRelationship
 import dm.sent.models.profiles.TcrVertical
 import org.junit.jupiter.api.Disabled
@@ -46,7 +49,8 @@ internal class ProfileServiceAsyncTest {
                     .brand(
                         BrandsBrandData.builder()
                             .compliance(
-                                BrandsBrandData.Compliance.builder()
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                                    .builder()
                                     .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                     .vertical(TcrVertical.PROFESSIONAL)
                                     .addDestinationCountry(
@@ -62,7 +66,8 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .contact(
-                                BrandsBrandData.Contact.builder()
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                                    .builder()
                                     .name("John Smith")
                                     .businessName("Acme Corp")
                                     .email("john@acmecorp.com")
@@ -72,11 +77,16 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .business(
-                                BrandsBrandData.Business.builder()
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                    .builder()
                                     .city("New York")
                                     .country("US")
                                     .countryOfRegistration("US")
-                                    .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
+                                    .entityType(
+                                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                            .EntityType
+                                            .PRIVATE_PROFIT
+                                    )
                                     .legalName("Acme Corporation LLC")
                                     .postalCode("10001")
                                     .state("NY")
@@ -164,7 +174,8 @@ internal class ProfileServiceAsyncTest {
                     .brand(
                         BrandsBrandData.builder()
                             .compliance(
-                                BrandsBrandData.Compliance.builder()
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                                    .builder()
                                     .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                     .vertical(TcrVertical.PROFESSIONAL)
                                     .addDestinationCountry(
@@ -180,7 +191,8 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .contact(
-                                BrandsBrandData.Contact.builder()
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                                    .builder()
                                     .name("John Smith")
                                     .businessName("Acme Corp")
                                     .email("john@acmecorp.com")
@@ -190,11 +202,16 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .business(
-                                BrandsBrandData.Business.builder()
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                    .builder()
                                     .city("New York")
                                     .country("US")
                                     .countryOfRegistration("US")
-                                    .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
+                                    .entityType(
+                                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                            .EntityType
+                                            .PRIVATE_PROFIT
+                                    )
                                     .legalName("Acme Corporation LLC")
                                     .postalCode("10001")
                                     .state("NY")

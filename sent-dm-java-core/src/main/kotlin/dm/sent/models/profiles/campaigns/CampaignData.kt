@@ -26,7 +26,10 @@ private constructor(
     private val description: JsonField<String>,
     private val name: JsonField<String>,
     private val type: JsonField<String>,
-    private val useCases: JsonField<List<UseCase>>,
+    private val useCases:
+        JsonField<
+            List<SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData>
+        >,
     private val helpKeywords: JsonField<String>,
     private val helpMessage: JsonField<String>,
     private val messageFlow: JsonField<String>,
@@ -48,7 +51,13 @@ private constructor(
         @JsonProperty("type") @ExcludeMissing type: JsonField<String> = JsonMissing.of(),
         @JsonProperty("useCases")
         @ExcludeMissing
-        useCases: JsonField<List<UseCase>> = JsonMissing.of(),
+        useCases:
+            JsonField<
+                List<
+                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+                >
+            > =
+            JsonMissing.of(),
         @JsonProperty("helpKeywords")
         @ExcludeMissing
         helpKeywords: JsonField<String> = JsonMissing.of(),
@@ -123,7 +132,9 @@ private constructor(
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun useCases(): List<UseCase> = useCases.getRequired("useCases")
+    fun useCases():
+        List<SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData> =
+        useCases.getRequired("useCases")
 
     /**
      * Comma-separated keywords that trigger help message (e.g., "HELP, INFO, SUPPORT")
@@ -224,7 +235,12 @@ private constructor(
      *
      * Unlike [useCases], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("useCases") @ExcludeMissing fun _useCases(): JsonField<List<UseCase>> = useCases
+    @JsonProperty("useCases")
+    @ExcludeMissing
+    fun _useCases():
+        JsonField<
+            List<SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData>
+        > = useCases
 
     /**
      * Returns the raw JSON value of [helpKeywords].
@@ -339,7 +355,13 @@ private constructor(
         private var description: JsonField<String>? = null
         private var name: JsonField<String>? = null
         private var type: JsonField<String>? = null
-        private var useCases: JsonField<MutableList<UseCase>>? = null
+        private var useCases:
+            JsonField<
+                MutableList<
+                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+                >
+            >? =
+            null
         private var helpKeywords: JsonField<String> = JsonMissing.of()
         private var helpMessage: JsonField<String> = JsonMissing.of()
         private var messageFlow: JsonField<String> = JsonMissing.of()
@@ -404,25 +426,41 @@ private constructor(
         fun type(type: JsonField<String>) = apply { this.type = type }
 
         /** List of use cases with sample messages */
-        fun useCases(useCases: List<UseCase>) = useCases(JsonField.of(useCases))
+        fun useCases(
+            useCases:
+                List<
+                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+                >
+        ) = useCases(JsonField.of(useCases))
 
         /**
          * Sets [Builder.useCases] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.useCases] with a well-typed `List<UseCase>` value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.useCases] with a well-typed
+         * `List<SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData>`
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
          */
-        fun useCases(useCases: JsonField<List<UseCase>>) = apply {
-            this.useCases = useCases.map { it.toMutableList() }
-        }
+        fun useCases(
+            useCases:
+                JsonField<
+                    List<
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+                    >
+                >
+        ) = apply { this.useCases = useCases.map { it.toMutableList() } }
 
         /**
-         * Adds a single [UseCase] to [useCases].
+         * Adds a single
+         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData] to
+         * [useCases].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addUseCase(useCase: UseCase) = apply {
+        fun addUseCase(
+            useCase:
+                SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+        ) = apply {
             useCases =
                 (useCases ?: JsonField.of(mutableListOf())).also {
                     checkKnown("useCases", it).add(useCase)
@@ -695,236 +733,6 @@ private constructor(
             (if (optoutMessage.asKnown().isPresent) 1 else 0) +
             (if (privacyPolicyLink.asKnown().isPresent) 1 else 0) +
             (if (termsAndConditionsLink.asKnown().isPresent) 1 else 0)
-
-    /** Campaign use case with sample messages */
-    class UseCase
-    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-    private constructor(
-        private val messagingUseCaseUs: JsonField<MessagingUseCaseUs>,
-        private val sampleMessages: JsonField<List<String>>,
-        private val additionalProperties: MutableMap<String, JsonValue>,
-    ) {
-
-        @JsonCreator
-        private constructor(
-            @JsonProperty("messagingUseCaseUs")
-            @ExcludeMissing
-            messagingUseCaseUs: JsonField<MessagingUseCaseUs> = JsonMissing.of(),
-            @JsonProperty("sampleMessages")
-            @ExcludeMissing
-            sampleMessages: JsonField<List<String>> = JsonMissing.of(),
-        ) : this(messagingUseCaseUs, sampleMessages, mutableMapOf())
-
-        /**
-         * US messaging use case category
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun messagingUseCaseUs(): MessagingUseCaseUs =
-            messagingUseCaseUs.getRequired("messagingUseCaseUs")
-
-        /**
-         * Sample messages for this use case (1-5 messages, max 1024 characters each)
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun sampleMessages(): List<String> = sampleMessages.getRequired("sampleMessages")
-
-        /**
-         * Returns the raw JSON value of [messagingUseCaseUs].
-         *
-         * Unlike [messagingUseCaseUs], this method doesn't throw if the JSON field has an
-         * unexpected type.
-         */
-        @JsonProperty("messagingUseCaseUs")
-        @ExcludeMissing
-        fun _messagingUseCaseUs(): JsonField<MessagingUseCaseUs> = messagingUseCaseUs
-
-        /**
-         * Returns the raw JSON value of [sampleMessages].
-         *
-         * Unlike [sampleMessages], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("sampleMessages")
-        @ExcludeMissing
-        fun _sampleMessages(): JsonField<List<String>> = sampleMessages
-
-        @JsonAnySetter
-        private fun putAdditionalProperty(key: String, value: JsonValue) {
-            additionalProperties.put(key, value)
-        }
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> =
-            Collections.unmodifiableMap(additionalProperties)
-
-        fun toBuilder() = Builder().from(this)
-
-        companion object {
-
-            /**
-             * Returns a mutable builder for constructing an instance of [UseCase].
-             *
-             * The following fields are required:
-             * ```java
-             * .messagingUseCaseUs()
-             * .sampleMessages()
-             * ```
-             */
-            @JvmStatic fun builder() = Builder()
-        }
-
-        /** A builder for [UseCase]. */
-        class Builder internal constructor() {
-
-            private var messagingUseCaseUs: JsonField<MessagingUseCaseUs>? = null
-            private var sampleMessages: JsonField<MutableList<String>>? = null
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-            @JvmSynthetic
-            internal fun from(useCase: UseCase) = apply {
-                messagingUseCaseUs = useCase.messagingUseCaseUs
-                sampleMessages = useCase.sampleMessages.map { it.toMutableList() }
-                additionalProperties = useCase.additionalProperties.toMutableMap()
-            }
-
-            /** US messaging use case category */
-            fun messagingUseCaseUs(messagingUseCaseUs: MessagingUseCaseUs) =
-                messagingUseCaseUs(JsonField.of(messagingUseCaseUs))
-
-            /**
-             * Sets [Builder.messagingUseCaseUs] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.messagingUseCaseUs] with a well-typed
-             * [MessagingUseCaseUs] value instead. This method is primarily for setting the field to
-             * an undocumented or not yet supported value.
-             */
-            fun messagingUseCaseUs(messagingUseCaseUs: JsonField<MessagingUseCaseUs>) = apply {
-                this.messagingUseCaseUs = messagingUseCaseUs
-            }
-
-            /** Sample messages for this use case (1-5 messages, max 1024 characters each) */
-            fun sampleMessages(sampleMessages: List<String>) =
-                sampleMessages(JsonField.of(sampleMessages))
-
-            /**
-             * Sets [Builder.sampleMessages] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sampleMessages] with a well-typed `List<String>`
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
-             */
-            fun sampleMessages(sampleMessages: JsonField<List<String>>) = apply {
-                this.sampleMessages = sampleMessages.map { it.toMutableList() }
-            }
-
-            /**
-             * Adds a single [String] to [sampleMessages].
-             *
-             * @throws IllegalStateException if the field was previously set to a non-list.
-             */
-            fun addSampleMessage(sampleMessage: String) = apply {
-                sampleMessages =
-                    (sampleMessages ?: JsonField.of(mutableListOf())).also {
-                        checkKnown("sampleMessages", it).add(sampleMessage)
-                    }
-            }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
-
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
-
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
-
-            /**
-             * Returns an immutable instance of [UseCase].
-             *
-             * Further updates to this [Builder] will not mutate the returned instance.
-             *
-             * The following fields are required:
-             * ```java
-             * .messagingUseCaseUs()
-             * .sampleMessages()
-             * ```
-             *
-             * @throws IllegalStateException if any required field is unset.
-             */
-            fun build(): UseCase =
-                UseCase(
-                    checkRequired("messagingUseCaseUs", messagingUseCaseUs),
-                    checkRequired("sampleMessages", sampleMessages).map { it.toImmutable() },
-                    additionalProperties.toMutableMap(),
-                )
-        }
-
-        private var validated: Boolean = false
-
-        fun validate(): UseCase = apply {
-            if (validated) {
-                return@apply
-            }
-
-            messagingUseCaseUs().validate()
-            sampleMessages()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: SentDmInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            (messagingUseCaseUs.asKnown().getOrNull()?.validity() ?: 0) +
-                (sampleMessages.asKnown().getOrNull()?.size ?: 0)
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is UseCase &&
-                messagingUseCaseUs == other.messagingUseCaseUs &&
-                sampleMessages == other.sampleMessages &&
-                additionalProperties == other.additionalProperties
-        }
-
-        private val hashCode: Int by lazy {
-            Objects.hash(messagingUseCaseUs, sampleMessages, additionalProperties)
-        }
-
-        override fun hashCode(): Int = hashCode
-
-        override fun toString() =
-            "UseCase{messagingUseCaseUs=$messagingUseCaseUs, sampleMessages=$sampleMessages, additionalProperties=$additionalProperties}"
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
