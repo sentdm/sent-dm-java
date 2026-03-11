@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-dm-java)](https://central.sonatype.com/artifact/dm.sent/sent-dm-java/0.6.1)
-[![javadoc](https://javadoc.io/badge2/dm.sent/sent-dm-java/0.6.1/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-dm-java/0.6.1)
+[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-dm-java)](https://central.sonatype.com/artifact/dm.sent/sent-dm-java/0.7.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-dm-java/0.7.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-dm-java/0.7.0)
 
 <!-- x-release-please-end -->
 
@@ -22,7 +22,7 @@ Use the Sent Dm MCP Server to enable AI assistants to interact with this API, al
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.6.1).
+The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-dm-java/0.7.0).
 
 <!-- x-release-please-end -->
 
@@ -33,7 +33,7 @@ The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm).
 ### Gradle
 
 ```kotlin
-implementation("dm.sent:sent-dm-java:0.6.1")
+implementation("dm.sent:sent-dm-java:0.7.0")
 ```
 
 ### Maven
@@ -42,7 +42,7 @@ implementation("dm.sent:sent-dm-java:0.6.1")
 <dependency>
   <groupId>dm.sent</groupId>
   <artifactId>sent-dm-java</artifactId>
-  <version>0.6.1</version>
+  <version>0.7.0</version>
 </dependency>
 ```
 
@@ -624,19 +624,19 @@ To access a property's raw JSON value, which may be undocumented, call its `_` p
 import dm.sent.core.JsonField;
 import java.util.Optional;
 
-JsonField<Boolean> testMode = client.messages().send(params)._testMode();
+JsonField<Boolean> sandbox = client.messages().send(params)._sandbox();
 
-if (testMode.isMissing()) {
+if (sandbox.isMissing()) {
   // The property is absent from the JSON response
-} else if (testMode.isNull()) {
+} else if (sandbox.isNull()) {
   // The property was set to literal null
 } else {
   // Check if value was provided as a string
   // Other methods include `asNumber()`, `asBoolean()`, etc.
-  Optional<String> jsonString = testMode.asString();
+  Optional<String> jsonString = sandbox.asString();
 
   // Try to deserialize into a custom type
-  MyClass myObject = testMode.asUnknown().orElseThrow().convert(MyClass.class);
+  MyClass myObject = sandbox.asUnknown().orElseThrow().convert(MyClass.class);
 }
 ```
 

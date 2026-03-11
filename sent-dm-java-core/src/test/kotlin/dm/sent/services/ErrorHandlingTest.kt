@@ -73,7 +73,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -114,7 +115,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -155,7 +157,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -196,7 +199,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -237,7 +241,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -278,7 +283,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -319,7 +325,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -360,7 +367,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -401,7 +409,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -442,7 +451,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -483,7 +493,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -524,7 +535,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -565,7 +577,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -606,7 +619,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -647,7 +661,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -688,7 +703,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(
@@ -727,7 +743,8 @@ internal class ErrorHandlingTest {
                 messageService.send(
                     MessageSendParams.builder()
                         .idempotencyKey("req_abc123_retry1")
-                        .testMode(false)
+                        .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
                         .template(

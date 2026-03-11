@@ -15,13 +15,11 @@ internal class ApiMetaTest {
         val apiMeta =
             ApiMeta.builder()
                 .requestId("request_id")
-                .responseTimeMs(0L)
                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .version("version")
                 .build()
 
         assertThat(apiMeta.requestId()).contains("request_id")
-        assertThat(apiMeta.responseTimeMs()).contains(0L)
         assertThat(apiMeta.timestamp()).contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(apiMeta.version()).contains("version")
     }
@@ -32,7 +30,6 @@ internal class ApiMetaTest {
         val apiMeta =
             ApiMeta.builder()
                 .requestId("request_id")
-                .responseTimeMs(0L)
                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .version("version")
                 .build()

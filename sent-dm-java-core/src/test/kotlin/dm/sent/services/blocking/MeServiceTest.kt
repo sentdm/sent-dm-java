@@ -3,6 +3,7 @@
 package dm.sent.services.blocking
 
 import dm.sent.client.okhttp.SentDmOkHttpClient
+import dm.sent.models.me.MeRetrieveParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -14,7 +15,12 @@ internal class MeServiceTest {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val meService = client.me()
 
-        val me = meService.retrieve()
+        val me =
+            meService.retrieve(
+                MeRetrieveParams.builder()
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
 
         me.validate()
     }

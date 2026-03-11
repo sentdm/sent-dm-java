@@ -2,6 +2,7 @@
 
 package dm.sent.models.users
 
+import dm.sent.core.http.Headers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -10,41 +11,66 @@ internal class UserRemoveParamsTest {
     @Test
     fun create() {
         UserRemoveParams.builder()
-            .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .testMode(false)
-            .bodyUserId("aa0e8400-e29b-41d4-a716-446655440005")
+            .userId("userId")
+            .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .build()
     }
 
     @Test
     fun pathParams() {
-        val params =
-            UserRemoveParams.builder().pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+        val params = UserRemoveParams.builder().userId("userId").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(params._pathParam(0)).isEqualTo("userId")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
+    }
+
+    @Test
+    fun headers() {
+        val params =
+            UserRemoveParams.builder()
+                .userId("userId")
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
+                .build()
+
+        val headers = params._headers()
+
+        assertThat(headers)
+            .isEqualTo(
+                Headers.builder()
+                    .put("x-profile-id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
+    }
+
+    @Test
+    fun headersWithoutOptionalFields() {
+        val params = UserRemoveParams.builder().userId("userId").build()
+
+        val headers = params._headers()
+
+        assertThat(headers).isEqualTo(Headers.builder().build())
     }
 
     @Test
     fun body() {
         val params =
             UserRemoveParams.builder()
-                .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .testMode(false)
-                .bodyUserId("aa0e8400-e29b-41d4-a716-446655440005")
+                .userId("userId")
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .build()
 
         val body = params._body()
 
-        assertThat(body.testMode()).contains(false)
-        assertThat(body.bodyUserId()).contains("aa0e8400-e29b-41d4-a716-446655440005")
+        assertThat(body.sandbox()).contains(false)
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params =
-            UserRemoveParams.builder().pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+        val params = UserRemoveParams.builder().userId("userId").build()
 
         val body = params._body()
     }

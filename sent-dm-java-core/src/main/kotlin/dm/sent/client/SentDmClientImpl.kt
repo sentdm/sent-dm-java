@@ -88,7 +88,6 @@ class SentDmClientImpl(private val clientOptions: ClientOptions) : SentDmClient 
     /** Create, update, and manage customer contact lists */
     override fun contacts(): ContactService = contacts
 
-    /** Register and manage 10DLC brands for SMS compliance */
     override fun brands(): BrandService = brands
 
     /** Retrieve account details */
@@ -162,7 +161,6 @@ class SentDmClientImpl(private val clientOptions: ClientOptions) : SentDmClient 
         /** Create, update, and manage customer contact lists */
         override fun contacts(): ContactService.WithRawResponse = contacts
 
-        /** Register and manage 10DLC brands for SMS compliance */
         override fun brands(): BrandService.WithRawResponse = brands
 
         /** Retrieve account details */

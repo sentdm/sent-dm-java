@@ -2,6 +2,7 @@
 
 package dm.sent.models.users
 
+import dm.sent.core.http.Headers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -9,16 +10,45 @@ internal class UserRetrieveParamsTest {
 
     @Test
     fun create() {
-        UserRetrieveParams.builder().userId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+        UserRetrieveParams.builder()
+            .userId("userId")
+            .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .build()
     }
 
     @Test
     fun pathParams() {
-        val params =
-            UserRetrieveParams.builder().userId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+        val params = UserRetrieveParams.builder().userId("userId").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(params._pathParam(0)).isEqualTo("userId")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
+    }
+
+    @Test
+    fun headers() {
+        val params =
+            UserRetrieveParams.builder()
+                .userId("userId")
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .build()
+
+        val headers = params._headers()
+
+        assertThat(headers)
+            .isEqualTo(
+                Headers.builder()
+                    .put("x-profile-id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
+    }
+
+    @Test
+    fun headersWithoutOptionalFields() {
+        val params = UserRetrieveParams.builder().userId("userId").build()
+
+        val headers = params._headers()
+
+        assertThat(headers).isEqualTo(Headers.builder().build())
     }
 }

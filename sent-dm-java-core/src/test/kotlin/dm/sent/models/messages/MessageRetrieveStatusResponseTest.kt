@@ -20,6 +20,7 @@ internal class MessageRetrieveStatusResponseTest {
                 .data(
                     MessageRetrieveStatusResponse.Data.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .activeContactPrice(0.0)
                         .channel("channel")
                         .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -69,7 +70,6 @@ internal class MessageRetrieveStatusResponseTest {
                 .meta(
                     ApiMeta.builder()
                         .requestId("request_id")
-                        .responseTimeMs(0L)
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
                         .build()
@@ -81,6 +81,7 @@ internal class MessageRetrieveStatusResponseTest {
             .contains(
                 MessageRetrieveStatusResponse.Data.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .activeContactPrice(0.0)
                     .channel("channel")
                     .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -132,7 +133,6 @@ internal class MessageRetrieveStatusResponseTest {
             .contains(
                 ApiMeta.builder()
                     .requestId("request_id")
-                    .responseTimeMs(0L)
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
                     .build()
@@ -148,6 +148,7 @@ internal class MessageRetrieveStatusResponseTest {
                 .data(
                     MessageRetrieveStatusResponse.Data.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .activeContactPrice(0.0)
                         .channel("channel")
                         .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -197,7 +198,6 @@ internal class MessageRetrieveStatusResponseTest {
                 .meta(
                     ApiMeta.builder()
                         .requestId("request_id")
-                        .responseTimeMs(0L)
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
                         .build()

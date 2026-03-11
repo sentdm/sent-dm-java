@@ -9,15 +9,21 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Retrieves detailed information about a specific sender profile within an organization. */
+/**
+ * Retrieves detailed information about a specific sender profile within an organization, including
+ * brand and KYC information if a brand has been configured.
+ */
 class ProfileRetrieveParams
 private constructor(
     private val profileId: String?,
+    private val xProfileId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
     fun profileId(): Optional<String> = Optional.ofNullable(profileId)
+
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -39,12 +45,14 @@ private constructor(
     class Builder internal constructor() {
 
         private var profileId: String? = null
+        private var xProfileId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(profileRetrieveParams: ProfileRetrieveParams) = apply {
             profileId = profileRetrieveParams.profileId
+            xProfileId = profileRetrieveParams.xProfileId
             additionalHeaders = profileRetrieveParams.additionalHeaders.toBuilder()
             additionalQueryParams = profileRetrieveParams.additionalQueryParams.toBuilder()
         }
@@ -53,6 +61,11 @@ private constructor(
 
         /** Alias for calling [Builder.profileId] with `profileId.orElse(null)`. */
         fun profileId(profileId: Optional<String>) = profileId(profileId.getOrNull())
+
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -160,6 +173,7 @@ private constructor(
         fun build(): ProfileRetrieveParams =
             ProfileRetrieveParams(
                 profileId,
+                xProfileId,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -171,7 +185,13 @@ private constructor(
             else -> ""
         }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                xProfileId?.let { put("x-profile-id", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
@@ -182,12 +202,14 @@ private constructor(
 
         return other is ProfileRetrieveParams &&
             profileId == other.profileId &&
+            xProfileId == other.xProfileId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int = Objects.hash(profileId, additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int =
+        Objects.hash(profileId, xProfileId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ProfileRetrieveParams{profileId=$profileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ProfileRetrieveParams{profileId=$profileId, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

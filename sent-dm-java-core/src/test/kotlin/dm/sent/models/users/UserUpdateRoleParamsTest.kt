@@ -11,22 +11,19 @@ internal class UserUpdateRoleParamsTest {
     @Test
     fun create() {
         UserUpdateRoleParams.builder()
-            .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .userId("userId")
             .idempotencyKey("req_abc123_retry1")
-            .testMode(false)
+            .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .role("billing")
-            .bodyUserId("aa0e8400-e29b-41d4-a716-446655440005")
             .build()
     }
 
     @Test
     fun pathParams() {
-        val params =
-            UserUpdateRoleParams.builder()
-                .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .build()
+        val params = UserUpdateRoleParams.builder().userId("userId").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(params._pathParam(0)).isEqualTo("userId")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
@@ -35,25 +32,27 @@ internal class UserUpdateRoleParamsTest {
     fun headers() {
         val params =
             UserUpdateRoleParams.builder()
-                .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .userId("userId")
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .role("billing")
-                .bodyUserId("aa0e8400-e29b-41d4-a716-446655440005")
                 .build()
 
         val headers = params._headers()
 
         assertThat(headers)
-            .isEqualTo(Headers.builder().put("Idempotency-Key", "req_abc123_retry1").build())
+            .isEqualTo(
+                Headers.builder()
+                    .put("Idempotency-Key", "req_abc123_retry1")
+                    .put("x-profile-id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
     }
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params =
-            UserUpdateRoleParams.builder()
-                .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .build()
+        val params = UserUpdateRoleParams.builder().userId("userId").build()
 
         val headers = params._headers()
 
@@ -64,26 +63,22 @@ internal class UserUpdateRoleParamsTest {
     fun body() {
         val params =
             UserUpdateRoleParams.builder()
-                .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .userId("userId")
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .role("billing")
-                .bodyUserId("aa0e8400-e29b-41d4-a716-446655440005")
                 .build()
 
         val body = params._body()
 
-        assertThat(body.testMode()).contains(false)
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.role()).contains("billing")
-        assertThat(body.bodyUserId()).contains("aa0e8400-e29b-41d4-a716-446655440005")
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params =
-            UserUpdateRoleParams.builder()
-                .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .build()
+        val params = UserUpdateRoleParams.builder().userId("userId").build()
 
         val body = params._body()
     }

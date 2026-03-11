@@ -13,7 +13,8 @@ internal class WebhookCreateParamsTest {
     fun create() {
         WebhookCreateParams.builder()
             .idempotencyKey("req_abc123_retry1")
-            .testMode(false)
+            .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .displayName("Order Notifications")
             .endpointUrl("https://example.com/webhooks/orders")
             .addEventType("messages")
@@ -28,7 +29,8 @@ internal class WebhookCreateParamsTest {
         val params =
             WebhookCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .displayName("Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders")
                 .addEventType("messages")
@@ -40,7 +42,12 @@ internal class WebhookCreateParamsTest {
         val headers = params._headers()
 
         assertThat(headers)
-            .isEqualTo(Headers.builder().put("Idempotency-Key", "req_abc123_retry1").build())
+            .isEqualTo(
+                Headers.builder()
+                    .put("Idempotency-Key", "req_abc123_retry1")
+                    .put("x-profile-id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
     }
 
     @Test
@@ -57,7 +64,8 @@ internal class WebhookCreateParamsTest {
         val params =
             WebhookCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .displayName("Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders")
                 .addEventType("messages")
@@ -68,7 +76,7 @@ internal class WebhookCreateParamsTest {
 
         val body = params._body()
 
-        assertThat(body.testMode()).contains(false)
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.displayName()).contains("Order Notifications")
         assertThat(body.endpointUrl()).contains("https://example.com/webhooks/orders")
         assertThat(body.eventTypes().getOrNull()).containsExactly("messages", "templates")

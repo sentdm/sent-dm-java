@@ -12,7 +12,8 @@ internal class ContactCreateParamsTest {
     fun create() {
         ContactCreateParams.builder()
             .idempotencyKey("req_abc123_retry1")
-            .testMode(false)
+            .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .phoneNumber("+1234567890")
             .build()
     }
@@ -22,14 +23,20 @@ internal class ContactCreateParamsTest {
         val params =
             ContactCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .phoneNumber("+1234567890")
                 .build()
 
         val headers = params._headers()
 
         assertThat(headers)
-            .isEqualTo(Headers.builder().put("Idempotency-Key", "req_abc123_retry1").build())
+            .isEqualTo(
+                Headers.builder()
+                    .put("Idempotency-Key", "req_abc123_retry1")
+                    .put("x-profile-id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
     }
 
     @Test
@@ -46,13 +53,14 @@ internal class ContactCreateParamsTest {
         val params =
             ContactCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .phoneNumber("+1234567890")
                 .build()
 
         val body = params._body()
 
-        assertThat(body.testMode()).contains(false)
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.phoneNumber()).contains("+1234567890")
     }
 

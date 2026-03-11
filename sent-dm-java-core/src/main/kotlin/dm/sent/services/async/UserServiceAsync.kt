@@ -116,22 +116,20 @@ interface UserServiceAsync {
      * Removes a user's access to an organization or profile. Requires admin role. You cannot remove
      * yourself or remove the last admin.
      */
-    fun remove(pathUserId: String): CompletableFuture<Void?> =
-        remove(pathUserId, UserRemoveParams.none())
+    fun remove(userId: String): CompletableFuture<Void?> = remove(userId, UserRemoveParams.none())
 
     /** @see remove */
     fun remove(
-        pathUserId: String,
+        userId: String,
         params: UserRemoveParams = UserRemoveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?> =
-        remove(params.toBuilder().pathUserId(pathUserId).build(), requestOptions)
+    ): CompletableFuture<Void?> = remove(params.toBuilder().userId(userId).build(), requestOptions)
 
     /** @see remove */
     fun remove(
-        pathUserId: String,
+        userId: String,
         params: UserRemoveParams = UserRemoveParams.none(),
-    ): CompletableFuture<Void?> = remove(pathUserId, params, RequestOptions.none())
+    ): CompletableFuture<Void?> = remove(userId, params, RequestOptions.none())
 
     /** @see remove */
     fun remove(
@@ -144,29 +142,29 @@ interface UserServiceAsync {
         remove(params, RequestOptions.none())
 
     /** @see remove */
-    fun remove(pathUserId: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
-        remove(pathUserId, UserRemoveParams.none(), requestOptions)
+    fun remove(userId: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
+        remove(userId, UserRemoveParams.none(), requestOptions)
 
     /**
      * Updates a user's role in the organization or profile. Requires admin role. You cannot change
      * your own role or demote the last admin.
      */
-    fun updateRole(pathUserId: String): CompletableFuture<ApiResponseOfUser> =
-        updateRole(pathUserId, UserUpdateRoleParams.none())
+    fun updateRole(userId: String): CompletableFuture<ApiResponseOfUser> =
+        updateRole(userId, UserUpdateRoleParams.none())
 
     /** @see updateRole */
     fun updateRole(
-        pathUserId: String,
+        userId: String,
         params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ApiResponseOfUser> =
-        updateRole(params.toBuilder().pathUserId(pathUserId).build(), requestOptions)
+        updateRole(params.toBuilder().userId(userId).build(), requestOptions)
 
     /** @see updateRole */
     fun updateRole(
-        pathUserId: String,
+        userId: String,
         params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
-    ): CompletableFuture<ApiResponseOfUser> = updateRole(pathUserId, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfUser> = updateRole(userId, params, RequestOptions.none())
 
     /** @see updateRole */
     fun updateRole(
@@ -180,10 +178,10 @@ interface UserServiceAsync {
 
     /** @see updateRole */
     fun updateRole(
-        pathUserId: String,
+        userId: String,
         requestOptions: RequestOptions,
     ): CompletableFuture<ApiResponseOfUser> =
-        updateRole(pathUserId, UserUpdateRoleParams.none(), requestOptions)
+        updateRole(userId, UserUpdateRoleParams.none(), requestOptions)
 
     /** A view of [UserServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -290,22 +288,22 @@ interface UserServiceAsync {
          * Returns a raw HTTP response for `delete /v3/users/{userId}`, but is otherwise the same as
          * [UserServiceAsync.remove].
          */
-        fun remove(pathUserId: String): CompletableFuture<HttpResponse> =
-            remove(pathUserId, UserRemoveParams.none())
+        fun remove(userId: String): CompletableFuture<HttpResponse> =
+            remove(userId, UserRemoveParams.none())
 
         /** @see remove */
         fun remove(
-            pathUserId: String,
+            userId: String,
             params: UserRemoveParams = UserRemoveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponse> =
-            remove(params.toBuilder().pathUserId(pathUserId).build(), requestOptions)
+            remove(params.toBuilder().userId(userId).build(), requestOptions)
 
         /** @see remove */
         fun remove(
-            pathUserId: String,
+            userId: String,
             params: UserRemoveParams = UserRemoveParams.none(),
-        ): CompletableFuture<HttpResponse> = remove(pathUserId, params, RequestOptions.none())
+        ): CompletableFuture<HttpResponse> = remove(userId, params, RequestOptions.none())
 
         /** @see remove */
         fun remove(
@@ -319,32 +317,31 @@ interface UserServiceAsync {
 
         /** @see remove */
         fun remove(
-            pathUserId: String,
+            userId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponse> =
-            remove(pathUserId, UserRemoveParams.none(), requestOptions)
+        ): CompletableFuture<HttpResponse> = remove(userId, UserRemoveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `patch /v3/users/{userId}`, but is otherwise the same as
          * [UserServiceAsync.updateRole].
          */
-        fun updateRole(pathUserId: String): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
-            updateRole(pathUserId, UserUpdateRoleParams.none())
+        fun updateRole(userId: String): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+            updateRole(userId, UserUpdateRoleParams.none())
 
         /** @see updateRole */
         fun updateRole(
-            pathUserId: String,
+            userId: String,
             params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
-            updateRole(params.toBuilder().pathUserId(pathUserId).build(), requestOptions)
+            updateRole(params.toBuilder().userId(userId).build(), requestOptions)
 
         /** @see updateRole */
         fun updateRole(
-            pathUserId: String,
+            userId: String,
             params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
         ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
-            updateRole(pathUserId, params, RequestOptions.none())
+            updateRole(userId, params, RequestOptions.none())
 
         /** @see updateRole */
         fun updateRole(
@@ -360,9 +357,9 @@ interface UserServiceAsync {
 
         /** @see updateRole */
         fun updateRole(
-            pathUserId: String,
+            userId: String,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
-            updateRole(pathUserId, UserUpdateRoleParams.none(), requestOptions)
+            updateRole(userId, UserUpdateRoleParams.none(), requestOptions)
     }
 }

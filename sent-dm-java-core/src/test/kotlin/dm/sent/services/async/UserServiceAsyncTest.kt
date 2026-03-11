@@ -4,7 +4,9 @@ package dm.sent.services.async
 
 import dm.sent.client.okhttp.SentDmOkHttpClientAsync
 import dm.sent.models.users.UserInviteParams
+import dm.sent.models.users.UserListParams
 import dm.sent.models.users.UserRemoveParams
+import dm.sent.models.users.UserRetrieveParams
 import dm.sent.models.users.UserUpdateRoleParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -18,7 +20,12 @@ internal class UserServiceAsyncTest {
         val userServiceAsync = client.users()
 
         val apiResponseOfUserFuture =
-            userServiceAsync.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            userServiceAsync.retrieve(
+                UserRetrieveParams.builder()
+                    .userId("userId")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
 
         val apiResponseOfUser = apiResponseOfUserFuture.get()
         apiResponseOfUser.validate()
@@ -30,7 +37,10 @@ internal class UserServiceAsyncTest {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val userServiceAsync = client.users()
 
-        val usersFuture = userServiceAsync.list()
+        val usersFuture =
+            userServiceAsync.list(
+                UserListParams.builder().xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+            )
 
         val users = usersFuture.get()
         users.validate()
@@ -46,7 +56,8 @@ internal class UserServiceAsyncTest {
             userServiceAsync.invite(
                 UserInviteParams.builder()
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .email("newuser@example.com")
                     .name("New User")
                     .role("developer")
@@ -66,9 +77,9 @@ internal class UserServiceAsyncTest {
         val future =
             userServiceAsync.remove(
                 UserRemoveParams.builder()
-                    .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .testMode(false)
-                    .bodyUserId("aa0e8400-e29b-41d4-a716-446655440005")
+                    .userId("userId")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .build()
             )
 
@@ -84,11 +95,11 @@ internal class UserServiceAsyncTest {
         val apiResponseOfUserFuture =
             userServiceAsync.updateRole(
                 UserUpdateRoleParams.builder()
-                    .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .userId("userId")
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .role("billing")
-                    .bodyUserId("aa0e8400-e29b-41d4-a716-446655440005")
                     .build()
             )
 

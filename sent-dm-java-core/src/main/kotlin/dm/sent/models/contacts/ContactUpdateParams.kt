@@ -27,6 +27,7 @@ class ContactUpdateParams
 private constructor(
     private val id: String?,
     private val idempotencyKey: String?,
+    private val xProfileId: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -36,14 +37,16 @@ private constructor(
 
     fun idempotencyKey(): Optional<String> = Optional.ofNullable(idempotencyKey)
 
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
+
     /**
-     * Test mode flag - when true, the operation is simulated without side effects Useful for
-     * testing integrations without actual execution
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun testMode(): Optional<Boolean> = body.testMode()
+    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * Default messaging channel: "sms" or "whatsapp"
@@ -62,11 +65,11 @@ private constructor(
     fun optOut(): Optional<Boolean> = body.optOut()
 
     /**
-     * Returns the raw JSON value of [testMode].
+     * Returns the raw JSON value of [sandbox].
      *
-     * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _testMode(): JsonField<Boolean> = body._testMode()
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
      * Returns the raw JSON value of [defaultChannel].
@@ -105,6 +108,7 @@ private constructor(
 
         private var id: String? = null
         private var idempotencyKey: String? = null
+        private var xProfileId: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -113,6 +117,7 @@ private constructor(
         internal fun from(contactUpdateParams: ContactUpdateParams) = apply {
             id = contactUpdateParams.id
             idempotencyKey = contactUpdateParams.idempotencyKey
+            xProfileId = contactUpdateParams.xProfileId
             body = contactUpdateParams.body.toBuilder()
             additionalHeaders = contactUpdateParams.additionalHeaders.toBuilder()
             additionalQueryParams = contactUpdateParams.additionalQueryParams.toBuilder()
@@ -129,31 +134,35 @@ private constructor(
         fun idempotencyKey(idempotencyKey: Optional<String>) =
             idempotencyKey(idempotencyKey.getOrNull())
 
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
+
         /**
          * Sets the entire request body.
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [testMode]
+         * - [sandbox]
          * - [defaultChannel]
          * - [optOut]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          */
-        fun testMode(testMode: Boolean) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
 
         /**
-         * Sets [Builder.testMode] to an arbitrary JSON value.
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun testMode(testMode: JsonField<Boolean>) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /** Default messaging channel: "sms" or "whatsapp" */
         fun defaultChannel(defaultChannel: String?) = apply { body.defaultChannel(defaultChannel) }
@@ -320,6 +329,7 @@ private constructor(
             ContactUpdateParams(
                 id,
                 idempotencyKey,
+                xProfileId,
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -338,6 +348,7 @@ private constructor(
         Headers.builder()
             .apply {
                 idempotencyKey?.let { put("Idempotency-Key", it) }
+                xProfileId?.let { put("x-profile-id", it) }
                 putAll(additionalHeaders)
             }
             .build()
@@ -348,7 +359,7 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val testMode: JsonField<Boolean>,
+        private val sandbox: JsonField<Boolean>,
         private val defaultChannel: JsonField<String>,
         private val optOut: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -356,26 +367,24 @@ private constructor(
 
         @JsonCreator
         private constructor(
-            @JsonProperty("test_mode")
-            @ExcludeMissing
-            testMode: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("default_channel")
             @ExcludeMissing
             defaultChannel: JsonField<String> = JsonMissing.of(),
             @JsonProperty("opt_out") @ExcludeMissing optOut: JsonField<Boolean> = JsonMissing.of(),
-        ) : this(testMode, defaultChannel, optOut, mutableMapOf())
+        ) : this(sandbox, defaultChannel, optOut, mutableMapOf())
 
         fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().testMode(testMode).build()
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun testMode(): Optional<Boolean> = testMode.getOptional("test_mode")
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * Default messaging channel: "sms" or "whatsapp"
@@ -394,11 +403,11 @@ private constructor(
         fun optOut(): Optional<Boolean> = optOut.getOptional("opt_out")
 
         /**
-         * Returns the raw JSON value of [testMode].
+         * Returns the raw JSON value of [sandbox].
          *
-         * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("test_mode") @ExcludeMissing fun _testMode(): JsonField<Boolean> = testMode
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
          * Returns the raw JSON value of [defaultChannel].
@@ -438,33 +447,33 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var testMode: JsonField<Boolean> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var defaultChannel: JsonField<String> = JsonMissing.of()
             private var optOut: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                testMode = body.testMode
+                sandbox = body.sandbox
                 defaultChannel = body.defaultChannel
                 optOut = body.optOut
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
             /**
-             * Test mode flag - when true, the operation is simulated without side effects Useful
-             * for testing integrations without actual execution
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
              */
-            fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
 
             /**
-             * Sets [Builder.testMode] to an arbitrary JSON value.
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun testMode(testMode: JsonField<Boolean>) = apply { this.testMode = testMode }
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /** Default messaging channel: "sms" or "whatsapp" */
             fun defaultChannel(defaultChannel: String?) =
@@ -532,7 +541,7 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              */
             fun build(): Body =
-                Body(testMode, defaultChannel, optOut, additionalProperties.toMutableMap())
+                Body(sandbox, defaultChannel, optOut, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -542,7 +551,7 @@ private constructor(
                 return@apply
             }
 
-            testMode()
+            sandbox()
             defaultChannel()
             optOut()
             validated = true
@@ -564,7 +573,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (testMode.asKnown().isPresent) 1 else 0) +
+            (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (if (defaultChannel.asKnown().isPresent) 1 else 0) +
                 (if (optOut.asKnown().isPresent) 1 else 0)
 
@@ -574,20 +583,20 @@ private constructor(
             }
 
             return other is Body &&
-                testMode == other.testMode &&
+                sandbox == other.sandbox &&
                 defaultChannel == other.defaultChannel &&
                 optOut == other.optOut &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(testMode, defaultChannel, optOut, additionalProperties)
+            Objects.hash(sandbox, defaultChannel, optOut, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{testMode=$testMode, defaultChannel=$defaultChannel, optOut=$optOut, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, defaultChannel=$defaultChannel, optOut=$optOut, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -598,14 +607,15 @@ private constructor(
         return other is ContactUpdateParams &&
             id == other.id &&
             idempotencyKey == other.idempotencyKey &&
+            xProfileId == other.xProfileId &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(id, idempotencyKey, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(id, idempotencyKey, xProfileId, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ContactUpdateParams{id=$id, idempotencyKey=$idempotencyKey, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ContactUpdateParams{id=$id, idempotencyKey=$idempotencyKey, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

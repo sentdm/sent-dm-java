@@ -4,8 +4,11 @@ package dm.sent.services.async
 
 import dm.sent.client.okhttp.SentDmOkHttpClientAsync
 import dm.sent.models.webhooks.WebhookCreateParams
+import dm.sent.models.webhooks.WebhookDeleteParams
+import dm.sent.models.webhooks.WebhookListEventTypesParams
 import dm.sent.models.webhooks.WebhookListEventsParams
 import dm.sent.models.webhooks.WebhookListParams
+import dm.sent.models.webhooks.WebhookRetrieveParams
 import dm.sent.models.webhooks.WebhookRotateSecretParams
 import dm.sent.models.webhooks.WebhookTestParams
 import dm.sent.models.webhooks.WebhookToggleStatusParams
@@ -25,7 +28,8 @@ internal class WebhookServiceAsyncTest {
             webhookServiceAsync.create(
                 WebhookCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .displayName("Order Notifications")
                     .endpointUrl("https://example.com/webhooks/orders")
                     .addEventType("messages")
@@ -46,7 +50,12 @@ internal class WebhookServiceAsyncTest {
         val webhookServiceAsync = client.webhooks()
 
         val apiResponseWebhookFuture =
-            webhookServiceAsync.retrieve("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
+            webhookServiceAsync.retrieve(
+                WebhookRetrieveParams.builder()
+                    .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
 
         val apiResponseWebhook = apiResponseWebhookFuture.get()
         apiResponseWebhook.validate()
@@ -63,7 +72,8 @@ internal class WebhookServiceAsyncTest {
                 WebhookUpdateParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .displayName("Updated Order Notifications")
                     .endpointUrl("https://example.com/webhooks/orders-v2")
                     .addEventType("messages")
@@ -90,6 +100,7 @@ internal class WebhookServiceAsyncTest {
                     .pageSize(0)
                     .isActive(true)
                     .search("search")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 
@@ -103,7 +114,13 @@ internal class WebhookServiceAsyncTest {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val future = webhookServiceAsync.delete("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
+        val future =
+            webhookServiceAsync.delete(
+                WebhookDeleteParams.builder()
+                    .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
 
         val response = future.get()
     }
@@ -114,7 +131,12 @@ internal class WebhookServiceAsyncTest {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val responseFuture = webhookServiceAsync.listEventTypes()
+        val responseFuture =
+            webhookServiceAsync.listEventTypes(
+                WebhookListEventTypesParams.builder()
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
 
         val response = responseFuture.get()
         response.validate()
@@ -133,6 +155,7 @@ internal class WebhookServiceAsyncTest {
                     .page(0)
                     .pageSize(0)
                     .search("search")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 
@@ -151,7 +174,8 @@ internal class WebhookServiceAsyncTest {
                 WebhookRotateSecretParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .build()
             )
 
@@ -170,7 +194,8 @@ internal class WebhookServiceAsyncTest {
                 WebhookTestParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .eventType("message.sent")
                     .build()
             )
@@ -190,7 +215,8 @@ internal class WebhookServiceAsyncTest {
                 WebhookToggleStatusParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .isActive(false)
                     .build()
             )
