@@ -252,7 +252,7 @@ private constructor(
     class Data
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val contacts: JsonField<List<Contact>>,
+        private val contacts: JsonField<List<ContactResponse>>,
         private val pagination: JsonField<PaginationMeta>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -261,7 +261,7 @@ private constructor(
         private constructor(
             @JsonProperty("contacts")
             @ExcludeMissing
-            contacts: JsonField<List<Contact>> = JsonMissing.of(),
+            contacts: JsonField<List<ContactResponse>> = JsonMissing.of(),
             @JsonProperty("pagination")
             @ExcludeMissing
             pagination: JsonField<PaginationMeta> = JsonMissing.of(),
@@ -273,7 +273,7 @@ private constructor(
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun contacts(): Optional<List<Contact>> = contacts.getOptional("contacts")
+        fun contacts(): Optional<List<ContactResponse>> = contacts.getOptional("contacts")
 
         /**
          * Pagination metadata
@@ -290,7 +290,7 @@ private constructor(
          */
         @JsonProperty("contacts")
         @ExcludeMissing
-        fun _contacts(): JsonField<List<Contact>> = contacts
+        fun _contacts(): JsonField<List<ContactResponse>> = contacts
 
         /**
          * Returns the raw JSON value of [pagination].
@@ -322,7 +322,7 @@ private constructor(
         /** A builder for [Data]. */
         class Builder internal constructor() {
 
-            private var contacts: JsonField<MutableList<Contact>>? = null
+            private var contacts: JsonField<MutableList<ContactResponse>>? = null
             private var pagination: JsonField<PaginationMeta> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -334,25 +334,25 @@ private constructor(
             }
 
             /** List of contacts */
-            fun contacts(contacts: List<Contact>) = contacts(JsonField.of(contacts))
+            fun contacts(contacts: List<ContactResponse>) = contacts(JsonField.of(contacts))
 
             /**
              * Sets [Builder.contacts] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.contacts] with a well-typed `List<Contact>` value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
+             * You should usually call [Builder.contacts] with a well-typed `List<ContactResponse>`
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
              */
-            fun contacts(contacts: JsonField<List<Contact>>) = apply {
+            fun contacts(contacts: JsonField<List<ContactResponse>>) = apply {
                 this.contacts = contacts.map { it.toMutableList() }
             }
 
             /**
-             * Adds a single [Contact] to [contacts].
+             * Adds a single [ContactResponse] to [contacts].
              *
              * @throws IllegalStateException if the field was previously set to a non-list.
              */
-            fun addContact(contact: Contact) = apply {
+            fun addContact(contact: ContactResponse) = apply {
                 contacts =
                     (contacts ?: JsonField.of(mutableListOf())).also {
                         checkKnown("contacts", it).add(contact)

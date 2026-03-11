@@ -4,16 +4,14 @@ package dm.sent.client
 
 import dm.sent.core.ClientOptions
 import dm.sent.core.getPackageVersion
-import dm.sent.services.async.BrandServiceAsync
-import dm.sent.services.async.BrandServiceAsyncImpl
 import dm.sent.services.async.ContactServiceAsync
 import dm.sent.services.async.ContactServiceAsyncImpl
-import dm.sent.services.async.LookupServiceAsync
-import dm.sent.services.async.LookupServiceAsyncImpl
 import dm.sent.services.async.MeServiceAsync
 import dm.sent.services.async.MeServiceAsyncImpl
 import dm.sent.services.async.MessageServiceAsync
 import dm.sent.services.async.MessageServiceAsyncImpl
+import dm.sent.services.async.NumberServiceAsync
+import dm.sent.services.async.NumberServiceAsyncImpl
 import dm.sent.services.async.ProfileServiceAsync
 import dm.sent.services.async.ProfileServiceAsyncImpl
 import dm.sent.services.async.TemplateServiceAsync
@@ -55,20 +53,16 @@ class SentDmClientAsyncImpl(private val clientOptions: ClientOptions) : SentDmCl
         ProfileServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val numbers: NumberServiceAsync by lazy {
+        NumberServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val messages: MessageServiceAsync by lazy {
         MessageServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    private val lookup: LookupServiceAsync by lazy {
-        LookupServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
     private val contacts: ContactServiceAsync by lazy {
         ContactServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
-    private val brands: BrandServiceAsync by lazy {
-        BrandServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
     private val me: MeServiceAsync by lazy { MeServiceAsyncImpl(clientOptionsWithUserAgent) }
@@ -92,15 +86,14 @@ class SentDmClientAsyncImpl(private val clientOptions: ClientOptions) : SentDmCl
     /** Manage organization profiles */
     override fun profiles(): ProfileServiceAsync = profiles
 
+    /** Manage and lookup phone numbers */
+    override fun numbers(): NumberServiceAsync = numbers
+
     /** Send and track SMS and WhatsApp messages */
     override fun messages(): MessageServiceAsync = messages
 
-    override fun lookup(): LookupServiceAsync = lookup
-
     /** Create, update, and manage customer contact lists */
     override fun contacts(): ContactServiceAsync = contacts
-
-    override fun brands(): BrandServiceAsync = brands
 
     /** Retrieve account details */
     override fun me(): MeServiceAsync = me
@@ -126,20 +119,16 @@ class SentDmClientAsyncImpl(private val clientOptions: ClientOptions) : SentDmCl
             ProfileServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val numbers: NumberServiceAsync.WithRawResponse by lazy {
+            NumberServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val messages: MessageServiceAsync.WithRawResponse by lazy {
             MessageServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val lookup: LookupServiceAsync.WithRawResponse by lazy {
-            LookupServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val contacts: ContactServiceAsync.WithRawResponse by lazy {
             ContactServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val brands: BrandServiceAsync.WithRawResponse by lazy {
-            BrandServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val me: MeServiceAsync.WithRawResponse by lazy {
@@ -165,15 +154,14 @@ class SentDmClientAsyncImpl(private val clientOptions: ClientOptions) : SentDmCl
         /** Manage organization profiles */
         override fun profiles(): ProfileServiceAsync.WithRawResponse = profiles
 
+        /** Manage and lookup phone numbers */
+        override fun numbers(): NumberServiceAsync.WithRawResponse = numbers
+
         /** Send and track SMS and WhatsApp messages */
         override fun messages(): MessageServiceAsync.WithRawResponse = messages
 
-        override fun lookup(): LookupServiceAsync.WithRawResponse = lookup
-
         /** Create, update, and manage customer contact lists */
         override fun contacts(): ContactServiceAsync.WithRawResponse = contacts
-
-        override fun brands(): BrandServiceAsync.WithRawResponse = brands
 
         /** Retrieve account details */
         override fun me(): MeServiceAsync.WithRawResponse = me

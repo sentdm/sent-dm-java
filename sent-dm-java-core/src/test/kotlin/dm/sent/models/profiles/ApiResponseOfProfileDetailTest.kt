@@ -5,10 +5,6 @@ package dm.sent.models.profiles
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.brands.BrandWithKyc
-import dm.sent.models.brands.DestinationCountry
-import dm.sent.models.brands.TcrBrandRelationship
-import dm.sent.models.brands.TcrVertical
 import dm.sent.models.webhooks.ApiError
 import dm.sent.models.webhooks.ApiMeta
 import java.time.OffsetDateTime
@@ -37,10 +33,10 @@ internal class ApiResponseOfProfileDetailTest {
                         )
                         .billingModel("billing_model")
                         .brand(
-                            BrandWithKyc.builder()
+                            ProfileDetail.Brand.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .business(
-                                    BrandWithKyc.Business.builder()
+                                    ProfileDetail.Brand.Business.builder()
                                         .city("city")
                                         .country("country")
                                         .countryOfRegistration("country_of_registration")
@@ -55,7 +51,7 @@ internal class ApiResponseOfProfileDetailTest {
                                         .build()
                                 )
                                 .compliance(
-                                    BrandWithKyc.Compliance.builder()
+                                    ProfileDetail.Brand.Compliance.builder()
                                         .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                                         .addDestinationCountry(
                                             DestinationCountry.builder()
@@ -72,7 +68,7 @@ internal class ApiResponseOfProfileDetailTest {
                                         .build()
                                 )
                                 .contact(
-                                    BrandWithKyc.Contact.builder()
+                                    ProfileDetail.Brand.Contact.builder()
                                         .businessName("business_name")
                                         .email("email")
                                         .name("name")
@@ -83,9 +79,9 @@ internal class ApiResponseOfProfileDetailTest {
                                 )
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .cspId("csp_id")
-                                .identityStatus(BrandWithKyc.IdentityStatus.SELF_DECLARED)
+                                .identityStatus(ProfileDetail.Brand.IdentityStatus.SELF_DECLARED)
                                 .isInherited(true)
-                                .status(BrandWithKyc.Status.ACTIVE)
+                                .status(ProfileDetail.Brand.Status.ACTIVE)
                                 .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .submittedToTcr(true)
                                 .tcrBrandId("tcr_brand_id")
@@ -152,10 +148,10 @@ internal class ApiResponseOfProfileDetailTest {
                     )
                     .billingModel("billing_model")
                     .brand(
-                        BrandWithKyc.builder()
+                        ProfileDetail.Brand.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .business(
-                                BrandWithKyc.Business.builder()
+                                ProfileDetail.Brand.Business.builder()
                                     .city("city")
                                     .country("country")
                                     .countryOfRegistration("country_of_registration")
@@ -170,7 +166,7 @@ internal class ApiResponseOfProfileDetailTest {
                                     .build()
                             )
                             .compliance(
-                                BrandWithKyc.Compliance.builder()
+                                ProfileDetail.Brand.Compliance.builder()
                                     .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                                     .addDestinationCountry(
                                         DestinationCountry.builder().id("id").isMain(true).build()
@@ -184,7 +180,7 @@ internal class ApiResponseOfProfileDetailTest {
                                     .build()
                             )
                             .contact(
-                                BrandWithKyc.Contact.builder()
+                                ProfileDetail.Brand.Contact.builder()
                                     .businessName("business_name")
                                     .email("email")
                                     .name("name")
@@ -195,9 +191,9 @@ internal class ApiResponseOfProfileDetailTest {
                             )
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .cspId("csp_id")
-                            .identityStatus(BrandWithKyc.IdentityStatus.SELF_DECLARED)
+                            .identityStatus(ProfileDetail.Brand.IdentityStatus.SELF_DECLARED)
                             .isInherited(true)
-                            .status(BrandWithKyc.Status.ACTIVE)
+                            .status(ProfileDetail.Brand.Status.ACTIVE)
                             .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .submittedToTcr(true)
                             .tcrBrandId("tcr_brand_id")
@@ -270,10 +266,10 @@ internal class ApiResponseOfProfileDetailTest {
                         )
                         .billingModel("billing_model")
                         .brand(
-                            BrandWithKyc.builder()
+                            ProfileDetail.Brand.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .business(
-                                    BrandWithKyc.Business.builder()
+                                    ProfileDetail.Brand.Business.builder()
                                         .city("city")
                                         .country("country")
                                         .countryOfRegistration("country_of_registration")
@@ -288,7 +284,7 @@ internal class ApiResponseOfProfileDetailTest {
                                         .build()
                                 )
                                 .compliance(
-                                    BrandWithKyc.Compliance.builder()
+                                    ProfileDetail.Brand.Compliance.builder()
                                         .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                                         .addDestinationCountry(
                                             DestinationCountry.builder()
@@ -305,7 +301,7 @@ internal class ApiResponseOfProfileDetailTest {
                                         .build()
                                 )
                                 .contact(
-                                    BrandWithKyc.Contact.builder()
+                                    ProfileDetail.Brand.Contact.builder()
                                         .businessName("business_name")
                                         .email("email")
                                         .name("name")
@@ -316,9 +312,9 @@ internal class ApiResponseOfProfileDetailTest {
                                 )
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .cspId("csp_id")
-                                .identityStatus(BrandWithKyc.IdentityStatus.SELF_DECLARED)
+                                .identityStatus(ProfileDetail.Brand.IdentityStatus.SELF_DECLARED)
                                 .isInherited(true)
-                                .status(BrandWithKyc.Status.ACTIVE)
+                                .status(ProfileDetail.Brand.Status.ACTIVE)
                                 .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .submittedToTcr(true)
                                 .tcrBrandId("tcr_brand_id")

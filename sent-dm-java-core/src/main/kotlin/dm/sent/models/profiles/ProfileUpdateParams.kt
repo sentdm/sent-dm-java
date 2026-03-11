@@ -11,12 +11,10 @@ import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.core.Params
-import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentDmInvalidDataException
-import dm.sent.models.brands.BrandData
-import dm.sent.models.webhooks.MutationRequest
+import dm.sent.models.webhooks.MutationRequestBase
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -98,7 +96,7 @@ private constructor(
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun billingContact(): Optional<BillingContact> = body.billingContact()
+    fun billingContact(): Optional<BillingContactInfo> = body.billingContact()
 
     /**
      * Billing model: profile, organization, or profile_and_organization (optional).
@@ -121,7 +119,7 @@ private constructor(
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun brand(): Optional<BrandData> = body.brand()
+    fun brand(): Optional<BrandsBrandData> = body.brand()
 
     /**
      * Profile description (optional)
@@ -267,7 +265,7 @@ private constructor(
      *
      * Unlike [billingContact], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _billingContact(): JsonField<BillingContact> = body._billingContact()
+    fun _billingContact(): JsonField<BillingContactInfo> = body._billingContact()
 
     /**
      * Returns the raw JSON value of [billingModel].
@@ -281,7 +279,7 @@ private constructor(
      *
      * Unlike [brand], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _brand(): JsonField<BrandData> = body._brand()
+    fun _brand(): JsonField<BrandsBrandData> = body._brand()
 
     /**
      * Returns the raw JSON value of [description].
@@ -561,22 +559,22 @@ private constructor(
          * "profile_and_organization" and no billing contact has been configured yet. Identifies who
          * receives invoices and who is responsible for payment.
          */
-        fun billingContact(billingContact: BillingContact?) = apply {
+        fun billingContact(billingContact: BillingContactInfo?) = apply {
             body.billingContact(billingContact)
         }
 
         /** Alias for calling [Builder.billingContact] with `billingContact.orElse(null)`. */
-        fun billingContact(billingContact: Optional<BillingContact>) =
+        fun billingContact(billingContact: Optional<BillingContactInfo>) =
             billingContact(billingContact.getOrNull())
 
         /**
          * Sets [Builder.billingContact] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.billingContact] with a well-typed [BillingContact] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.billingContact] with a well-typed [BillingContactInfo]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
          */
-        fun billingContact(billingContact: JsonField<BillingContact>) = apply {
+        fun billingContact(billingContact: JsonField<BillingContactInfo>) = apply {
             body.billingContact(billingContact)
         }
 
@@ -609,18 +607,19 @@ private constructor(
          * the brand associated with this profile. Cannot be set when inherit_tcr_brand is true.
          * Once a brand has been submitted to TCR it cannot be modified.
          */
-        fun brand(brand: BrandData?) = apply { body.brand(brand) }
+        fun brand(brand: BrandsBrandData?) = apply { body.brand(brand) }
 
         /** Alias for calling [Builder.brand] with `brand.orElse(null)`. */
-        fun brand(brand: Optional<BrandData>) = brand(brand.getOrNull())
+        fun brand(brand: Optional<BrandsBrandData>) = brand(brand.getOrNull())
 
         /**
          * Sets [Builder.brand] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.brand] with a well-typed [BrandData] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.brand] with a well-typed [BrandsBrandData] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun brand(brand: JsonField<BrandData>) = apply { body.brand(brand) }
+        fun brand(brand: JsonField<BrandsBrandData>) = apply { body.brand(brand) }
 
         /** Profile description (optional) */
         fun description(description: String?) = apply { body.description(description) }
@@ -1071,9 +1070,9 @@ private constructor(
         private val allowContactSharing: JsonField<Boolean>,
         private val allowNumberChangeDuringOnboarding: JsonField<Boolean>,
         private val allowTemplateSharing: JsonField<Boolean>,
-        private val billingContact: JsonField<BillingContact>,
+        private val billingContact: JsonField<BillingContactInfo>,
         private val billingModel: JsonField<String>,
-        private val brand: JsonField<BrandData>,
+        private val brand: JsonField<BrandsBrandData>,
         private val description: JsonField<String>,
         private val icon: JsonField<String>,
         private val inheritContacts: JsonField<Boolean>,
@@ -1104,11 +1103,13 @@ private constructor(
             allowTemplateSharing: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("billing_contact")
             @ExcludeMissing
-            billingContact: JsonField<BillingContact> = JsonMissing.of(),
+            billingContact: JsonField<BillingContactInfo> = JsonMissing.of(),
             @JsonProperty("billing_model")
             @ExcludeMissing
             billingModel: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("brand") @ExcludeMissing brand: JsonField<BrandData> = JsonMissing.of(),
+            @JsonProperty("brand")
+            @ExcludeMissing
+            brand: JsonField<BrandsBrandData> = JsonMissing.of(),
             @JsonProperty("description")
             @ExcludeMissing
             description: JsonField<String> = JsonMissing.of(),
@@ -1168,8 +1169,8 @@ private constructor(
             mutableMapOf(),
         )
 
-        fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
+        fun toMutationRequestBase(): MutationRequestBase =
+            MutationRequestBase.builder().sandbox(sandbox).build()
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -1215,7 +1216,7 @@ private constructor(
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun billingContact(): Optional<BillingContact> =
+        fun billingContact(): Optional<BillingContactInfo> =
             billingContact.getOptional("billing_contact")
 
         /**
@@ -1239,7 +1240,7 @@ private constructor(
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun brand(): Optional<BrandData> = brand.getOptional("brand")
+        fun brand(): Optional<BrandsBrandData> = brand.getOptional("brand")
 
         /**
          * Profile description (optional)
@@ -1402,7 +1403,7 @@ private constructor(
          */
         @JsonProperty("billing_contact")
         @ExcludeMissing
-        fun _billingContact(): JsonField<BillingContact> = billingContact
+        fun _billingContact(): JsonField<BillingContactInfo> = billingContact
 
         /**
          * Returns the raw JSON value of [billingModel].
@@ -1419,7 +1420,7 @@ private constructor(
          *
          * Unlike [brand], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("brand") @ExcludeMissing fun _brand(): JsonField<BrandData> = brand
+        @JsonProperty("brand") @ExcludeMissing fun _brand(): JsonField<BrandsBrandData> = brand
 
         /**
          * Returns the raw JSON value of [description].
@@ -1566,9 +1567,9 @@ private constructor(
             private var allowContactSharing: JsonField<Boolean> = JsonMissing.of()
             private var allowNumberChangeDuringOnboarding: JsonField<Boolean> = JsonMissing.of()
             private var allowTemplateSharing: JsonField<Boolean> = JsonMissing.of()
-            private var billingContact: JsonField<BillingContact> = JsonMissing.of()
+            private var billingContact: JsonField<BillingContactInfo> = JsonMissing.of()
             private var billingModel: JsonField<String> = JsonMissing.of()
-            private var brand: JsonField<BrandData> = JsonMissing.of()
+            private var brand: JsonField<BrandsBrandData> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
             private var icon: JsonField<String> = JsonMissing.of()
             private var inheritContacts: JsonField<Boolean> = JsonMissing.of()
@@ -1722,21 +1723,21 @@ private constructor(
              * "profile_and_organization" and no billing contact has been configured yet. Identifies
              * who receives invoices and who is responsible for payment.
              */
-            fun billingContact(billingContact: BillingContact?) =
+            fun billingContact(billingContact: BillingContactInfo?) =
                 billingContact(JsonField.ofNullable(billingContact))
 
             /** Alias for calling [Builder.billingContact] with `billingContact.orElse(null)`. */
-            fun billingContact(billingContact: Optional<BillingContact>) =
+            fun billingContact(billingContact: Optional<BillingContactInfo>) =
                 billingContact(billingContact.getOrNull())
 
             /**
              * Sets [Builder.billingContact] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.billingContact] with a well-typed [BillingContact]
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
+             * You should usually call [Builder.billingContact] with a well-typed
+             * [BillingContactInfo] value instead. This method is primarily for setting the field to
+             * an undocumented or not yet supported value.
              */
-            fun billingContact(billingContact: JsonField<BillingContact>) = apply {
+            fun billingContact(billingContact: JsonField<BillingContactInfo>) = apply {
                 this.billingContact = billingContact
             }
 
@@ -1771,19 +1772,19 @@ private constructor(
              * updates the brand associated with this profile. Cannot be set when inherit_tcr_brand
              * is true. Once a brand has been submitted to TCR it cannot be modified.
              */
-            fun brand(brand: BrandData?) = brand(JsonField.ofNullable(brand))
+            fun brand(brand: BrandsBrandData?) = brand(JsonField.ofNullable(brand))
 
             /** Alias for calling [Builder.brand] with `brand.orElse(null)`. */
-            fun brand(brand: Optional<BrandData>) = brand(brand.getOrNull())
+            fun brand(brand: Optional<BrandsBrandData>) = brand(brand.getOrNull())
 
             /**
              * Sets [Builder.brand] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.brand] with a well-typed [BrandData] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.brand] with a well-typed [BrandsBrandData] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun brand(brand: JsonField<BrandData>) = apply { this.brand = brand }
+            fun brand(brand: JsonField<BrandsBrandData>) = apply { this.brand = brand }
 
             /** Profile description (optional) */
             fun description(description: String?) = description(JsonField.ofNullable(description))
@@ -2253,574 +2254,6 @@ private constructor(
 
         override fun toString() =
             "Body{sandbox=$sandbox, allowContactSharing=$allowContactSharing, allowNumberChangeDuringOnboarding=$allowNumberChangeDuringOnboarding, allowTemplateSharing=$allowTemplateSharing, billingContact=$billingContact, billingModel=$billingModel, brand=$brand, description=$description, icon=$icon, inheritContacts=$inheritContacts, inheritTcrBrand=$inheritTcrBrand, inheritTcrCampaign=$inheritTcrCampaign, inheritTemplates=$inheritTemplates, name=$name, paymentDetails=$paymentDetails, sendingPhoneNumber=$sendingPhoneNumber, sendingPhoneNumberProfileId=$sendingPhoneNumberProfileId, sendingWhatsappNumberProfileId=$sendingWhatsappNumberProfileId, shortName=$shortName, whatsappPhoneNumber=$whatsappPhoneNumber, additionalProperties=$additionalProperties}"
-    }
-
-    /**
-     * Billing contact for this profile. Required when billing_model is "profile" or
-     * "profile_and_organization" and no billing contact has been configured yet. Identifies who
-     * receives invoices and who is responsible for payment.
-     */
-    class BillingContact
-    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-    private constructor(
-        private val email: JsonField<String>,
-        private val name: JsonField<String>,
-        private val address: JsonField<String>,
-        private val phone: JsonField<String>,
-        private val additionalProperties: MutableMap<String, JsonValue>,
-    ) {
-
-        @JsonCreator
-        private constructor(
-            @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("address") @ExcludeMissing address: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("phone") @ExcludeMissing phone: JsonField<String> = JsonMissing.of(),
-        ) : this(email, name, address, phone, mutableMapOf())
-
-        /**
-         * Email address where invoices will be sent (required)
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun email(): String = email.getRequired("email")
-
-        /**
-         * Full name of the billing contact or company (required)
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun name(): String = name.getRequired("name")
-
-        /**
-         * Billing address (optional). Free-form text including street, city, state, postal code,
-         * and country.
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun address(): Optional<String> = address.getOptional("address")
-
-        /**
-         * Phone number for the billing contact (optional)
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun phone(): Optional<String> = phone.getOptional("phone")
-
-        /**
-         * Returns the raw JSON value of [email].
-         *
-         * Unlike [email], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<String> = email
-
-        /**
-         * Returns the raw JSON value of [name].
-         *
-         * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
-
-        /**
-         * Returns the raw JSON value of [address].
-         *
-         * Unlike [address], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("address") @ExcludeMissing fun _address(): JsonField<String> = address
-
-        /**
-         * Returns the raw JSON value of [phone].
-         *
-         * Unlike [phone], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("phone") @ExcludeMissing fun _phone(): JsonField<String> = phone
-
-        @JsonAnySetter
-        private fun putAdditionalProperty(key: String, value: JsonValue) {
-            additionalProperties.put(key, value)
-        }
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> =
-            Collections.unmodifiableMap(additionalProperties)
-
-        fun toBuilder() = Builder().from(this)
-
-        companion object {
-
-            /**
-             * Returns a mutable builder for constructing an instance of [BillingContact].
-             *
-             * The following fields are required:
-             * ```java
-             * .email()
-             * .name()
-             * ```
-             */
-            @JvmStatic fun builder() = Builder()
-        }
-
-        /** A builder for [BillingContact]. */
-        class Builder internal constructor() {
-
-            private var email: JsonField<String>? = null
-            private var name: JsonField<String>? = null
-            private var address: JsonField<String> = JsonMissing.of()
-            private var phone: JsonField<String> = JsonMissing.of()
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-            @JvmSynthetic
-            internal fun from(billingContact: BillingContact) = apply {
-                email = billingContact.email
-                name = billingContact.name
-                address = billingContact.address
-                phone = billingContact.phone
-                additionalProperties = billingContact.additionalProperties.toMutableMap()
-            }
-
-            /** Email address where invoices will be sent (required) */
-            fun email(email: String) = email(JsonField.of(email))
-
-            /**
-             * Sets [Builder.email] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.email] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun email(email: JsonField<String>) = apply { this.email = email }
-
-            /** Full name of the billing contact or company (required) */
-            fun name(name: String) = name(JsonField.of(name))
-
-            /**
-             * Sets [Builder.name] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.name] with a well-typed [String] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
-             */
-            fun name(name: JsonField<String>) = apply { this.name = name }
-
-            /**
-             * Billing address (optional). Free-form text including street, city, state, postal
-             * code, and country.
-             */
-            fun address(address: String?) = address(JsonField.ofNullable(address))
-
-            /** Alias for calling [Builder.address] with `address.orElse(null)`. */
-            fun address(address: Optional<String>) = address(address.getOrNull())
-
-            /**
-             * Sets [Builder.address] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.address] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun address(address: JsonField<String>) = apply { this.address = address }
-
-            /** Phone number for the billing contact (optional) */
-            fun phone(phone: String?) = phone(JsonField.ofNullable(phone))
-
-            /** Alias for calling [Builder.phone] with `phone.orElse(null)`. */
-            fun phone(phone: Optional<String>) = phone(phone.getOrNull())
-
-            /**
-             * Sets [Builder.phone] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.phone] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun phone(phone: JsonField<String>) = apply { this.phone = phone }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
-
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
-
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
-
-            /**
-             * Returns an immutable instance of [BillingContact].
-             *
-             * Further updates to this [Builder] will not mutate the returned instance.
-             *
-             * The following fields are required:
-             * ```java
-             * .email()
-             * .name()
-             * ```
-             *
-             * @throws IllegalStateException if any required field is unset.
-             */
-            fun build(): BillingContact =
-                BillingContact(
-                    checkRequired("email", email),
-                    checkRequired("name", name),
-                    address,
-                    phone,
-                    additionalProperties.toMutableMap(),
-                )
-        }
-
-        private var validated: Boolean = false
-
-        fun validate(): BillingContact = apply {
-            if (validated) {
-                return@apply
-            }
-
-            email()
-            name()
-            address()
-            phone()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: SentDmInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            (if (email.asKnown().isPresent) 1 else 0) +
-                (if (name.asKnown().isPresent) 1 else 0) +
-                (if (address.asKnown().isPresent) 1 else 0) +
-                (if (phone.asKnown().isPresent) 1 else 0)
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is BillingContact &&
-                email == other.email &&
-                name == other.name &&
-                address == other.address &&
-                phone == other.phone &&
-                additionalProperties == other.additionalProperties
-        }
-
-        private val hashCode: Int by lazy {
-            Objects.hash(email, name, address, phone, additionalProperties)
-        }
-
-        override fun hashCode(): Int = hashCode
-
-        override fun toString() =
-            "BillingContact{email=$email, name=$name, address=$address, phone=$phone, additionalProperties=$additionalProperties}"
-    }
-
-    /**
-     * Payment card details for this profile (optional). Accepted when billing_model is "profile" or
-     * "profile_and_organization". Not persisted on our servers — forwarded to the payment
-     * processor.
-     */
-    class PaymentDetails
-    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-    private constructor(
-        private val cardNumber: JsonField<String>,
-        private val cvc: JsonField<String>,
-        private val expiry: JsonField<String>,
-        private val zipCode: JsonField<String>,
-        private val additionalProperties: MutableMap<String, JsonValue>,
-    ) {
-
-        @JsonCreator
-        private constructor(
-            @JsonProperty("card_number")
-            @ExcludeMissing
-            cardNumber: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("cvc") @ExcludeMissing cvc: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("expiry") @ExcludeMissing expiry: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("zip_code") @ExcludeMissing zipCode: JsonField<String> = JsonMissing.of(),
-        ) : this(cardNumber, cvc, expiry, zipCode, mutableMapOf())
-
-        /**
-         * Card number (digits only, 13–19 characters)
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun cardNumber(): String = cardNumber.getRequired("card_number")
-
-        /**
-         * Card security code (3–4 digits)
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun cvc(): String = cvc.getRequired("cvc")
-
-        /**
-         * Card expiry date in MM/YY format (e.g. "09/27")
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun expiry(): String = expiry.getRequired("expiry")
-
-        /**
-         * Billing ZIP / postal code associated with the card
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun zipCode(): String = zipCode.getRequired("zip_code")
-
-        /**
-         * Returns the raw JSON value of [cardNumber].
-         *
-         * Unlike [cardNumber], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("card_number")
-        @ExcludeMissing
-        fun _cardNumber(): JsonField<String> = cardNumber
-
-        /**
-         * Returns the raw JSON value of [cvc].
-         *
-         * Unlike [cvc], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("cvc") @ExcludeMissing fun _cvc(): JsonField<String> = cvc
-
-        /**
-         * Returns the raw JSON value of [expiry].
-         *
-         * Unlike [expiry], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("expiry") @ExcludeMissing fun _expiry(): JsonField<String> = expiry
-
-        /**
-         * Returns the raw JSON value of [zipCode].
-         *
-         * Unlike [zipCode], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("zip_code") @ExcludeMissing fun _zipCode(): JsonField<String> = zipCode
-
-        @JsonAnySetter
-        private fun putAdditionalProperty(key: String, value: JsonValue) {
-            additionalProperties.put(key, value)
-        }
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> =
-            Collections.unmodifiableMap(additionalProperties)
-
-        fun toBuilder() = Builder().from(this)
-
-        companion object {
-
-            /**
-             * Returns a mutable builder for constructing an instance of [PaymentDetails].
-             *
-             * The following fields are required:
-             * ```java
-             * .cardNumber()
-             * .cvc()
-             * .expiry()
-             * .zipCode()
-             * ```
-             */
-            @JvmStatic fun builder() = Builder()
-        }
-
-        /** A builder for [PaymentDetails]. */
-        class Builder internal constructor() {
-
-            private var cardNumber: JsonField<String>? = null
-            private var cvc: JsonField<String>? = null
-            private var expiry: JsonField<String>? = null
-            private var zipCode: JsonField<String>? = null
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-            @JvmSynthetic
-            internal fun from(paymentDetails: PaymentDetails) = apply {
-                cardNumber = paymentDetails.cardNumber
-                cvc = paymentDetails.cvc
-                expiry = paymentDetails.expiry
-                zipCode = paymentDetails.zipCode
-                additionalProperties = paymentDetails.additionalProperties.toMutableMap()
-            }
-
-            /** Card number (digits only, 13–19 characters) */
-            fun cardNumber(cardNumber: String) = cardNumber(JsonField.of(cardNumber))
-
-            /**
-             * Sets [Builder.cardNumber] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.cardNumber] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun cardNumber(cardNumber: JsonField<String>) = apply { this.cardNumber = cardNumber }
-
-            /** Card security code (3–4 digits) */
-            fun cvc(cvc: String) = cvc(JsonField.of(cvc))
-
-            /**
-             * Sets [Builder.cvc] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.cvc] with a well-typed [String] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
-             */
-            fun cvc(cvc: JsonField<String>) = apply { this.cvc = cvc }
-
-            /** Card expiry date in MM/YY format (e.g. "09/27") */
-            fun expiry(expiry: String) = expiry(JsonField.of(expiry))
-
-            /**
-             * Sets [Builder.expiry] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.expiry] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun expiry(expiry: JsonField<String>) = apply { this.expiry = expiry }
-
-            /** Billing ZIP / postal code associated with the card */
-            fun zipCode(zipCode: String) = zipCode(JsonField.of(zipCode))
-
-            /**
-             * Sets [Builder.zipCode] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.zipCode] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun zipCode(zipCode: JsonField<String>) = apply { this.zipCode = zipCode }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
-
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
-
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
-
-            /**
-             * Returns an immutable instance of [PaymentDetails].
-             *
-             * Further updates to this [Builder] will not mutate the returned instance.
-             *
-             * The following fields are required:
-             * ```java
-             * .cardNumber()
-             * .cvc()
-             * .expiry()
-             * .zipCode()
-             * ```
-             *
-             * @throws IllegalStateException if any required field is unset.
-             */
-            fun build(): PaymentDetails =
-                PaymentDetails(
-                    checkRequired("cardNumber", cardNumber),
-                    checkRequired("cvc", cvc),
-                    checkRequired("expiry", expiry),
-                    checkRequired("zipCode", zipCode),
-                    additionalProperties.toMutableMap(),
-                )
-        }
-
-        private var validated: Boolean = false
-
-        fun validate(): PaymentDetails = apply {
-            if (validated) {
-                return@apply
-            }
-
-            cardNumber()
-            cvc()
-            expiry()
-            zipCode()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: SentDmInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            (if (cardNumber.asKnown().isPresent) 1 else 0) +
-                (if (cvc.asKnown().isPresent) 1 else 0) +
-                (if (expiry.asKnown().isPresent) 1 else 0) +
-                (if (zipCode.asKnown().isPresent) 1 else 0)
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is PaymentDetails &&
-                cardNumber == other.cardNumber &&
-                cvc == other.cvc &&
-                expiry == other.expiry &&
-                zipCode == other.zipCode &&
-                additionalProperties == other.additionalProperties
-        }
-
-        private val hashCode: Int by lazy {
-            Objects.hash(cardNumber, cvc, expiry, zipCode, additionalProperties)
-        }
-
-        override fun hashCode(): Int = hashCode
-
-        override fun toString() =
-            "PaymentDetails{cardNumber=$cardNumber, cvc=$cvc, expiry=$expiry, zipCode=$zipCode, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

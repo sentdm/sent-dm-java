@@ -14,7 +14,7 @@ import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentDmInvalidDataException
-import dm.sent.models.webhooks.MutationRequest
+import dm.sent.models.webhooks.MutationRequestBase
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -469,8 +469,8 @@ private constructor(
             mutableMapOf(),
         )
 
-        fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
+        fun toMutationRequestBase(): MutationRequestBase =
+            MutationRequestBase.builder().sandbox(sandbox).build()
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for

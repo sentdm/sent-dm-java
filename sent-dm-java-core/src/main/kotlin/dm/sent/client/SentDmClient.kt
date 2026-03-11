@@ -3,11 +3,10 @@
 package dm.sent.client
 
 import dm.sent.core.ClientOptions
-import dm.sent.services.blocking.BrandService
 import dm.sent.services.blocking.ContactService
-import dm.sent.services.blocking.LookupService
 import dm.sent.services.blocking.MeService
 import dm.sent.services.blocking.MessageService
+import dm.sent.services.blocking.NumberService
 import dm.sent.services.blocking.ProfileService
 import dm.sent.services.blocking.TemplateService
 import dm.sent.services.blocking.UserService
@@ -62,15 +61,14 @@ interface SentDmClient {
     /** Manage organization profiles */
     fun profiles(): ProfileService
 
+    /** Manage and lookup phone numbers */
+    fun numbers(): NumberService
+
     /** Send and track SMS and WhatsApp messages */
     fun messages(): MessageService
 
-    fun lookup(): LookupService
-
     /** Create, update, and manage customer contact lists */
     fun contacts(): ContactService
-
-    fun brands(): BrandService
 
     /** Retrieve account details */
     fun me(): MeService
@@ -110,15 +108,14 @@ interface SentDmClient {
         /** Manage organization profiles */
         fun profiles(): ProfileService.WithRawResponse
 
+        /** Manage and lookup phone numbers */
+        fun numbers(): NumberService.WithRawResponse
+
         /** Send and track SMS and WhatsApp messages */
         fun messages(): MessageService.WithRawResponse
 
-        fun lookup(): LookupService.WithRawResponse
-
         /** Create, update, and manage customer contact lists */
         fun contacts(): ContactService.WithRawResponse
-
-        fun brands(): BrandService.WithRawResponse
 
         /** Retrieve account details */
         fun me(): MeService.WithRawResponse

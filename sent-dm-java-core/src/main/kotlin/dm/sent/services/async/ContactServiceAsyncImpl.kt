@@ -17,7 +17,7 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
-import dm.sent.models.contacts.ApiResponseContact
+import dm.sent.models.contacts.ApiResponseOfContact
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
@@ -44,21 +44,21 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun create(
         params: ContactCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseContact> =
+    ): CompletableFuture<ApiResponseOfContact> =
         // post /v3/contacts
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieve(
         params: ContactRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseContact> =
+    ): CompletableFuture<ApiResponseOfContact> =
         // get /v3/contacts/{id}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun update(
         params: ContactUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseContact> =
+    ): CompletableFuture<ApiResponseOfContact> =
         // patch /v3/contacts/{id}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
@@ -89,13 +89,13 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<ApiResponseContact> =
-            jsonHandler<ApiResponseContact>(clientOptions.jsonMapper)
+        private val createHandler: Handler<ApiResponseOfContact> =
+            jsonHandler<ApiResponseOfContact>(clientOptions.jsonMapper)
 
         override fun create(
             params: ContactCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -120,13 +120,13 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val retrieveHandler: Handler<ApiResponseContact> =
-            jsonHandler<ApiResponseContact>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<ApiResponseOfContact> =
+            jsonHandler<ApiResponseOfContact>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: ContactRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -153,13 +153,13 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val updateHandler: Handler<ApiResponseContact> =
-            jsonHandler<ApiResponseContact>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<ApiResponseOfContact> =
+            jsonHandler<ApiResponseOfContact>(clientOptions.jsonMapper)
 
         override fun update(
             params: ContactUpdateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
