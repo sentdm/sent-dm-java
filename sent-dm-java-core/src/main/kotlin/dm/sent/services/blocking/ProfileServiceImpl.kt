@@ -18,14 +18,16 @@ import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
 import dm.sent.models.profiles.ApiResponseOfProfileDetail
-import dm.sent.models.profiles.ProfileCompleteParams
-import dm.sent.models.profiles.ProfileCompleteResponse
+import dm.sent.models.profiles.ProfileCompleteSetupParams
+import dm.sent.models.profiles.ProfileCompleteSetupResponse
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
+import dm.sent.services.blocking.profiles.CampaignService
+import dm.sent.services.blocking.profiles.CampaignServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -37,10 +39,15 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
         WithRawResponseImpl(clientOptions)
     }
 
+    private val campaigns: CampaignService by lazy { CampaignServiceImpl(clientOptions) }
+
     override fun withRawResponse(): ProfileService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ProfileService =
         ProfileServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    /** Manage organization profiles */
+    override fun campaigns(): CampaignService = campaigns
 
     override fun create(
         params: ProfileCreateParams,
@@ -75,12 +82,12 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
         withRawResponse().delete(params, requestOptions)
     }
 
-    override fun complete(
-        params: ProfileCompleteParams,
+    override fun completeSetup(
+        params: ProfileCompleteSetupParams,
         requestOptions: RequestOptions,
-    ): ProfileCompleteResponse =
+    ): ProfileCompleteSetupResponse =
         // post /v3/profiles/{profileId}/complete
-        withRawResponse().complete(params, requestOptions).parse()
+        withRawResponse().completeSetup(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ProfileService.WithRawResponse {
@@ -88,12 +95,19 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val campaigns: CampaignService.WithRawResponse by lazy {
+            CampaignServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): ProfileService.WithRawResponse =
             ProfileServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        /** Manage organization profiles */
+        override fun campaigns(): CampaignService.WithRawResponse = campaigns
 
         private val createHandler: Handler<ApiResponseOfProfileDetail> =
             jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
@@ -235,13 +249,13 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val completeHandler: Handler<ProfileCompleteResponse> =
-            jsonHandler<ProfileCompleteResponse>(clientOptions.jsonMapper)
+        private val completeSetupHandler: Handler<ProfileCompleteSetupResponse> =
+            jsonHandler<ProfileCompleteSetupResponse>(clientOptions.jsonMapper)
 
-        override fun complete(
-            params: ProfileCompleteParams,
+        override fun completeSetup(
+            params: ProfileCompleteSetupParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ProfileCompleteResponse> {
+        ): HttpResponseFor<ProfileCompleteSetupResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -257,7 +271,7 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { completeHandler.handle(it) }
+                    .use { completeSetupHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

@@ -6,8 +6,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.client.okhttp.SentDmOkHttpClient
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.brands.TcrBrandRelationship
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
+import dm.sent.models.profiles.TcrBrandRelationship
 import dm.sent.models.webhooks.ApiError
 import dm.sent.models.webhooks.ApiMeta
 import java.time.OffsetDateTime
@@ -56,10 +56,9 @@ internal class ProGuardCompatibilityTest {
         assertThat(client.users()).isNotNull()
         assertThat(client.templates()).isNotNull()
         assertThat(client.profiles()).isNotNull()
+        assertThat(client.numbers()).isNotNull()
         assertThat(client.messages()).isNotNull()
-        assertThat(client.lookup()).isNotNull()
         assertThat(client.contacts()).isNotNull()
-        assertThat(client.brands()).isNotNull()
         assertThat(client.me()).isNotNull()
     }
 
