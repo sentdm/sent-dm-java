@@ -17,6 +17,7 @@ private constructor(
     private val page: Int,
     private val pageSize: Int,
     private val search: String?,
+    private val xProfileId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -28,6 +29,8 @@ private constructor(
     fun pageSize(): Int = pageSize
 
     fun search(): Optional<String> = Optional.ofNullable(search)
+
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -58,6 +61,7 @@ private constructor(
         private var page: Int? = null
         private var pageSize: Int? = null
         private var search: String? = null
+        private var xProfileId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -67,6 +71,7 @@ private constructor(
             page = webhookListEventsParams.page
             pageSize = webhookListEventsParams.pageSize
             search = webhookListEventsParams.search
+            xProfileId = webhookListEventsParams.xProfileId
             additionalHeaders = webhookListEventsParams.additionalHeaders.toBuilder()
             additionalQueryParams = webhookListEventsParams.additionalQueryParams.toBuilder()
         }
@@ -84,6 +89,11 @@ private constructor(
 
         /** Alias for calling [Builder.search] with `search.orElse(null)`. */
         fun search(search: Optional<String>) = search(search.getOrNull())
+
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -202,6 +212,7 @@ private constructor(
                 checkRequired("page", page),
                 checkRequired("pageSize", pageSize),
                 search,
+                xProfileId,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -213,13 +224,19 @@ private constructor(
             else -> ""
         }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                xProfileId?.let { put("x-profile-id", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
                 put("page", page.toString())
-                put("pageSize", pageSize.toString())
+                put("page_size", pageSize.toString())
                 search?.let { put("search", it) }
                 putAll(additionalQueryParams)
             }
@@ -235,13 +252,22 @@ private constructor(
             page == other.page &&
             pageSize == other.pageSize &&
             search == other.search &&
+            xProfileId == other.xProfileId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(id, page, pageSize, search, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            id,
+            page,
+            pageSize,
+            search,
+            xProfileId,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "WebhookListEventsParams{id=$id, page=$page, pageSize=$pageSize, search=$search, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "WebhookListEventsParams{id=$id, page=$page, pageSize=$pageSize, search=$search, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

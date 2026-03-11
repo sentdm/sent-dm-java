@@ -15,14 +15,12 @@ import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
-import kotlin.jvm.optionals.getOrNull
 
 /** Request and response metadata */
 class ApiMeta
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val requestId: JsonField<String>,
-    private val responseTimeMs: JsonField<Long>,
     private val timestamp: JsonField<OffsetDateTime>,
     private val version: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -31,14 +29,11 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("request_id") @ExcludeMissing requestId: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("response_time_ms")
-        @ExcludeMissing
-        responseTimeMs: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("timestamp")
         @ExcludeMissing
         timestamp: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("version") @ExcludeMissing version: JsonField<String> = JsonMissing.of(),
-    ) : this(requestId, responseTimeMs, timestamp, version, mutableMapOf())
+    ) : this(requestId, timestamp, version, mutableMapOf())
 
     /**
      * Unique identifier for this request (for tracing and support)
@@ -47,14 +42,6 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun requestId(): Optional<String> = requestId.getOptional("request_id")
-
-    /**
-     * Response time in milliseconds (optional)
-     *
-     * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun responseTimeMs(): Optional<Long> = responseTimeMs.getOptional("response_time_ms")
 
     /**
      * Server timestamp when the response was generated
@@ -78,15 +65,6 @@ private constructor(
      * Unlike [requestId], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("request_id") @ExcludeMissing fun _requestId(): JsonField<String> = requestId
-
-    /**
-     * Returns the raw JSON value of [responseTimeMs].
-     *
-     * Unlike [responseTimeMs], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("response_time_ms")
-    @ExcludeMissing
-    fun _responseTimeMs(): JsonField<Long> = responseTimeMs
 
     /**
      * Returns the raw JSON value of [timestamp].
@@ -126,7 +104,6 @@ private constructor(
     class Builder internal constructor() {
 
         private var requestId: JsonField<String> = JsonMissing.of()
-        private var responseTimeMs: JsonField<Long> = JsonMissing.of()
         private var timestamp: JsonField<OffsetDateTime> = JsonMissing.of()
         private var version: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -134,7 +111,6 @@ private constructor(
         @JvmSynthetic
         internal fun from(apiMeta: ApiMeta) = apply {
             requestId = apiMeta.requestId
-            responseTimeMs = apiMeta.responseTimeMs
             timestamp = apiMeta.timestamp
             version = apiMeta.version
             additionalProperties = apiMeta.additionalProperties.toMutableMap()
@@ -151,32 +127,6 @@ private constructor(
          * value.
          */
         fun requestId(requestId: JsonField<String>) = apply { this.requestId = requestId }
-
-        /** Response time in milliseconds (optional) */
-        fun responseTimeMs(responseTimeMs: Long?) =
-            responseTimeMs(JsonField.ofNullable(responseTimeMs))
-
-        /**
-         * Alias for [Builder.responseTimeMs].
-         *
-         * This unboxed primitive overload exists for backwards compatibility.
-         */
-        fun responseTimeMs(responseTimeMs: Long) = responseTimeMs(responseTimeMs as Long?)
-
-        /** Alias for calling [Builder.responseTimeMs] with `responseTimeMs.orElse(null)`. */
-        fun responseTimeMs(responseTimeMs: Optional<Long>) =
-            responseTimeMs(responseTimeMs.getOrNull())
-
-        /**
-         * Sets [Builder.responseTimeMs] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.responseTimeMs] with a well-typed [Long] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun responseTimeMs(responseTimeMs: JsonField<Long>) = apply {
-            this.responseTimeMs = responseTimeMs
-        }
 
         /** Server timestamp when the response was generated */
         fun timestamp(timestamp: OffsetDateTime) = timestamp(JsonField.of(timestamp))
@@ -226,13 +176,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): ApiMeta =
-            ApiMeta(
-                requestId,
-                responseTimeMs,
-                timestamp,
-                version,
-                additionalProperties.toMutableMap(),
-            )
+            ApiMeta(requestId, timestamp, version, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
@@ -243,7 +187,6 @@ private constructor(
         }
 
         requestId()
-        responseTimeMs()
         timestamp()
         version()
         validated = true
@@ -265,7 +208,6 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (requestId.asKnown().isPresent) 1 else 0) +
-            (if (responseTimeMs.asKnown().isPresent) 1 else 0) +
             (if (timestamp.asKnown().isPresent) 1 else 0) +
             (if (version.asKnown().isPresent) 1 else 0)
 
@@ -276,18 +218,17 @@ private constructor(
 
         return other is ApiMeta &&
             requestId == other.requestId &&
-            responseTimeMs == other.responseTimeMs &&
             timestamp == other.timestamp &&
             version == other.version &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(requestId, responseTimeMs, timestamp, version, additionalProperties)
+        Objects.hash(requestId, timestamp, version, additionalProperties)
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ApiMeta{requestId=$requestId, responseTimeMs=$responseTimeMs, timestamp=$timestamp, version=$version, additionalProperties=$additionalProperties}"
+        "ApiMeta{requestId=$requestId, timestamp=$timestamp, version=$version, additionalProperties=$additionalProperties}"
 }

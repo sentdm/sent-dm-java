@@ -19,8 +19,10 @@ private constructor(
     private val page: Int,
     private val pageSize: Int,
     private val category: String?,
+    private val isWelcomePlayground: Boolean?,
     private val search: String?,
     private val status: String?,
+    private val xProfileId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -28,16 +30,22 @@ private constructor(
     /** Page number (1-indexed) */
     fun page(): Int = page
 
+    /** Number of items per page */
     fun pageSize(): Int = pageSize
 
     /** Optional category filter: MARKETING, UTILITY, AUTHENTICATION */
     fun category(): Optional<String> = Optional.ofNullable(category)
+
+    /** Optional filter by welcome playground flag */
+    fun isWelcomePlayground(): Optional<Boolean> = Optional.ofNullable(isWelcomePlayground)
 
     /** Optional search term for filtering templates */
     fun search(): Optional<String> = Optional.ofNullable(search)
 
     /** Optional status filter: APPROVED, PENDING, REJECTED */
     fun status(): Optional<String> = Optional.ofNullable(status)
+
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -67,8 +75,10 @@ private constructor(
         private var page: Int? = null
         private var pageSize: Int? = null
         private var category: String? = null
+        private var isWelcomePlayground: Boolean? = null
         private var search: String? = null
         private var status: String? = null
+        private var xProfileId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -77,8 +87,10 @@ private constructor(
             page = templateListParams.page
             pageSize = templateListParams.pageSize
             category = templateListParams.category
+            isWelcomePlayground = templateListParams.isWelcomePlayground
             search = templateListParams.search
             status = templateListParams.status
+            xProfileId = templateListParams.xProfileId
             additionalHeaders = templateListParams.additionalHeaders.toBuilder()
             additionalQueryParams = templateListParams.additionalQueryParams.toBuilder()
         }
@@ -86,6 +98,7 @@ private constructor(
         /** Page number (1-indexed) */
         fun page(page: Int) = apply { this.page = page }
 
+        /** Number of items per page */
         fun pageSize(pageSize: Int) = apply { this.pageSize = pageSize }
 
         /** Optional category filter: MARKETING, UTILITY, AUTHENTICATION */
@@ -93,6 +106,25 @@ private constructor(
 
         /** Alias for calling [Builder.category] with `category.orElse(null)`. */
         fun category(category: Optional<String>) = category(category.getOrNull())
+
+        /** Optional filter by welcome playground flag */
+        fun isWelcomePlayground(isWelcomePlayground: Boolean?) = apply {
+            this.isWelcomePlayground = isWelcomePlayground
+        }
+
+        /**
+         * Alias for [Builder.isWelcomePlayground].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun isWelcomePlayground(isWelcomePlayground: Boolean) =
+            isWelcomePlayground(isWelcomePlayground as Boolean?)
+
+        /**
+         * Alias for calling [Builder.isWelcomePlayground] with `isWelcomePlayground.orElse(null)`.
+         */
+        fun isWelcomePlayground(isWelcomePlayground: Optional<Boolean>) =
+            isWelcomePlayground(isWelcomePlayground.getOrNull())
 
         /** Optional search term for filtering templates */
         fun search(search: String?) = apply { this.search = search }
@@ -105,6 +137,11 @@ private constructor(
 
         /** Alias for calling [Builder.status] with `status.orElse(null)`. */
         fun status(status: Optional<String>) = status(status.getOrNull())
+
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -222,21 +259,30 @@ private constructor(
                 checkRequired("page", page),
                 checkRequired("pageSize", pageSize),
                 category,
+                isWelcomePlayground,
                 search,
                 status,
+                xProfileId,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                xProfileId?.let { put("x-profile-id", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
                 put("page", page.toString())
-                put("pageSize", pageSize.toString())
+                put("page_size", pageSize.toString())
                 category?.let { put("category", it) }
+                isWelcomePlayground?.let { put("is_welcome_playground", it.toString()) }
                 search?.let { put("search", it) }
                 status?.let { put("status", it) }
                 putAll(additionalQueryParams)
@@ -252,8 +298,10 @@ private constructor(
             page == other.page &&
             pageSize == other.pageSize &&
             category == other.category &&
+            isWelcomePlayground == other.isWelcomePlayground &&
             search == other.search &&
             status == other.status &&
+            xProfileId == other.xProfileId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
@@ -263,12 +311,14 @@ private constructor(
             page,
             pageSize,
             category,
+            isWelcomePlayground,
             search,
             status,
+            xProfileId,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "TemplateListParams{page=$page, pageSize=$pageSize, category=$category, search=$search, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TemplateListParams{page=$page, pageSize=$pageSize, category=$category, isWelcomePlayground=$isWelcomePlayground, search=$search, status=$status, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

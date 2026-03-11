@@ -26,25 +26,28 @@ import kotlin.jvm.optionals.getOrNull
  */
 class UserUpdateRoleParams
 private constructor(
-    private val pathUserId: String?,
+    private val userId: String?,
     private val idempotencyKey: String?,
+    private val xProfileId: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    fun pathUserId(): Optional<String> = Optional.ofNullable(pathUserId)
+    fun userId(): Optional<String> = Optional.ofNullable(userId)
 
     fun idempotencyKey(): Optional<String> = Optional.ofNullable(idempotencyKey)
 
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
+
     /**
-     * Test mode flag - when true, the operation is simulated without side effects Useful for
-     * testing integrations without actual execution
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun testMode(): Optional<Boolean> = body.testMode()
+    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * User role: admin, billing, or developer (required)
@@ -55,19 +58,11 @@ private constructor(
     fun role(): Optional<String> = body.role()
 
     /**
-     * User ID from route parameter
+     * Returns the raw JSON value of [sandbox].
      *
-     * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun bodyUserId(): Optional<String> = body.bodyUserId()
-
-    /**
-     * Returns the raw JSON value of [testMode].
-     *
-     * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _testMode(): JsonField<Boolean> = body._testMode()
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
      * Returns the raw JSON value of [role].
@@ -75,13 +70,6 @@ private constructor(
      * Unlike [role], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _role(): JsonField<String> = body._role()
-
-    /**
-     * Returns the raw JSON value of [bodyUserId].
-     *
-     * Unlike [bodyUserId], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _bodyUserId(): JsonField<String> = body._bodyUserId()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -104,25 +92,27 @@ private constructor(
     /** A builder for [UserUpdateRoleParams]. */
     class Builder internal constructor() {
 
-        private var pathUserId: String? = null
+        private var userId: String? = null
         private var idempotencyKey: String? = null
+        private var xProfileId: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(userUpdateRoleParams: UserUpdateRoleParams) = apply {
-            pathUserId = userUpdateRoleParams.pathUserId
+            userId = userUpdateRoleParams.userId
             idempotencyKey = userUpdateRoleParams.idempotencyKey
+            xProfileId = userUpdateRoleParams.xProfileId
             body = userUpdateRoleParams.body.toBuilder()
             additionalHeaders = userUpdateRoleParams.additionalHeaders.toBuilder()
             additionalQueryParams = userUpdateRoleParams.additionalQueryParams.toBuilder()
         }
 
-        fun pathUserId(pathUserId: String?) = apply { this.pathUserId = pathUserId }
+        fun userId(userId: String?) = apply { this.userId = userId }
 
-        /** Alias for calling [Builder.pathUserId] with `pathUserId.orElse(null)`. */
-        fun pathUserId(pathUserId: Optional<String>) = pathUserId(pathUserId.getOrNull())
+        /** Alias for calling [Builder.userId] with `userId.orElse(null)`. */
+        fun userId(userId: Optional<String>) = userId(userId.getOrNull())
 
         fun idempotencyKey(idempotencyKey: String?) = apply { this.idempotencyKey = idempotencyKey }
 
@@ -130,31 +120,34 @@ private constructor(
         fun idempotencyKey(idempotencyKey: Optional<String>) =
             idempotencyKey(idempotencyKey.getOrNull())
 
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
+
         /**
          * Sets the entire request body.
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [testMode]
+         * - [sandbox]
          * - [role]
-         * - [bodyUserId]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          */
-        fun testMode(testMode: Boolean) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
 
         /**
-         * Sets [Builder.testMode] to an arbitrary JSON value.
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun testMode(testMode: JsonField<Boolean>) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /** User role: admin, billing, or developer (required) */
         fun role(role: String) = apply { body.role(role) }
@@ -166,18 +159,6 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun role(role: JsonField<String>) = apply { body.role(role) }
-
-        /** User ID from route parameter */
-        fun bodyUserId(bodyUserId: String) = apply { body.bodyUserId(bodyUserId) }
-
-        /**
-         * Sets [Builder.bodyUserId] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.bodyUserId] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun bodyUserId(bodyUserId: JsonField<String>) = apply { body.bodyUserId(bodyUserId) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -303,8 +284,9 @@ private constructor(
          */
         fun build(): UserUpdateRoleParams =
             UserUpdateRoleParams(
-                pathUserId,
+                userId,
                 idempotencyKey,
+                xProfileId,
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -315,7 +297,7 @@ private constructor(
 
     fun _pathParam(index: Int): String =
         when (index) {
-            0 -> pathUserId ?: ""
+            0 -> userId ?: ""
             else -> ""
         }
 
@@ -323,6 +305,7 @@ private constructor(
         Headers.builder()
             .apply {
                 idempotencyKey?.let { put("Idempotency-Key", it) }
+                xProfileId?.let { put("x-profile-id", it) }
                 putAll(additionalHeaders)
             }
             .build()
@@ -333,34 +316,28 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val testMode: JsonField<Boolean>,
+        private val sandbox: JsonField<Boolean>,
         private val role: JsonField<String>,
-        private val bodyUserId: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("test_mode")
-            @ExcludeMissing
-            testMode: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("role") @ExcludeMissing role: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("user_id")
-            @ExcludeMissing
-            bodyUserId: JsonField<String> = JsonMissing.of(),
-        ) : this(testMode, role, bodyUserId, mutableMapOf())
+        ) : this(sandbox, role, mutableMapOf())
 
         fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().testMode(testMode).build()
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun testMode(): Optional<Boolean> = testMode.getOptional("test_mode")
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * User role: admin, billing, or developer (required)
@@ -371,19 +348,11 @@ private constructor(
         fun role(): Optional<String> = role.getOptional("role")
 
         /**
-         * User ID from route parameter
+         * Returns the raw JSON value of [sandbox].
          *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
-        fun bodyUserId(): Optional<String> = bodyUserId.getOptional("user_id")
-
-        /**
-         * Returns the raw JSON value of [testMode].
-         *
-         * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("test_mode") @ExcludeMissing fun _testMode(): JsonField<Boolean> = testMode
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
          * Returns the raw JSON value of [role].
@@ -391,13 +360,6 @@ private constructor(
          * Unlike [role], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("role") @ExcludeMissing fun _role(): JsonField<String> = role
-
-        /**
-         * Returns the raw JSON value of [bodyUserId].
-         *
-         * Unlike [bodyUserId], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("user_id") @ExcludeMissing fun _bodyUserId(): JsonField<String> = bodyUserId
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -420,33 +382,31 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var testMode: JsonField<Boolean> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var role: JsonField<String> = JsonMissing.of()
-            private var bodyUserId: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                testMode = body.testMode
+                sandbox = body.sandbox
                 role = body.role
-                bodyUserId = body.bodyUserId
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
             /**
-             * Test mode flag - when true, the operation is simulated without side effects Useful
-             * for testing integrations without actual execution
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
              */
-            fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
 
             /**
-             * Sets [Builder.testMode] to an arbitrary JSON value.
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun testMode(testMode: JsonField<Boolean>) = apply { this.testMode = testMode }
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /** User role: admin, billing, or developer (required) */
             fun role(role: String) = role(JsonField.of(role))
@@ -459,18 +419,6 @@ private constructor(
              * value.
              */
             fun role(role: JsonField<String>) = apply { this.role = role }
-
-            /** User ID from route parameter */
-            fun bodyUserId(bodyUserId: String) = bodyUserId(JsonField.of(bodyUserId))
-
-            /**
-             * Sets [Builder.bodyUserId] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.bodyUserId] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun bodyUserId(bodyUserId: JsonField<String>) = apply { this.bodyUserId = bodyUserId }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -496,8 +444,7 @@ private constructor(
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              */
-            fun build(): Body =
-                Body(testMode, role, bodyUserId, additionalProperties.toMutableMap())
+            fun build(): Body = Body(sandbox, role, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -507,9 +454,8 @@ private constructor(
                 return@apply
             }
 
-            testMode()
+            sandbox()
             role()
-            bodyUserId()
             validated = true
         }
 
@@ -529,9 +475,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (testMode.asKnown().isPresent) 1 else 0) +
-                (if (role.asKnown().isPresent) 1 else 0) +
-                (if (bodyUserId.asKnown().isPresent) 1 else 0)
+            (if (sandbox.asKnown().isPresent) 1 else 0) + (if (role.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -539,20 +483,17 @@ private constructor(
             }
 
             return other is Body &&
-                testMode == other.testMode &&
+                sandbox == other.sandbox &&
                 role == other.role &&
-                bodyUserId == other.bodyUserId &&
                 additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy {
-            Objects.hash(testMode, role, bodyUserId, additionalProperties)
-        }
+        private val hashCode: Int by lazy { Objects.hash(sandbox, role, additionalProperties) }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{testMode=$testMode, role=$role, bodyUserId=$bodyUserId, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, role=$role, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -561,16 +502,24 @@ private constructor(
         }
 
         return other is UserUpdateRoleParams &&
-            pathUserId == other.pathUserId &&
+            userId == other.userId &&
             idempotencyKey == other.idempotencyKey &&
+            xProfileId == other.xProfileId &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(pathUserId, idempotencyKey, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            userId,
+            idempotencyKey,
+            xProfileId,
+            body,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "UserUpdateRoleParams{pathUserId=$pathUserId, idempotencyKey=$idempotencyKey, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "UserUpdateRoleParams{userId=$userId, idempotencyKey=$idempotencyKey, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

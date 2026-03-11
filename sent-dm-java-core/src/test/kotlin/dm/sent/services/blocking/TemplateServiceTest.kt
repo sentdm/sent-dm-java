@@ -14,6 +14,7 @@ import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDefinition
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateListParams
+import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
 import dm.sent.models.templates.TemplateVariable
 import org.junit.jupiter.api.Disabled
@@ -31,7 +32,8 @@ internal class TemplateServiceTest {
             templateService.create(
                 TemplateCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .category("MARKETING")
                     .creationSource(null)
                     .definition(
@@ -52,6 +54,7 @@ internal class TemplateServiceTest {
                                                         TemplateVariable.Props.builder()
                                                             .alt(null)
                                                             .mediaType(null)
+                                                            .regex(null)
                                                             .sample("John")
                                                             .shortUrl(null)
                                                             .url(null)
@@ -69,6 +72,7 @@ internal class TemplateServiceTest {
                                                         TemplateVariable.Props.builder()
                                                             .alt(null)
                                                             .mediaType(null)
+                                                            .regex(null)
                                                             .sample("SentDM")
                                                             .shortUrl(null)
                                                             .url(null)
@@ -92,6 +96,7 @@ internal class TemplateServiceTest {
                                                         TemplateVariable.Props.builder()
                                                             .alt("alt")
                                                             .mediaType("mediaType")
+                                                            .regex("regex")
                                                             .sample("sample")
                                                             .shortUrl("shortUrl")
                                                             .url("url")
@@ -115,6 +120,7 @@ internal class TemplateServiceTest {
                                                         TemplateVariable.Props.builder()
                                                             .alt("alt")
                                                             .mediaType("mediaType")
+                                                            .regex("regex")
                                                             .sample("sample")
                                                             .shortUrl("shortUrl")
                                                             .url("url")
@@ -170,6 +176,7 @@ internal class TemplateServiceTest {
                                                 TemplateVariable.Props.builder()
                                                     .alt("alt")
                                                     .mediaType("mediaType")
+                                                    .regex("regex")
                                                     .sample("sample")
                                                     .shortUrl("shortUrl")
                                                     .url("url")
@@ -193,6 +200,7 @@ internal class TemplateServiceTest {
                                                 TemplateVariable.Props.builder()
                                                     .alt("alt")
                                                     .mediaType("mediaType")
+                                                    .regex("regex")
                                                     .sample("sample")
                                                     .shortUrl("shortUrl")
                                                     .url("url")
@@ -220,7 +228,13 @@ internal class TemplateServiceTest {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
-        val apiResponseTemplate = templateService.retrieve("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+        val apiResponseTemplate =
+            templateService.retrieve(
+                TemplateRetrieveParams.builder()
+                    .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
 
         apiResponseTemplate.validate()
     }
@@ -236,7 +250,8 @@ internal class TemplateServiceTest {
                 TemplateUpdateParams.builder()
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .category("MARKETING")
                     .definition(
                         TemplateDefinition.builder()
@@ -254,6 +269,7 @@ internal class TemplateServiceTest {
                                                         TemplateVariable.Props.builder()
                                                             .alt("alt")
                                                             .mediaType("mediaType")
+                                                            .regex("regex")
                                                             .sample("sample")
                                                             .shortUrl("shortUrl")
                                                             .url("url")
@@ -277,6 +293,7 @@ internal class TemplateServiceTest {
                                                         TemplateVariable.Props.builder()
                                                             .alt("alt")
                                                             .mediaType("mediaType")
+                                                            .regex("regex")
                                                             .sample("sample")
                                                             .shortUrl("shortUrl")
                                                             .url("url")
@@ -300,6 +317,7 @@ internal class TemplateServiceTest {
                                                         TemplateVariable.Props.builder()
                                                             .alt("alt")
                                                             .mediaType("mediaType")
+                                                            .regex("regex")
                                                             .sample("sample")
                                                             .shortUrl("shortUrl")
                                                             .url("url")
@@ -355,6 +373,7 @@ internal class TemplateServiceTest {
                                                 TemplateVariable.Props.builder()
                                                     .alt("alt")
                                                     .mediaType("mediaType")
+                                                    .regex("regex")
                                                     .sample("sample")
                                                     .shortUrl("shortUrl")
                                                     .url("url")
@@ -378,6 +397,7 @@ internal class TemplateServiceTest {
                                                 TemplateVariable.Props.builder()
                                                     .alt("alt")
                                                     .mediaType("mediaType")
+                                                    .regex("regex")
                                                     .sample("sample")
                                                     .shortUrl("shortUrl")
                                                     .url("url")
@@ -412,8 +432,10 @@ internal class TemplateServiceTest {
                     .page(0)
                     .pageSize(0)
                     .category("category")
+                    .isWelcomePlayground(true)
                     .search("search")
                     .status("status")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 
@@ -429,7 +451,8 @@ internal class TemplateServiceTest {
         templateService.delete(
             TemplateDeleteParams.builder()
                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .deleteFromMeta(false)
                 .build()
         )

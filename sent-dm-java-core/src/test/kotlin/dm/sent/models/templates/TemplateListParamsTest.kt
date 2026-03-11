@@ -2,6 +2,7 @@
 
 package dm.sent.models.templates
 
+import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -14,9 +15,43 @@ internal class TemplateListParamsTest {
             .page(0)
             .pageSize(0)
             .category("category")
+            .isWelcomePlayground(true)
             .search("search")
             .status("status")
+            .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
+    }
+
+    @Test
+    fun headers() {
+        val params =
+            TemplateListParams.builder()
+                .page(0)
+                .pageSize(0)
+                .category("category")
+                .isWelcomePlayground(true)
+                .search("search")
+                .status("status")
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .build()
+
+        val headers = params._headers()
+
+        assertThat(headers)
+            .isEqualTo(
+                Headers.builder()
+                    .put("x-profile-id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
+    }
+
+    @Test
+    fun headersWithoutOptionalFields() {
+        val params = TemplateListParams.builder().page(0).pageSize(0).build()
+
+        val headers = params._headers()
+
+        assertThat(headers).isEqualTo(Headers.builder().build())
     }
 
     @Test
@@ -26,8 +61,10 @@ internal class TemplateListParamsTest {
                 .page(0)
                 .pageSize(0)
                 .category("category")
+                .isWelcomePlayground(true)
                 .search("search")
                 .status("status")
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         val queryParams = params._queryParams()
@@ -36,8 +73,9 @@ internal class TemplateListParamsTest {
             .isEqualTo(
                 QueryParams.builder()
                     .put("page", "0")
-                    .put("pageSize", "0")
+                    .put("page_size", "0")
                     .put("category", "category")
+                    .put("is_welcome_playground", "true")
                     .put("search", "search")
                     .put("status", "status")
                     .build()
@@ -51,6 +89,6 @@ internal class TemplateListParamsTest {
         val queryParams = params._queryParams()
 
         assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("page", "0").put("pageSize", "0").build())
+            .isEqualTo(QueryParams.builder().put("page", "0").put("page_size", "0").build())
     }
 }

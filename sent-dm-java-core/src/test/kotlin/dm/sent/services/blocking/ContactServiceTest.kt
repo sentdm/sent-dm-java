@@ -6,6 +6,7 @@ import dm.sent.client.okhttp.SentDmOkHttpClient
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
+import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -22,7 +23,8 @@ internal class ContactServiceTest {
             contactService.create(
                 ContactCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .phoneNumber("+1234567890")
                     .build()
             )
@@ -36,7 +38,13 @@ internal class ContactServiceTest {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val contactService = client.contacts()
 
-        val apiResponseContact = contactService.retrieve("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+        val apiResponseContact =
+            contactService.retrieve(
+                ContactRetrieveParams.builder()
+                    .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
 
         apiResponseContact.validate()
     }
@@ -52,7 +60,8 @@ internal class ContactServiceTest {
                 ContactUpdateParams.builder()
                     .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .defaultChannel("whatsapp")
                     .optOut(false)
                     .build()
@@ -75,6 +84,7 @@ internal class ContactServiceTest {
                     .channel("channel")
                     .phone("phone")
                     .search("search")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 
@@ -90,7 +100,8 @@ internal class ContactServiceTest {
         contactService.delete(
             ContactDeleteParams.builder()
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .build()
         )
     }

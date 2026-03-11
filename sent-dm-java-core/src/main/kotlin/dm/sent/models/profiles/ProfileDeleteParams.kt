@@ -26,44 +26,32 @@ import kotlin.jvm.optionals.getOrNull
  */
 class ProfileDeleteParams
 private constructor(
-    private val pathProfileId: String?,
+    private val profileId: String?,
+    private val xProfileId: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    fun pathProfileId(): Optional<String> = Optional.ofNullable(pathProfileId)
+    fun profileId(): Optional<String> = Optional.ofNullable(profileId)
+
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /**
-     * Test mode flag - when true, the operation is simulated without side effects Useful for
-     * testing integrations without actual execution
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun testMode(): Optional<Boolean> = body.testMode()
+    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
-     * Profile ID from route parameter
+     * Returns the raw JSON value of [sandbox].
      *
-     * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun bodyProfileId(): Optional<String> = body.bodyProfileId()
-
-    /**
-     * Returns the raw JSON value of [testMode].
-     *
-     * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _testMode(): JsonField<Boolean> = body._testMode()
-
-    /**
-     * Returns the raw JSON value of [bodyProfileId].
-     *
-     * Unlike [bodyProfileId], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _bodyProfileId(): JsonField<String> = body._bodyProfileId()
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -86,63 +74,53 @@ private constructor(
     /** A builder for [ProfileDeleteParams]. */
     class Builder internal constructor() {
 
-        private var pathProfileId: String? = null
+        private var profileId: String? = null
+        private var xProfileId: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(profileDeleteParams: ProfileDeleteParams) = apply {
-            pathProfileId = profileDeleteParams.pathProfileId
+            profileId = profileDeleteParams.profileId
+            xProfileId = profileDeleteParams.xProfileId
             body = profileDeleteParams.body.toBuilder()
             additionalHeaders = profileDeleteParams.additionalHeaders.toBuilder()
             additionalQueryParams = profileDeleteParams.additionalQueryParams.toBuilder()
         }
 
-        fun pathProfileId(pathProfileId: String?) = apply { this.pathProfileId = pathProfileId }
+        fun profileId(profileId: String?) = apply { this.profileId = profileId }
 
-        /** Alias for calling [Builder.pathProfileId] with `pathProfileId.orElse(null)`. */
-        fun pathProfileId(pathProfileId: Optional<String>) =
-            pathProfileId(pathProfileId.getOrNull())
+        /** Alias for calling [Builder.profileId] with `profileId.orElse(null)`. */
+        fun profileId(profileId: Optional<String>) = profileId(profileId.getOrNull())
+
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
 
         /**
          * Sets the entire request body.
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [testMode]
-         * - [bodyProfileId]
+         * - [sandbox]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          */
-        fun testMode(testMode: Boolean) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
 
         /**
-         * Sets [Builder.testMode] to an arbitrary JSON value.
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun testMode(testMode: JsonField<Boolean>) = apply { body.testMode(testMode) }
-
-        /** Profile ID from route parameter */
-        fun bodyProfileId(bodyProfileId: String) = apply { body.bodyProfileId(bodyProfileId) }
-
-        /**
-         * Sets [Builder.bodyProfileId] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.bodyProfileId] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun bodyProfileId(bodyProfileId: JsonField<String>) = apply {
-            body.bodyProfileId(bodyProfileId)
-        }
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -268,7 +246,8 @@ private constructor(
          */
         fun build(): ProfileDeleteParams =
             ProfileDeleteParams(
-                pathProfileId,
+                profileId,
+                xProfileId,
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -279,11 +258,17 @@ private constructor(
 
     fun _pathParam(index: Int): String =
         when (index) {
-            0 -> pathProfileId ?: ""
+            0 -> profileId ?: ""
             else -> ""
         }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                xProfileId?.let { put("x-profile-id", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
@@ -291,57 +276,33 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val testMode: JsonField<Boolean>,
-        private val bodyProfileId: JsonField<String>,
+        private val sandbox: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("test_mode")
-            @ExcludeMissing
-            testMode: JsonField<Boolean> = JsonMissing.of(),
-            @JsonProperty("profile_id")
-            @ExcludeMissing
-            bodyProfileId: JsonField<String> = JsonMissing.of(),
-        ) : this(testMode, bodyProfileId, mutableMapOf())
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of()
+        ) : this(sandbox, mutableMapOf())
 
         fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().testMode(testMode).build()
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun testMode(): Optional<Boolean> = testMode.getOptional("test_mode")
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
-         * Profile ID from route parameter
+         * Returns the raw JSON value of [sandbox].
          *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
-        fun bodyProfileId(): Optional<String> = bodyProfileId.getOptional("profile_id")
-
-        /**
-         * Returns the raw JSON value of [testMode].
-         *
-         * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("test_mode") @ExcludeMissing fun _testMode(): JsonField<Boolean> = testMode
-
-        /**
-         * Returns the raw JSON value of [bodyProfileId].
-         *
-         * Unlike [bodyProfileId], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("profile_id")
-        @ExcludeMissing
-        fun _bodyProfileId(): JsonField<String> = bodyProfileId
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -364,45 +325,29 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var testMode: JsonField<Boolean> = JsonMissing.of()
-            private var bodyProfileId: JsonField<String> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                testMode = body.testMode
-                bodyProfileId = body.bodyProfileId
+                sandbox = body.sandbox
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
             /**
-             * Test mode flag - when true, the operation is simulated without side effects Useful
-             * for testing integrations without actual execution
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
              */
-            fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
 
             /**
-             * Sets [Builder.testMode] to an arbitrary JSON value.
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun testMode(testMode: JsonField<Boolean>) = apply { this.testMode = testMode }
-
-            /** Profile ID from route parameter */
-            fun bodyProfileId(bodyProfileId: String) = bodyProfileId(JsonField.of(bodyProfileId))
-
-            /**
-             * Sets [Builder.bodyProfileId] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.bodyProfileId] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun bodyProfileId(bodyProfileId: JsonField<String>) = apply {
-                this.bodyProfileId = bodyProfileId
-            }
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -428,7 +373,7 @@ private constructor(
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              */
-            fun build(): Body = Body(testMode, bodyProfileId, additionalProperties.toMutableMap())
+            fun build(): Body = Body(sandbox, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -438,8 +383,7 @@ private constructor(
                 return@apply
             }
 
-            testMode()
-            bodyProfileId()
+            sandbox()
             validated = true
         }
 
@@ -457,10 +401,7 @@ private constructor(
          *
          * Used for best match union deserialization.
          */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            (if (testMode.asKnown().isPresent) 1 else 0) +
-                (if (bodyProfileId.asKnown().isPresent) 1 else 0)
+        @JvmSynthetic internal fun validity(): Int = (if (sandbox.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -468,19 +409,16 @@ private constructor(
             }
 
             return other is Body &&
-                testMode == other.testMode &&
-                bodyProfileId == other.bodyProfileId &&
+                sandbox == other.sandbox &&
                 additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy {
-            Objects.hash(testMode, bodyProfileId, additionalProperties)
-        }
+        private val hashCode: Int by lazy { Objects.hash(sandbox, additionalProperties) }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{testMode=$testMode, bodyProfileId=$bodyProfileId, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -489,15 +427,16 @@ private constructor(
         }
 
         return other is ProfileDeleteParams &&
-            pathProfileId == other.pathProfileId &&
+            profileId == other.profileId &&
+            xProfileId == other.xProfileId &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(pathProfileId, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(profileId, xProfileId, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ProfileDeleteParams{pathProfileId=$pathProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ProfileDeleteParams{profileId=$profileId, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

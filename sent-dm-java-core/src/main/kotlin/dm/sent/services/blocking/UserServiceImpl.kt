@@ -175,7 +175,7 @@ class UserServiceImpl internal constructor(private val clientOptions: ClientOpti
         ): HttpResponse {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
-            checkRequired("pathUserId", params.pathUserId().getOrNull())
+            checkRequired("userId", params.userId().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
@@ -200,7 +200,7 @@ class UserServiceImpl internal constructor(private val clientOptions: ClientOpti
         ): HttpResponseFor<ApiResponseOfUser> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
-            checkRequired("pathUserId", params.pathUserId().getOrNull())
+            checkRequired("userId", params.userId().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)

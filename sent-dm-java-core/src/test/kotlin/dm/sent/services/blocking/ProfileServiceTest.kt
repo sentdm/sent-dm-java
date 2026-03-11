@@ -3,9 +3,15 @@
 package dm.sent.services.blocking
 
 import dm.sent.client.okhttp.SentDmOkHttpClient
+import dm.sent.models.brands.BrandData
+import dm.sent.models.brands.DestinationCountry
+import dm.sent.models.brands.TcrBrandRelationship
+import dm.sent.models.brands.TcrVertical
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
+import dm.sent.models.profiles.ProfileListParams
+import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -22,18 +28,87 @@ internal class ProfileServiceTest {
             profileService.create(
                 ProfileCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .allowContactSharing(true)
                     .allowTemplateSharing(false)
+                    .billingContact(
+                        ProfileCreateParams.BillingContact.builder()
+                            .email("billing@acmecorp.com")
+                            .name("Acme Corp")
+                            .address("123 Main Street, New York, NY 10001, US")
+                            .phone("+12025551234")
+                            .build()
+                    )
                     .billingModel("profile")
+                    .brand(
+                        BrandData.builder()
+                            .compliance(
+                                BrandData.Compliance.builder()
+                                    .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
+                                    .vertical(TcrVertical.PROFESSIONAL)
+                                    .addDestinationCountry(
+                                        DestinationCountry.builder().id("US").isMain(false).build()
+                                    )
+                                    .expectedMessagingVolume("10000")
+                                    .isTcrApplication(true)
+                                    .notes(null)
+                                    .phoneNumberPrefix("+1")
+                                    .primaryUseCase(
+                                        "Customer notifications and appointment reminders"
+                                    )
+                                    .build()
+                            )
+                            .contact(
+                                BrandData.Contact.builder()
+                                    .name("John Smith")
+                                    .businessName("Acme Corp")
+                                    .email("john@acmecorp.com")
+                                    .phone("+12025551234")
+                                    .phoneCountryCode("1")
+                                    .role("CEO")
+                                    .build()
+                            )
+                            .business(
+                                BrandData.Business.builder()
+                                    .city("New York")
+                                    .country("US")
+                                    .countryOfRegistration("US")
+                                    .entityType(BrandData.Business.EntityType.PRIVATE_PROFIT)
+                                    .legalName("Acme Corporation LLC")
+                                    .postalCode("10001")
+                                    .state("NY")
+                                    .street("123 Main Street")
+                                    .taxId("12-3456789")
+                                    .taxIdType("us_ein")
+                                    .url("https://acmecorp.com")
+                                    .build()
+                            )
+                            .build()
+                    )
                     .description("Sales department sender profile")
                     .icon("https://example.com/sales-icon.png")
                     .inheritContacts(true)
-                    .inheritTcrBrand(true)
-                    .inheritTcrCampaign(true)
+                    .inheritTcrBrand(false)
+                    .inheritTcrCampaign(false)
                     .inheritTemplates(true)
                     .name("Sales Team")
+                    .paymentDetails(
+                        ProfileCreateParams.PaymentDetails.builder()
+                            .cardNumber("4111111111111111")
+                            .cvc("123")
+                            .expiry("09/27")
+                            .zipCode("10001")
+                            .build()
+                    )
                     .shortName("SALES")
+                    .whatsappBusinessAccount(
+                        ProfileCreateParams.WhatsappBusinessAccount.builder()
+                            .accessToken("EAAxxxxxxxxxxxxxxx")
+                            .wabaId("123456789012345")
+                            .phoneNumberId("987654321098765")
+                            .build()
+                    )
                     .build()
             )
 
@@ -47,7 +122,12 @@ internal class ProfileServiceTest {
         val profileService = client.profiles()
 
         val apiResponseOfProfileDetail =
-            profileService.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            profileService.retrieve(
+                ProfileRetrieveParams.builder()
+                    .profileId("profileId")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
 
         apiResponseOfProfileDetail.validate()
     }
@@ -61,13 +141,67 @@ internal class ProfileServiceTest {
         val apiResponseOfProfileDetail =
             profileService.update(
                 ProfileUpdateParams.builder()
-                    .pathProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .profileId("profileId")
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .allowContactSharing(true)
                     .allowNumberChangeDuringOnboarding(null)
                     .allowTemplateSharing(null)
+                    .billingContact(
+                        ProfileUpdateParams.BillingContact.builder()
+                            .email("dev@stainless.com")
+                            .name("x")
+                            .address("address")
+                            .phone("phone")
+                            .build()
+                    )
                     .billingModel("organization")
+                    .brand(
+                        BrandData.builder()
+                            .compliance(
+                                BrandData.Compliance.builder()
+                                    .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
+                                    .vertical(TcrVertical.PROFESSIONAL)
+                                    .addDestinationCountry(
+                                        DestinationCountry.builder().id("US").isMain(false).build()
+                                    )
+                                    .expectedMessagingVolume("10000")
+                                    .isTcrApplication(true)
+                                    .notes(null)
+                                    .phoneNumberPrefix("+1")
+                                    .primaryUseCase(
+                                        "Customer notifications and appointment reminders"
+                                    )
+                                    .build()
+                            )
+                            .contact(
+                                BrandData.Contact.builder()
+                                    .name("John Smith")
+                                    .businessName("Acme Corp")
+                                    .email("john@acmecorp.com")
+                                    .phone("+12025551234")
+                                    .phoneCountryCode("1")
+                                    .role("CEO")
+                                    .build()
+                            )
+                            .business(
+                                BrandData.Business.builder()
+                                    .city("New York")
+                                    .country("US")
+                                    .countryOfRegistration("US")
+                                    .entityType(BrandData.Business.EntityType.PRIVATE_PROFIT)
+                                    .legalName("Acme Corporation LLC")
+                                    .postalCode("10001")
+                                    .state("NY")
+                                    .street("123 Main Street")
+                                    .taxId("12-3456789")
+                                    .taxIdType("us_ein")
+                                    .url("https://acmecorp.com")
+                                    .build()
+                            )
+                            .build()
+                    )
                     .description("Updated sales department sender profile")
                     .icon(null)
                     .inheritContacts(null)
@@ -75,11 +209,18 @@ internal class ProfileServiceTest {
                     .inheritTcrCampaign(null)
                     .inheritTemplates(null)
                     .name("Sales Team - Updated")
-                    .bodyProfileId("770e8400-e29b-41d4-a716-446655440002")
+                    .paymentDetails(
+                        ProfileUpdateParams.PaymentDetails.builder()
+                            .cardNumber("3216699102256101")
+                            .cvc("3216")
+                            .expiry("11/66")
+                            .zipCode("x")
+                            .build()
+                    )
                     .sendingPhoneNumber(null)
                     .sendingPhoneNumberProfileId(null)
                     .sendingWhatsappNumberProfileId(null)
-                    .shortName(null)
+                    .shortName("SALES")
                     .whatsappPhoneNumber(null)
                     .build()
             )
@@ -93,7 +234,12 @@ internal class ProfileServiceTest {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val profileService = client.profiles()
 
-        val profiles = profileService.list()
+        val profiles =
+            profileService.list(
+                ProfileListParams.builder()
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
 
         profiles.validate()
     }
@@ -106,9 +252,9 @@ internal class ProfileServiceTest {
 
         profileService.delete(
             ProfileDeleteParams.builder()
-                .pathProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .testMode(false)
-                .bodyProfileId("770e8400-e29b-41d4-a716-446655440002")
+                .profileId("profileId")
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .build()
         )
     }
@@ -124,7 +270,8 @@ internal class ProfileServiceTest {
                 ProfileCompleteParams.builder()
                     .profileId("660e8400-e29b-41d4-a716-446655440000")
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .webHookUrl("https://your-app.com/webhook/profile-complete")
                     .build()
             )

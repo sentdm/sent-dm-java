@@ -46,7 +46,6 @@ internal class ApiResponseTemplateTest {
                 .meta(
                     ApiMeta.builder()
                         .requestId("request_id")
-                        .responseTimeMs(0L)
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
                         .build()
@@ -86,7 +85,6 @@ internal class ApiResponseTemplateTest {
             .contains(
                 ApiMeta.builder()
                     .requestId("request_id")
-                    .responseTimeMs(0L)
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
                     .build()
@@ -128,7 +126,6 @@ internal class ApiResponseTemplateTest {
                 .meta(
                     ApiMeta.builder()
                         .requestId("request_id")
-                        .responseTimeMs(0L)
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
                         .build()

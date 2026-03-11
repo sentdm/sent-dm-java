@@ -72,8 +72,9 @@ internal class ProGuardCompatibilityTest {
                     MessageRetrieveActivitiesResponse.Data.builder()
                         .addActivity(
                             MessageRetrieveActivitiesResponse.Data.Activity.builder()
-                                .content("content")
+                                .activeContactPrice("active_contact_price")
                                 .description("description")
+                                .price("price")
                                 .status("status")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .build()
@@ -96,7 +97,6 @@ internal class ProGuardCompatibilityTest {
                 .meta(
                     ApiMeta.builder()
                         .requestId("request_id")
-                        .responseTimeMs(0L)
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
                         .build()

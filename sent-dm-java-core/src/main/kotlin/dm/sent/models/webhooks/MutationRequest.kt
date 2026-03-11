@@ -18,30 +18,30 @@ import java.util.Optional
 class MutationRequest
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val testMode: JsonField<Boolean>,
+    private val sandbox: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
-        @JsonProperty("test_mode") @ExcludeMissing testMode: JsonField<Boolean> = JsonMissing.of()
-    ) : this(testMode, mutableMapOf())
+        @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of()
+    ) : this(sandbox, mutableMapOf())
 
     /**
-     * Test mode flag - when true, the operation is simulated without side effects Useful for
-     * testing integrations without actual execution
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun testMode(): Optional<Boolean> = testMode.getOptional("test_mode")
+    fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
     /**
-     * Returns the raw JSON value of [testMode].
+     * Returns the raw JSON value of [sandbox].
      *
-     * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("test_mode") @ExcludeMissing fun _testMode(): JsonField<Boolean> = testMode
+    @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -64,29 +64,28 @@ private constructor(
     /** A builder for [MutationRequest]. */
     class Builder internal constructor() {
 
-        private var testMode: JsonField<Boolean> = JsonMissing.of()
+        private var sandbox: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(mutationRequest: MutationRequest) = apply {
-            testMode = mutationRequest.testMode
+            sandbox = mutationRequest.sandbox
             additionalProperties = mutationRequest.additionalProperties.toMutableMap()
         }
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          */
-        fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
+        fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
 
         /**
-         * Sets [Builder.testMode] to an arbitrary JSON value.
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun testMode(testMode: JsonField<Boolean>) = apply { this.testMode = testMode }
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -112,8 +111,7 @@ private constructor(
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): MutationRequest =
-            MutationRequest(testMode, additionalProperties.toMutableMap())
+        fun build(): MutationRequest = MutationRequest(sandbox, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
@@ -123,7 +121,7 @@ private constructor(
             return@apply
         }
 
-        testMode()
+        sandbox()
         validated = true
     }
 
@@ -140,7 +138,7 @@ private constructor(
      *
      * Used for best match union deserialization.
      */
-    @JvmSynthetic internal fun validity(): Int = (if (testMode.asKnown().isPresent) 1 else 0)
+    @JvmSynthetic internal fun validity(): Int = (if (sandbox.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -148,14 +146,14 @@ private constructor(
         }
 
         return other is MutationRequest &&
-            testMode == other.testMode &&
+            sandbox == other.sandbox &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(testMode, additionalProperties) }
+    private val hashCode: Int by lazy { Objects.hash(sandbox, additionalProperties) }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "MutationRequest{testMode=$testMode, additionalProperties=$additionalProperties}"
+        "MutationRequest{sandbox=$sandbox, additionalProperties=$additionalProperties}"
 }

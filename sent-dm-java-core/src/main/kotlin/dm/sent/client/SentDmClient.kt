@@ -70,7 +70,6 @@ interface SentDmClient {
     /** Create, update, and manage customer contact lists */
     fun contacts(): ContactService
 
-    /** Register and manage 10DLC brands for SMS compliance */
     fun brands(): BrandService
 
     /** Retrieve account details */
@@ -119,7 +118,6 @@ interface SentDmClient {
         /** Create, update, and manage customer contact lists */
         fun contacts(): ContactService.WithRawResponse
 
-        /** Register and manage 10DLC brands for SMS compliance */
         fun brands(): BrandService.WithRawResponse
 
         /** Retrieve account details */

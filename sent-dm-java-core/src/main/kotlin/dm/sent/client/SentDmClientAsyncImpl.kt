@@ -100,7 +100,6 @@ class SentDmClientAsyncImpl(private val clientOptions: ClientOptions) : SentDmCl
     /** Create, update, and manage customer contact lists */
     override fun contacts(): ContactServiceAsync = contacts
 
-    /** Register and manage 10DLC brands for SMS compliance */
     override fun brands(): BrandServiceAsync = brands
 
     /** Retrieve account details */
@@ -174,7 +173,6 @@ class SentDmClientAsyncImpl(private val clientOptions: ClientOptions) : SentDmCl
         /** Create, update, and manage customer contact lists */
         override fun contacts(): ContactServiceAsync.WithRawResponse = contacts
 
-        /** Register and manage 10DLC brands for SMS compliance */
         override fun brands(): BrandServiceAsync.WithRawResponse = brands
 
         /** Retrieve account details */
