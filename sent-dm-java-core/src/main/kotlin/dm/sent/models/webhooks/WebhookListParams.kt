@@ -17,6 +17,7 @@ private constructor(
     private val pageSize: Int,
     private val isActive: Boolean?,
     private val search: String?,
+    private val xProfileId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -28,6 +29,8 @@ private constructor(
     fun isActive(): Optional<Boolean> = Optional.ofNullable(isActive)
 
     fun search(): Optional<String> = Optional.ofNullable(search)
+
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -58,6 +61,7 @@ private constructor(
         private var pageSize: Int? = null
         private var isActive: Boolean? = null
         private var search: String? = null
+        private var xProfileId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -67,6 +71,7 @@ private constructor(
             pageSize = webhookListParams.pageSize
             isActive = webhookListParams.isActive
             search = webhookListParams.search
+            xProfileId = webhookListParams.xProfileId
             additionalHeaders = webhookListParams.additionalHeaders.toBuilder()
             additionalQueryParams = webhookListParams.additionalQueryParams.toBuilder()
         }
@@ -91,6 +96,11 @@ private constructor(
 
         /** Alias for calling [Builder.search] with `search.orElse(null)`. */
         fun search(search: Optional<String>) = search(search.getOrNull())
+
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -209,19 +219,26 @@ private constructor(
                 checkRequired("pageSize", pageSize),
                 isActive,
                 search,
+                xProfileId,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                xProfileId?.let { put("x-profile-id", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
                 put("page", page.toString())
-                put("pageSize", pageSize.toString())
-                isActive?.let { put("isActive", it.toString()) }
+                put("page_size", pageSize.toString())
+                isActive?.let { put("is_active", it.toString()) }
                 search?.let { put("search", it) }
                 putAll(additionalQueryParams)
             }
@@ -237,13 +254,22 @@ private constructor(
             pageSize == other.pageSize &&
             isActive == other.isActive &&
             search == other.search &&
+            xProfileId == other.xProfileId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(page, pageSize, isActive, search, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            page,
+            pageSize,
+            isActive,
+            search,
+            xProfileId,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "WebhookListParams{page=$page, pageSize=$pageSize, isActive=$isActive, search=$search, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "WebhookListParams{page=$page, pageSize=$pageSize, isActive=$isActive, search=$search, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

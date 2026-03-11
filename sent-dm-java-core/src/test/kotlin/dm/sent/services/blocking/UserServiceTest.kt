@@ -4,7 +4,9 @@ package dm.sent.services.blocking
 
 import dm.sent.client.okhttp.SentDmOkHttpClient
 import dm.sent.models.users.UserInviteParams
+import dm.sent.models.users.UserListParams
 import dm.sent.models.users.UserRemoveParams
+import dm.sent.models.users.UserRetrieveParams
 import dm.sent.models.users.UserUpdateRoleParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -17,7 +19,13 @@ internal class UserServiceTest {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
-        val apiResponseOfUser = userService.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val apiResponseOfUser =
+            userService.retrieve(
+                UserRetrieveParams.builder()
+                    .userId("userId")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
 
         apiResponseOfUser.validate()
     }
@@ -28,7 +36,10 @@ internal class UserServiceTest {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
-        val users = userService.list()
+        val users =
+            userService.list(
+                UserListParams.builder().xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+            )
 
         users.validate()
     }
@@ -43,7 +54,8 @@ internal class UserServiceTest {
             userService.invite(
                 UserInviteParams.builder()
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .email("newuser@example.com")
                     .name("New User")
                     .role("developer")
@@ -61,9 +73,9 @@ internal class UserServiceTest {
 
         userService.remove(
             UserRemoveParams.builder()
-                .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .testMode(false)
-                .bodyUserId("aa0e8400-e29b-41d4-a716-446655440005")
+                .userId("userId")
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .build()
         )
     }
@@ -77,11 +89,11 @@ internal class UserServiceTest {
         val apiResponseOfUser =
             userService.updateRole(
                 UserUpdateRoleParams.builder()
-                    .pathUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .userId("userId")
                     .idempotencyKey("req_abc123_retry1")
-                    .testMode(false)
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .role("billing")
-                    .bodyUserId("aa0e8400-e29b-41d4-a716-446655440005")
                     .build()
             )
 

@@ -28,6 +28,7 @@ import kotlin.jvm.optionals.getOrNull
 class UserInviteParams
 private constructor(
     private val idempotencyKey: String?,
+    private val xProfileId: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -35,14 +36,16 @@ private constructor(
 
     fun idempotencyKey(): Optional<String> = Optional.ofNullable(idempotencyKey)
 
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
+
     /**
-     * Test mode flag - when true, the operation is simulated without side effects Useful for
-     * testing integrations without actual execution
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun testMode(): Optional<Boolean> = body.testMode()
+    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * User email address (required)
@@ -69,11 +72,11 @@ private constructor(
     fun role(): Optional<String> = body.role()
 
     /**
-     * Returns the raw JSON value of [testMode].
+     * Returns the raw JSON value of [sandbox].
      *
-     * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _testMode(): JsonField<Boolean> = body._testMode()
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
      * Returns the raw JSON value of [email].
@@ -118,6 +121,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var idempotencyKey: String? = null
+        private var xProfileId: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -125,6 +129,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(userInviteParams: UserInviteParams) = apply {
             idempotencyKey = userInviteParams.idempotencyKey
+            xProfileId = userInviteParams.xProfileId
             body = userInviteParams.body.toBuilder()
             additionalHeaders = userInviteParams.additionalHeaders.toBuilder()
             additionalQueryParams = userInviteParams.additionalQueryParams.toBuilder()
@@ -136,12 +141,17 @@ private constructor(
         fun idempotencyKey(idempotencyKey: Optional<String>) =
             idempotencyKey(idempotencyKey.getOrNull())
 
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
+
         /**
          * Sets the entire request body.
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [testMode]
+         * - [sandbox]
          * - [email]
          * - [name]
          * - [role]
@@ -149,19 +159,18 @@ private constructor(
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          */
-        fun testMode(testMode: Boolean) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
 
         /**
-         * Sets [Builder.testMode] to an arbitrary JSON value.
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun testMode(testMode: JsonField<Boolean>) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /** User email address (required) */
         fun email(email: String) = apply { body.email(email) }
@@ -321,6 +330,7 @@ private constructor(
         fun build(): UserInviteParams =
             UserInviteParams(
                 idempotencyKey,
+                xProfileId,
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -333,6 +343,7 @@ private constructor(
         Headers.builder()
             .apply {
                 idempotencyKey?.let { put("Idempotency-Key", it) }
+                xProfileId?.let { put("x-profile-id", it) }
                 putAll(additionalHeaders)
             }
             .build()
@@ -343,7 +354,7 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val testMode: JsonField<Boolean>,
+        private val sandbox: JsonField<Boolean>,
         private val email: JsonField<String>,
         private val name: JsonField<String>,
         private val role: JsonField<String>,
@@ -352,25 +363,23 @@ private constructor(
 
         @JsonCreator
         private constructor(
-            @JsonProperty("test_mode")
-            @ExcludeMissing
-            testMode: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("role") @ExcludeMissing role: JsonField<String> = JsonMissing.of(),
-        ) : this(testMode, email, name, role, mutableMapOf())
+        ) : this(sandbox, email, name, role, mutableMapOf())
 
         fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().testMode(testMode).build()
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun testMode(): Optional<Boolean> = testMode.getOptional("test_mode")
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * User email address (required)
@@ -397,11 +406,11 @@ private constructor(
         fun role(): Optional<String> = role.getOptional("role")
 
         /**
-         * Returns the raw JSON value of [testMode].
+         * Returns the raw JSON value of [sandbox].
          *
-         * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("test_mode") @ExcludeMissing fun _testMode(): JsonField<Boolean> = testMode
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
          * Returns the raw JSON value of [email].
@@ -445,7 +454,7 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var testMode: JsonField<Boolean> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var email: JsonField<String> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
             private var role: JsonField<String> = JsonMissing.of()
@@ -453,7 +462,7 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                testMode = body.testMode
+                sandbox = body.sandbox
                 email = body.email
                 name = body.name
                 role = body.role
@@ -461,19 +470,19 @@ private constructor(
             }
 
             /**
-             * Test mode flag - when true, the operation is simulated without side effects Useful
-             * for testing integrations without actual execution
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
              */
-            fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
 
             /**
-             * Sets [Builder.testMode] to an arbitrary JSON value.
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun testMode(testMode: JsonField<Boolean>) = apply { this.testMode = testMode }
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /** User email address (required) */
             fun email(email: String) = email(JsonField.of(email))
@@ -536,7 +545,7 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              */
             fun build(): Body =
-                Body(testMode, email, name, role, additionalProperties.toMutableMap())
+                Body(sandbox, email, name, role, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -546,7 +555,7 @@ private constructor(
                 return@apply
             }
 
-            testMode()
+            sandbox()
             email()
             name()
             role()
@@ -569,7 +578,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (testMode.asKnown().isPresent) 1 else 0) +
+            (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (if (email.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (if (role.asKnown().isPresent) 1 else 0)
@@ -580,7 +589,7 @@ private constructor(
             }
 
             return other is Body &&
-                testMode == other.testMode &&
+                sandbox == other.sandbox &&
                 email == other.email &&
                 name == other.name &&
                 role == other.role &&
@@ -588,13 +597,13 @@ private constructor(
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(testMode, email, name, role, additionalProperties)
+            Objects.hash(sandbox, email, name, role, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{testMode=$testMode, email=$email, name=$name, role=$role, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, email=$email, name=$name, role=$role, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -604,14 +613,15 @@ private constructor(
 
         return other is UserInviteParams &&
             idempotencyKey == other.idempotencyKey &&
+            xProfileId == other.xProfileId &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(idempotencyKey, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(idempotencyKey, xProfileId, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "UserInviteParams{idempotencyKey=$idempotencyKey, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "UserInviteParams{idempotencyKey=$idempotencyKey, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

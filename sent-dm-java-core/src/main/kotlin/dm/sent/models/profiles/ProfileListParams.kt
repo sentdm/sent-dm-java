@@ -6,16 +6,22 @@ import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import java.util.Objects
+import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 /**
- * Retrieves all sender profiles within an organization. Profiles represent different brands,
- * departments, or use cases within an organization, each with their own messaging configuration.
+ * Retrieves all sender profiles within an organization, including brand information for each
+ * profile. Profiles represent different brands, departments, or use cases within an organization,
+ * each with their own messaging configuration.
  */
 class ProfileListParams
 private constructor(
+    private val xProfileId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -36,14 +42,21 @@ private constructor(
     /** A builder for [ProfileListParams]. */
     class Builder internal constructor() {
 
+        private var xProfileId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(profileListParams: ProfileListParams) = apply {
+            xProfileId = profileListParams.xProfileId
             additionalHeaders = profileListParams.additionalHeaders.toBuilder()
             additionalQueryParams = profileListParams.additionalQueryParams.toBuilder()
         }
+
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -149,10 +162,16 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): ProfileListParams =
-            ProfileListParams(additionalHeaders.build(), additionalQueryParams.build())
+            ProfileListParams(xProfileId, additionalHeaders.build(), additionalQueryParams.build())
     }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                xProfileId?.let { put("x-profile-id", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
@@ -162,12 +181,14 @@ private constructor(
         }
 
         return other is ProfileListParams &&
+            xProfileId == other.xProfileId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int = Objects.hash(additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int =
+        Objects.hash(xProfileId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ProfileListParams{additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ProfileListParams{xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

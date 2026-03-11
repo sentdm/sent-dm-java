@@ -13,7 +13,8 @@ internal class ContactUpdateParamsTest {
         ContactUpdateParams.builder()
             .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
             .idempotencyKey("req_abc123_retry1")
-            .testMode(false)
+            .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .defaultChannel("whatsapp")
             .optOut(false)
             .build()
@@ -35,7 +36,8 @@ internal class ContactUpdateParamsTest {
             ContactUpdateParams.builder()
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .defaultChannel("whatsapp")
                 .optOut(false)
                 .build()
@@ -43,7 +45,12 @@ internal class ContactUpdateParamsTest {
         val headers = params._headers()
 
         assertThat(headers)
-            .isEqualTo(Headers.builder().put("Idempotency-Key", "req_abc123_retry1").build())
+            .isEqualTo(
+                Headers.builder()
+                    .put("Idempotency-Key", "req_abc123_retry1")
+                    .put("x-profile-id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
     }
 
     @Test
@@ -62,14 +69,15 @@ internal class ContactUpdateParamsTest {
             ContactUpdateParams.builder()
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .defaultChannel("whatsapp")
                 .optOut(false)
                 .build()
 
         val body = params._body()
 
-        assertThat(body.testMode()).contains(false)
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.defaultChannel()).contains("whatsapp")
         assertThat(body.optOut()).contains(false)
     }

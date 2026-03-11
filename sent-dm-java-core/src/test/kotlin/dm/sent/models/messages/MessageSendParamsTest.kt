@@ -14,7 +14,8 @@ internal class MessageSendParamsTest {
     fun create() {
         MessageSendParams.builder()
             .idempotencyKey("req_abc123_retry1")
-            .testMode(false)
+            .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .addChannel("sms")
             .addChannel("whatsapp")
             .template(
@@ -39,7 +40,8 @@ internal class MessageSendParamsTest {
         val params =
             MessageSendParams.builder()
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .addChannel("sms")
                 .addChannel("whatsapp")
                 .template(
@@ -61,7 +63,12 @@ internal class MessageSendParamsTest {
         val headers = params._headers()
 
         assertThat(headers)
-            .isEqualTo(Headers.builder().put("Idempotency-Key", "req_abc123_retry1").build())
+            .isEqualTo(
+                Headers.builder()
+                    .put("Idempotency-Key", "req_abc123_retry1")
+                    .put("x-profile-id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
     }
 
     @Test
@@ -78,7 +85,8 @@ internal class MessageSendParamsTest {
         val params =
             MessageSendParams.builder()
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .addChannel("sms")
                 .addChannel("whatsapp")
                 .template(
@@ -99,7 +107,7 @@ internal class MessageSendParamsTest {
 
         val body = params._body()
 
-        assertThat(body.testMode()).contains(false)
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.channel().getOrNull()).containsExactly("sms", "whatsapp")
         assertThat(body.template())
             .contains(

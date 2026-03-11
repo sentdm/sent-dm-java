@@ -20,10 +20,35 @@ internal class MeRetrieveResponseTest {
                 .data(
                     MeRetrieveResponse.Data.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .channels(
+                            MeRetrieveResponse.Data.Channels.builder()
+                                .rcs(
+                                    MeRetrieveResponse.Data.Channels.Rcs.builder()
+                                        .configured(true)
+                                        .phoneNumber("phone_number")
+                                        .build()
+                                )
+                                .sms(
+                                    MeRetrieveResponse.Data.Channels.Sms.builder()
+                                        .configured(true)
+                                        .phoneNumber("phone_number")
+                                        .build()
+                                )
+                                .whatsapp(
+                                    MeRetrieveResponse.Data.Channels.Whatsapp.builder()
+                                        .businessName("business_name")
+                                        .configured(true)
+                                        .phoneNumber("phone_number")
+                                        .build()
+                                )
+                                .build()
+                        )
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .description("description")
+                        .email("email")
                         .icon("icon")
                         .name("name")
+                        .organizationId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .addProfile(
                             MeRetrieveResponse.Data.Profile.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -58,7 +83,9 @@ internal class MeRetrieveResponseTest {
                                 .inheritTemplates(true)
                                 .build()
                         )
+                        .shortName("short_name")
                         .status("status")
+                        .type("type")
                         .build()
                 )
                 .error(
@@ -76,7 +103,6 @@ internal class MeRetrieveResponseTest {
                 .meta(
                     ApiMeta.builder()
                         .requestId("request_id")
-                        .responseTimeMs(0L)
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
                         .build()
@@ -88,10 +114,35 @@ internal class MeRetrieveResponseTest {
             .contains(
                 MeRetrieveResponse.Data.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .channels(
+                        MeRetrieveResponse.Data.Channels.builder()
+                            .rcs(
+                                MeRetrieveResponse.Data.Channels.Rcs.builder()
+                                    .configured(true)
+                                    .phoneNumber("phone_number")
+                                    .build()
+                            )
+                            .sms(
+                                MeRetrieveResponse.Data.Channels.Sms.builder()
+                                    .configured(true)
+                                    .phoneNumber("phone_number")
+                                    .build()
+                            )
+                            .whatsapp(
+                                MeRetrieveResponse.Data.Channels.Whatsapp.builder()
+                                    .businessName("business_name")
+                                    .configured(true)
+                                    .phoneNumber("phone_number")
+                                    .build()
+                            )
+                            .build()
+                    )
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .description("description")
+                    .email("email")
                     .icon("icon")
                     .name("name")
+                    .organizationId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .addProfile(
                         MeRetrieveResponse.Data.Profile.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -126,7 +177,9 @@ internal class MeRetrieveResponseTest {
                             .inheritTemplates(true)
                             .build()
                     )
+                    .shortName("short_name")
                     .status("status")
+                    .type("type")
                     .build()
             )
         assertThat(meRetrieveResponse.error())
@@ -146,7 +199,6 @@ internal class MeRetrieveResponseTest {
             .contains(
                 ApiMeta.builder()
                     .requestId("request_id")
-                    .responseTimeMs(0L)
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
                     .build()
@@ -162,10 +214,35 @@ internal class MeRetrieveResponseTest {
                 .data(
                     MeRetrieveResponse.Data.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .channels(
+                            MeRetrieveResponse.Data.Channels.builder()
+                                .rcs(
+                                    MeRetrieveResponse.Data.Channels.Rcs.builder()
+                                        .configured(true)
+                                        .phoneNumber("phone_number")
+                                        .build()
+                                )
+                                .sms(
+                                    MeRetrieveResponse.Data.Channels.Sms.builder()
+                                        .configured(true)
+                                        .phoneNumber("phone_number")
+                                        .build()
+                                )
+                                .whatsapp(
+                                    MeRetrieveResponse.Data.Channels.Whatsapp.builder()
+                                        .businessName("business_name")
+                                        .configured(true)
+                                        .phoneNumber("phone_number")
+                                        .build()
+                                )
+                                .build()
+                        )
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .description("description")
+                        .email("email")
                         .icon("icon")
                         .name("name")
+                        .organizationId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .addProfile(
                             MeRetrieveResponse.Data.Profile.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -200,7 +277,9 @@ internal class MeRetrieveResponseTest {
                                 .inheritTemplates(true)
                                 .build()
                         )
+                        .shortName("short_name")
                         .status("status")
+                        .type("type")
                         .build()
                 )
                 .error(
@@ -218,7 +297,6 @@ internal class MeRetrieveResponseTest {
                 .meta(
                     ApiMeta.builder()
                         .requestId("request_id")
-                        .responseTimeMs(0L)
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
                         .build()

@@ -12,7 +12,8 @@ internal class UserInviteParamsTest {
     fun create() {
         UserInviteParams.builder()
             .idempotencyKey("req_abc123_retry1")
-            .testMode(false)
+            .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .email("newuser@example.com")
             .name("New User")
             .role("developer")
@@ -24,7 +25,8 @@ internal class UserInviteParamsTest {
         val params =
             UserInviteParams.builder()
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .email("newuser@example.com")
                 .name("New User")
                 .role("developer")
@@ -33,7 +35,12 @@ internal class UserInviteParamsTest {
         val headers = params._headers()
 
         assertThat(headers)
-            .isEqualTo(Headers.builder().put("Idempotency-Key", "req_abc123_retry1").build())
+            .isEqualTo(
+                Headers.builder()
+                    .put("Idempotency-Key", "req_abc123_retry1")
+                    .put("x-profile-id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
     }
 
     @Test
@@ -50,7 +57,8 @@ internal class UserInviteParamsTest {
         val params =
             UserInviteParams.builder()
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .email("newuser@example.com")
                 .name("New User")
                 .role("developer")
@@ -58,7 +66,7 @@ internal class UserInviteParamsTest {
 
         val body = params._body()
 
-        assertThat(body.testMode()).contains(false)
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.email()).contains("newuser@example.com")
         assertThat(body.name()).contains("New User")
         assertThat(body.role()).contains("developer")

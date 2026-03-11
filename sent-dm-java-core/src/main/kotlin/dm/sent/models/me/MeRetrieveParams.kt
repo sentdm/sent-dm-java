@@ -6,16 +6,31 @@ import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import java.util.Objects
+import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 /**
- * Returns the account associated with the API key. For organization API keys, returns the
- * organization with its profiles. For profile API keys, returns the profile with its settings.
+ * Returns the account associated with the provided API key. The response includes account identity,
+ * contact information, messaging channel configuration, and — depending on the account type —
+ * either a list of child profiles or the profile's own settings.
+ *
+ * **Account types:**
+ * - `organization` — Has child profiles. The `profiles` array is populated.
+ * - `user` — Standalone account with no profiles.
+ * - `profile` — Child of an organization. Includes `organization_id`, `short_name`, `status`, and
+ *   `settings`.
+ *
+ * **Channels:** The `channels` object always includes `sms`, `whatsapp`, and `rcs`. Each channel
+ * has a `configured` boolean. Configured channels expose additional details such as `phone_number`.
  */
 class MeRetrieveParams
 private constructor(
+    private val xProfileId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -36,14 +51,21 @@ private constructor(
     /** A builder for [MeRetrieveParams]. */
     class Builder internal constructor() {
 
+        private var xProfileId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(meRetrieveParams: MeRetrieveParams) = apply {
+            xProfileId = meRetrieveParams.xProfileId
             additionalHeaders = meRetrieveParams.additionalHeaders.toBuilder()
             additionalQueryParams = meRetrieveParams.additionalQueryParams.toBuilder()
         }
+
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -149,10 +171,16 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): MeRetrieveParams =
-            MeRetrieveParams(additionalHeaders.build(), additionalQueryParams.build())
+            MeRetrieveParams(xProfileId, additionalHeaders.build(), additionalQueryParams.build())
     }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                xProfileId?.let { put("x-profile-id", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
@@ -162,12 +190,14 @@ private constructor(
         }
 
         return other is MeRetrieveParams &&
+            xProfileId == other.xProfileId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int = Objects.hash(additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int =
+        Objects.hash(xProfileId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "MeRetrieveParams{additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "MeRetrieveParams{xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

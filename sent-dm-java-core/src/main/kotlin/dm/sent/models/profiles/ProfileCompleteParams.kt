@@ -43,6 +43,7 @@ class ProfileCompleteParams
 private constructor(
     private val profileId: String?,
     private val idempotencyKey: String?,
+    private val xProfileId: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -52,14 +53,16 @@ private constructor(
 
     fun idempotencyKey(): Optional<String> = Optional.ofNullable(idempotencyKey)
 
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
+
     /**
-     * Test mode flag - when true, the operation is simulated without side effects Useful for
-     * testing integrations without actual execution
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun testMode(): Optional<Boolean> = body.testMode()
+    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * Webhook URL to call when profile completion finishes (success or failure)
@@ -70,11 +73,11 @@ private constructor(
     fun webHookUrl(): String = body.webHookUrl()
 
     /**
-     * Returns the raw JSON value of [testMode].
+     * Returns the raw JSON value of [sandbox].
      *
-     * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _testMode(): JsonField<Boolean> = body._testMode()
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
      * Returns the raw JSON value of [webHookUrl].
@@ -111,6 +114,7 @@ private constructor(
 
         private var profileId: String? = null
         private var idempotencyKey: String? = null
+        private var xProfileId: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -119,6 +123,7 @@ private constructor(
         internal fun from(profileCompleteParams: ProfileCompleteParams) = apply {
             profileId = profileCompleteParams.profileId
             idempotencyKey = profileCompleteParams.idempotencyKey
+            xProfileId = profileCompleteParams.xProfileId
             body = profileCompleteParams.body.toBuilder()
             additionalHeaders = profileCompleteParams.additionalHeaders.toBuilder()
             additionalQueryParams = profileCompleteParams.additionalQueryParams.toBuilder()
@@ -135,30 +140,34 @@ private constructor(
         fun idempotencyKey(idempotencyKey: Optional<String>) =
             idempotencyKey(idempotencyKey.getOrNull())
 
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
+
         /**
          * Sets the entire request body.
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [testMode]
+         * - [sandbox]
          * - [webHookUrl]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          */
-        fun testMode(testMode: Boolean) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
 
         /**
-         * Sets [Builder.testMode] to an arbitrary JSON value.
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun testMode(testMode: JsonField<Boolean>) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /** Webhook URL to call when profile completion finishes (success or failure) */
         fun webHookUrl(webHookUrl: String) = apply { body.webHookUrl(webHookUrl) }
@@ -305,6 +314,7 @@ private constructor(
             ProfileCompleteParams(
                 profileId,
                 idempotencyKey,
+                xProfileId,
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -323,6 +333,7 @@ private constructor(
         Headers.builder()
             .apply {
                 idempotencyKey?.let { put("Idempotency-Key", it) }
+                xProfileId?.let { put("x-profile-id", it) }
                 putAll(additionalHeaders)
             }
             .build()
@@ -333,32 +344,30 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val testMode: JsonField<Boolean>,
+        private val sandbox: JsonField<Boolean>,
         private val webHookUrl: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("test_mode")
-            @ExcludeMissing
-            testMode: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("webHookUrl")
             @ExcludeMissing
             webHookUrl: JsonField<String> = JsonMissing.of(),
-        ) : this(testMode, webHookUrl, mutableMapOf())
+        ) : this(sandbox, webHookUrl, mutableMapOf())
 
         fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().testMode(testMode).build()
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun testMode(): Optional<Boolean> = testMode.getOptional("test_mode")
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * Webhook URL to call when profile completion finishes (success or failure)
@@ -369,11 +378,11 @@ private constructor(
         fun webHookUrl(): String = webHookUrl.getRequired("webHookUrl")
 
         /**
-         * Returns the raw JSON value of [testMode].
+         * Returns the raw JSON value of [sandbox].
          *
-         * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("test_mode") @ExcludeMissing fun _testMode(): JsonField<Boolean> = testMode
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
          * Returns the raw JSON value of [webHookUrl].
@@ -412,31 +421,31 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var testMode: JsonField<Boolean> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var webHookUrl: JsonField<String>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                testMode = body.testMode
+                sandbox = body.sandbox
                 webHookUrl = body.webHookUrl
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
             /**
-             * Test mode flag - when true, the operation is simulated without side effects Useful
-             * for testing integrations without actual execution
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
              */
-            fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
 
             /**
-             * Sets [Builder.testMode] to an arbitrary JSON value.
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun testMode(testMode: JsonField<Boolean>) = apply { this.testMode = testMode }
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /** Webhook URL to call when profile completion finishes (success or failure) */
             fun webHookUrl(webHookUrl: String) = webHookUrl(JsonField.of(webHookUrl))
@@ -483,7 +492,7 @@ private constructor(
              */
             fun build(): Body =
                 Body(
-                    testMode,
+                    sandbox,
                     checkRequired("webHookUrl", webHookUrl),
                     additionalProperties.toMutableMap(),
                 )
@@ -496,7 +505,7 @@ private constructor(
                 return@apply
             }
 
-            testMode()
+            sandbox()
             webHookUrl()
             validated = true
         }
@@ -517,7 +526,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (testMode.asKnown().isPresent) 1 else 0) +
+            (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (if (webHookUrl.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -526,19 +535,19 @@ private constructor(
             }
 
             return other is Body &&
-                testMode == other.testMode &&
+                sandbox == other.sandbox &&
                 webHookUrl == other.webHookUrl &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(testMode, webHookUrl, additionalProperties)
+            Objects.hash(sandbox, webHookUrl, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{testMode=$testMode, webHookUrl=$webHookUrl, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, webHookUrl=$webHookUrl, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -549,14 +558,22 @@ private constructor(
         return other is ProfileCompleteParams &&
             profileId == other.profileId &&
             idempotencyKey == other.idempotencyKey &&
+            xProfileId == other.xProfileId &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(profileId, idempotencyKey, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            profileId,
+            idempotencyKey,
+            xProfileId,
+            body,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "ProfileCompleteParams{profileId=$profileId, idempotencyKey=$idempotencyKey, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ProfileCompleteParams{profileId=$profileId, idempotencyKey=$idempotencyKey, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

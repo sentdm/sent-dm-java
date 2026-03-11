@@ -70,7 +70,6 @@ interface SentDmClientAsync {
     /** Create, update, and manage customer contact lists */
     fun contacts(): ContactServiceAsync
 
-    /** Register and manage 10DLC brands for SMS compliance */
     fun brands(): BrandServiceAsync
 
     /** Retrieve account details */
@@ -121,7 +120,6 @@ interface SentDmClientAsync {
         /** Create, update, and manage customer contact lists */
         fun contacts(): ContactServiceAsync.WithRawResponse
 
-        /** Register and manage 10DLC brands for SMS compliance */
         fun brands(): BrandServiceAsync.WithRawResponse
 
         /** Retrieve account details */

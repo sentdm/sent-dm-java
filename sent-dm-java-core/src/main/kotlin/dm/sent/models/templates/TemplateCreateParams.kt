@@ -27,6 +27,7 @@ import kotlin.jvm.optionals.getOrNull
 class TemplateCreateParams
 private constructor(
     private val idempotencyKey: String?,
+    private val xProfileId: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -34,14 +35,16 @@ private constructor(
 
     fun idempotencyKey(): Optional<String> = Optional.ofNullable(idempotencyKey)
 
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
+
     /**
-     * Test mode flag - when true, the operation is simulated without side effects Useful for
-     * testing integrations without actual execution
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun testMode(): Optional<Boolean> = body.testMode()
+    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -85,11 +88,11 @@ private constructor(
     fun submitForReview(): Optional<Boolean> = body.submitForReview()
 
     /**
-     * Returns the raw JSON value of [testMode].
+     * Returns the raw JSON value of [sandbox].
      *
-     * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _testMode(): JsonField<Boolean> = body._testMode()
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
      * Returns the raw JSON value of [category].
@@ -148,6 +151,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var idempotencyKey: String? = null
+        private var xProfileId: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -155,6 +159,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(templateCreateParams: TemplateCreateParams) = apply {
             idempotencyKey = templateCreateParams.idempotencyKey
+            xProfileId = templateCreateParams.xProfileId
             body = templateCreateParams.body.toBuilder()
             additionalHeaders = templateCreateParams.additionalHeaders.toBuilder()
             additionalQueryParams = templateCreateParams.additionalQueryParams.toBuilder()
@@ -166,12 +171,17 @@ private constructor(
         fun idempotencyKey(idempotencyKey: Optional<String>) =
             idempotencyKey(idempotencyKey.getOrNull())
 
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
+
         /**
          * Sets the entire request body.
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [testMode]
+         * - [sandbox]
          * - [category]
          * - [creationSource]
          * - [definition]
@@ -181,19 +191,18 @@ private constructor(
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          */
-        fun testMode(testMode: Boolean) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
 
         /**
-         * Sets [Builder.testMode] to an arbitrary JSON value.
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun testMode(testMode: JsonField<Boolean>) = apply { body.testMode(testMode) }
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /**
          * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -399,6 +408,7 @@ private constructor(
         fun build(): TemplateCreateParams =
             TemplateCreateParams(
                 idempotencyKey,
+                xProfileId,
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -411,6 +421,7 @@ private constructor(
         Headers.builder()
             .apply {
                 idempotencyKey?.let { put("Idempotency-Key", it) }
+                xProfileId?.let { put("x-profile-id", it) }
                 putAll(additionalHeaders)
             }
             .build()
@@ -421,7 +432,7 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val testMode: JsonField<Boolean>,
+        private val sandbox: JsonField<Boolean>,
         private val category: JsonField<String>,
         private val creationSource: JsonField<String>,
         private val definition: JsonField<TemplateDefinition>,
@@ -432,9 +443,7 @@ private constructor(
 
         @JsonCreator
         private constructor(
-            @JsonProperty("test_mode")
-            @ExcludeMissing
-            testMode: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("category")
             @ExcludeMissing
             category: JsonField<String> = JsonMissing.of(),
@@ -451,7 +460,7 @@ private constructor(
             @ExcludeMissing
             submitForReview: JsonField<Boolean> = JsonMissing.of(),
         ) : this(
-            testMode,
+            sandbox,
             category,
             creationSource,
             definition,
@@ -461,16 +470,16 @@ private constructor(
         )
 
         fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().testMode(testMode).build()
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
-         * Test mode flag - when true, the operation is simulated without side effects Useful for
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
          * testing integrations without actual execution
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun testMode(): Optional<Boolean> = testMode.getOptional("test_mode")
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -514,11 +523,11 @@ private constructor(
         fun submitForReview(): Optional<Boolean> = submitForReview.getOptional("submit_for_review")
 
         /**
-         * Returns the raw JSON value of [testMode].
+         * Returns the raw JSON value of [sandbox].
          *
-         * Unlike [testMode], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("test_mode") @ExcludeMissing fun _testMode(): JsonField<Boolean> = testMode
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
          * Returns the raw JSON value of [category].
@@ -584,7 +593,7 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var testMode: JsonField<Boolean> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var category: JsonField<String> = JsonMissing.of()
             private var creationSource: JsonField<String> = JsonMissing.of()
             private var definition: JsonField<TemplateDefinition> = JsonMissing.of()
@@ -594,7 +603,7 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                testMode = body.testMode
+                sandbox = body.sandbox
                 category = body.category
                 creationSource = body.creationSource
                 definition = body.definition
@@ -604,19 +613,19 @@ private constructor(
             }
 
             /**
-             * Test mode flag - when true, the operation is simulated without side effects Useful
-             * for testing integrations without actual execution
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
              */
-            fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
 
             /**
-             * Sets [Builder.testMode] to an arbitrary JSON value.
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.testMode] with a well-typed [Boolean] value instead.
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun testMode(testMode: JsonField<Boolean>) = apply { this.testMode = testMode }
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /**
              * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -725,7 +734,7 @@ private constructor(
              */
             fun build(): Body =
                 Body(
-                    testMode,
+                    sandbox,
                     category,
                     creationSource,
                     definition,
@@ -742,7 +751,7 @@ private constructor(
                 return@apply
             }
 
-            testMode()
+            sandbox()
             category()
             creationSource()
             definition().ifPresent { it.validate() }
@@ -767,7 +776,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (testMode.asKnown().isPresent) 1 else 0) +
+            (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (if (category.asKnown().isPresent) 1 else 0) +
                 (if (creationSource.asKnown().isPresent) 1 else 0) +
                 (definition.asKnown().getOrNull()?.validity() ?: 0) +
@@ -780,7 +789,7 @@ private constructor(
             }
 
             return other is Body &&
-                testMode == other.testMode &&
+                sandbox == other.sandbox &&
                 category == other.category &&
                 creationSource == other.creationSource &&
                 definition == other.definition &&
@@ -791,7 +800,7 @@ private constructor(
 
         private val hashCode: Int by lazy {
             Objects.hash(
-                testMode,
+                sandbox,
                 category,
                 creationSource,
                 definition,
@@ -804,7 +813,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{testMode=$testMode, category=$category, creationSource=$creationSource, definition=$definition, language=$language, submitForReview=$submitForReview, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, category=$category, creationSource=$creationSource, definition=$definition, language=$language, submitForReview=$submitForReview, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -814,14 +823,15 @@ private constructor(
 
         return other is TemplateCreateParams &&
             idempotencyKey == other.idempotencyKey &&
+            xProfileId == other.xProfileId &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(idempotencyKey, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(idempotencyKey, xProfileId, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "TemplateCreateParams{idempotencyKey=$idempotencyKey, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TemplateCreateParams{idempotencyKey=$idempotencyKey, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

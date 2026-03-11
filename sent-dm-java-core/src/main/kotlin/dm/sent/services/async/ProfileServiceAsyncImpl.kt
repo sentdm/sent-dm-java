@@ -171,7 +171,7 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
         ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
-            checkRequired("pathProfileId", params.pathProfileId().getOrNull())
+            checkRequired("profileId", params.profileId().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)
@@ -234,7 +234,7 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
         ): CompletableFuture<HttpResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
-            checkRequired("pathProfileId", params.pathProfileId().getOrNull())
+            checkRequired("profileId", params.profileId().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)

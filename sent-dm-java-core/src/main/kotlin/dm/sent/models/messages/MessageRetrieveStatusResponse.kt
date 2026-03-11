@@ -262,6 +262,7 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val id: JsonField<String>,
+        private val activeContactPrice: JsonField<Double>,
         private val channel: JsonField<String>,
         private val contactId: JsonField<String>,
         private val createdAt: JsonField<OffsetDateTime>,
@@ -282,6 +283,9 @@ private constructor(
         @JsonCreator
         private constructor(
             @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("active_contact_price")
+            @ExcludeMissing
+            activeContactPrice: JsonField<Double> = JsonMissing.of(),
             @JsonProperty("channel") @ExcludeMissing channel: JsonField<String> = JsonMissing.of(),
             @JsonProperty("contact_id")
             @ExcludeMissing
@@ -318,6 +322,7 @@ private constructor(
             templateName: JsonField<String> = JsonMissing.of(),
         ) : this(
             id,
+            activeContactPrice,
             channel,
             contactId,
             createdAt,
@@ -340,6 +345,13 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun id(): Optional<String> = id.getOptional("id")
+
+        /**
+         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun activeContactPrice(): Optional<Double> =
+            activeContactPrice.getOptional("active_contact_price")
 
         /**
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -435,6 +447,16 @@ private constructor(
          * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+        /**
+         * Returns the raw JSON value of [activeContactPrice].
+         *
+         * Unlike [activeContactPrice], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("active_contact_price")
+        @ExcludeMissing
+        fun _activeContactPrice(): JsonField<Double> = activeContactPrice
 
         /**
          * Returns the raw JSON value of [channel].
@@ -575,6 +597,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var id: JsonField<String> = JsonMissing.of()
+            private var activeContactPrice: JsonField<Double> = JsonMissing.of()
             private var channel: JsonField<String> = JsonMissing.of()
             private var contactId: JsonField<String> = JsonMissing.of()
             private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -594,6 +617,7 @@ private constructor(
             @JvmSynthetic
             internal fun from(data: Data) = apply {
                 id = data.id
+                activeContactPrice = data.activeContactPrice
                 channel = data.channel
                 contactId = data.contactId
                 createdAt = data.createdAt
@@ -621,6 +645,35 @@ private constructor(
              * value.
              */
             fun id(id: JsonField<String>) = apply { this.id = id }
+
+            fun activeContactPrice(activeContactPrice: Double?) =
+                activeContactPrice(JsonField.ofNullable(activeContactPrice))
+
+            /**
+             * Alias for [Builder.activeContactPrice].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun activeContactPrice(activeContactPrice: Double) =
+                activeContactPrice(activeContactPrice as Double?)
+
+            /**
+             * Alias for calling [Builder.activeContactPrice] with
+             * `activeContactPrice.orElse(null)`.
+             */
+            fun activeContactPrice(activeContactPrice: Optional<Double>) =
+                activeContactPrice(activeContactPrice.getOrNull())
+
+            /**
+             * Sets [Builder.activeContactPrice] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.activeContactPrice] with a well-typed [Double] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun activeContactPrice(activeContactPrice: JsonField<Double>) = apply {
+                this.activeContactPrice = activeContactPrice
+            }
 
             fun channel(channel: String) = channel(JsonField.of(channel))
 
@@ -854,6 +907,7 @@ private constructor(
             fun build(): Data =
                 Data(
                     id,
+                    activeContactPrice,
                     channel,
                     contactId,
                     createdAt,
@@ -880,6 +934,7 @@ private constructor(
             }
 
             id()
+            activeContactPrice()
             channel()
             contactId()
             createdAt()
@@ -914,6 +969,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (id.asKnown().isPresent) 1 else 0) +
+                (if (activeContactPrice.asKnown().isPresent) 1 else 0) +
                 (if (channel.asKnown().isPresent) 1 else 0) +
                 (if (contactId.asKnown().isPresent) 1 else 0) +
                 (if (createdAt.asKnown().isPresent) 1 else 0) +
@@ -1628,6 +1684,7 @@ private constructor(
 
             return other is Data &&
                 id == other.id &&
+                activeContactPrice == other.activeContactPrice &&
                 channel == other.channel &&
                 contactId == other.contactId &&
                 createdAt == other.createdAt &&
@@ -1648,6 +1705,7 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 id,
+                activeContactPrice,
                 channel,
                 contactId,
                 createdAt,
@@ -1669,7 +1727,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{id=$id, channel=$channel, contactId=$contactId, createdAt=$createdAt, customerId=$customerId, events=$events, messageBody=$messageBody, phone=$phone, phoneInternational=$phoneInternational, price=$price, regionCode=$regionCode, status=$status, templateCategory=$templateCategory, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
+            "Data{id=$id, activeContactPrice=$activeContactPrice, channel=$channel, contactId=$contactId, createdAt=$createdAt, customerId=$customerId, events=$events, messageBody=$messageBody, phone=$phone, phoneInternational=$phoneInternational, price=$price, regionCode=$regionCode, status=$status, templateCategory=$templateCategory, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -21,6 +21,7 @@ private constructor(
     private val channel: String?,
     private val phone: String?,
     private val search: String?,
+    private val xProfileId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -28,6 +29,7 @@ private constructor(
     /** Page number (1-indexed) */
     fun page(): Int = page
 
+    /** Number of items per page */
     fun pageSize(): Int = pageSize
 
     /** Optional channel filter (sms, whatsapp) */
@@ -38,6 +40,8 @@ private constructor(
 
     /** Optional search term for filtering contacts */
     fun search(): Optional<String> = Optional.ofNullable(search)
+
+    fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -69,6 +73,7 @@ private constructor(
         private var channel: String? = null
         private var phone: String? = null
         private var search: String? = null
+        private var xProfileId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -79,6 +84,7 @@ private constructor(
             channel = contactListParams.channel
             phone = contactListParams.phone
             search = contactListParams.search
+            xProfileId = contactListParams.xProfileId
             additionalHeaders = contactListParams.additionalHeaders.toBuilder()
             additionalQueryParams = contactListParams.additionalQueryParams.toBuilder()
         }
@@ -86,6 +92,7 @@ private constructor(
         /** Page number (1-indexed) */
         fun page(page: Int) = apply { this.page = page }
 
+        /** Number of items per page */
         fun pageSize(pageSize: Int) = apply { this.pageSize = pageSize }
 
         /** Optional channel filter (sms, whatsapp) */
@@ -105,6 +112,11 @@ private constructor(
 
         /** Alias for calling [Builder.search] with `search.orElse(null)`. */
         fun search(search: Optional<String>) = search(search.getOrNull())
+
+        fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
+
+        /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
+        fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -224,18 +236,25 @@ private constructor(
                 channel,
                 phone,
                 search,
+                xProfileId,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                xProfileId?.let { put("x-profile-id", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
                 put("page", page.toString())
-                put("pageSize", pageSize.toString())
+                put("page_size", pageSize.toString())
                 channel?.let { put("channel", it) }
                 phone?.let { put("phone", it) }
                 search?.let { put("search", it) }
@@ -254,6 +273,7 @@ private constructor(
             channel == other.channel &&
             phone == other.phone &&
             search == other.search &&
+            xProfileId == other.xProfileId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
@@ -265,10 +285,11 @@ private constructor(
             channel,
             phone,
             search,
+            xProfileId,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "ContactListParams{page=$page, pageSize=$pageSize, channel=$channel, phone=$phone, search=$search, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ContactListParams{page=$page, pageSize=$pageSize, channel=$channel, phone=$phone, search=$search, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

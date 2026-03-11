@@ -229,6 +229,7 @@ private constructor(
     private constructor(
         private val alt: JsonField<String>,
         private val mediaType: JsonField<String>,
+        private val regex: JsonField<String>,
         private val sample: JsonField<String>,
         private val shortUrl: JsonField<String>,
         private val url: JsonField<String>,
@@ -242,6 +243,7 @@ private constructor(
             @JsonProperty("mediaType")
             @ExcludeMissing
             mediaType: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("regex") @ExcludeMissing regex: JsonField<String> = JsonMissing.of(),
             @JsonProperty("sample") @ExcludeMissing sample: JsonField<String> = JsonMissing.of(),
             @JsonProperty("shortUrl")
             @ExcludeMissing
@@ -250,7 +252,7 @@ private constructor(
             @JsonProperty("variableType")
             @ExcludeMissing
             variableType: JsonField<String> = JsonMissing.of(),
-        ) : this(alt, mediaType, sample, shortUrl, url, variableType, mutableMapOf())
+        ) : this(alt, mediaType, regex, sample, shortUrl, url, variableType, mutableMapOf())
 
         /**
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -263,6 +265,12 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun mediaType(): Optional<String> = mediaType.getOptional("mediaType")
+
+        /**
+         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun regex(): Optional<String> = regex.getOptional("regex")
 
         /**
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -301,6 +309,13 @@ private constructor(
          * Unlike [mediaType], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("mediaType") @ExcludeMissing fun _mediaType(): JsonField<String> = mediaType
+
+        /**
+         * Returns the raw JSON value of [regex].
+         *
+         * Unlike [regex], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("regex") @ExcludeMissing fun _regex(): JsonField<String> = regex
 
         /**
          * Returns the raw JSON value of [sample].
@@ -356,6 +371,7 @@ private constructor(
 
             private var alt: JsonField<String> = JsonMissing.of()
             private var mediaType: JsonField<String> = JsonMissing.of()
+            private var regex: JsonField<String> = JsonMissing.of()
             private var sample: JsonField<String> = JsonMissing.of()
             private var shortUrl: JsonField<String> = JsonMissing.of()
             private var url: JsonField<String> = JsonMissing.of()
@@ -366,6 +382,7 @@ private constructor(
             internal fun from(props: Props) = apply {
                 alt = props.alt
                 mediaType = props.mediaType
+                regex = props.regex
                 sample = props.sample
                 shortUrl = props.shortUrl
                 url = props.url
@@ -400,6 +417,20 @@ private constructor(
              * supported value.
              */
             fun mediaType(mediaType: JsonField<String>) = apply { this.mediaType = mediaType }
+
+            fun regex(regex: String?) = regex(JsonField.ofNullable(regex))
+
+            /** Alias for calling [Builder.regex] with `regex.orElse(null)`. */
+            fun regex(regex: Optional<String>) = regex(regex.getOrNull())
+
+            /**
+             * Sets [Builder.regex] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.regex] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun regex(regex: JsonField<String>) = apply { this.regex = regex }
 
             fun sample(sample: String?) = sample(JsonField.ofNullable(sample))
 
@@ -489,6 +520,7 @@ private constructor(
                 Props(
                     alt,
                     mediaType,
+                    regex,
                     sample,
                     shortUrl,
                     url,
@@ -506,6 +538,7 @@ private constructor(
 
             alt()
             mediaType()
+            regex()
             sample()
             shortUrl()
             url()
@@ -531,6 +564,7 @@ private constructor(
         internal fun validity(): Int =
             (if (alt.asKnown().isPresent) 1 else 0) +
                 (if (mediaType.asKnown().isPresent) 1 else 0) +
+                (if (regex.asKnown().isPresent) 1 else 0) +
                 (if (sample.asKnown().isPresent) 1 else 0) +
                 (if (shortUrl.asKnown().isPresent) 1 else 0) +
                 (if (url.asKnown().isPresent) 1 else 0) +
@@ -544,6 +578,7 @@ private constructor(
             return other is Props &&
                 alt == other.alt &&
                 mediaType == other.mediaType &&
+                regex == other.regex &&
                 sample == other.sample &&
                 shortUrl == other.shortUrl &&
                 url == other.url &&
@@ -552,13 +587,22 @@ private constructor(
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(alt, mediaType, sample, shortUrl, url, variableType, additionalProperties)
+            Objects.hash(
+                alt,
+                mediaType,
+                regex,
+                sample,
+                shortUrl,
+                url,
+                variableType,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Props{alt=$alt, mediaType=$mediaType, sample=$sample, shortUrl=$shortUrl, url=$url, variableType=$variableType, additionalProperties=$additionalProperties}"
+            "Props{alt=$alt, mediaType=$mediaType, regex=$regex, sample=$sample, shortUrl=$shortUrl, url=$url, variableType=$variableType, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

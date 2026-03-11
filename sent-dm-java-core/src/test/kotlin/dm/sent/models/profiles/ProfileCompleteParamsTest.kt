@@ -13,7 +13,8 @@ internal class ProfileCompleteParamsTest {
         ProfileCompleteParams.builder()
             .profileId("660e8400-e29b-41d4-a716-446655440000")
             .idempotencyKey("req_abc123_retry1")
-            .testMode(false)
+            .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .webHookUrl("https://your-app.com/webhook/profile-complete")
             .build()
     }
@@ -37,14 +38,20 @@ internal class ProfileCompleteParamsTest {
             ProfileCompleteParams.builder()
                 .profileId("660e8400-e29b-41d4-a716-446655440000")
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .webHookUrl("https://your-app.com/webhook/profile-complete")
                 .build()
 
         val headers = params._headers()
 
         assertThat(headers)
-            .isEqualTo(Headers.builder().put("Idempotency-Key", "req_abc123_retry1").build())
+            .isEqualTo(
+                Headers.builder()
+                    .put("Idempotency-Key", "req_abc123_retry1")
+                    .put("x-profile-id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
     }
 
     @Test
@@ -66,13 +73,14 @@ internal class ProfileCompleteParamsTest {
             ProfileCompleteParams.builder()
                 .profileId("660e8400-e29b-41d4-a716-446655440000")
                 .idempotencyKey("req_abc123_retry1")
-                .testMode(false)
+                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .webHookUrl("https://your-app.com/webhook/profile-complete")
                 .build()
 
         val body = params._body()
 
-        assertThat(body.testMode()).contains(false)
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.webHookUrl()).isEqualTo("https://your-app.com/webhook/profile-complete")
     }
 
