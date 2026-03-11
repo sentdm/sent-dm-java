@@ -14,6 +14,7 @@ import dm.sent.models.messages.MessageSendResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** Send and track SMS and WhatsApp messages */
 interface MessageServiceAsync {
 
     /**

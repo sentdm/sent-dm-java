@@ -27,6 +27,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Register and manage 10DLC brands for SMS compliance */
 class CampaignServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     CampaignServiceAsync {
 

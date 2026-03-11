@@ -25,6 +25,7 @@ import dm.sent.models.webhooks.WebhookUpdateParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** Configure webhook endpoints for real-time event delivery */
 interface WebhookServiceAsync {
 
     /**

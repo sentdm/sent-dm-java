@@ -28,6 +28,7 @@ import dm.sent.services.blocking.brands.CampaignServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/** Register and manage 10DLC brands for SMS compliance */
 class BrandServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     BrandService {
 
@@ -42,6 +43,7 @@ class BrandServiceImpl internal constructor(private val clientOptions: ClientOpt
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): BrandService =
         BrandServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    /** Register and manage 10DLC brands for SMS compliance */
     override fun campaigns(): CampaignService = campaigns
 
     override fun create(
@@ -84,6 +86,7 @@ class BrandServiceImpl internal constructor(private val clientOptions: ClientOpt
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
+        /** Register and manage 10DLC brands for SMS compliance */
         override fun campaigns(): CampaignService.WithRawResponse = campaigns
 
         private val createHandler: Handler<ApiResponseBrandWithKyc> =

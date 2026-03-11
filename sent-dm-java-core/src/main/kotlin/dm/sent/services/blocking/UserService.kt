@@ -16,6 +16,7 @@ import dm.sent.models.users.UserRetrieveParams
 import dm.sent.models.users.UserUpdateRoleParams
 import java.util.function.Consumer
 
+/** Invite, update, and manage organization users and roles */
 interface UserService {
 
     /**

@@ -16,6 +16,7 @@ import dm.sent.models.templates.TemplateUpdateParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
+/** Manage message templates with variable substitution */
 interface TemplateServiceAsync {
 
     /**

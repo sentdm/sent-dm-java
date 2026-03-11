@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.6.1 (2026-03-11)
+
+Full Changelog: [v0.6.0...v0.6.1](https://github.com/sentdm/sent-dm-java/compare/v0.6.0...v0.6.1)
+
+### Bug Fixes
+
+* **client:** incorrect `Retry-After` parsing ([6d4e87d](https://github.com/sentdm/sent-dm-java/commit/6d4e87dae24fe9c5775022473d10d1bf67feb3fd))
+* **client:** method name conflict ([1a6889d](https://github.com/sentdm/sent-dm-java/commit/1a6889dbe4a2b34055b50cec925f452f2c2695ac))
+
+
+### Chores
+
+* **ci:** skip uploading artifacts on stainless-internal branches ([888ded0](https://github.com/sentdm/sent-dm-java/commit/888ded06e1c2a5ffc7e7dc93055ec0dc92953a07))
+* **internal:** bump palantir-java-format ([cbd4f1b](https://github.com/sentdm/sent-dm-java/commit/cbd4f1bacdc8260d342b842ff18b830dd75d11b8))
+* **internal:** codegen related update ([0076455](https://github.com/sentdm/sent-dm-java/commit/0076455451ea946dfdfb2be1ed3e57275af0d13e))
+* **internal:** codegen related update ([3a09c77](https://github.com/sentdm/sent-dm-java/commit/3a09c773610e5227b9131c2941e049e3832b6d1a))
+* **internal:** expand imports ([47e0e22](https://github.com/sentdm/sent-dm-java/commit/47e0e221dc542bd54edfffdccdec5f55db08f352))
+
 ## 0.6.0 (2026-02-18)
 
 Full Changelog: [v0.5.1...v0.6.0](https://github.com/sentdm/sent-dm-java/compare/v0.5.1...v0.6.0)
