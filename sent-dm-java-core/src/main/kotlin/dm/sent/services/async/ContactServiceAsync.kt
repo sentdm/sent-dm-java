@@ -6,7 +6,7 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.contacts.ApiResponseContact
+import dm.sent.models.contacts.ApiResponseOfContact
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
@@ -32,28 +32,28 @@ interface ContactServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ContactServiceAsync
 
     /** Creates a new contact by phone number and associates it with the authenticated customer. */
-    fun create(): CompletableFuture<ApiResponseContact> = create(ContactCreateParams.none())
+    fun create(): CompletableFuture<ApiResponseOfContact> = create(ContactCreateParams.none())
 
     /** @see create */
     fun create(
         params: ContactCreateParams = ContactCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseContact>
+    ): CompletableFuture<ApiResponseOfContact>
 
     /** @see create */
     fun create(
         params: ContactCreateParams = ContactCreateParams.none()
-    ): CompletableFuture<ApiResponseContact> = create(params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfContact> = create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(requestOptions: RequestOptions): CompletableFuture<ApiResponseContact> =
+    fun create(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfContact> =
         create(ContactCreateParams.none(), requestOptions)
 
     /**
      * Retrieves a specific contact by their unique identifier. Returns detailed contact information
      * including phone formats, available channels, and opt-out status.
      */
-    fun retrieve(id: String): CompletableFuture<ApiResponseContact> =
+    fun retrieve(id: String): CompletableFuture<ApiResponseOfContact> =
         retrieve(id, ContactRetrieveParams.none())
 
     /** @see retrieve */
@@ -61,37 +61,37 @@ interface ContactServiceAsync {
         id: String,
         params: ContactRetrieveParams = ContactRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseContact> =
+    ): CompletableFuture<ApiResponseOfContact> =
         retrieve(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: ContactRetrieveParams = ContactRetrieveParams.none(),
-    ): CompletableFuture<ApiResponseContact> = retrieve(id, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfContact> = retrieve(id, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: ContactRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseContact>
+    ): CompletableFuture<ApiResponseOfContact>
 
     /** @see retrieve */
-    fun retrieve(params: ContactRetrieveParams): CompletableFuture<ApiResponseContact> =
+    fun retrieve(params: ContactRetrieveParams): CompletableFuture<ApiResponseOfContact> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseContact> =
+    ): CompletableFuture<ApiResponseOfContact> =
         retrieve(id, ContactRetrieveParams.none(), requestOptions)
 
     /**
      * Updates a contact's default channel and/or opt-out status. Inherited contacts cannot be
      * updated.
      */
-    fun update(id: String): CompletableFuture<ApiResponseContact> =
+    fun update(id: String): CompletableFuture<ApiResponseOfContact> =
         update(id, ContactUpdateParams.none())
 
     /** @see update */
@@ -99,27 +99,30 @@ interface ContactServiceAsync {
         id: String,
         params: ContactUpdateParams = ContactUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseContact> =
+    ): CompletableFuture<ApiResponseOfContact> =
         update(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see update */
     fun update(
         id: String,
         params: ContactUpdateParams = ContactUpdateParams.none(),
-    ): CompletableFuture<ApiResponseContact> = update(id, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfContact> = update(id, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: ContactUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseContact>
+    ): CompletableFuture<ApiResponseOfContact>
 
     /** @see update */
-    fun update(params: ContactUpdateParams): CompletableFuture<ApiResponseContact> =
+    fun update(params: ContactUpdateParams): CompletableFuture<ApiResponseOfContact> =
         update(params, RequestOptions.none())
 
     /** @see update */
-    fun update(id: String, requestOptions: RequestOptions): CompletableFuture<ApiResponseContact> =
+    fun update(
+        id: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ApiResponseOfContact> =
         update(id, ContactUpdateParams.none(), requestOptions)
 
     /**
@@ -185,32 +188,32 @@ interface ContactServiceAsync {
          * Returns a raw HTTP response for `post /v3/contacts`, but is otherwise the same as
          * [ContactServiceAsync.create].
          */
-        fun create(): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        fun create(): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             create(ContactCreateParams.none())
 
         /** @see create */
         fun create(
             params: ContactCreateParams = ContactCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>>
 
         /** @see create */
         fun create(
             params: ContactCreateParams = ContactCreateParams.none()
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             create(ContactCreateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /v3/contacts/{id}`, but is otherwise the same as
          * [ContactServiceAsync.retrieve].
          */
-        fun retrieve(id: String): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        fun retrieve(id: String): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             retrieve(id, ContactRetrieveParams.none())
 
         /** @see retrieve */
@@ -218,40 +221,40 @@ interface ContactServiceAsync {
             id: String,
             params: ContactRetrieveParams = ContactRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieve */
         fun retrieve(
             id: String,
             params: ContactRetrieveParams = ContactRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             params: ContactRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>>
 
         /** @see retrieve */
         fun retrieve(
             params: ContactRetrieveParams
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             id: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             retrieve(id, ContactRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `patch /v3/contacts/{id}`, but is otherwise the same as
          * [ContactServiceAsync.update].
          */
-        fun update(id: String): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        fun update(id: String): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             update(id, ContactUpdateParams.none())
 
         /** @see update */
@@ -259,33 +262,33 @@ interface ContactServiceAsync {
             id: String,
             params: ContactUpdateParams = ContactUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             update(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see update */
         fun update(
             id: String,
             params: ContactUpdateParams = ContactUpdateParams.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             update(id, params, RequestOptions.none())
 
         /** @see update */
         fun update(
             params: ContactUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>>
 
         /** @see update */
         fun update(
             params: ContactUpdateParams
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             update(params, RequestOptions.none())
 
         /** @see update */
         fun update(
             id: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseContact>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             update(id, ContactUpdateParams.none(), requestOptions)
 
         /**

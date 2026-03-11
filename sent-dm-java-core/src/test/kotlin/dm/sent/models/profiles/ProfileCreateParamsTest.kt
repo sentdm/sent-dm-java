@@ -3,10 +3,6 @@
 package dm.sent.models.profiles
 
 import dm.sent.core.http.Headers
-import dm.sent.models.brands.BrandData
-import dm.sent.models.brands.DestinationCountry
-import dm.sent.models.brands.TcrBrandRelationship
-import dm.sent.models.brands.TcrVertical
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -21,7 +17,7 @@ internal class ProfileCreateParamsTest {
             .allowContactSharing(true)
             .allowTemplateSharing(false)
             .billingContact(
-                ProfileCreateParams.BillingContact.builder()
+                BillingContactInfo.builder()
                     .email("billing@acmecorp.com")
                     .name("Acme Corp")
                     .address("123 Main Street, New York, NY 10001, US")
@@ -30,9 +26,9 @@ internal class ProfileCreateParamsTest {
             )
             .billingModel("profile")
             .brand(
-                BrandData.builder()
+                BrandsBrandData.builder()
                     .compliance(
-                        BrandData.Compliance.builder()
+                        BrandsBrandData.Compliance.builder()
                             .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                             .vertical(TcrVertical.PROFESSIONAL)
                             .addDestinationCountry(
@@ -46,7 +42,7 @@ internal class ProfileCreateParamsTest {
                             .build()
                     )
                     .contact(
-                        BrandData.Contact.builder()
+                        BrandsBrandData.Contact.builder()
                             .name("John Smith")
                             .businessName("Acme Corp")
                             .email("john@acmecorp.com")
@@ -56,11 +52,11 @@ internal class ProfileCreateParamsTest {
                             .build()
                     )
                     .business(
-                        BrandData.Business.builder()
+                        BrandsBrandData.Business.builder()
                             .city("New York")
                             .country("US")
                             .countryOfRegistration("US")
-                            .entityType(BrandData.Business.EntityType.PRIVATE_PROFIT)
+                            .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
                             .legalName("Acme Corporation LLC")
                             .postalCode("10001")
                             .state("NY")
@@ -80,7 +76,7 @@ internal class ProfileCreateParamsTest {
             .inheritTemplates(true)
             .name("Sales Team")
             .paymentDetails(
-                ProfileCreateParams.PaymentDetails.builder()
+                PaymentDetails.builder()
                     .cardNumber("4111111111111111")
                     .cvc("123")
                     .expiry("09/27")
@@ -108,7 +104,7 @@ internal class ProfileCreateParamsTest {
                 .allowContactSharing(true)
                 .allowTemplateSharing(false)
                 .billingContact(
-                    ProfileCreateParams.BillingContact.builder()
+                    BillingContactInfo.builder()
                         .email("billing@acmecorp.com")
                         .name("Acme Corp")
                         .address("123 Main Street, New York, NY 10001, US")
@@ -117,9 +113,9 @@ internal class ProfileCreateParamsTest {
                 )
                 .billingModel("profile")
                 .brand(
-                    BrandData.builder()
+                    BrandsBrandData.builder()
                         .compliance(
-                            BrandData.Compliance.builder()
+                            BrandsBrandData.Compliance.builder()
                                 .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                 .vertical(TcrVertical.PROFESSIONAL)
                                 .addDestinationCountry(
@@ -133,7 +129,7 @@ internal class ProfileCreateParamsTest {
                                 .build()
                         )
                         .contact(
-                            BrandData.Contact.builder()
+                            BrandsBrandData.Contact.builder()
                                 .name("John Smith")
                                 .businessName("Acme Corp")
                                 .email("john@acmecorp.com")
@@ -143,11 +139,11 @@ internal class ProfileCreateParamsTest {
                                 .build()
                         )
                         .business(
-                            BrandData.Business.builder()
+                            BrandsBrandData.Business.builder()
                                 .city("New York")
                                 .country("US")
                                 .countryOfRegistration("US")
-                                .entityType(BrandData.Business.EntityType.PRIVATE_PROFIT)
+                                .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
                                 .legalName("Acme Corporation LLC")
                                 .postalCode("10001")
                                 .state("NY")
@@ -167,7 +163,7 @@ internal class ProfileCreateParamsTest {
                 .inheritTemplates(true)
                 .name("Sales Team")
                 .paymentDetails(
-                    ProfileCreateParams.PaymentDetails.builder()
+                    PaymentDetails.builder()
                         .cardNumber("4111111111111111")
                         .cvc("123")
                         .expiry("09/27")
@@ -214,7 +210,7 @@ internal class ProfileCreateParamsTest {
                 .allowContactSharing(true)
                 .allowTemplateSharing(false)
                 .billingContact(
-                    ProfileCreateParams.BillingContact.builder()
+                    BillingContactInfo.builder()
                         .email("billing@acmecorp.com")
                         .name("Acme Corp")
                         .address("123 Main Street, New York, NY 10001, US")
@@ -223,9 +219,9 @@ internal class ProfileCreateParamsTest {
                 )
                 .billingModel("profile")
                 .brand(
-                    BrandData.builder()
+                    BrandsBrandData.builder()
                         .compliance(
-                            BrandData.Compliance.builder()
+                            BrandsBrandData.Compliance.builder()
                                 .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                 .vertical(TcrVertical.PROFESSIONAL)
                                 .addDestinationCountry(
@@ -239,7 +235,7 @@ internal class ProfileCreateParamsTest {
                                 .build()
                         )
                         .contact(
-                            BrandData.Contact.builder()
+                            BrandsBrandData.Contact.builder()
                                 .name("John Smith")
                                 .businessName("Acme Corp")
                                 .email("john@acmecorp.com")
@@ -249,11 +245,11 @@ internal class ProfileCreateParamsTest {
                                 .build()
                         )
                         .business(
-                            BrandData.Business.builder()
+                            BrandsBrandData.Business.builder()
                                 .city("New York")
                                 .country("US")
                                 .countryOfRegistration("US")
-                                .entityType(BrandData.Business.EntityType.PRIVATE_PROFIT)
+                                .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
                                 .legalName("Acme Corporation LLC")
                                 .postalCode("10001")
                                 .state("NY")
@@ -273,7 +269,7 @@ internal class ProfileCreateParamsTest {
                 .inheritTemplates(true)
                 .name("Sales Team")
                 .paymentDetails(
-                    ProfileCreateParams.PaymentDetails.builder()
+                    PaymentDetails.builder()
                         .cardNumber("4111111111111111")
                         .cvc("123")
                         .expiry("09/27")
@@ -297,7 +293,7 @@ internal class ProfileCreateParamsTest {
         assertThat(body.allowTemplateSharing()).contains(false)
         assertThat(body.billingContact())
             .contains(
-                ProfileCreateParams.BillingContact.builder()
+                BillingContactInfo.builder()
                     .email("billing@acmecorp.com")
                     .name("Acme Corp")
                     .address("123 Main Street, New York, NY 10001, US")
@@ -307,9 +303,9 @@ internal class ProfileCreateParamsTest {
         assertThat(body.billingModel()).contains("profile")
         assertThat(body.brand())
             .contains(
-                BrandData.builder()
+                BrandsBrandData.builder()
                     .compliance(
-                        BrandData.Compliance.builder()
+                        BrandsBrandData.Compliance.builder()
                             .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                             .vertical(TcrVertical.PROFESSIONAL)
                             .addDestinationCountry(
@@ -323,7 +319,7 @@ internal class ProfileCreateParamsTest {
                             .build()
                     )
                     .contact(
-                        BrandData.Contact.builder()
+                        BrandsBrandData.Contact.builder()
                             .name("John Smith")
                             .businessName("Acme Corp")
                             .email("john@acmecorp.com")
@@ -333,11 +329,11 @@ internal class ProfileCreateParamsTest {
                             .build()
                     )
                     .business(
-                        BrandData.Business.builder()
+                        BrandsBrandData.Business.builder()
                             .city("New York")
                             .country("US")
                             .countryOfRegistration("US")
-                            .entityType(BrandData.Business.EntityType.PRIVATE_PROFIT)
+                            .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
                             .legalName("Acme Corporation LLC")
                             .postalCode("10001")
                             .state("NY")
@@ -358,7 +354,7 @@ internal class ProfileCreateParamsTest {
         assertThat(body.name()).contains("Sales Team")
         assertThat(body.paymentDetails())
             .contains(
-                ProfileCreateParams.PaymentDetails.builder()
+                PaymentDetails.builder()
                     .cardNumber("4111111111111111")
                     .cvc("123")
                     .expiry("09/27")

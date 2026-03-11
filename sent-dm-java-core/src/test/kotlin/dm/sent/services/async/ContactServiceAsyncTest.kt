@@ -19,7 +19,7 @@ internal class ContactServiceAsyncTest {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val contactServiceAsync = client.contacts()
 
-        val apiResponseContactFuture =
+        val apiResponseOfContactFuture =
             contactServiceAsync.create(
                 ContactCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
@@ -29,8 +29,8 @@ internal class ContactServiceAsyncTest {
                     .build()
             )
 
-        val apiResponseContact = apiResponseContactFuture.get()
-        apiResponseContact.validate()
+        val apiResponseOfContact = apiResponseOfContactFuture.get()
+        apiResponseOfContact.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -39,7 +39,7 @@ internal class ContactServiceAsyncTest {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val contactServiceAsync = client.contacts()
 
-        val apiResponseContactFuture =
+        val apiResponseOfContactFuture =
             contactServiceAsync.retrieve(
                 ContactRetrieveParams.builder()
                     .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
@@ -47,8 +47,8 @@ internal class ContactServiceAsyncTest {
                     .build()
             )
 
-        val apiResponseContact = apiResponseContactFuture.get()
-        apiResponseContact.validate()
+        val apiResponseOfContact = apiResponseOfContactFuture.get()
+        apiResponseOfContact.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -57,7 +57,7 @@ internal class ContactServiceAsyncTest {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val contactServiceAsync = client.contacts()
 
-        val apiResponseContactFuture =
+        val apiResponseOfContactFuture =
             contactServiceAsync.update(
                 ContactUpdateParams.builder()
                     .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
@@ -69,8 +69,8 @@ internal class ContactServiceAsyncTest {
                     .build()
             )
 
-        val apiResponseContact = apiResponseContactFuture.get()
-        apiResponseContact.validate()
+        val apiResponseOfContact = apiResponseOfContactFuture.get()
+        apiResponseOfContact.validate()
     }
 
     @Disabled("Mock server tests are disabled")

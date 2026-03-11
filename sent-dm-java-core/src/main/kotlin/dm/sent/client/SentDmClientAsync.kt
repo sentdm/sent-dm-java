@@ -3,11 +3,10 @@
 package dm.sent.client
 
 import dm.sent.core.ClientOptions
-import dm.sent.services.async.BrandServiceAsync
 import dm.sent.services.async.ContactServiceAsync
-import dm.sent.services.async.LookupServiceAsync
 import dm.sent.services.async.MeServiceAsync
 import dm.sent.services.async.MessageServiceAsync
+import dm.sent.services.async.NumberServiceAsync
 import dm.sent.services.async.ProfileServiceAsync
 import dm.sent.services.async.TemplateServiceAsync
 import dm.sent.services.async.UserServiceAsync
@@ -62,15 +61,14 @@ interface SentDmClientAsync {
     /** Manage organization profiles */
     fun profiles(): ProfileServiceAsync
 
+    /** Manage and lookup phone numbers */
+    fun numbers(): NumberServiceAsync
+
     /** Send and track SMS and WhatsApp messages */
     fun messages(): MessageServiceAsync
 
-    fun lookup(): LookupServiceAsync
-
     /** Create, update, and manage customer contact lists */
     fun contacts(): ContactServiceAsync
-
-    fun brands(): BrandServiceAsync
 
     /** Retrieve account details */
     fun me(): MeServiceAsync
@@ -112,15 +110,14 @@ interface SentDmClientAsync {
         /** Manage organization profiles */
         fun profiles(): ProfileServiceAsync.WithRawResponse
 
+        /** Manage and lookup phone numbers */
+        fun numbers(): NumberServiceAsync.WithRawResponse
+
         /** Send and track SMS and WhatsApp messages */
         fun messages(): MessageServiceAsync.WithRawResponse
 
-        fun lookup(): LookupServiceAsync.WithRawResponse
-
         /** Create, update, and manage customer contact lists */
         fun contacts(): ContactServiceAsync.WithRawResponse
-
-        fun brands(): BrandServiceAsync.WithRawResponse
 
         /** Retrieve account details */
         fun me(): MeServiceAsync.WithRawResponse

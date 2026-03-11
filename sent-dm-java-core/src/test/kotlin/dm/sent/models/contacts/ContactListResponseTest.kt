@@ -21,7 +21,7 @@ internal class ContactListResponseTest {
                 .data(
                     ContactListResponse.Data.builder()
                         .addContact(
-                            Contact.builder()
+                            ContactResponse.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .availableChannels("available_channels")
                                 .countryCode("country_code")
@@ -81,7 +81,7 @@ internal class ContactListResponseTest {
             .contains(
                 ContactListResponse.Data.builder()
                     .addContact(
-                        Contact.builder()
+                        ContactResponse.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .availableChannels("available_channels")
                             .countryCode("country_code")
@@ -147,7 +147,7 @@ internal class ContactListResponseTest {
                 .data(
                     ContactListResponse.Data.builder()
                         .addContact(
-                            Contact.builder()
+                            ContactResponse.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .availableChannels("available_channels")
                                 .countryCode("country_code")

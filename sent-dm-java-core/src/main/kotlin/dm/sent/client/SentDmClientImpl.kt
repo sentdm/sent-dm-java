@@ -4,16 +4,14 @@ package dm.sent.client
 
 import dm.sent.core.ClientOptions
 import dm.sent.core.getPackageVersion
-import dm.sent.services.blocking.BrandService
-import dm.sent.services.blocking.BrandServiceImpl
 import dm.sent.services.blocking.ContactService
 import dm.sent.services.blocking.ContactServiceImpl
-import dm.sent.services.blocking.LookupService
-import dm.sent.services.blocking.LookupServiceImpl
 import dm.sent.services.blocking.MeService
 import dm.sent.services.blocking.MeServiceImpl
 import dm.sent.services.blocking.MessageService
 import dm.sent.services.blocking.MessageServiceImpl
+import dm.sent.services.blocking.NumberService
+import dm.sent.services.blocking.NumberServiceImpl
 import dm.sent.services.blocking.ProfileService
 import dm.sent.services.blocking.ProfileServiceImpl
 import dm.sent.services.blocking.TemplateService
@@ -51,13 +49,11 @@ class SentDmClientImpl(private val clientOptions: ClientOptions) : SentDmClient 
 
     private val profiles: ProfileService by lazy { ProfileServiceImpl(clientOptionsWithUserAgent) }
 
+    private val numbers: NumberService by lazy { NumberServiceImpl(clientOptionsWithUserAgent) }
+
     private val messages: MessageService by lazy { MessageServiceImpl(clientOptionsWithUserAgent) }
 
-    private val lookup: LookupService by lazy { LookupServiceImpl(clientOptionsWithUserAgent) }
-
     private val contacts: ContactService by lazy { ContactServiceImpl(clientOptionsWithUserAgent) }
-
-    private val brands: BrandService by lazy { BrandServiceImpl(clientOptionsWithUserAgent) }
 
     private val me: MeService by lazy { MeServiceImpl(clientOptionsWithUserAgent) }
 
@@ -80,15 +76,14 @@ class SentDmClientImpl(private val clientOptions: ClientOptions) : SentDmClient 
     /** Manage organization profiles */
     override fun profiles(): ProfileService = profiles
 
+    /** Manage and lookup phone numbers */
+    override fun numbers(): NumberService = numbers
+
     /** Send and track SMS and WhatsApp messages */
     override fun messages(): MessageService = messages
 
-    override fun lookup(): LookupService = lookup
-
     /** Create, update, and manage customer contact lists */
     override fun contacts(): ContactService = contacts
-
-    override fun brands(): BrandService = brands
 
     /** Retrieve account details */
     override fun me(): MeService = me
@@ -114,20 +109,16 @@ class SentDmClientImpl(private val clientOptions: ClientOptions) : SentDmClient 
             ProfileServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val numbers: NumberService.WithRawResponse by lazy {
+            NumberServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val messages: MessageService.WithRawResponse by lazy {
             MessageServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val lookup: LookupService.WithRawResponse by lazy {
-            LookupServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val contacts: ContactService.WithRawResponse by lazy {
             ContactServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val brands: BrandService.WithRawResponse by lazy {
-            BrandServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val me: MeService.WithRawResponse by lazy {
@@ -153,15 +144,14 @@ class SentDmClientImpl(private val clientOptions: ClientOptions) : SentDmClient 
         /** Manage organization profiles */
         override fun profiles(): ProfileService.WithRawResponse = profiles
 
+        /** Manage and lookup phone numbers */
+        override fun numbers(): NumberService.WithRawResponse = numbers
+
         /** Send and track SMS and WhatsApp messages */
         override fun messages(): MessageService.WithRawResponse = messages
 
-        override fun lookup(): LookupService.WithRawResponse = lookup
-
         /** Create, update, and manage customer contact lists */
         override fun contacts(): ContactService.WithRawResponse = contacts
-
-        override fun brands(): BrandService.WithRawResponse = brands
 
         /** Retrieve account details */
         override fun me(): MeService.WithRawResponse = me

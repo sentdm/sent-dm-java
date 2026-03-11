@@ -322,8 +322,8 @@ private constructor(
             eventType: JsonField<String> = JsonMissing.of(),
         ) : this(sandbox, eventType, mutableMapOf())
 
-        fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
+        fun toMutationRequestBase(): MutationRequestBase =
+            MutationRequestBase.builder().sandbox(sandbox).build()
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for

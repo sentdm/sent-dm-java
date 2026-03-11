@@ -8,14 +8,15 @@ import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.models.profiles.ApiResponseOfProfileDetail
-import dm.sent.models.profiles.ProfileCompleteParams
-import dm.sent.models.profiles.ProfileCompleteResponse
+import dm.sent.models.profiles.ProfileCompleteSetupParams
+import dm.sent.models.profiles.ProfileCompleteSetupResponse
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
+import dm.sent.services.blocking.profiles.CampaignService
 import java.util.function.Consumer
 
 /** Manage organization profiles */
@@ -32,6 +33,9 @@ interface ProfileService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ProfileService
+
+    /** Manage organization profiles */
+    fun campaigns(): CampaignService
 
     /**
      * Creates a new sender profile within an organization. Profiles represent different brands,
@@ -235,26 +239,28 @@ interface ProfileService {
      *                 - If non-TCR with destination country (IsMain=true) → SUBMITTED
      *                 - Otherwise → COMPLETED
      */
-    fun complete(profileId: String, params: ProfileCompleteParams): ProfileCompleteResponse =
-        complete(profileId, params, RequestOptions.none())
-
-    /** @see complete */
-    fun complete(
+    fun completeSetup(
         profileId: String,
-        params: ProfileCompleteParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileCompleteResponse =
-        complete(params.toBuilder().profileId(profileId).build(), requestOptions)
+        params: ProfileCompleteSetupParams,
+    ): ProfileCompleteSetupResponse = completeSetup(profileId, params, RequestOptions.none())
 
-    /** @see complete */
-    fun complete(params: ProfileCompleteParams): ProfileCompleteResponse =
-        complete(params, RequestOptions.none())
-
-    /** @see complete */
-    fun complete(
-        params: ProfileCompleteParams,
+    /** @see completeSetup */
+    fun completeSetup(
+        profileId: String,
+        params: ProfileCompleteSetupParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileCompleteResponse
+    ): ProfileCompleteSetupResponse =
+        completeSetup(params.toBuilder().profileId(profileId).build(), requestOptions)
+
+    /** @see completeSetup */
+    fun completeSetup(params: ProfileCompleteSetupParams): ProfileCompleteSetupResponse =
+        completeSetup(params, RequestOptions.none())
+
+    /** @see completeSetup */
+    fun completeSetup(
+        params: ProfileCompleteSetupParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ProfileCompleteSetupResponse
 
     /** A view of [ProfileService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -265,6 +271,9 @@ interface ProfileService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): ProfileService.WithRawResponse
+
+        /** Manage organization profiles */
+        fun campaigns(): CampaignService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /v3/profiles`, but is otherwise the same as
@@ -448,34 +457,36 @@ interface ProfileService {
 
         /**
          * Returns a raw HTTP response for `post /v3/profiles/{profileId}/complete`, but is
-         * otherwise the same as [ProfileService.complete].
+         * otherwise the same as [ProfileService.completeSetup].
          */
         @MustBeClosed
-        fun complete(
+        fun completeSetup(
             profileId: String,
-            params: ProfileCompleteParams,
-        ): HttpResponseFor<ProfileCompleteResponse> =
-            complete(profileId, params, RequestOptions.none())
+            params: ProfileCompleteSetupParams,
+        ): HttpResponseFor<ProfileCompleteSetupResponse> =
+            completeSetup(profileId, params, RequestOptions.none())
 
-        /** @see complete */
+        /** @see completeSetup */
         @MustBeClosed
-        fun complete(
+        fun completeSetup(
             profileId: String,
-            params: ProfileCompleteParams,
+            params: ProfileCompleteSetupParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileCompleteResponse> =
-            complete(params.toBuilder().profileId(profileId).build(), requestOptions)
+        ): HttpResponseFor<ProfileCompleteSetupResponse> =
+            completeSetup(params.toBuilder().profileId(profileId).build(), requestOptions)
 
-        /** @see complete */
+        /** @see completeSetup */
         @MustBeClosed
-        fun complete(params: ProfileCompleteParams): HttpResponseFor<ProfileCompleteResponse> =
-            complete(params, RequestOptions.none())
+        fun completeSetup(
+            params: ProfileCompleteSetupParams
+        ): HttpResponseFor<ProfileCompleteSetupResponse> =
+            completeSetup(params, RequestOptions.none())
 
-        /** @see complete */
+        /** @see completeSetup */
         @MustBeClosed
-        fun complete(
-            params: ProfileCompleteParams,
+        fun completeSetup(
+            params: ProfileCompleteSetupParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileCompleteResponse>
+        ): HttpResponseFor<ProfileCompleteSetupResponse>
     }
 }

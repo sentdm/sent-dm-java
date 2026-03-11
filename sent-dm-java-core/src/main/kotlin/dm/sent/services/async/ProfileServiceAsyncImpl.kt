@@ -18,14 +18,16 @@ import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
 import dm.sent.models.profiles.ApiResponseOfProfileDetail
-import dm.sent.models.profiles.ProfileCompleteParams
-import dm.sent.models.profiles.ProfileCompleteResponse
+import dm.sent.models.profiles.ProfileCompleteSetupParams
+import dm.sent.models.profiles.ProfileCompleteSetupResponse
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
+import dm.sent.services.async.profiles.CampaignServiceAsync
+import dm.sent.services.async.profiles.CampaignServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -38,10 +40,15 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
         WithRawResponseImpl(clientOptions)
     }
 
+    private val campaigns: CampaignServiceAsync by lazy { CampaignServiceAsyncImpl(clientOptions) }
+
     override fun withRawResponse(): ProfileServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ProfileServiceAsync =
         ProfileServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    /** Manage organization profiles */
+    override fun campaigns(): CampaignServiceAsync = campaigns
 
     override fun create(
         params: ProfileCreateParams,
@@ -78,12 +85,12 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // delete /v3/profiles/{profileId}
         withRawResponse().delete(params, requestOptions).thenAccept {}
 
-    override fun complete(
-        params: ProfileCompleteParams,
+    override fun completeSetup(
+        params: ProfileCompleteSetupParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ProfileCompleteResponse> =
+    ): CompletableFuture<ProfileCompleteSetupResponse> =
         // post /v3/profiles/{profileId}/complete
-        withRawResponse().complete(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().completeSetup(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ProfileServiceAsync.WithRawResponse {
@@ -91,12 +98,19 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val campaigns: CampaignServiceAsync.WithRawResponse by lazy {
+            CampaignServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): ProfileServiceAsync.WithRawResponse =
             ProfileServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        /** Manage organization profiles */
+        override fun campaigns(): CampaignServiceAsync.WithRawResponse = campaigns
 
         private val createHandler: Handler<ApiResponseOfProfileDetail> =
             jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
@@ -253,13 +267,13 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val completeHandler: Handler<ProfileCompleteResponse> =
-            jsonHandler<ProfileCompleteResponse>(clientOptions.jsonMapper)
+        private val completeSetupHandler: Handler<ProfileCompleteSetupResponse> =
+            jsonHandler<ProfileCompleteSetupResponse>(clientOptions.jsonMapper)
 
-        override fun complete(
-            params: ProfileCompleteParams,
+        override fun completeSetup(
+            params: ProfileCompleteSetupParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ProfileCompleteResponse>> {
+        ): CompletableFuture<HttpResponseFor<ProfileCompleteSetupResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -277,7 +291,7 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { completeHandler.handle(it) }
+                            .use { completeSetupHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

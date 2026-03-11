@@ -3,16 +3,18 @@
 package dm.sent.services.async
 
 import dm.sent.client.okhttp.SentDmOkHttpClientAsync
-import dm.sent.models.brands.BrandData
-import dm.sent.models.brands.DestinationCountry
-import dm.sent.models.brands.TcrBrandRelationship
-import dm.sent.models.brands.TcrVertical
-import dm.sent.models.profiles.ProfileCompleteParams
+import dm.sent.models.profiles.BillingContactInfo
+import dm.sent.models.profiles.BrandsBrandData
+import dm.sent.models.profiles.DestinationCountry
+import dm.sent.models.profiles.PaymentDetails
+import dm.sent.models.profiles.ProfileCompleteSetupParams
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
+import dm.sent.models.profiles.TcrBrandRelationship
+import dm.sent.models.profiles.TcrVertical
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -33,7 +35,7 @@ internal class ProfileServiceAsyncTest {
                     .allowContactSharing(true)
                     .allowTemplateSharing(false)
                     .billingContact(
-                        ProfileCreateParams.BillingContact.builder()
+                        BillingContactInfo.builder()
                             .email("billing@acmecorp.com")
                             .name("Acme Corp")
                             .address("123 Main Street, New York, NY 10001, US")
@@ -42,9 +44,9 @@ internal class ProfileServiceAsyncTest {
                     )
                     .billingModel("profile")
                     .brand(
-                        BrandData.builder()
+                        BrandsBrandData.builder()
                             .compliance(
-                                BrandData.Compliance.builder()
+                                BrandsBrandData.Compliance.builder()
                                     .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                     .vertical(TcrVertical.PROFESSIONAL)
                                     .addDestinationCountry(
@@ -60,7 +62,7 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .contact(
-                                BrandData.Contact.builder()
+                                BrandsBrandData.Contact.builder()
                                     .name("John Smith")
                                     .businessName("Acme Corp")
                                     .email("john@acmecorp.com")
@@ -70,11 +72,11 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .business(
-                                BrandData.Business.builder()
+                                BrandsBrandData.Business.builder()
                                     .city("New York")
                                     .country("US")
                                     .countryOfRegistration("US")
-                                    .entityType(BrandData.Business.EntityType.PRIVATE_PROFIT)
+                                    .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
                                     .legalName("Acme Corporation LLC")
                                     .postalCode("10001")
                                     .state("NY")
@@ -94,7 +96,7 @@ internal class ProfileServiceAsyncTest {
                     .inheritTemplates(true)
                     .name("Sales Team")
                     .paymentDetails(
-                        ProfileCreateParams.PaymentDetails.builder()
+                        PaymentDetails.builder()
                             .cardNumber("4111111111111111")
                             .cvc("123")
                             .expiry("09/27")
@@ -151,7 +153,7 @@ internal class ProfileServiceAsyncTest {
                     .allowNumberChangeDuringOnboarding(null)
                     .allowTemplateSharing(null)
                     .billingContact(
-                        ProfileUpdateParams.BillingContact.builder()
+                        BillingContactInfo.builder()
                             .email("dev@stainless.com")
                             .name("x")
                             .address("address")
@@ -160,9 +162,9 @@ internal class ProfileServiceAsyncTest {
                     )
                     .billingModel("organization")
                     .brand(
-                        BrandData.builder()
+                        BrandsBrandData.builder()
                             .compliance(
-                                BrandData.Compliance.builder()
+                                BrandsBrandData.Compliance.builder()
                                     .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                     .vertical(TcrVertical.PROFESSIONAL)
                                     .addDestinationCountry(
@@ -178,7 +180,7 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .contact(
-                                BrandData.Contact.builder()
+                                BrandsBrandData.Contact.builder()
                                     .name("John Smith")
                                     .businessName("Acme Corp")
                                     .email("john@acmecorp.com")
@@ -188,11 +190,11 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .business(
-                                BrandData.Business.builder()
+                                BrandsBrandData.Business.builder()
                                     .city("New York")
                                     .country("US")
                                     .countryOfRegistration("US")
-                                    .entityType(BrandData.Business.EntityType.PRIVATE_PROFIT)
+                                    .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
                                     .legalName("Acme Corporation LLC")
                                     .postalCode("10001")
                                     .state("NY")
@@ -212,7 +214,7 @@ internal class ProfileServiceAsyncTest {
                     .inheritTemplates(null)
                     .name("Sales Team - Updated")
                     .paymentDetails(
-                        ProfileUpdateParams.PaymentDetails.builder()
+                        PaymentDetails.builder()
                             .cardNumber("3216699102256101")
                             .cvc("3216")
                             .expiry("11/66")
@@ -268,13 +270,13 @@ internal class ProfileServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun complete() {
+    fun completeSetup() {
         val client = SentDmOkHttpClientAsync.builder().apiKey("My API Key").build()
         val profileServiceAsync = client.profiles()
 
         val responseFuture =
-            profileServiceAsync.complete(
-                ProfileCompleteParams.builder()
+            profileServiceAsync.completeSetup(
+                ProfileCompleteSetupParams.builder()
                     .profileId("660e8400-e29b-41d4-a716-446655440000")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
