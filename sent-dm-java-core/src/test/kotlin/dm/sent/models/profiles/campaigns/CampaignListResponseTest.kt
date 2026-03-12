@@ -5,8 +5,8 @@ package dm.sent.models.profiles.campaigns
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.webhooks.ApiError
 import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -64,10 +64,10 @@ internal class CampaignListResponseTest {
                         .build()
                 )
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -133,10 +133,10 @@ internal class CampaignListResponseTest {
             )
         assertThat(campaignListResponse.error())
             .contains(
-                ApiError.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        ApiError.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -206,10 +206,10 @@ internal class CampaignListResponseTest {
                         .build()
                 )
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )

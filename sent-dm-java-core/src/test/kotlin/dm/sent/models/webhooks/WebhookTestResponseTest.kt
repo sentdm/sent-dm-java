@@ -17,10 +17,10 @@ internal class WebhookTestResponseTest {
             WebhookTestResponse.builder()
                 .data(WebhookTestResponse.Data.builder().message("message").success(true).build())
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -42,10 +42,10 @@ internal class WebhookTestResponseTest {
             .contains(WebhookTestResponse.Data.builder().message("message").success(true).build())
         assertThat(webhookTestResponse.error())
             .contains(
-                ApiError.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        ApiError.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -71,10 +71,10 @@ internal class WebhookTestResponseTest {
             WebhookTestResponse.builder()
                 .data(WebhookTestResponse.Data.builder().message("message").success(true).build())
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
