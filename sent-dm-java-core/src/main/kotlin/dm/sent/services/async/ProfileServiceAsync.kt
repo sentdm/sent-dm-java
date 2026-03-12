@@ -7,8 +7,8 @@ import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.models.profiles.ApiResponseOfProfileDetail
-import dm.sent.models.profiles.ProfileCompleteSetupParams
-import dm.sent.models.profiles.ProfileCompleteSetupResponse
+import dm.sent.models.profiles.ProfileCompleteParams
+import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
@@ -256,31 +256,29 @@ interface ProfileServiceAsync {
      *                 - If non-TCR with destination country (IsMain=true) → SUBMITTED
      *                 - Otherwise → COMPLETED
      */
-    fun completeSetup(
+    fun complete(
         profileId: String,
-        params: ProfileCompleteSetupParams,
-    ): CompletableFuture<ProfileCompleteSetupResponse> =
-        completeSetup(profileId, params, RequestOptions.none())
+        params: ProfileCompleteParams,
+    ): CompletableFuture<ProfileCompleteResponse> =
+        complete(profileId, params, RequestOptions.none())
 
-    /** @see completeSetup */
-    fun completeSetup(
+    /** @see complete */
+    fun complete(
         profileId: String,
-        params: ProfileCompleteSetupParams,
+        params: ProfileCompleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ProfileCompleteSetupResponse> =
-        completeSetup(params.toBuilder().profileId(profileId).build(), requestOptions)
+    ): CompletableFuture<ProfileCompleteResponse> =
+        complete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
-    /** @see completeSetup */
-    fun completeSetup(
-        params: ProfileCompleteSetupParams
-    ): CompletableFuture<ProfileCompleteSetupResponse> =
-        completeSetup(params, RequestOptions.none())
+    /** @see complete */
+    fun complete(params: ProfileCompleteParams): CompletableFuture<ProfileCompleteResponse> =
+        complete(params, RequestOptions.none())
 
-    /** @see completeSetup */
-    fun completeSetup(
-        params: ProfileCompleteSetupParams,
+    /** @see complete */
+    fun complete(
+        params: ProfileCompleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ProfileCompleteSetupResponse>
+    ): CompletableFuture<ProfileCompleteResponse>
 
     /**
      * A view of [ProfileServiceAsync] that provides access to raw HTTP responses for each method.
@@ -475,32 +473,32 @@ interface ProfileServiceAsync {
 
         /**
          * Returns a raw HTTP response for `post /v3/profiles/{profileId}/complete`, but is
-         * otherwise the same as [ProfileServiceAsync.completeSetup].
+         * otherwise the same as [ProfileServiceAsync.complete].
          */
-        fun completeSetup(
+        fun complete(
             profileId: String,
-            params: ProfileCompleteSetupParams,
-        ): CompletableFuture<HttpResponseFor<ProfileCompleteSetupResponse>> =
-            completeSetup(profileId, params, RequestOptions.none())
+            params: ProfileCompleteParams,
+        ): CompletableFuture<HttpResponseFor<ProfileCompleteResponse>> =
+            complete(profileId, params, RequestOptions.none())
 
-        /** @see completeSetup */
-        fun completeSetup(
+        /** @see complete */
+        fun complete(
             profileId: String,
-            params: ProfileCompleteSetupParams,
+            params: ProfileCompleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileCompleteSetupResponse>> =
-            completeSetup(params.toBuilder().profileId(profileId).build(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<ProfileCompleteResponse>> =
+            complete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
-        /** @see completeSetup */
-        fun completeSetup(
-            params: ProfileCompleteSetupParams
-        ): CompletableFuture<HttpResponseFor<ProfileCompleteSetupResponse>> =
-            completeSetup(params, RequestOptions.none())
+        /** @see complete */
+        fun complete(
+            params: ProfileCompleteParams
+        ): CompletableFuture<HttpResponseFor<ProfileCompleteResponse>> =
+            complete(params, RequestOptions.none())
 
-        /** @see completeSetup */
-        fun completeSetup(
-            params: ProfileCompleteSetupParams,
+        /** @see complete */
+        fun complete(
+            params: ProfileCompleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileCompleteSetupResponse>>
+        ): CompletableFuture<HttpResponseFor<ProfileCompleteResponse>>
     }
 }

@@ -6,11 +6,11 @@ import dm.sent.core.http.Headers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ProfileCompleteSetupParamsTest {
+internal class ProfileCompleteParamsTest {
 
     @Test
     fun create() {
-        ProfileCompleteSetupParams.builder()
+        ProfileCompleteParams.builder()
             .profileId("660e8400-e29b-41d4-a716-446655440000")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -22,7 +22,7 @@ internal class ProfileCompleteSetupParamsTest {
     @Test
     fun pathParams() {
         val params =
-            ProfileCompleteSetupParams.builder()
+            ProfileCompleteParams.builder()
                 .profileId("660e8400-e29b-41d4-a716-446655440000")
                 .webHookUrl("https://your-app.com/webhook/profile-complete")
                 .build()
@@ -35,7 +35,7 @@ internal class ProfileCompleteSetupParamsTest {
     @Test
     fun headers() {
         val params =
-            ProfileCompleteSetupParams.builder()
+            ProfileCompleteParams.builder()
                 .profileId("660e8400-e29b-41d4-a716-446655440000")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -57,7 +57,7 @@ internal class ProfileCompleteSetupParamsTest {
     @Test
     fun headersWithoutOptionalFields() {
         val params =
-            ProfileCompleteSetupParams.builder()
+            ProfileCompleteParams.builder()
                 .profileId("660e8400-e29b-41d4-a716-446655440000")
                 .webHookUrl("https://your-app.com/webhook/profile-complete")
                 .build()
@@ -70,7 +70,7 @@ internal class ProfileCompleteSetupParamsTest {
     @Test
     fun body() {
         val params =
-            ProfileCompleteSetupParams.builder()
+            ProfileCompleteParams.builder()
                 .profileId("660e8400-e29b-41d4-a716-446655440000")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -87,7 +87,7 @@ internal class ProfileCompleteSetupParamsTest {
     @Test
     fun bodyWithoutOptionalFields() {
         val params =
-            ProfileCompleteSetupParams.builder()
+            ProfileCompleteParams.builder()
                 .profileId("660e8400-e29b-41d4-a716-446655440000")
                 .webHookUrl("https://your-app.com/webhook/profile-complete")
                 .build()

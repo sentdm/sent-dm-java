@@ -15,7 +15,7 @@ import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 
-class MutationRequestBase
+class MutationRequest
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val sandbox: JsonField<Boolean>,
@@ -57,20 +57,20 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [MutationRequestBase]. */
+        /** Returns a mutable builder for constructing an instance of [MutationRequest]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [MutationRequestBase]. */
+    /** A builder for [MutationRequest]. */
     class Builder internal constructor() {
 
         private var sandbox: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(mutationRequestBase: MutationRequestBase) = apply {
-            sandbox = mutationRequestBase.sandbox
-            additionalProperties = mutationRequestBase.additionalProperties.toMutableMap()
+        internal fun from(mutationRequest: MutationRequest) = apply {
+            sandbox = mutationRequest.sandbox
+            additionalProperties = mutationRequest.additionalProperties.toMutableMap()
         }
 
         /**
@@ -107,17 +107,16 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [MutationRequestBase].
+         * Returns an immutable instance of [MutationRequest].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): MutationRequestBase =
-            MutationRequestBase(sandbox, additionalProperties.toMutableMap())
+        fun build(): MutationRequest = MutationRequest(sandbox, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
 
-    fun validate(): MutationRequestBase = apply {
+    fun validate(): MutationRequest = apply {
         if (validated) {
             return@apply
         }
@@ -146,7 +145,7 @@ private constructor(
             return true
         }
 
-        return other is MutationRequestBase &&
+        return other is MutationRequest &&
             sandbox == other.sandbox &&
             additionalProperties == other.additionalProperties
     }
@@ -156,5 +155,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "MutationRequestBase{sandbox=$sandbox, additionalProperties=$additionalProperties}"
+        "MutationRequest{sandbox=$sandbox, additionalProperties=$additionalProperties}"
 }

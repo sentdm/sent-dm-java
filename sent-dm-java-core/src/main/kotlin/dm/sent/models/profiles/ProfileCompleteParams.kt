@@ -15,7 +15,7 @@ import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentDmInvalidDataException
-import dm.sent.models.webhooks.MutationRequestBase
+import dm.sent.models.webhooks.MutationRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -39,7 +39,7 @@ import kotlin.jvm.optionals.getOrNull
  *                 - If non-TCR with destination country (IsMain=true) → SUBMITTED
  *                 - Otherwise → COMPLETED
  */
-class ProfileCompleteSetupParams
+class ProfileCompleteParams
 private constructor(
     private val profileId: String?,
     private val idempotencyKey: String?,
@@ -99,7 +99,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [ProfileCompleteSetupParams].
+         * Returns a mutable builder for constructing an instance of [ProfileCompleteParams].
          *
          * The following fields are required:
          * ```java
@@ -109,7 +109,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ProfileCompleteSetupParams]. */
+    /** A builder for [ProfileCompleteParams]. */
     class Builder internal constructor() {
 
         private var profileId: String? = null
@@ -120,13 +120,13 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(profileCompleteSetupParams: ProfileCompleteSetupParams) = apply {
-            profileId = profileCompleteSetupParams.profileId
-            idempotencyKey = profileCompleteSetupParams.idempotencyKey
-            xProfileId = profileCompleteSetupParams.xProfileId
-            body = profileCompleteSetupParams.body.toBuilder()
-            additionalHeaders = profileCompleteSetupParams.additionalHeaders.toBuilder()
-            additionalQueryParams = profileCompleteSetupParams.additionalQueryParams.toBuilder()
+        internal fun from(profileCompleteParams: ProfileCompleteParams) = apply {
+            profileId = profileCompleteParams.profileId
+            idempotencyKey = profileCompleteParams.idempotencyKey
+            xProfileId = profileCompleteParams.xProfileId
+            body = profileCompleteParams.body.toBuilder()
+            additionalHeaders = profileCompleteParams.additionalHeaders.toBuilder()
+            additionalQueryParams = profileCompleteParams.additionalQueryParams.toBuilder()
         }
 
         fun profileId(profileId: String?) = apply { this.profileId = profileId }
@@ -299,7 +299,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ProfileCompleteSetupParams].
+         * Returns an immutable instance of [ProfileCompleteParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -310,8 +310,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): ProfileCompleteSetupParams =
-            ProfileCompleteSetupParams(
+        fun build(): ProfileCompleteParams =
+            ProfileCompleteParams(
                 profileId,
                 idempotencyKey,
                 xProfileId,
@@ -357,8 +357,8 @@ private constructor(
             webHookUrl: JsonField<String> = JsonMissing.of(),
         ) : this(sandbox, webHookUrl, mutableMapOf())
 
-        fun toMutationRequestBase(): MutationRequestBase =
-            MutationRequestBase.builder().sandbox(sandbox).build()
+        fun toMutationRequest(): MutationRequest =
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -555,7 +555,7 @@ private constructor(
             return true
         }
 
-        return other is ProfileCompleteSetupParams &&
+        return other is ProfileCompleteParams &&
             profileId == other.profileId &&
             idempotencyKey == other.idempotencyKey &&
             xProfileId == other.xProfileId &&
@@ -575,5 +575,5 @@ private constructor(
         )
 
     override fun toString() =
-        "ProfileCompleteSetupParams{profileId=$profileId, idempotencyKey=$idempotencyKey, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ProfileCompleteParams{profileId=$profileId, idempotencyKey=$idempotencyKey, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
