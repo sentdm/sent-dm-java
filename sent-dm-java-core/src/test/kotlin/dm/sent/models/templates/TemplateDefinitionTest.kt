@@ -15,7 +15,7 @@ internal class TemplateDefinitionTest {
         val templateDefinition =
             TemplateDefinition.builder()
                 .body(
-                    TemplateDefinition.Body.builder()
+                    SentDmServicesCommonContractsPocOsTemplateBody.builder()
                         .multiChannel(
                             TemplateBodyContent.builder()
                                 .template("template")
@@ -91,16 +91,16 @@ internal class TemplateDefinitionTest {
                         .build()
                 )
                 .authenticationConfig(
-                    TemplateDefinition.AuthenticationConfig.builder()
+                    SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
                         .addSecurityRecommendation(true)
                         .codeExpirationMinutes(0)
                         .build()
                 )
                 .addButton(
-                    TemplateDefinition.Button.builder()
+                    SentDmServicesCommonContractsPocOsTemplateButton.builder()
                         .id(0)
                         .props(
-                            TemplateDefinition.Button.Props.builder()
+                            SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
                                 .activeFor(0)
                                 .autofillText("autofillText")
                                 .countryCode("countryCode")
@@ -120,7 +120,7 @@ internal class TemplateDefinitionTest {
                 )
                 .definitionVersion("definitionVersion")
                 .footer(
-                    TemplateDefinition.Footer.builder()
+                    SentDmServicesCommonContractsPocOsTemplateFooter.builder()
                         .template("template")
                         .type("type")
                         .addVariable(
@@ -144,7 +144,7 @@ internal class TemplateDefinitionTest {
                         .build()
                 )
                 .header(
-                    TemplateDefinition.Header.builder()
+                    SentDmServicesCommonContractsPocOsTemplateHeader.builder()
                         .template("template")
                         .type("type")
                         .addVariable(
@@ -171,7 +171,7 @@ internal class TemplateDefinitionTest {
 
         assertThat(templateDefinition.body())
             .isEqualTo(
-                TemplateDefinition.Body.builder()
+                SentDmServicesCommonContractsPocOsTemplateBody.builder()
                     .multiChannel(
                         TemplateBodyContent.builder()
                             .template("template")
@@ -248,17 +248,17 @@ internal class TemplateDefinitionTest {
             )
         assertThat(templateDefinition.authenticationConfig())
             .contains(
-                TemplateDefinition.AuthenticationConfig.builder()
+                SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
                     .addSecurityRecommendation(true)
                     .codeExpirationMinutes(0)
                     .build()
             )
         assertThat(templateDefinition.buttons().getOrNull())
             .containsExactly(
-                TemplateDefinition.Button.builder()
+                SentDmServicesCommonContractsPocOsTemplateButton.builder()
                     .id(0)
                     .props(
-                        TemplateDefinition.Button.Props.builder()
+                        SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
                             .activeFor(0)
                             .autofillText("autofillText")
                             .countryCode("countryCode")
@@ -279,7 +279,7 @@ internal class TemplateDefinitionTest {
         assertThat(templateDefinition.definitionVersion()).contains("definitionVersion")
         assertThat(templateDefinition.footer())
             .contains(
-                TemplateDefinition.Footer.builder()
+                SentDmServicesCommonContractsPocOsTemplateFooter.builder()
                     .template("template")
                     .type("type")
                     .addVariable(
@@ -304,7 +304,7 @@ internal class TemplateDefinitionTest {
             )
         assertThat(templateDefinition.header())
             .contains(
-                TemplateDefinition.Header.builder()
+                SentDmServicesCommonContractsPocOsTemplateHeader.builder()
                     .template("template")
                     .type("type")
                     .addVariable(
@@ -335,7 +335,7 @@ internal class TemplateDefinitionTest {
         val templateDefinition =
             TemplateDefinition.builder()
                 .body(
-                    TemplateDefinition.Body.builder()
+                    SentDmServicesCommonContractsPocOsTemplateBody.builder()
                         .multiChannel(
                             TemplateBodyContent.builder()
                                 .template("template")
@@ -411,16 +411,16 @@ internal class TemplateDefinitionTest {
                         .build()
                 )
                 .authenticationConfig(
-                    TemplateDefinition.AuthenticationConfig.builder()
+                    SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
                         .addSecurityRecommendation(true)
                         .codeExpirationMinutes(0)
                         .build()
                 )
                 .addButton(
-                    TemplateDefinition.Button.builder()
+                    SentDmServicesCommonContractsPocOsTemplateButton.builder()
                         .id(0)
                         .props(
-                            TemplateDefinition.Button.Props.builder()
+                            SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
                                 .activeFor(0)
                                 .autofillText("autofillText")
                                 .countryCode("countryCode")
@@ -440,7 +440,7 @@ internal class TemplateDefinitionTest {
                 )
                 .definitionVersion("definitionVersion")
                 .footer(
-                    TemplateDefinition.Footer.builder()
+                    SentDmServicesCommonContractsPocOsTemplateFooter.builder()
                         .template("template")
                         .type("type")
                         .addVariable(
@@ -464,7 +464,7 @@ internal class TemplateDefinitionTest {
                         .build()
                 )
                 .header(
-                    TemplateDefinition.Header.builder()
+                    SentDmServicesCommonContractsPocOsTemplateHeader.builder()
                         .template("template")
                         .type("type")
                         .addVariable(
