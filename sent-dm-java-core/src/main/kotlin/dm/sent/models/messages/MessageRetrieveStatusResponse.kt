@@ -13,8 +13,8 @@ import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentDmInvalidDataException
-import dm.sent.models.webhooks.ApiError
 import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
@@ -26,7 +26,7 @@ class MessageRetrieveStatusResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val data: JsonField<Data>,
-    private val error: JsonField<ApiError>,
+    private val error: JsonField<ErrorDetail>,
     private val meta: JsonField<ApiMeta>,
     private val success: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -35,7 +35,7 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("data") @ExcludeMissing data: JsonField<Data> = JsonMissing.of(),
-        @JsonProperty("error") @ExcludeMissing error: JsonField<ApiError> = JsonMissing.of(),
+        @JsonProperty("error") @ExcludeMissing error: JsonField<ErrorDetail> = JsonMissing.of(),
         @JsonProperty("meta") @ExcludeMissing meta: JsonField<ApiMeta> = JsonMissing.of(),
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
@@ -54,7 +54,7 @@ private constructor(
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun error(): Optional<ApiError> = error.getOptional("error")
+    fun error(): Optional<ErrorDetail> = error.getOptional("error")
 
     /**
      * Request and response metadata
@@ -84,7 +84,7 @@ private constructor(
      *
      * Unlike [error], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<ApiError> = error
+    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<ErrorDetail> = error
 
     /**
      * Returns the raw JSON value of [meta].
@@ -125,7 +125,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var data: JsonField<Data> = JsonMissing.of()
-        private var error: JsonField<ApiError> = JsonMissing.of()
+        private var error: JsonField<ErrorDetail> = JsonMissing.of()
         private var meta: JsonField<ApiMeta> = JsonMissing.of()
         private var success: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -154,18 +154,19 @@ private constructor(
         fun data(data: JsonField<Data>) = apply { this.data = data }
 
         /** Error information */
-        fun error(error: ApiError?) = error(JsonField.ofNullable(error))
+        fun error(error: ErrorDetail?) = error(JsonField.ofNullable(error))
 
         /** Alias for calling [Builder.error] with `error.orElse(null)`. */
-        fun error(error: Optional<ApiError>) = error(error.getOrNull())
+        fun error(error: Optional<ErrorDetail>) = error(error.getOrNull())
 
         /**
          * Sets [Builder.error] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.error] with a well-typed [ApiError] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.error] with a well-typed [ErrorDetail] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun error(error: JsonField<ApiError>) = apply { this.error = error }
+        fun error(error: JsonField<ErrorDetail>) = apply { this.error = error }
 
         /** Request and response metadata */
         fun meta(meta: ApiMeta) = meta(JsonField.of(meta))

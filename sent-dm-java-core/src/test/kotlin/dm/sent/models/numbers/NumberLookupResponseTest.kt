@@ -5,8 +5,8 @@ package dm.sent.models.numbers
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.webhooks.ApiError
 import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -31,10 +31,10 @@ internal class NumberLookupResponseTest {
                         .build()
                 )
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -68,10 +68,10 @@ internal class NumberLookupResponseTest {
             )
         assertThat(numberLookupResponse.error())
             .contains(
-                ApiError.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        ApiError.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -109,10 +109,10 @@ internal class NumberLookupResponseTest {
                         .build()
                 )
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )

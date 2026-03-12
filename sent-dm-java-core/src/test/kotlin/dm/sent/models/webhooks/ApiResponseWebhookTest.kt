@@ -33,10 +33,10 @@ internal class ApiResponseWebhookTest {
                         .build()
                 )
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -74,10 +74,10 @@ internal class ApiResponseWebhookTest {
             )
         assertThat(apiResponseWebhook.error())
             .contains(
-                ApiError.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        ApiError.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -119,10 +119,10 @@ internal class ApiResponseWebhookTest {
                         .build()
                 )
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )

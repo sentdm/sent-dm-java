@@ -18,7 +18,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Error information */
-class ApiError
+class ErrorDetail
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val code: JsonField<String>,
@@ -110,11 +110,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [ApiError]. */
+        /** Returns a mutable builder for constructing an instance of [ErrorDetail]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ApiError]. */
+    /** A builder for [ErrorDetail]. */
     class Builder internal constructor() {
 
         private var code: JsonField<String> = JsonMissing.of()
@@ -124,12 +124,12 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(apiError: ApiError) = apply {
-            code = apiError.code
-            details = apiError.details
-            docUrl = apiError.docUrl
-            message = apiError.message
-            additionalProperties = apiError.additionalProperties.toMutableMap()
+        internal fun from(errorDetail: ErrorDetail) = apply {
+            code = errorDetail.code
+            details = errorDetail.details
+            docUrl = errorDetail.docUrl
+            message = errorDetail.message
+            additionalProperties = errorDetail.additionalProperties.toMutableMap()
         }
 
         /** Machine-readable error code (e.g., "RESOURCE_001") */
@@ -202,17 +202,17 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ApiError].
+         * Returns an immutable instance of [ErrorDetail].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ApiError =
-            ApiError(code, details, docUrl, message, additionalProperties.toMutableMap())
+        fun build(): ErrorDetail =
+            ErrorDetail(code, details, docUrl, message, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
 
-    fun validate(): ApiError = apply {
+    fun validate(): ErrorDetail = apply {
         if (validated) {
             return@apply
         }
@@ -349,7 +349,7 @@ private constructor(
             return true
         }
 
-        return other is ApiError &&
+        return other is ErrorDetail &&
             code == other.code &&
             details == other.details &&
             docUrl == other.docUrl &&
@@ -364,5 +364,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ApiError{code=$code, details=$details, docUrl=$docUrl, message=$message, additionalProperties=$additionalProperties}"
+        "ErrorDetail{code=$code, details=$details, docUrl=$docUrl, message=$message, additionalProperties=$additionalProperties}"
 }
