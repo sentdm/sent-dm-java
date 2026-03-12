@@ -58,8 +58,7 @@ private constructor(
     ) : this(body, authenticationConfig, buttons, definitionVersion, footer, header, mutableMapOf())
 
     /**
-     * Required template body with content for different channels (multi-channel, SMS-specific, or
-     * WhatsApp-specific)
+     * Body section of a message template with channel-specific content
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -67,7 +66,7 @@ private constructor(
     fun body(): SentDmServicesCommonContractsPocOsTemplateBody = body.getRequired("body")
 
     /**
-     * Configuration specific to AUTHENTICATION category templates (optional)
+     * Configuration for AUTHENTICATION category templates
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -93,7 +92,7 @@ private constructor(
     fun definitionVersion(): Optional<String> = definitionVersion.getOptional("definitionVersion")
 
     /**
-     * Optional template footer with optional variables
+     * Footer section of a message template
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -102,7 +101,7 @@ private constructor(
         footer.getOptional("footer")
 
     /**
-     * Optional template header with optional variables
+     * Header section of a message template
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -220,10 +219,7 @@ private constructor(
             additionalProperties = templateDefinition.additionalProperties.toMutableMap()
         }
 
-        /**
-         * Required template body with content for different channels (multi-channel, SMS-specific,
-         * or WhatsApp-specific)
-         */
+        /** Body section of a message template with channel-specific content */
         fun body(body: SentDmServicesCommonContractsPocOsTemplateBody) = body(JsonField.of(body))
 
         /**
@@ -237,7 +233,7 @@ private constructor(
             this.body = body
         }
 
-        /** Configuration specific to AUTHENTICATION category templates (optional) */
+        /** Configuration for AUTHENTICATION category templates */
         fun authenticationConfig(
             authenticationConfig: SentDmServicesCommonContractsPocOsAuthenticationConfig?
         ) = authenticationConfig(JsonField.ofNullable(authenticationConfig))
@@ -312,7 +308,7 @@ private constructor(
             this.definitionVersion = definitionVersion
         }
 
-        /** Optional template footer with optional variables */
+        /** Footer section of a message template */
         fun footer(footer: SentDmServicesCommonContractsPocOsTemplateFooter?) =
             footer(JsonField.ofNullable(footer))
 
@@ -331,7 +327,7 @@ private constructor(
             this.footer = footer
         }
 
-        /** Optional template header with optional variables */
+        /** Header section of a message template */
         fun header(header: SentDmServicesCommonContractsPocOsTemplateHeader?) =
             header(JsonField.ofNullable(header))
 

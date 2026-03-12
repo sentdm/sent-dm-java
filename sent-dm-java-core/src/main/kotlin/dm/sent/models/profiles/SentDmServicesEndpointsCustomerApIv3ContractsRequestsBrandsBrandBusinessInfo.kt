@@ -95,8 +95,6 @@ private constructor(
         countryOfRegistration.getOptional("countryOfRegistration")
 
     /**
-     * Business entity type
-     *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -365,7 +363,6 @@ private constructor(
             this.countryOfRegistration = countryOfRegistration
         }
 
-        /** Business entity type */
         fun entityType(entityType: EntityType?) = entityType(JsonField.ofNullable(entityType))
 
         /** Alias for calling [Builder.entityType] with `entityType.orElse(null)`. */
@@ -572,7 +569,6 @@ private constructor(
             (if (taxIdType.asKnown().isPresent) 1 else 0) +
             (if (url.asKnown().isPresent) 1 else 0)
 
-    /** Business entity type */
     class EntityType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
         /**

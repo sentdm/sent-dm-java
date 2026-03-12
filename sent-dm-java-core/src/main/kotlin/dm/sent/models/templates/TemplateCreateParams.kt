@@ -64,7 +64,7 @@ private constructor(
     fun creationSource(): Optional<String> = body.creationSource()
 
     /**
-     * Template definition including header, body, footer, and buttons
+     * Complete definition of a message template including header, body, footer, and buttons
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -239,7 +239,7 @@ private constructor(
             body.creationSource(creationSource)
         }
 
-        /** Template definition including header, body, footer, and buttons */
+        /** Complete definition of a message template including header, body, footer, and buttons */
         fun definition(definition: TemplateDefinition) = apply { body.definition(definition) }
 
         /**
@@ -499,7 +499,7 @@ private constructor(
         fun creationSource(): Optional<String> = creationSource.getOptional("creation_source")
 
         /**
-         * Template definition including header, body, footer, and buttons
+         * Complete definition of a message template including header, body, footer, and buttons
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -664,7 +664,9 @@ private constructor(
                 this.creationSource = creationSource
             }
 
-            /** Template definition including header, body, footer, and buttons */
+            /**
+             * Complete definition of a message template including header, body, footer, and buttons
+             */
             fun definition(definition: TemplateDefinition) = definition(JsonField.of(definition))
 
             /**

@@ -51,7 +51,7 @@ private constructor(
     fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
-     * Campaign data
+     * Campaign data for create or update operation
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -155,7 +155,7 @@ private constructor(
          */
         fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
-        /** Campaign data */
+        /** Campaign data for create or update operation */
         fun campaign(campaign: CampaignData) = apply { body.campaign(campaign) }
 
         /**
@@ -356,7 +356,7 @@ private constructor(
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
-         * Campaign data
+         * Campaign data for create or update operation
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -433,7 +433,7 @@ private constructor(
              */
             fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
-            /** Campaign data */
+            /** Campaign data for create or update operation */
             fun campaign(campaign: CampaignData) = campaign(JsonField.of(campaign))
 
             /**

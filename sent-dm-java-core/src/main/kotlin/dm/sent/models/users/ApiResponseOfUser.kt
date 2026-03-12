@@ -38,7 +38,7 @@ private constructor(
     ) : this(data, error, meta, success, mutableMapOf())
 
     /**
-     * The response data (null if error)
+     * User response for v3 API
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -46,7 +46,7 @@ private constructor(
     fun data(): Optional<UserResponse> = data.getOptional("data")
 
     /**
-     * Error details (null if successful)
+     * Error information
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -54,7 +54,7 @@ private constructor(
     fun error(): Optional<ApiError> = error.getOptional("error")
 
     /**
-     * Metadata about the request and response
+     * Request and response metadata
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -133,7 +133,7 @@ private constructor(
             additionalProperties = apiResponseOfUser.additionalProperties.toMutableMap()
         }
 
-        /** The response data (null if error) */
+        /** User response for v3 API */
         fun data(data: UserResponse?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
@@ -148,7 +148,7 @@ private constructor(
          */
         fun data(data: JsonField<UserResponse>) = apply { this.data = data }
 
-        /** Error details (null if successful) */
+        /** Error information */
         fun error(error: ApiError?) = error(JsonField.ofNullable(error))
 
         /** Alias for calling [Builder.error] with `error.orElse(null)`. */
@@ -162,7 +162,7 @@ private constructor(
          */
         fun error(error: JsonField<ApiError>) = apply { this.error = error }
 
-        /** Metadata about the request and response */
+        /** Request and response metadata */
         fun meta(meta: ApiMeta) = meta(JsonField.of(meta))
 
         /**
