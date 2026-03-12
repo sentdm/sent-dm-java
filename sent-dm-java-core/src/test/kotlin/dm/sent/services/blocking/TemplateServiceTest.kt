@@ -3,12 +3,6 @@
 package dm.sent.services.blocking
 
 import dm.sent.client.okhttp.SentDmOkHttpClient
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsAuthenticationConfig
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateBody
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateButton
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateButtonProps
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateFooter
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateHeader
 import dm.sent.models.templates.TemplateBodyContent
 import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDefinition
@@ -39,7 +33,7 @@ internal class TemplateServiceTest {
                     .definition(
                         TemplateDefinition.builder()
                             .body(
-                                SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                                TemplateDefinition.Body.builder()
                                     .multiChannel(
                                         TemplateBodyContent.builder()
                                             .template(
@@ -135,17 +129,16 @@ internal class TemplateServiceTest {
                                     .build()
                             )
                             .authenticationConfig(
-                                SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                                TemplateDefinition.AuthenticationConfig.builder()
                                     .addSecurityRecommendation(true)
                                     .codeExpirationMinutes(0)
                                     .build()
                             )
                             .addButton(
-                                SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                                TemplateDefinition.Button.builder()
                                     .id(0)
                                     .props(
-                                        SentDmServicesCommonContractsPocOsTemplateButtonProps
-                                            .builder()
+                                        TemplateDefinition.Button.Props.builder()
                                             .activeFor(0)
                                             .autofillText("autofillText")
                                             .countryCode("countryCode")
@@ -165,7 +158,7 @@ internal class TemplateServiceTest {
                             )
                             .definitionVersion("1.0")
                             .footer(
-                                SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                                TemplateDefinition.Footer.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
@@ -189,7 +182,7 @@ internal class TemplateServiceTest {
                                     .build()
                             )
                             .header(
-                                SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                                TemplateDefinition.Header.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
@@ -256,7 +249,7 @@ internal class TemplateServiceTest {
                     .definition(
                         TemplateDefinition.builder()
                             .body(
-                                SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                                TemplateDefinition.Body.builder()
                                     .multiChannel(
                                         TemplateBodyContent.builder()
                                             .template("template")
@@ -332,17 +325,16 @@ internal class TemplateServiceTest {
                                     .build()
                             )
                             .authenticationConfig(
-                                SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                                TemplateDefinition.AuthenticationConfig.builder()
                                     .addSecurityRecommendation(true)
                                     .codeExpirationMinutes(0)
                                     .build()
                             )
                             .addButton(
-                                SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                                TemplateDefinition.Button.builder()
                                     .id(0)
                                     .props(
-                                        SentDmServicesCommonContractsPocOsTemplateButtonProps
-                                            .builder()
+                                        TemplateDefinition.Button.Props.builder()
                                             .activeFor(0)
                                             .autofillText("autofillText")
                                             .countryCode("countryCode")
@@ -362,7 +354,7 @@ internal class TemplateServiceTest {
                             )
                             .definitionVersion("definitionVersion")
                             .footer(
-                                SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                                TemplateDefinition.Footer.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
@@ -386,7 +378,7 @@ internal class TemplateServiceTest {
                                     .build()
                             )
                             .header(
-                                SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                                TemplateDefinition.Header.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(

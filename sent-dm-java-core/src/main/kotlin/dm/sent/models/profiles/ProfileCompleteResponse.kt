@@ -11,7 +11,7 @@ import dm.sent.errors.SentDmInvalidDataException
 import java.util.Collections
 import java.util.Objects
 
-class ProfileCompleteSetupResponse
+class ProfileCompleteResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(private val additionalProperties: MutableMap<String, JsonValue>) {
 
@@ -31,20 +31,18 @@ private constructor(private val additionalProperties: MutableMap<String, JsonVal
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [ProfileCompleteSetupResponse].
-         */
+        /** Returns a mutable builder for constructing an instance of [ProfileCompleteResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ProfileCompleteSetupResponse]. */
+    /** A builder for [ProfileCompleteResponse]. */
     class Builder internal constructor() {
 
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(profileCompleteSetupResponse: ProfileCompleteSetupResponse) = apply {
-            additionalProperties = profileCompleteSetupResponse.additionalProperties.toMutableMap()
+        internal fun from(profileCompleteResponse: ProfileCompleteResponse) = apply {
+            additionalProperties = profileCompleteResponse.additionalProperties.toMutableMap()
         }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
@@ -67,17 +65,17 @@ private constructor(private val additionalProperties: MutableMap<String, JsonVal
         }
 
         /**
-         * Returns an immutable instance of [ProfileCompleteSetupResponse].
+         * Returns an immutable instance of [ProfileCompleteResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ProfileCompleteSetupResponse =
-            ProfileCompleteSetupResponse(additionalProperties.toMutableMap())
+        fun build(): ProfileCompleteResponse =
+            ProfileCompleteResponse(additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
 
-    fun validate(): ProfileCompleteSetupResponse = apply {
+    fun validate(): ProfileCompleteResponse = apply {
         if (validated) {
             return@apply
         }
@@ -105,7 +103,7 @@ private constructor(private val additionalProperties: MutableMap<String, JsonVal
             return true
         }
 
-        return other is ProfileCompleteSetupResponse &&
+        return other is ProfileCompleteResponse &&
             additionalProperties == other.additionalProperties
     }
 
@@ -113,6 +111,5 @@ private constructor(private val additionalProperties: MutableMap<String, JsonVal
 
     override fun hashCode(): Int = hashCode
 
-    override fun toString() =
-        "ProfileCompleteSetupResponse{additionalProperties=$additionalProperties}"
+    override fun toString() = "ProfileCompleteResponse{additionalProperties=$additionalProperties}"
 }
