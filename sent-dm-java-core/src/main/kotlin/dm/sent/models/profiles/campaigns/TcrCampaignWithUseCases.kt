@@ -14,7 +14,6 @@ import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentDmInvalidDataException
-import dm.sent.models.BaseDto
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects

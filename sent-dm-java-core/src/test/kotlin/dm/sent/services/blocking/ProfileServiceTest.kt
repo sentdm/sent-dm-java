@@ -7,15 +7,12 @@ import dm.sent.models.profiles.BillingContactInfo
 import dm.sent.models.profiles.BrandsBrandData
 import dm.sent.models.profiles.DestinationCountry
 import dm.sent.models.profiles.PaymentDetails
-import dm.sent.models.profiles.ProfileCompleteSetupParams
+import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
-import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
 import dm.sent.models.profiles.TcrBrandRelationship
 import dm.sent.models.profiles.TcrVertical
 import org.junit.jupiter.api.Disabled
@@ -49,8 +46,7 @@ internal class ProfileServiceTest {
                     .brand(
                         BrandsBrandData.builder()
                             .compliance(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                                    .builder()
+                                BrandsBrandData.Compliance.builder()
                                     .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                     .vertical(TcrVertical.PROFESSIONAL)
                                     .addDestinationCountry(
@@ -66,8 +62,7 @@ internal class ProfileServiceTest {
                                     .build()
                             )
                             .contact(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-                                    .builder()
+                                BrandsBrandData.Contact.builder()
                                     .name("John Smith")
                                     .businessName("Acme Corp")
                                     .email("john@acmecorp.com")
@@ -77,16 +72,11 @@ internal class ProfileServiceTest {
                                     .build()
                             )
                             .business(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                                    .builder()
+                                BrandsBrandData.Business.builder()
                                     .city("New York")
                                     .country("US")
                                     .countryOfRegistration("US")
-                                    .entityType(
-                                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                                            .EntityType
-                                            .PRIVATE_PROFIT
-                                    )
+                                    .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
                                     .legalName("Acme Corporation LLC")
                                     .postalCode("10001")
                                     .state("NY")
@@ -172,8 +162,7 @@ internal class ProfileServiceTest {
                     .brand(
                         BrandsBrandData.builder()
                             .compliance(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                                    .builder()
+                                BrandsBrandData.Compliance.builder()
                                     .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                     .vertical(TcrVertical.PROFESSIONAL)
                                     .addDestinationCountry(
@@ -189,8 +178,7 @@ internal class ProfileServiceTest {
                                     .build()
                             )
                             .contact(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-                                    .builder()
+                                BrandsBrandData.Contact.builder()
                                     .name("John Smith")
                                     .businessName("Acme Corp")
                                     .email("john@acmecorp.com")
@@ -200,16 +188,11 @@ internal class ProfileServiceTest {
                                     .build()
                             )
                             .business(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                                    .builder()
+                                BrandsBrandData.Business.builder()
                                     .city("New York")
                                     .country("US")
                                     .countryOfRegistration("US")
-                                    .entityType(
-                                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                                            .EntityType
-                                            .PRIVATE_PROFIT
-                                    )
+                                    .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
                                     .legalName("Acme Corporation LLC")
                                     .postalCode("10001")
                                     .state("NY")
@@ -280,13 +263,13 @@ internal class ProfileServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun completeSetup() {
+    fun complete() {
         val client = SentDmOkHttpClient.builder().apiKey("My API Key").build()
         val profileService = client.profiles()
 
         val response =
-            profileService.completeSetup(
-                ProfileCompleteSetupParams.builder()
+            profileService.complete(
+                ProfileCompleteParams.builder()
                     .profileId("660e8400-e29b-41d4-a716-446655440000")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

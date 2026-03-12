@@ -8,8 +8,8 @@ import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.models.profiles.ApiResponseOfProfileDetail
-import dm.sent.models.profiles.ProfileCompleteSetupParams
-import dm.sent.models.profiles.ProfileCompleteSetupResponse
+import dm.sent.models.profiles.ProfileCompleteParams
+import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
@@ -239,28 +239,26 @@ interface ProfileService {
      *                 - If non-TCR with destination country (IsMain=true) → SUBMITTED
      *                 - Otherwise → COMPLETED
      */
-    fun completeSetup(
+    fun complete(profileId: String, params: ProfileCompleteParams): ProfileCompleteResponse =
+        complete(profileId, params, RequestOptions.none())
+
+    /** @see complete */
+    fun complete(
         profileId: String,
-        params: ProfileCompleteSetupParams,
-    ): ProfileCompleteSetupResponse = completeSetup(profileId, params, RequestOptions.none())
-
-    /** @see completeSetup */
-    fun completeSetup(
-        profileId: String,
-        params: ProfileCompleteSetupParams,
+        params: ProfileCompleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileCompleteSetupResponse =
-        completeSetup(params.toBuilder().profileId(profileId).build(), requestOptions)
+    ): ProfileCompleteResponse =
+        complete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
-    /** @see completeSetup */
-    fun completeSetup(params: ProfileCompleteSetupParams): ProfileCompleteSetupResponse =
-        completeSetup(params, RequestOptions.none())
+    /** @see complete */
+    fun complete(params: ProfileCompleteParams): ProfileCompleteResponse =
+        complete(params, RequestOptions.none())
 
-    /** @see completeSetup */
-    fun completeSetup(
-        params: ProfileCompleteSetupParams,
+    /** @see complete */
+    fun complete(
+        params: ProfileCompleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileCompleteSetupResponse
+    ): ProfileCompleteResponse
 
     /** A view of [ProfileService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -457,36 +455,34 @@ interface ProfileService {
 
         /**
          * Returns a raw HTTP response for `post /v3/profiles/{profileId}/complete`, but is
-         * otherwise the same as [ProfileService.completeSetup].
+         * otherwise the same as [ProfileService.complete].
          */
         @MustBeClosed
-        fun completeSetup(
+        fun complete(
             profileId: String,
-            params: ProfileCompleteSetupParams,
-        ): HttpResponseFor<ProfileCompleteSetupResponse> =
-            completeSetup(profileId, params, RequestOptions.none())
+            params: ProfileCompleteParams,
+        ): HttpResponseFor<ProfileCompleteResponse> =
+            complete(profileId, params, RequestOptions.none())
 
-        /** @see completeSetup */
+        /** @see complete */
         @MustBeClosed
-        fun completeSetup(
+        fun complete(
             profileId: String,
-            params: ProfileCompleteSetupParams,
+            params: ProfileCompleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileCompleteSetupResponse> =
-            completeSetup(params.toBuilder().profileId(profileId).build(), requestOptions)
+        ): HttpResponseFor<ProfileCompleteResponse> =
+            complete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
-        /** @see completeSetup */
+        /** @see complete */
         @MustBeClosed
-        fun completeSetup(
-            params: ProfileCompleteSetupParams
-        ): HttpResponseFor<ProfileCompleteSetupResponse> =
-            completeSetup(params, RequestOptions.none())
+        fun complete(params: ProfileCompleteParams): HttpResponseFor<ProfileCompleteResponse> =
+            complete(params, RequestOptions.none())
 
-        /** @see completeSetup */
+        /** @see complete */
         @MustBeClosed
-        fun completeSetup(
-            params: ProfileCompleteSetupParams,
+        fun complete(
+            params: ProfileCompleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileCompleteSetupResponse>
+        ): HttpResponseFor<ProfileCompleteResponse>
     }
 }

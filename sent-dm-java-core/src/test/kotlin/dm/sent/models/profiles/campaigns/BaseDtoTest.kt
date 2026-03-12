@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models
+package dm.sent.models.profiles.campaigns
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.jsonMapper

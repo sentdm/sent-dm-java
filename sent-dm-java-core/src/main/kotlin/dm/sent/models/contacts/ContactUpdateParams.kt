@@ -14,7 +14,7 @@ import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentDmInvalidDataException
-import dm.sent.models.webhooks.MutationRequestBase
+import dm.sent.models.webhooks.MutationRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -374,8 +374,8 @@ private constructor(
             @JsonProperty("opt_out") @ExcludeMissing optOut: JsonField<Boolean> = JsonMissing.of(),
         ) : this(sandbox, defaultChannel, optOut, mutableMapOf())
 
-        fun toMutationRequestBase(): MutationRequestBase =
-            MutationRequestBase.builder().sandbox(sandbox).build()
+        fun toMutationRequest(): MutationRequest =
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
