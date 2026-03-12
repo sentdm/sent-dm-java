@@ -30,7 +30,8 @@ internal class ProfileUpdateParamsTest {
             .brand(
                 BrandsBrandData.builder()
                     .compliance(
-                        BrandsBrandData.Compliance.builder()
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                            .builder()
                             .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                             .vertical(TcrVertical.PROFESSIONAL)
                             .addDestinationCountry(
@@ -44,7 +45,8 @@ internal class ProfileUpdateParamsTest {
                             .build()
                     )
                     .contact(
-                        BrandsBrandData.Contact.builder()
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                            .builder()
                             .name("John Smith")
                             .businessName("Acme Corp")
                             .email("john@acmecorp.com")
@@ -54,11 +56,16 @@ internal class ProfileUpdateParamsTest {
                             .build()
                     )
                     .business(
-                        BrandsBrandData.Business.builder()
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                            .builder()
                             .city("New York")
                             .country("US")
                             .countryOfRegistration("US")
-                            .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
+                            .entityType(
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                    .EntityType
+                                    .PRIVATE_PROFIT
+                            )
                             .legalName("Acme Corporation LLC")
                             .postalCode("10001")
                             .state("NY")
@@ -125,7 +132,8 @@ internal class ProfileUpdateParamsTest {
                 .brand(
                     BrandsBrandData.builder()
                         .compliance(
-                            BrandsBrandData.Compliance.builder()
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                                .builder()
                                 .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                 .vertical(TcrVertical.PROFESSIONAL)
                                 .addDestinationCountry(
@@ -139,7 +147,8 @@ internal class ProfileUpdateParamsTest {
                                 .build()
                         )
                         .contact(
-                            BrandsBrandData.Contact.builder()
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                                .builder()
                                 .name("John Smith")
                                 .businessName("Acme Corp")
                                 .email("john@acmecorp.com")
@@ -149,11 +158,16 @@ internal class ProfileUpdateParamsTest {
                                 .build()
                         )
                         .business(
-                            BrandsBrandData.Business.builder()
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                .builder()
                                 .city("New York")
                                 .country("US")
                                 .countryOfRegistration("US")
-                                .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
+                                .entityType(
+                                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                        .EntityType
+                                        .PRIVATE_PROFIT
+                                )
                                 .legalName("Acme Corporation LLC")
                                 .postalCode("10001")
                                 .state("NY")
@@ -230,7 +244,8 @@ internal class ProfileUpdateParamsTest {
                 .brand(
                     BrandsBrandData.builder()
                         .compliance(
-                            BrandsBrandData.Compliance.builder()
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                                .builder()
                                 .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                 .vertical(TcrVertical.PROFESSIONAL)
                                 .addDestinationCountry(
@@ -244,7 +259,8 @@ internal class ProfileUpdateParamsTest {
                                 .build()
                         )
                         .contact(
-                            BrandsBrandData.Contact.builder()
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                                .builder()
                                 .name("John Smith")
                                 .businessName("Acme Corp")
                                 .email("john@acmecorp.com")
@@ -254,11 +270,16 @@ internal class ProfileUpdateParamsTest {
                                 .build()
                         )
                         .business(
-                            BrandsBrandData.Business.builder()
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                .builder()
                                 .city("New York")
                                 .country("US")
                                 .countryOfRegistration("US")
-                                .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
+                                .entityType(
+                                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                        .EntityType
+                                        .PRIVATE_PROFIT
+                                )
                                 .legalName("Acme Corporation LLC")
                                 .postalCode("10001")
                                 .state("NY")
@@ -312,7 +333,8 @@ internal class ProfileUpdateParamsTest {
             .contains(
                 BrandsBrandData.builder()
                     .compliance(
-                        BrandsBrandData.Compliance.builder()
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                            .builder()
                             .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                             .vertical(TcrVertical.PROFESSIONAL)
                             .addDestinationCountry(
@@ -326,7 +348,8 @@ internal class ProfileUpdateParamsTest {
                             .build()
                     )
                     .contact(
-                        BrandsBrandData.Contact.builder()
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                            .builder()
                             .name("John Smith")
                             .businessName("Acme Corp")
                             .email("john@acmecorp.com")
@@ -336,11 +359,16 @@ internal class ProfileUpdateParamsTest {
                             .build()
                     )
                     .business(
-                        BrandsBrandData.Business.builder()
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                            .builder()
                             .city("New York")
                             .country("US")
                             .countryOfRegistration("US")
-                            .entityType(BrandsBrandData.Business.EntityType.PRIVATE_PROFIT)
+                            .entityType(
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                    .EntityType
+                                    .PRIVATE_PROFIT
+                            )
                             .legalName("Acme Corporation LLC")
                             .postalCode("10001")
                             .state("NY")
