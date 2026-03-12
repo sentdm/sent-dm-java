@@ -61,7 +61,7 @@ private constructor(
     fun channel(): Optional<List<String>> = body.channel()
 
     /**
-     * Template reference (by id or name, with optional parameters)
+     * SDK-style template reference: resolve by ID or by name, with optional parameters.
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -203,7 +203,7 @@ private constructor(
          */
         fun addChannel(channel: String) = apply { body.addChannel(channel) }
 
-        /** Template reference (by id or name, with optional parameters) */
+        /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
         fun template(template: Template) = apply { body.template(template) }
 
         /**
@@ -424,7 +424,7 @@ private constructor(
         fun channel(): Optional<List<String>> = channel.getOptional("channel")
 
         /**
-         * Template reference (by id or name, with optional parameters)
+         * SDK-style template reference: resolve by ID or by name, with optional parameters.
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -551,7 +551,7 @@ private constructor(
                     }
             }
 
-            /** Template reference (by id or name, with optional parameters) */
+            /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
             fun template(template: Template) = template(JsonField.of(template))
 
             /**
@@ -677,7 +677,7 @@ private constructor(
             "Body{sandbox=$sandbox, channel=$channel, template=$template, to=$to, additionalProperties=$additionalProperties}"
     }
 
-    /** Template reference (by id or name, with optional parameters) */
+    /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
     class Template
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(

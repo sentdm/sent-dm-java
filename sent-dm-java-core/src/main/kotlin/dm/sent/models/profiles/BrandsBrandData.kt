@@ -54,7 +54,7 @@ private constructor(
     ) : this(compliance, contact, business, mutableMapOf())
 
     /**
-     * Compliance and TCR-related information
+     * Compliance and TCR information for brand registration
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -64,7 +64,7 @@ private constructor(
         compliance.getRequired("compliance")
 
     /**
-     * Contact information for the brand
+     * Contact information for brand KYC
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -73,7 +73,7 @@ private constructor(
         contact.getRequired("contact")
 
     /**
-     * Business details and address information
+     * Business details and address for brand KYC
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -169,7 +169,7 @@ private constructor(
             additionalProperties = brandsBrandData.additionalProperties.toMutableMap()
         }
 
-        /** Compliance and TCR-related information */
+        /** Compliance and TCR information for brand registration */
         fun compliance(
             compliance:
                 SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
@@ -190,7 +190,7 @@ private constructor(
                 >
         ) = apply { this.compliance = compliance }
 
-        /** Contact information for the brand */
+        /** Contact information for brand KYC */
         fun contact(
             contact: SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
         ) = contact(JsonField.of(contact))
@@ -210,7 +210,7 @@ private constructor(
                 >
         ) = apply { this.contact = contact }
 
-        /** Business details and address information */
+        /** Business details and address for brand KYC */
         fun business(
             business: SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo?
         ) = business(JsonField.ofNullable(business))

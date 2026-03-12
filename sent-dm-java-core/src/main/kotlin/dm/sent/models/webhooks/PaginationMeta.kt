@@ -40,7 +40,7 @@ private constructor(
     ) : this(cursors, hasMore, page, pageSize, totalCount, totalPages, mutableMapOf())
 
     /**
-     * Cursor-based pagination (optional)
+     * Cursor-based pagination pointers
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -169,7 +169,7 @@ private constructor(
             additionalProperties = paginationMeta.additionalProperties.toMutableMap()
         }
 
-        /** Cursor-based pagination (optional) */
+        /** Cursor-based pagination pointers */
         fun cursors(cursors: Cursors?) = cursors(JsonField.ofNullable(cursors))
 
         /** Alias for calling [Builder.cursors] with `cursors.orElse(null)`. */
@@ -312,7 +312,7 @@ private constructor(
             (if (totalCount.asKnown().isPresent) 1 else 0) +
             (if (totalPages.asKnown().isPresent) 1 else 0)
 
-    /** Cursor-based pagination (optional) */
+    /** Cursor-based pagination pointers */
     class Cursors
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(

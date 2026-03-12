@@ -71,8 +71,6 @@ private constructor(
     )
 
     /**
-     * Brand relationship level with TCR (required for TCR)
-     *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
@@ -80,8 +78,6 @@ private constructor(
         brandRelationship.getRequired("brandRelationship")
 
     /**
-     * Business vertical/industry category (required for TCR)
-     *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
@@ -288,7 +284,6 @@ private constructor(
                     .toMutableMap()
         }
 
-        /** Brand relationship level with TCR (required for TCR) */
         fun brandRelationship(brandRelationship: TcrBrandRelationship) =
             brandRelationship(JsonField.of(brandRelationship))
 
@@ -303,7 +298,6 @@ private constructor(
             this.brandRelationship = brandRelationship
         }
 
-        /** Business vertical/industry category (required for TCR) */
         fun vertical(vertical: TcrVertical) = vertical(JsonField.of(vertical))
 
         /**

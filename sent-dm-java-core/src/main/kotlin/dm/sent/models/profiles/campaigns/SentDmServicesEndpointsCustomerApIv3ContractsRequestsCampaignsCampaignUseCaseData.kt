@@ -38,8 +38,6 @@ private constructor(
     ) : this(messagingUseCaseUs, sampleMessages, mutableMapOf())
 
     /**
-     * US messaging use case category
-     *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
@@ -128,7 +126,6 @@ private constructor(
                     .toMutableMap()
         }
 
-        /** US messaging use case category */
         fun messagingUseCaseUs(messagingUseCaseUs: MessagingUseCaseUs) =
             messagingUseCaseUs(JsonField.of(messagingUseCaseUs))
 
