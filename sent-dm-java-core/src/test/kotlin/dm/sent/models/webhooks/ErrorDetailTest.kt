@@ -8,15 +8,15 @@ import dm.sent.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ApiErrorTest {
+internal class ErrorDetailTest {
 
     @Test
     fun create() {
-        val apiError =
-            ApiError.builder()
+        val errorDetail =
+            ErrorDetail.builder()
                 .code("code")
                 .details(
-                    ApiError.Details.builder()
+                    ErrorDetail.Details.builder()
                         .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                         .build()
                 )
@@ -24,25 +24,25 @@ internal class ApiErrorTest {
                 .message("message")
                 .build()
 
-        assertThat(apiError.code()).contains("code")
-        assertThat(apiError.details())
+        assertThat(errorDetail.code()).contains("code")
+        assertThat(errorDetail.details())
             .contains(
-                ApiError.Details.builder()
+                ErrorDetail.Details.builder()
                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                     .build()
             )
-        assertThat(apiError.docUrl()).contains("doc_url")
-        assertThat(apiError.message()).contains("message")
+        assertThat(errorDetail.docUrl()).contains("doc_url")
+        assertThat(errorDetail.message()).contains("message")
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val apiError =
-            ApiError.builder()
+        val errorDetail =
+            ErrorDetail.builder()
                 .code("code")
                 .details(
-                    ApiError.Details.builder()
+                    ErrorDetail.Details.builder()
                         .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                         .build()
                 )
@@ -50,12 +50,12 @@ internal class ApiErrorTest {
                 .message("message")
                 .build()
 
-        val roundtrippedApiError =
+        val roundtrippedErrorDetail =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(apiError),
-                jacksonTypeRef<ApiError>(),
+                jsonMapper.writeValueAsString(errorDetail),
+                jacksonTypeRef<ErrorDetail>(),
             )
 
-        assertThat(roundtrippedApiError).isEqualTo(apiError)
+        assertThat(roundtrippedErrorDetail).isEqualTo(errorDetail)
     }
 }

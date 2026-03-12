@@ -21,10 +21,10 @@ internal class WebhookRotateSecretResponseTest {
                         .build()
                 )
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -48,10 +48,10 @@ internal class WebhookRotateSecretResponseTest {
             )
         assertThat(webhookRotateSecretResponse.error())
             .contains(
-                ApiError.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        ApiError.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -81,10 +81,10 @@ internal class WebhookRotateSecretResponseTest {
                         .build()
                 )
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )

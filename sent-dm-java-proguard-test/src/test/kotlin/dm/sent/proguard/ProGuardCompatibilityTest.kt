@@ -8,8 +8,8 @@ import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.profiles.TcrBrandRelationship
-import dm.sent.models.webhooks.ApiError
 import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
@@ -82,10 +82,10 @@ internal class ProGuardCompatibilityTest {
                         .build()
                 )
                 .error(
-                    ApiError.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ApiError.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
