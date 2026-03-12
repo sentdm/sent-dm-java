@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.0 (2026-03-12)
+
+Full Changelog: [v0.9.0...v0.10.0](https://github.com/sentdm/sent-dm-java/compare/v0.9.0...v0.10.0)
+
+### Features
+
+* **api:** api update ([f5b9f5a](https://github.com/sentdm/sent-dm-java/commit/f5b9f5ae383d57eeb86010031c4037152cf40966))
+* **api:** manual updates ([3ee7bbe](https://github.com/sentdm/sent-dm-java/commit/3ee7bbe782d6c22dcd1794f60ab8fe76cb869d2b))
+* **api:** manual updates ([50a6405](https://github.com/sentdm/sent-dm-java/commit/50a6405f8cf6e55df150fb097cb45a13853ce595))
+
 ## 0.9.0 (2026-03-11)
 
 Full Changelog: [v0.8.0...v0.9.0](https://github.com/sentdm/sent-dm-java/compare/v0.8.0...v0.9.0)
