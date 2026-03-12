@@ -41,7 +41,9 @@ private constructor(
     ) : this(data, error, meta, success, mutableMapOf())
 
     /**
-     * The response data (null if error)
+     * Account response for GET /v3/me endpoint. Returns organization (with profiles), user
+     * (standalone), or profile (child of an organization) data depending on the API key type.
+     * Always includes messaging channel configuration.
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -49,7 +51,7 @@ private constructor(
     fun data(): Optional<Data> = data.getOptional("data")
 
     /**
-     * Error details (null if successful)
+     * Error information
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -57,7 +59,7 @@ private constructor(
     fun error(): Optional<ApiError> = error.getOptional("error")
 
     /**
-     * Metadata about the request and response
+     * Request and response metadata
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -136,7 +138,11 @@ private constructor(
             additionalProperties = meRetrieveResponse.additionalProperties.toMutableMap()
         }
 
-        /** The response data (null if error) */
+        /**
+         * Account response for GET /v3/me endpoint. Returns organization (with profiles), user
+         * (standalone), or profile (child of an organization) data depending on the API key type.
+         * Always includes messaging channel configuration.
+         */
         fun data(data: Data?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
@@ -150,7 +156,7 @@ private constructor(
          */
         fun data(data: JsonField<Data>) = apply { this.data = data }
 
-        /** Error details (null if successful) */
+        /** Error information */
         fun error(error: ApiError?) = error(JsonField.ofNullable(error))
 
         /** Alias for calling [Builder.error] with `error.orElse(null)`. */
@@ -164,7 +170,7 @@ private constructor(
          */
         fun error(error: JsonField<ApiError>) = apply { this.error = error }
 
-        /** Metadata about the request and response */
+        /** Request and response metadata */
         fun meta(meta: ApiMeta) = meta(JsonField.of(meta))
 
         /**
@@ -248,7 +254,11 @@ private constructor(
             (meta.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
 
-    /** The response data (null if error) */
+    /**
+     * Account response for GET /v3/me endpoint. Returns organization (with profiles), user
+     * (standalone), or profile (child of an organization) data depending on the API key type.
+     * Always includes messaging channel configuration.
+     */
     class Data
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -323,7 +333,8 @@ private constructor(
         fun id(): Optional<String> = id.getOptional("id")
 
         /**
-         * Messaging channel configuration
+         * Messaging channel configuration. All three channels are always present. Each channel has
+         * a "configured" flag; configured channels expose additional details.
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -387,7 +398,7 @@ private constructor(
         fun profiles(): Optional<List<Profile>> = profiles.getOptional("profiles")
 
         /**
-         * Profile settings (only for profile type)
+         * Profile configuration settings
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -587,7 +598,10 @@ private constructor(
              */
             fun id(id: JsonField<String>) = apply { this.id = id }
 
-            /** Messaging channel configuration */
+            /**
+             * Messaging channel configuration. All three channels are always present. Each channel
+             * has a "configured" flag; configured channels expose additional details.
+             */
             fun channels(channels: Channels) = channels(JsonField.of(channels))
 
             /**
@@ -719,7 +733,7 @@ private constructor(
                     }
             }
 
-            /** Profile settings (only for profile type) */
+            /** Profile configuration settings */
             fun settings(settings: ProfileSettings?) = settings(JsonField.ofNullable(settings))
 
             /** Alias for calling [Builder.settings] with `settings.orElse(null)`. */
@@ -877,7 +891,10 @@ private constructor(
                 (if (status.asKnown().isPresent) 1 else 0) +
                 (if (type.asKnown().isPresent) 1 else 0)
 
-        /** Messaging channel configuration */
+        /**
+         * Messaging channel configuration. All three channels are always present. Each channel has
+         * a "configured" flag; configured channels expose additional details.
+         */
         class Channels
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
@@ -897,7 +914,7 @@ private constructor(
             ) : this(rcs, sms, whatsapp, mutableMapOf())
 
             /**
-             * RCS channel (provider: vibes)
+             * RCS channel configuration. When configured, includes the RCS phone number.
              *
              * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
@@ -905,7 +922,7 @@ private constructor(
             fun rcs(): Optional<Rcs> = rcs.getOptional("rcs")
 
             /**
-             * SMS channel (providers: telnyx, sinch)
+             * SMS channel configuration. When configured, includes the sending phone number.
              *
              * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
@@ -913,7 +930,8 @@ private constructor(
             fun sms(): Optional<Sms> = sms.getOptional("sms")
 
             /**
-             * WhatsApp Business channel (provider: meta)
+             * WhatsApp Business channel configuration. When configured, includes the WhatsApp phone
+             * number and business name.
              *
              * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
@@ -978,7 +996,7 @@ private constructor(
                     additionalProperties = channels.additionalProperties.toMutableMap()
                 }
 
-                /** RCS channel (provider: vibes) */
+                /** RCS channel configuration. When configured, includes the RCS phone number. */
                 fun rcs(rcs: Rcs) = rcs(JsonField.of(rcs))
 
                 /**
@@ -990,7 +1008,9 @@ private constructor(
                  */
                 fun rcs(rcs: JsonField<Rcs>) = apply { this.rcs = rcs }
 
-                /** SMS channel (providers: telnyx, sinch) */
+                /**
+                 * SMS channel configuration. When configured, includes the sending phone number.
+                 */
                 fun sms(sms: Sms) = sms(JsonField.of(sms))
 
                 /**
@@ -1002,7 +1022,10 @@ private constructor(
                  */
                 fun sms(sms: JsonField<Sms>) = apply { this.sms = sms }
 
-                /** WhatsApp Business channel (provider: meta) */
+                /**
+                 * WhatsApp Business channel configuration. When configured, includes the WhatsApp
+                 * phone number and business name.
+                 */
                 fun whatsapp(whatsapp: Whatsapp) = whatsapp(JsonField.of(whatsapp))
 
                 /**
@@ -1078,7 +1101,7 @@ private constructor(
                     (sms.asKnown().getOrNull()?.validity() ?: 0) +
                     (whatsapp.asKnown().getOrNull()?.validity() ?: 0)
 
-            /** RCS channel (provider: vibes) */
+            /** RCS channel configuration. When configured, includes the RCS phone number. */
             class Rcs
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(
@@ -1281,7 +1304,7 @@ private constructor(
                     "Rcs{configured=$configured, phoneNumber=$phoneNumber, additionalProperties=$additionalProperties}"
             }
 
-            /** SMS channel (providers: telnyx, sinch) */
+            /** SMS channel configuration. When configured, includes the sending phone number. */
             class Sms
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(
@@ -1484,7 +1507,10 @@ private constructor(
                     "Sms{configured=$configured, phoneNumber=$phoneNumber, additionalProperties=$additionalProperties}"
             }
 
-            /** WhatsApp Business channel (provider: meta) */
+            /**
+             * WhatsApp Business channel configuration. When configured, includes the WhatsApp phone
+             * number and business name.
+             */
             class Whatsapp
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(

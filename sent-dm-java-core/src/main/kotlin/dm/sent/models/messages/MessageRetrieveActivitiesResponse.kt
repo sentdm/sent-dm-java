@@ -41,7 +41,7 @@ private constructor(
     ) : this(data, error, meta, success, mutableMapOf())
 
     /**
-     * The response data (null if error)
+     * Response for GET /messages/{id}/activities
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -49,7 +49,7 @@ private constructor(
     fun data(): Optional<Data> = data.getOptional("data")
 
     /**
-     * Error details (null if successful)
+     * Error information
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -57,7 +57,7 @@ private constructor(
     fun error(): Optional<ApiError> = error.getOptional("error")
 
     /**
-     * Metadata about the request and response
+     * Request and response metadata
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -141,7 +141,7 @@ private constructor(
                     messageRetrieveActivitiesResponse.additionalProperties.toMutableMap()
             }
 
-        /** The response data (null if error) */
+        /** Response for GET /messages/{id}/activities */
         fun data(data: Data?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
@@ -155,7 +155,7 @@ private constructor(
          */
         fun data(data: JsonField<Data>) = apply { this.data = data }
 
-        /** Error details (null if successful) */
+        /** Error information */
         fun error(error: ApiError?) = error(JsonField.ofNullable(error))
 
         /** Alias for calling [Builder.error] with `error.orElse(null)`. */
@@ -169,7 +169,7 @@ private constructor(
          */
         fun error(error: JsonField<ApiError>) = apply { this.error = error }
 
-        /** Metadata about the request and response */
+        /** Request and response metadata */
         fun meta(meta: ApiMeta) = meta(JsonField.of(meta))
 
         /**
@@ -259,7 +259,7 @@ private constructor(
             (meta.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
 
-    /** The response data (null if error) */
+    /** Response for GET /messages/{id}/activities */
     class Data
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(

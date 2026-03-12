@@ -93,9 +93,8 @@ private constructor(
     fun allowTemplateSharing(): Optional<Boolean> = body.allowTemplateSharing()
 
     /**
-     * Billing contact for this profile. Required when billing_model is "profile" or
-     * "profile_and_organization". Identifies who receives invoices and who is responsible for
-     * payment.
+     * Billing contact information for a profile. Required when billing_model is "profile" or
+     * "profile_and_organization".
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -116,8 +115,7 @@ private constructor(
     fun billingModel(): Optional<String> = body.billingModel()
 
     /**
-     * Brand and KYC information for this profile (optional). When provided, creates the brand
-     * associated with this profile. Cannot be set when inherit_tcr_brand is true.
+     * Brand and KYC data grouped into contact, business, and compliance sections
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -181,9 +179,9 @@ private constructor(
     fun name(): Optional<String> = body.name()
 
     /**
-     * Payment card details for this profile (optional). Accepted when billing_model is "profile" or
-     * "profile_and_organization". Not persisted on our servers — forwarded to the payment
-     * processor.
+     * Payment card details for a profile. Accepted when billing_model is "profile" or
+     * "profile_and_organization". These details are not stored on our servers and will be forwarded
+     * to the payment processor.
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -200,10 +198,10 @@ private constructor(
     fun shortName(): Optional<String> = body.shortName()
 
     /**
-     * Direct WhatsApp Business Account credentials for this profile. When provided, the profile
-     * uses its own WhatsApp Business Account instead of inheriting from the organization. When
-     * omitted, the profile inherits the organization's WhatsApp Business Account (requires the
-     * organization to have completed WhatsApp Embedded Signup).
+     * Direct WhatsApp Business Account credentials for a profile. Use this when the profile should
+     * have its own WhatsApp Business Account instead of inheriting from the organization.
+     * Credentials must be obtained from Meta Business Manager by creating a System User with
+     * whatsapp_business_messaging and whatsapp_business_management scopes.
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -437,9 +435,8 @@ private constructor(
         }
 
         /**
-         * Billing contact for this profile. Required when billing_model is "profile" or
-         * "profile_and_organization". Identifies who receives invoices and who is responsible for
-         * payment.
+         * Billing contact information for a profile. Required when billing_model is "profile" or
+         * "profile_and_organization".
          */
         fun billingContact(billingContact: BillingContactInfo?) = apply {
             body.billingContact(billingContact)
@@ -484,10 +481,7 @@ private constructor(
             body.billingModel(billingModel)
         }
 
-        /**
-         * Brand and KYC information for this profile (optional). When provided, creates the brand
-         * associated with this profile. Cannot be set when inherit_tcr_brand is true.
-         */
+        /** Brand and KYC data grouped into contact, business, and compliance sections */
         fun brand(brand: BrandsBrandData?) = apply { body.brand(brand) }
 
         /** Alias for calling [Builder.brand] with `brand.orElse(null)`. */
@@ -655,9 +649,9 @@ private constructor(
         fun name(name: JsonField<String>) = apply { body.name(name) }
 
         /**
-         * Payment card details for this profile (optional). Accepted when billing_model is
-         * "profile" or "profile_and_organization". Not persisted on our servers — forwarded to the
-         * payment processor.
+         * Payment card details for a profile. Accepted when billing_model is "profile" or
+         * "profile_and_organization". These details are not stored on our servers and will be
+         * forwarded to the payment processor.
          */
         fun paymentDetails(paymentDetails: PaymentDetails?) = apply {
             body.paymentDetails(paymentDetails)
@@ -698,10 +692,10 @@ private constructor(
         fun shortName(shortName: JsonField<String>) = apply { body.shortName(shortName) }
 
         /**
-         * Direct WhatsApp Business Account credentials for this profile. When provided, the profile
-         * uses its own WhatsApp Business Account instead of inheriting from the organization. When
-         * omitted, the profile inherits the organization's WhatsApp Business Account (requires the
-         * organization to have completed WhatsApp Embedded Signup).
+         * Direct WhatsApp Business Account credentials for a profile. Use this when the profile
+         * should have its own WhatsApp Business Account instead of inheriting from the
+         * organization. Credentials must be obtained from Meta Business Manager by creating a
+         * System User with whatsapp_business_messaging and whatsapp_business_management scopes.
          */
         fun whatsappBusinessAccount(whatsappBusinessAccount: WhatsappBusinessAccount?) = apply {
             body.whatsappBusinessAccount(whatsappBusinessAccount)
@@ -989,9 +983,8 @@ private constructor(
             allowTemplateSharing.getOptional("allow_template_sharing")
 
         /**
-         * Billing contact for this profile. Required when billing_model is "profile" or
-         * "profile_and_organization". Identifies who receives invoices and who is responsible for
-         * payment.
+         * Billing contact information for a profile. Required when billing_model is "profile" or
+         * "profile_and_organization".
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -1013,8 +1006,7 @@ private constructor(
         fun billingModel(): Optional<String> = billingModel.getOptional("billing_model")
 
         /**
-         * Brand and KYC information for this profile (optional). When provided, creates the brand
-         * associated with this profile. Cannot be set when inherit_tcr_brand is true.
+         * Brand and KYC data grouped into contact, business, and compliance sections
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -1080,9 +1072,9 @@ private constructor(
         fun name(): Optional<String> = name.getOptional("name")
 
         /**
-         * Payment card details for this profile (optional). Accepted when billing_model is
-         * "profile" or "profile_and_organization". Not persisted on our servers — forwarded to the
-         * payment processor.
+         * Payment card details for a profile. Accepted when billing_model is "profile" or
+         * "profile_and_organization". These details are not stored on our servers and will be
+         * forwarded to the payment processor.
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -1101,10 +1093,10 @@ private constructor(
         fun shortName(): Optional<String> = shortName.getOptional("short_name")
 
         /**
-         * Direct WhatsApp Business Account credentials for this profile. When provided, the profile
-         * uses its own WhatsApp Business Account instead of inheriting from the organization. When
-         * omitted, the profile inherits the organization's WhatsApp Business Account (requires the
-         * organization to have completed WhatsApp Embedded Signup).
+         * Direct WhatsApp Business Account credentials for a profile. Use this when the profile
+         * should have its own WhatsApp Business Account instead of inheriting from the
+         * organization. Credentials must be obtained from Meta Business Manager by creating a
+         * System User with whatsapp_business_messaging and whatsapp_business_management scopes.
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -1363,9 +1355,8 @@ private constructor(
             }
 
             /**
-             * Billing contact for this profile. Required when billing_model is "profile" or
-             * "profile_and_organization". Identifies who receives invoices and who is responsible
-             * for payment.
+             * Billing contact information for a profile. Required when billing_model is "profile"
+             * or "profile_and_organization".
              */
             fun billingContact(billingContact: BillingContactInfo?) =
                 billingContact(JsonField.ofNullable(billingContact))
@@ -1411,10 +1402,7 @@ private constructor(
                 this.billingModel = billingModel
             }
 
-            /**
-             * Brand and KYC information for this profile (optional). When provided, creates the
-             * brand associated with this profile. Cannot be set when inherit_tcr_brand is true.
-             */
+            /** Brand and KYC data grouped into contact, business, and compliance sections */
             fun brand(brand: BrandsBrandData?) = brand(JsonField.ofNullable(brand))
 
             /** Alias for calling [Builder.brand] with `brand.orElse(null)`. */
@@ -1587,9 +1575,9 @@ private constructor(
             fun name(name: JsonField<String>) = apply { this.name = name }
 
             /**
-             * Payment card details for this profile (optional). Accepted when billing_model is
-             * "profile" or "profile_and_organization". Not persisted on our servers — forwarded to
-             * the payment processor.
+             * Payment card details for a profile. Accepted when billing_model is "profile" or
+             * "profile_and_organization". These details are not stored on our servers and will be
+             * forwarded to the payment processor.
              */
             fun paymentDetails(paymentDetails: PaymentDetails?) =
                 paymentDetails(JsonField.ofNullable(paymentDetails))
@@ -1629,10 +1617,10 @@ private constructor(
             fun shortName(shortName: JsonField<String>) = apply { this.shortName = shortName }
 
             /**
-             * Direct WhatsApp Business Account credentials for this profile. When provided, the
-             * profile uses its own WhatsApp Business Account instead of inheriting from the
-             * organization. When omitted, the profile inherits the organization's WhatsApp Business
-             * Account (requires the organization to have completed WhatsApp Embedded Signup).
+             * Direct WhatsApp Business Account credentials for a profile. Use this when the profile
+             * should have its own WhatsApp Business Account instead of inheriting from the
+             * organization. Credentials must be obtained from Meta Business Manager by creating a
+             * System User with whatsapp_business_messaging and whatsapp_business_management scopes.
              */
             fun whatsappBusinessAccount(whatsappBusinessAccount: WhatsappBusinessAccount?) =
                 whatsappBusinessAccount(JsonField.ofNullable(whatsappBusinessAccount))
@@ -1815,10 +1803,10 @@ private constructor(
     }
 
     /**
-     * Direct WhatsApp Business Account credentials for this profile. When provided, the profile
-     * uses its own WhatsApp Business Account instead of inheriting from the organization. When
-     * omitted, the profile inherits the organization's WhatsApp Business Account (requires the
-     * organization to have completed WhatsApp Embedded Signup).
+     * Direct WhatsApp Business Account credentials for a profile. Use this when the profile should
+     * have its own WhatsApp Business Account instead of inheriting from the organization.
+     * Credentials must be obtained from Meta Business Manager by creating a System User with
+     * whatsapp_business_messaging and whatsapp_business_management scopes.
      */
     class WhatsappBusinessAccount
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)

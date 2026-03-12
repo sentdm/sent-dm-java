@@ -178,8 +178,7 @@ private constructor(
         allowTemplateSharing.getOptional("allow_template_sharing")
 
     /**
-     * Billing contact for this profile. Present when billing_model is "profile" or
-     * "profile_and_organization".
+     * Billing contact info returned in profile responses
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -195,8 +194,8 @@ private constructor(
     fun billingModel(): Optional<String> = billingModel.getOptional("billing_model")
 
     /**
-     * Brand associated with this profile. Null if no brand has been configured yet. Includes KYC
-     * information and TCR registration status.
+     * Brand response with nested contact, business, and compliance sections — mirrors the request
+     * structure.
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -722,10 +721,7 @@ private constructor(
             this.allowTemplateSharing = allowTemplateSharing
         }
 
-        /**
-         * Billing contact for this profile. Present when billing_model is "profile" or
-         * "profile_and_organization".
-         */
+        /** Billing contact info returned in profile responses */
         fun billingContact(billingContact: BillingContact?) =
             billingContact(JsonField.ofNullable(billingContact))
 
@@ -759,8 +755,8 @@ private constructor(
         }
 
         /**
-         * Brand associated with this profile. Null if no brand has been configured yet. Includes
-         * KYC information and TCR registration status.
+         * Brand response with nested contact, business, and compliance sections — mirrors the
+         * request structure.
          */
         fun brand(brand: Brand?) = brand(JsonField.ofNullable(brand))
 
@@ -1199,10 +1195,7 @@ private constructor(
             (if (wabaId.asKnown().isPresent) 1 else 0) +
             (if (whatsappPhoneNumber.asKnown().isPresent) 1 else 0)
 
-    /**
-     * Billing contact for this profile. Present when billing_model is "profile" or
-     * "profile_and_organization".
-     */
+    /** Billing contact info returned in profile responses */
     class BillingContact
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -1452,8 +1445,8 @@ private constructor(
     }
 
     /**
-     * Brand associated with this profile. Null if no brand has been configured yet. Includes KYC
-     * information and TCR registration status.
+     * Brand response with nested contact, business, and compliance sections — mirrors the request
+     * structure.
      */
     class Brand
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -1578,8 +1571,6 @@ private constructor(
         fun cspId(): Optional<String> = cspId.getOptional("csp_id")
 
         /**
-         * TCR brand identity verification status
-         *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
@@ -1595,8 +1586,6 @@ private constructor(
         fun isInherited(): Optional<Boolean> = isInherited.getOptional("is_inherited")
 
         /**
-         * TCR brand status
-         *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
@@ -1905,7 +1894,6 @@ private constructor(
              */
             fun cspId(cspId: JsonField<String>) = apply { this.cspId = cspId }
 
-            /** TCR brand identity verification status */
             fun identityStatus(identityStatus: IdentityStatus?) =
                 identityStatus(JsonField.ofNullable(identityStatus))
 
@@ -1938,7 +1926,6 @@ private constructor(
                 this.isInherited = isInherited
             }
 
-            /** TCR brand status */
             fun status(status: Status?) = status(JsonField.ofNullable(status))
 
             /** Alias for calling [Builder.status] with `status.orElse(null)`. */
@@ -2792,8 +2779,6 @@ private constructor(
             )
 
             /**
-             * Brand relationship level with TCR
-             *
              * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
              */
@@ -2853,8 +2838,6 @@ private constructor(
             fun primaryUseCase(): Optional<String> = primaryUseCase.getOptional("primary_use_case")
 
             /**
-             * Business vertical/industry category
-             *
              * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
              */
@@ -2982,7 +2965,6 @@ private constructor(
                     additionalProperties = compliance.additionalProperties.toMutableMap()
                 }
 
-                /** Brand relationship level with TCR */
                 fun brandRelationship(brandRelationship: TcrBrandRelationship?) =
                     brandRelationship(JsonField.ofNullable(brandRelationship))
 
@@ -3128,7 +3110,6 @@ private constructor(
                     this.primaryUseCase = primaryUseCase
                 }
 
-                /** Business vertical/industry category */
                 fun vertical(vertical: TcrVertical?) = vertical(JsonField.ofNullable(vertical))
 
                 /** Alias for calling [Builder.vertical] with `vertical.orElse(null)`. */
@@ -3638,7 +3619,6 @@ private constructor(
                 "Contact{businessName=$businessName, email=$email, name=$name, phone=$phone, phoneCountryCode=$phoneCountryCode, role=$role, additionalProperties=$additionalProperties}"
         }
 
-        /** TCR brand identity verification status */
         class IdentityStatus
         @JsonCreator
         private constructor(private val value: JsonField<String>) : Enum {
@@ -3783,7 +3763,6 @@ private constructor(
             override fun toString() = value.toString()
         }
 
-        /** TCR brand status */
         class Status @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
             /**

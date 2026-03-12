@@ -57,7 +57,7 @@ private constructor(
     fun category(): Optional<String> = body.category()
 
     /**
-     * Template definition including header, body, footer, and buttons
+     * Complete definition of a message template including header, body, footer, and buttons
      *
      * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -226,7 +226,7 @@ private constructor(
          */
         fun category(category: JsonField<String>) = apply { body.category(category) }
 
-        /** Template definition including header, body, footer, and buttons */
+        /** Complete definition of a message template including header, body, footer, and buttons */
         fun definition(definition: TemplateDefinition?) = apply { body.definition(definition) }
 
         /** Alias for calling [Builder.definition] with `definition.orElse(null)`. */
@@ -492,7 +492,7 @@ private constructor(
         fun category(): Optional<String> = category.getOptional("category")
 
         /**
-         * Template definition including header, body, footer, and buttons
+         * Complete definition of a message template including header, body, footer, and buttons
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -640,7 +640,9 @@ private constructor(
              */
             fun category(category: JsonField<String>) = apply { this.category = category }
 
-            /** Template definition including header, body, footer, and buttons */
+            /**
+             * Complete definition of a message template including header, body, footer, and buttons
+             */
             fun definition(definition: TemplateDefinition?) =
                 definition(JsonField.ofNullable(definition))
 
