@@ -252,7 +252,6 @@ private constructor(
     class Data
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val body: JsonField<String>,
         private val recipients: JsonField<List<Recipient>>,
         private val status: JsonField<String>,
         private val templateId: JsonField<String>,
@@ -262,7 +261,6 @@ private constructor(
 
         @JsonCreator
         private constructor(
-            @JsonProperty("body") @ExcludeMissing body: JsonField<String> = JsonMissing.of(),
             @JsonProperty("recipients")
             @ExcludeMissing
             recipients: JsonField<List<Recipient>> = JsonMissing.of(),
@@ -273,15 +271,7 @@ private constructor(
             @JsonProperty("template_name")
             @ExcludeMissing
             templateName: JsonField<String> = JsonMissing.of(),
-        ) : this(body, recipients, status, templateId, templateName, mutableMapOf())
-
-        /**
-         * Resolved template body text
-         *
-         * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun body(): Optional<String> = body.getOptional("body")
+        ) : this(recipients, status, templateId, templateName, mutableMapOf())
 
         /**
          * Per-recipient message results
@@ -314,13 +304,6 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun templateName(): Optional<String> = templateName.getOptional("template_name")
-
-        /**
-         * Returns the raw JSON value of [body].
-         *
-         * Unlike [body], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("body") @ExcludeMissing fun _body(): JsonField<String> = body
 
         /**
          * Returns the raw JSON value of [recipients].
@@ -378,7 +361,6 @@ private constructor(
         /** A builder for [Data]. */
         class Builder internal constructor() {
 
-            private var body: JsonField<String> = JsonMissing.of()
             private var recipients: JsonField<MutableList<Recipient>>? = null
             private var status: JsonField<String> = JsonMissing.of()
             private var templateId: JsonField<String> = JsonMissing.of()
@@ -387,28 +369,12 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(data: Data) = apply {
-                body = data.body
                 recipients = data.recipients.map { it.toMutableList() }
                 status = data.status
                 templateId = data.templateId
                 templateName = data.templateName
                 additionalProperties = data.additionalProperties.toMutableMap()
             }
-
-            /** Resolved template body text */
-            fun body(body: String?) = body(JsonField.ofNullable(body))
-
-            /** Alias for calling [Builder.body] with `body.orElse(null)`. */
-            fun body(body: Optional<String>) = body(body.getOrNull())
-
-            /**
-             * Sets [Builder.body] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.body] with a well-typed [String] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
-             */
-            fun body(body: JsonField<String>) = apply { this.body = body }
 
             /** Per-recipient message results */
             fun recipients(recipients: List<Recipient>) = recipients(JsonField.of(recipients))
@@ -500,7 +466,6 @@ private constructor(
              */
             fun build(): Data =
                 Data(
-                    body,
                     (recipients ?: JsonMissing.of()).map { it.toImmutable() },
                     status,
                     templateId,
@@ -516,7 +481,6 @@ private constructor(
                 return@apply
             }
 
-            body()
             recipients().ifPresent { it.forEach { it.validate() } }
             status()
             templateId()
@@ -540,8 +504,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (body.asKnown().isPresent) 1 else 0) +
-                (recipients.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (recipients.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (if (status.asKnown().isPresent) 1 else 0) +
                 (if (templateId.asKnown().isPresent) 1 else 0) +
                 (if (templateName.asKnown().isPresent) 1 else 0)
@@ -550,6 +513,7 @@ private constructor(
         class Recipient
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
+            private val body: JsonField<String>,
             private val channel: JsonField<String>,
             private val messageId: JsonField<String>,
             private val to: JsonField<String>,
@@ -558,6 +522,7 @@ private constructor(
 
             @JsonCreator
             private constructor(
+                @JsonProperty("body") @ExcludeMissing body: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("channel")
                 @ExcludeMissing
                 channel: JsonField<String> = JsonMissing.of(),
@@ -565,7 +530,15 @@ private constructor(
                 @ExcludeMissing
                 messageId: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("to") @ExcludeMissing to: JsonField<String> = JsonMissing.of(),
-            ) : this(channel, messageId, to, mutableMapOf())
+            ) : this(body, channel, messageId, to, mutableMapOf())
+
+            /**
+             * Resolved template body text for this recipient's channel, or null for auto-detect
+             *
+             * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun body(): Optional<String> = body.getOptional("body")
 
             /**
              * Channel this message will be sent on (e.g. "sms", "whatsapp"), or null for
@@ -591,6 +564,13 @@ private constructor(
              *   the server responded with an unexpected value).
              */
             fun to(): Optional<String> = to.getOptional("to")
+
+            /**
+             * Returns the raw JSON value of [body].
+             *
+             * Unlike [body], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("body") @ExcludeMissing fun _body(): JsonField<String> = body
 
             /**
              * Returns the raw JSON value of [channel].
@@ -637,6 +617,7 @@ private constructor(
             /** A builder for [Recipient]. */
             class Builder internal constructor() {
 
+                private var body: JsonField<String> = JsonMissing.of()
                 private var channel: JsonField<String> = JsonMissing.of()
                 private var messageId: JsonField<String> = JsonMissing.of()
                 private var to: JsonField<String> = JsonMissing.of()
@@ -644,11 +625,29 @@ private constructor(
 
                 @JvmSynthetic
                 internal fun from(recipient: Recipient) = apply {
+                    body = recipient.body
                     channel = recipient.channel
                     messageId = recipient.messageId
                     to = recipient.to
                     additionalProperties = recipient.additionalProperties.toMutableMap()
                 }
+
+                /**
+                 * Resolved template body text for this recipient's channel, or null for auto-detect
+                 */
+                fun body(body: String?) = body(JsonField.ofNullable(body))
+
+                /** Alias for calling [Builder.body] with `body.orElse(null)`. */
+                fun body(body: Optional<String>) = body(body.getOrNull())
+
+                /**
+                 * Sets [Builder.body] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.body] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun body(body: JsonField<String>) = apply { this.body = body }
 
                 /**
                  * Channel this message will be sent on (e.g. "sms", "whatsapp"), or null for
@@ -720,7 +719,7 @@ private constructor(
                  * Further updates to this [Builder] will not mutate the returned instance.
                  */
                 fun build(): Recipient =
-                    Recipient(channel, messageId, to, additionalProperties.toMutableMap())
+                    Recipient(body, channel, messageId, to, additionalProperties.toMutableMap())
             }
 
             private var validated: Boolean = false
@@ -730,6 +729,7 @@ private constructor(
                     return@apply
                 }
 
+                body()
                 channel()
                 messageId()
                 to()
@@ -752,7 +752,8 @@ private constructor(
              */
             @JvmSynthetic
             internal fun validity(): Int =
-                (if (channel.asKnown().isPresent) 1 else 0) +
+                (if (body.asKnown().isPresent) 1 else 0) +
+                    (if (channel.asKnown().isPresent) 1 else 0) +
                     (if (messageId.asKnown().isPresent) 1 else 0) +
                     (if (to.asKnown().isPresent) 1 else 0)
 
@@ -762,6 +763,7 @@ private constructor(
                 }
 
                 return other is Recipient &&
+                    body == other.body &&
                     channel == other.channel &&
                     messageId == other.messageId &&
                     to == other.to &&
@@ -769,13 +771,13 @@ private constructor(
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(channel, messageId, to, additionalProperties)
+                Objects.hash(body, channel, messageId, to, additionalProperties)
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Recipient{channel=$channel, messageId=$messageId, to=$to, additionalProperties=$additionalProperties}"
+                "Recipient{body=$body, channel=$channel, messageId=$messageId, to=$to, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {
@@ -784,7 +786,6 @@ private constructor(
             }
 
             return other is Data &&
-                body == other.body &&
                 recipients == other.recipients &&
                 status == other.status &&
                 templateId == other.templateId &&
@@ -793,13 +794,13 @@ private constructor(
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(body, recipients, status, templateId, templateName, additionalProperties)
+            Objects.hash(recipients, status, templateId, templateName, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{body=$body, recipients=$recipients, status=$status, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
+            "Data{recipients=$recipients, status=$status, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
