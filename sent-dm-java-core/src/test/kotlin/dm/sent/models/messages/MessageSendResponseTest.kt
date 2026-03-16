@@ -19,9 +19,9 @@ internal class MessageSendResponseTest {
             MessageSendResponse.builder()
                 .data(
                     MessageSendResponse.Data.builder()
-                        .body("body")
                         .addRecipient(
                             MessageSendResponse.Data.Recipient.builder()
+                                .body("body")
                                 .channel("channel")
                                 .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .to("to")
@@ -57,9 +57,9 @@ internal class MessageSendResponseTest {
         assertThat(messageSendResponse.data())
             .contains(
                 MessageSendResponse.Data.builder()
-                    .body("body")
                     .addRecipient(
                         MessageSendResponse.Data.Recipient.builder()
+                            .body("body")
                             .channel("channel")
                             .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .to("to")
@@ -101,9 +101,9 @@ internal class MessageSendResponseTest {
             MessageSendResponse.builder()
                 .data(
                     MessageSendResponse.Data.builder()
-                        .body("body")
                         .addRecipient(
                             MessageSendResponse.Data.Recipient.builder()
+                                .body("body")
                                 .channel("channel")
                                 .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .to("to")
