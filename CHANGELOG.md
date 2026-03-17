@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.12.1 (2026-03-17)
+
+Full Changelog: [v0.12.0...v0.12.1](https://github.com/sentdm/sent-dm-java/compare/v0.12.0...v0.12.1)
+
+### Chores
+
+* **internal:** tweak CI branches ([6016a44](https://github.com/sentdm/sent-dm-java/commit/6016a44a70710cfce159270684fb982c05f44e1e))
+
 ## 0.12.0 (2026-03-16)
 
 Full Changelog: [v0.11.0...v0.12.0](https://github.com/sentdm/sent-dm-java/compare/v0.11.0...v0.12.0)
