@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.12.2 (2026-03-18)
+
+Full Changelog: [v0.12.1...v0.12.2](https://github.com/sentdm/sent-dm-java/compare/v0.12.1...v0.12.2)
+
+### Bug Fixes
+
+* **client:** allow updating header/query affecting fields in `toBuilder()` ([f3afdff](https://github.com/sentdm/sent-dm-java/commit/f3afdffd2d250e961747ed0f802504b3f60184ce))
+
+
+### Chores
+
+* **internal:** update retry delay tests ([6fab665](https://github.com/sentdm/sent-dm-java/commit/6fab66502dab0aec7c4de51797fc3ab777c8ee35))
+
 ## 0.12.1 (2026-03-17)
 
 Full Changelog: [v0.12.0...v0.12.1](https://github.com/sentdm/sent-dm-java/compare/v0.12.0...v0.12.1)
