@@ -282,7 +282,7 @@ private constructor(
         fun recipients(): Optional<List<Recipient>> = recipients.getOptional("recipients")
 
         /**
-         * Overall request status (e.g. "accepted")
+         * Overall request status: "QUEUED" when the batch has been accepted and published to Kafka.
          *
          * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -402,7 +402,10 @@ private constructor(
                     }
             }
 
-            /** Overall request status (e.g. "accepted") */
+            /**
+             * Overall request status: "QUEUED" when the batch has been accepted and published to
+             * Kafka.
+             */
             fun status(status: String) = status(JsonField.of(status))
 
             /**
