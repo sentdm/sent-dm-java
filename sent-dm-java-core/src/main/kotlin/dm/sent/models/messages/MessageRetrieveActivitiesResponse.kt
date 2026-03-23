@@ -501,7 +501,7 @@ private constructor(
             fun price(): Optional<String> = price.getOptional("price")
 
             /**
-             * Activity status (e.g., QUEUED, PROCESSED, SENT, DELIVERED, FAILED)
+             * Activity status (e.g., QUEUED, PROCESSED, ROUTED, SENT, DELIVERED, FAILED)
              *
              * @throws SentDmInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
@@ -655,7 +655,7 @@ private constructor(
                  */
                 fun price(price: JsonField<String>) = apply { this.price = price }
 
-                /** Activity status (e.g., QUEUED, PROCESSED, SENT, DELIVERED, FAILED) */
+                /** Activity status (e.g., QUEUED, PROCESSED, ROUTED, SENT, DELIVERED, FAILED) */
                 fun status(status: String) = status(JsonField.of(status))
 
                 /**
