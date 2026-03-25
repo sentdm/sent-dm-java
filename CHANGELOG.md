@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.13.0 (2026-03-25)
+
+Full Changelog: [v0.12.2...v0.13.0](https://github.com/sentdm/sent-dm-java/compare/v0.12.2...v0.13.0)
+
+### Features
+
+* **api:** api update ([e75c446](https://github.com/sentdm/sent-dm-java/commit/e75c4465f63a039270f69eed29460e4deac4b04f))
+* **api:** api update ([607f6fa](https://github.com/sentdm/sent-dm-java/commit/607f6fa8480594351be371ae9aabb2636758112a))
+
+
+### Chores
+
+* **ci:** skip lint on metadata-only changes ([e7b04a6](https://github.com/sentdm/sent-dm-java/commit/e7b04a6eaa33943a1c2c39a6d6c5a4565848a6a5))
+* **internal:** bump ktfmt ([9d557c3](https://github.com/sentdm/sent-dm-java/commit/9d557c3f51e45eccbdb8b00e1c79603db5ae485f))
+* **internal:** update gitignore ([e59e98c](https://github.com/sentdm/sent-dm-java/commit/e59e98cec473bd6f8d525f80416b41d5cbf19ff6))
+
 ## 0.12.2 (2026-03-18)
 
 Full Changelog: [v0.12.1...v0.12.2](https://github.com/sentdm/sent-dm-java/compare/v0.12.1...v0.12.2)
