@@ -8,7 +8,7 @@ repositories {
 
 allprojects {
     group = "dm.sent"
-    version = "0.13.0" // x-release-please-version
+    version = "0.14.0" // x-release-please-version
 }
 
 subprojects {
@@ -31,6 +31,6 @@ subprojects {
 // Avoid race conditions between `dokkaJavadocCollector` and `dokkaJavadocJar` tasks
 tasks.named("dokkaJavadocCollector").configure {
     subprojects.flatMap { it.tasks }
-        .filter { it.project.name != "sent-dm-java" && it.name == "dokkaJavadocJar" }
+        .filter { it.project.name != "sent-java" && it.name == "dokkaJavadocJar" }
         .forEach { mustRunAfter(it) }
 }
