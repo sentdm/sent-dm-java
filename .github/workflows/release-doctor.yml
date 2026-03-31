@@ -18,7 +18,7 @@ jobs:
         run: |
           bash ./bin/check-release-environment
         env:
-          SONATYPE_USERNAME: ${{ secrets.SENT_DM_SONATYPE_USERNAME || secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SENT_DM_SONATYPE_PASSWORD || secrets.SONATYPE_PASSWORD }}
-          GPG_SIGNING_KEY: ${{ secrets.SENT_DM_SONATYPE_GPG_SIGNING_KEY || secrets.GPG_SIGNING_KEY }}
-          GPG_SIGNING_PASSWORD: ${{ secrets.SENT_DM_SONATYPE_GPG_SIGNING_PASSWORD || secrets.GPG_SIGNING_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SENT_SONATYPE_USERNAME || secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SENT_SONATYPE_PASSWORD || secrets.SONATYPE_PASSWORD }}
+          GPG_SIGNING_KEY: ${{ secrets.SENT_SONATYPE_GPG_SIGNING_KEY || secrets.GPG_SIGNING_KEY }}
+          GPG_SIGNING_PASSWORD: ${{ secrets.SENT_SONATYPE_GPG_SIGNING_PASSWORD || secrets.GPG_SIGNING_PASSWORD }}
