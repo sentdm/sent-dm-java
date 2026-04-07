@@ -11,6 +11,7 @@ import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
+import dm.sent.core.checkRequired
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import java.util.Collections
@@ -40,10 +41,10 @@ private constructor(
     /**
      * The footer template text with optional variable placeholders
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun template(): Optional<String> = template.getOptional("template")
+    fun template(): String = template.getRequired("template")
 
     /**
      * The type of footer (typically "text")
@@ -101,6 +102,11 @@ private constructor(
         /**
          * Returns a mutable builder for constructing an instance of
          * [SentDmServicesCommonContractsPocOsTemplateFooter].
+         *
+         * The following fields are required:
+         * ```java
+         * .template()
+         * ```
          */
         @JvmStatic fun builder() = Builder()
     }
@@ -108,7 +114,7 @@ private constructor(
     /** A builder for [SentDmServicesCommonContractsPocOsTemplateFooter]. */
     class Builder internal constructor() {
 
-        private var template: JsonField<String> = JsonMissing.of()
+        private var template: JsonField<String>? = null
         private var type: JsonField<String> = JsonMissing.of()
         private var variables: JsonField<MutableList<TemplateVariable>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -207,10 +213,17 @@ private constructor(
          * Returns an immutable instance of [SentDmServicesCommonContractsPocOsTemplateFooter].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .template()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): SentDmServicesCommonContractsPocOsTemplateFooter =
             SentDmServicesCommonContractsPocOsTemplateFooter(
-                template,
+                checkRequired("template", template),
                 type,
                 (variables ?: JsonMissing.of()).map { it.toImmutable() },
                 additionalProperties.toMutableMap(),
