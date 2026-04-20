@@ -73,6 +73,7 @@ internal class ProGuardCompatibilityTest {
                             MessageRetrieveActivitiesResponse.Data.Activity.builder()
                                 .activeContactPrice("active_contact_price")
                                 .description("description")
+                                .from("from")
                                 .price("price")
                                 .status("status")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))

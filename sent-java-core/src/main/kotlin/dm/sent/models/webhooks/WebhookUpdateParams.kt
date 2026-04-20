@@ -63,6 +63,12 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
+    fun eventFilters(): Optional<EventFilters> = body.eventFilters()
+
+    /**
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
     fun eventTypes(): Optional<List<String>> = body.eventTypes()
 
     /**
@@ -97,6 +103,13 @@ private constructor(
      * Unlike [endpointUrl], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _endpointUrl(): JsonField<String> = body._endpointUrl()
+
+    /**
+     * Returns the raw JSON value of [eventFilters].
+     *
+     * Unlike [eventFilters], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _eventFilters(): JsonField<EventFilters> = body._eventFilters()
 
     /**
      * Returns the raw JSON value of [eventTypes].
@@ -181,8 +194,8 @@ private constructor(
          * - [sandbox]
          * - [displayName]
          * - [endpointUrl]
+         * - [eventFilters]
          * - [eventTypes]
-         * - [retryCount]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -222,6 +235,23 @@ private constructor(
          * value.
          */
         fun endpointUrl(endpointUrl: JsonField<String>) = apply { body.endpointUrl(endpointUrl) }
+
+        fun eventFilters(eventFilters: EventFilters?) = apply { body.eventFilters(eventFilters) }
+
+        /** Alias for calling [Builder.eventFilters] with `eventFilters.orElse(null)`. */
+        fun eventFilters(eventFilters: Optional<EventFilters>) =
+            eventFilters(eventFilters.getOrNull())
+
+        /**
+         * Sets [Builder.eventFilters] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.eventFilters] with a well-typed [EventFilters] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun eventFilters(eventFilters: JsonField<EventFilters>) = apply {
+            body.eventFilters(eventFilters)
+        }
 
         fun eventTypes(eventTypes: List<String>) = apply { body.eventTypes(eventTypes) }
 
@@ -422,6 +452,7 @@ private constructor(
         private val sandbox: JsonField<Boolean>,
         private val displayName: JsonField<String>,
         private val endpointUrl: JsonField<String>,
+        private val eventFilters: JsonField<EventFilters>,
         private val eventTypes: JsonField<List<String>>,
         private val retryCount: JsonField<Int>,
         private val timeoutSeconds: JsonField<Int>,
@@ -437,6 +468,9 @@ private constructor(
             @JsonProperty("endpoint_url")
             @ExcludeMissing
             endpointUrl: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("event_filters")
+            @ExcludeMissing
+            eventFilters: JsonField<EventFilters> = JsonMissing.of(),
             @JsonProperty("event_types")
             @ExcludeMissing
             eventTypes: JsonField<List<String>> = JsonMissing.of(),
@@ -450,6 +484,7 @@ private constructor(
             sandbox,
             displayName,
             endpointUrl,
+            eventFilters,
             eventTypes,
             retryCount,
             timeoutSeconds,
@@ -479,6 +514,12 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun endpointUrl(): Optional<String> = endpointUrl.getOptional("endpoint_url")
+
+        /**
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun eventFilters(): Optional<EventFilters> = eventFilters.getOptional("event_filters")
 
         /**
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -522,6 +563,16 @@ private constructor(
         @JsonProperty("endpoint_url")
         @ExcludeMissing
         fun _endpointUrl(): JsonField<String> = endpointUrl
+
+        /**
+         * Returns the raw JSON value of [eventFilters].
+         *
+         * Unlike [eventFilters], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("event_filters")
+        @ExcludeMissing
+        fun _eventFilters(): JsonField<EventFilters> = eventFilters
 
         /**
          * Returns the raw JSON value of [eventTypes].
@@ -573,6 +624,7 @@ private constructor(
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var displayName: JsonField<String> = JsonMissing.of()
             private var endpointUrl: JsonField<String> = JsonMissing.of()
+            private var eventFilters: JsonField<EventFilters> = JsonMissing.of()
             private var eventTypes: JsonField<MutableList<String>>? = null
             private var retryCount: JsonField<Int> = JsonMissing.of()
             private var timeoutSeconds: JsonField<Int> = JsonMissing.of()
@@ -583,6 +635,7 @@ private constructor(
                 sandbox = body.sandbox
                 displayName = body.displayName
                 endpointUrl = body.endpointUrl
+                eventFilters = body.eventFilters
                 eventTypes = body.eventTypes.map { it.toMutableList() }
                 retryCount = body.retryCount
                 timeoutSeconds = body.timeoutSeconds
@@ -628,6 +681,24 @@ private constructor(
              */
             fun endpointUrl(endpointUrl: JsonField<String>) = apply {
                 this.endpointUrl = endpointUrl
+            }
+
+            fun eventFilters(eventFilters: EventFilters?) =
+                eventFilters(JsonField.ofNullable(eventFilters))
+
+            /** Alias for calling [Builder.eventFilters] with `eventFilters.orElse(null)`. */
+            fun eventFilters(eventFilters: Optional<EventFilters>) =
+                eventFilters(eventFilters.getOrNull())
+
+            /**
+             * Sets [Builder.eventFilters] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.eventFilters] with a well-typed [EventFilters] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun eventFilters(eventFilters: JsonField<EventFilters>) = apply {
+                this.eventFilters = eventFilters
             }
 
             fun eventTypes(eventTypes: List<String>) = eventTypes(JsonField.of(eventTypes))
@@ -708,6 +779,7 @@ private constructor(
                     sandbox,
                     displayName,
                     endpointUrl,
+                    eventFilters,
                     (eventTypes ?: JsonMissing.of()).map { it.toImmutable() },
                     retryCount,
                     timeoutSeconds,
@@ -725,6 +797,7 @@ private constructor(
             sandbox()
             displayName()
             endpointUrl()
+            eventFilters().ifPresent { it.validate() }
             eventTypes()
             retryCount()
             timeoutSeconds()
@@ -750,6 +823,7 @@ private constructor(
             (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (if (displayName.asKnown().isPresent) 1 else 0) +
                 (if (endpointUrl.asKnown().isPresent) 1 else 0) +
+                (eventFilters.asKnown().getOrNull()?.validity() ?: 0) +
                 (eventTypes.asKnown().getOrNull()?.size ?: 0) +
                 (if (retryCount.asKnown().isPresent) 1 else 0) +
                 (if (timeoutSeconds.asKnown().isPresent) 1 else 0)
@@ -763,6 +837,7 @@ private constructor(
                 sandbox == other.sandbox &&
                 displayName == other.displayName &&
                 endpointUrl == other.endpointUrl &&
+                eventFilters == other.eventFilters &&
                 eventTypes == other.eventTypes &&
                 retryCount == other.retryCount &&
                 timeoutSeconds == other.timeoutSeconds &&
@@ -774,6 +849,7 @@ private constructor(
                 sandbox,
                 displayName,
                 endpointUrl,
+                eventFilters,
                 eventTypes,
                 retryCount,
                 timeoutSeconds,
@@ -784,7 +860,106 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, displayName=$displayName, endpointUrl=$endpointUrl, eventTypes=$eventTypes, retryCount=$retryCount, timeoutSeconds=$timeoutSeconds, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, displayName=$displayName, endpointUrl=$endpointUrl, eventFilters=$eventFilters, eventTypes=$eventTypes, retryCount=$retryCount, timeoutSeconds=$timeoutSeconds, additionalProperties=$additionalProperties}"
+    }
+
+    class EventFilters
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [EventFilters]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [EventFilters]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(eventFilters: EventFilters) = apply {
+                additionalProperties = eventFilters.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [EventFilters].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): EventFilters = EventFilters(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): EventFilters = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is EventFilters && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "EventFilters{additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

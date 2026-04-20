@@ -2,6 +2,7 @@
 
 package dm.sent.models.webhooks
 
+import dm.sent.core.JsonValue
 import dm.sent.core.http.Headers
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -17,7 +18,12 @@ internal class WebhookCreateParamsTest {
             .sandbox(false)
             .displayName("Order Notifications")
             .endpointUrl("https://example.com/webhooks/orders")
-            .addEventType("messages")
+            .eventFilters(
+                WebhookCreateParams.EventFilters.builder()
+                    .putAdditionalProperty("message", JsonValue.from(listOf("delivered", "failed")))
+                    .build()
+            )
+            .addEventType("message")
             .addEventType("templates")
             .retryCount(3)
             .timeoutSeconds(30)
@@ -33,7 +39,15 @@ internal class WebhookCreateParamsTest {
                 .sandbox(false)
                 .displayName("Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders")
-                .addEventType("messages")
+                .eventFilters(
+                    WebhookCreateParams.EventFilters.builder()
+                        .putAdditionalProperty(
+                            "message",
+                            JsonValue.from(listOf("delivered", "failed")),
+                        )
+                        .build()
+                )
+                .addEventType("message")
                 .addEventType("templates")
                 .retryCount(3)
                 .timeoutSeconds(30)
@@ -68,7 +82,15 @@ internal class WebhookCreateParamsTest {
                 .sandbox(false)
                 .displayName("Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders")
-                .addEventType("messages")
+                .eventFilters(
+                    WebhookCreateParams.EventFilters.builder()
+                        .putAdditionalProperty(
+                            "message",
+                            JsonValue.from(listOf("delivered", "failed")),
+                        )
+                        .build()
+                )
+                .addEventType("message")
                 .addEventType("templates")
                 .retryCount(3)
                 .timeoutSeconds(30)
@@ -79,7 +101,13 @@ internal class WebhookCreateParamsTest {
         assertThat(body.sandbox()).contains(false)
         assertThat(body.displayName()).contains("Order Notifications")
         assertThat(body.endpointUrl()).contains("https://example.com/webhooks/orders")
-        assertThat(body.eventTypes().getOrNull()).containsExactly("messages", "templates")
+        assertThat(body.eventFilters())
+            .contains(
+                WebhookCreateParams.EventFilters.builder()
+                    .putAdditionalProperty("message", JsonValue.from(listOf("delivered", "failed")))
+                    .build()
+            )
+        assertThat(body.eventTypes().getOrNull()).containsExactly("message", "templates")
         assertThat(body.retryCount()).contains(3)
         assertThat(body.timeoutSeconds()).contains(30)
     }

@@ -39,6 +39,14 @@ internal class WebhookListResponseTest {
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .displayName("display_name")
                                 .endpointUrl("endpoint_url")
+                                .eventFilters(
+                                    WebhookResponse.EventFilters.builder()
+                                        .putAdditionalProperty(
+                                            "foo",
+                                            JsonValue.from(listOf("string")),
+                                        )
+                                        .build()
+                                )
                                 .addEventType("string")
                                 .isActive(true)
                                 .lastDeliveryAttemptAt(
@@ -102,6 +110,11 @@ internal class WebhookListResponseTest {
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .displayName("display_name")
                             .endpointUrl("endpoint_url")
+                            .eventFilters(
+                                WebhookResponse.EventFilters.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                                    .build()
+                            )
                             .addEventType("string")
                             .isActive(true)
                             .lastDeliveryAttemptAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -169,6 +182,14 @@ internal class WebhookListResponseTest {
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .displayName("display_name")
                                 .endpointUrl("endpoint_url")
+                                .eventFilters(
+                                    WebhookResponse.EventFilters.builder()
+                                        .putAdditionalProperty(
+                                            "foo",
+                                            JsonValue.from(listOf("string")),
+                                        )
+                                        .build()
+                                )
                                 .addEventType("string")
                                 .isActive(true)
                                 .lastDeliveryAttemptAt(
