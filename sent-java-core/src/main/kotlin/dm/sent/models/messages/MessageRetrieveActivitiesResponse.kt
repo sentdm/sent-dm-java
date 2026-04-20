@@ -450,6 +450,7 @@ private constructor(
         private constructor(
             private val activeContactPrice: JsonField<String>,
             private val description: JsonField<String>,
+            private val from: JsonField<String>,
             private val price: JsonField<String>,
             private val status: JsonField<String>,
             private val timestamp: JsonField<OffsetDateTime>,
@@ -464,6 +465,7 @@ private constructor(
                 @JsonProperty("description")
                 @ExcludeMissing
                 description: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("from") @ExcludeMissing from: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("price") @ExcludeMissing price: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("status")
                 @ExcludeMissing
@@ -471,7 +473,15 @@ private constructor(
                 @JsonProperty("timestamp")
                 @ExcludeMissing
                 timestamp: JsonField<OffsetDateTime> = JsonMissing.of(),
-            ) : this(activeContactPrice, description, price, status, timestamp, mutableMapOf())
+            ) : this(
+                activeContactPrice,
+                description,
+                from,
+                price,
+                status,
+                timestamp,
+                mutableMapOf(),
+            )
 
             /**
              * Active contact markup applied on top of the channel cost, formatted to 4 decimal
@@ -490,6 +500,15 @@ private constructor(
              *   the server responded with an unexpected value).
              */
             fun description(): Optional<String> = description.getOptional("description")
+
+            /**
+             * Sender phone number for this activity (the customer's sending number for outbound,
+             * the external sender for inbound). Null when not reported by the provider.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun from(): Optional<String> = from.getOptional("from")
 
             /**
              * Channel cost for this activity (e.g., SMS/WhatsApp provider cost), formatted to 4
@@ -535,6 +554,13 @@ private constructor(
             @JsonProperty("description")
             @ExcludeMissing
             fun _description(): JsonField<String> = description
+
+            /**
+             * Returns the raw JSON value of [from].
+             *
+             * Unlike [from], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("from") @ExcludeMissing fun _from(): JsonField<String> = from
 
             /**
              * Returns the raw JSON value of [price].
@@ -583,6 +609,7 @@ private constructor(
 
                 private var activeContactPrice: JsonField<String> = JsonMissing.of()
                 private var description: JsonField<String> = JsonMissing.of()
+                private var from: JsonField<String> = JsonMissing.of()
                 private var price: JsonField<String> = JsonMissing.of()
                 private var status: JsonField<String> = JsonMissing.of()
                 private var timestamp: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -592,6 +619,7 @@ private constructor(
                 internal fun from(activity: Activity) = apply {
                     activeContactPrice = activity.activeContactPrice
                     description = activity.description
+                    from = activity.from
                     price = activity.price
                     status = activity.status
                     timestamp = activity.timestamp
@@ -636,6 +664,25 @@ private constructor(
                 fun description(description: JsonField<String>) = apply {
                     this.description = description
                 }
+
+                /**
+                 * Sender phone number for this activity (the customer's sending number for
+                 * outbound, the external sender for inbound). Null when not reported by the
+                 * provider.
+                 */
+                fun from(from: String?) = from(JsonField.ofNullable(from))
+
+                /** Alias for calling [Builder.from] with `from.orElse(null)`. */
+                fun from(from: Optional<String>) = from(from.getOrNull())
+
+                /**
+                 * Sets [Builder.from] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.from] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun from(from: JsonField<String>) = apply { this.from = from }
 
                 /**
                  * Channel cost for this activity (e.g., SMS/WhatsApp provider cost), formatted to 4
@@ -712,6 +759,7 @@ private constructor(
                     Activity(
                         activeContactPrice,
                         description,
+                        from,
                         price,
                         status,
                         timestamp,
@@ -728,6 +776,7 @@ private constructor(
 
                 activeContactPrice()
                 description()
+                from()
                 price()
                 status()
                 timestamp()
@@ -752,6 +801,7 @@ private constructor(
             internal fun validity(): Int =
                 (if (activeContactPrice.asKnown().isPresent) 1 else 0) +
                     (if (description.asKnown().isPresent) 1 else 0) +
+                    (if (from.asKnown().isPresent) 1 else 0) +
                     (if (price.asKnown().isPresent) 1 else 0) +
                     (if (status.asKnown().isPresent) 1 else 0) +
                     (if (timestamp.asKnown().isPresent) 1 else 0)
@@ -764,6 +814,7 @@ private constructor(
                 return other is Activity &&
                     activeContactPrice == other.activeContactPrice &&
                     description == other.description &&
+                    from == other.from &&
                     price == other.price &&
                     status == other.status &&
                     timestamp == other.timestamp &&
@@ -774,6 +825,7 @@ private constructor(
                 Objects.hash(
                     activeContactPrice,
                     description,
+                    from,
                     price,
                     status,
                     timestamp,
@@ -784,7 +836,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Activity{activeContactPrice=$activeContactPrice, description=$description, price=$price, status=$status, timestamp=$timestamp, additionalProperties=$additionalProperties}"
+                "Activity{activeContactPrice=$activeContactPrice, description=$description, from=$from, price=$price, status=$status, timestamp=$timestamp, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {

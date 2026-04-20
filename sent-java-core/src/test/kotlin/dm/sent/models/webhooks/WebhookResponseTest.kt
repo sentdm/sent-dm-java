@@ -3,6 +3,7 @@
 package dm.sent.models.webhooks
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
@@ -20,6 +21,11 @@ internal class WebhookResponseTest {
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .displayName("display_name")
                 .endpointUrl("endpoint_url")
+                .eventFilters(
+                    WebhookResponse.EventFilters.builder()
+                        .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                        .build()
+                )
                 .addEventType("string")
                 .isActive(true)
                 .lastDeliveryAttemptAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -36,6 +42,12 @@ internal class WebhookResponseTest {
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(webhookResponse.displayName()).contains("display_name")
         assertThat(webhookResponse.endpointUrl()).contains("endpoint_url")
+        assertThat(webhookResponse.eventFilters())
+            .contains(
+                WebhookResponse.EventFilters.builder()
+                    .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                    .build()
+            )
         assertThat(webhookResponse.eventTypes().getOrNull()).containsExactly("string")
         assertThat(webhookResponse.isActive()).contains(true)
         assertThat(webhookResponse.lastDeliveryAttemptAt())
@@ -59,6 +71,11 @@ internal class WebhookResponseTest {
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .displayName("display_name")
                 .endpointUrl("endpoint_url")
+                .eventFilters(
+                    WebhookResponse.EventFilters.builder()
+                        .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                        .build()
+                )
                 .addEventType("string")
                 .isActive(true)
                 .lastDeliveryAttemptAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))

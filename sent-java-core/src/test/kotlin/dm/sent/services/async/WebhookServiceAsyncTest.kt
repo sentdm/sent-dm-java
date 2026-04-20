@@ -3,6 +3,7 @@
 package dm.sent.services.async
 
 import dm.sent.client.okhttp.SentOkHttpClientAsync
+import dm.sent.core.JsonValue
 import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
@@ -32,7 +33,15 @@ internal class WebhookServiceAsyncTest {
                     .sandbox(false)
                     .displayName("Order Notifications")
                     .endpointUrl("https://example.com/webhooks/orders")
-                    .addEventType("messages")
+                    .eventFilters(
+                        WebhookCreateParams.EventFilters.builder()
+                            .putAdditionalProperty(
+                                "message",
+                                JsonValue.from(listOf("delivered", "failed")),
+                            )
+                            .build()
+                    )
+                    .addEventType("message")
                     .addEventType("templates")
                     .retryCount(3)
                     .timeoutSeconds(30)
@@ -76,7 +85,15 @@ internal class WebhookServiceAsyncTest {
                     .sandbox(false)
                     .displayName("Updated Order Notifications")
                     .endpointUrl("https://example.com/webhooks/orders-v2")
-                    .addEventType("messages")
+                    .eventFilters(
+                        WebhookUpdateParams.EventFilters.builder()
+                            .putAdditionalProperty(
+                                "message",
+                                JsonValue.from(listOf("delivered", "failed")),
+                            )
+                            .build()
+                    )
+                    .addEventType("message")
                     .addEventType("templates")
                     .retryCount(5)
                     .timeoutSeconds(60)
