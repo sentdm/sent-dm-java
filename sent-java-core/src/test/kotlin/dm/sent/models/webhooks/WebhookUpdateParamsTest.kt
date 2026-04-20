@@ -2,6 +2,7 @@
 
 package dm.sent.models.webhooks
 
+import dm.sent.core.JsonValue
 import dm.sent.core.http.Headers
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -18,7 +19,12 @@ internal class WebhookUpdateParamsTest {
             .sandbox(false)
             .displayName("Updated Order Notifications")
             .endpointUrl("https://example.com/webhooks/orders-v2")
-            .addEventType("messages")
+            .eventFilters(
+                WebhookUpdateParams.EventFilters.builder()
+                    .putAdditionalProperty("message", JsonValue.from(listOf("delivered", "failed")))
+                    .build()
+            )
+            .addEventType("message")
             .addEventType("templates")
             .retryCount(5)
             .timeoutSeconds(60)
@@ -45,7 +51,15 @@ internal class WebhookUpdateParamsTest {
                 .sandbox(false)
                 .displayName("Updated Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders-v2")
-                .addEventType("messages")
+                .eventFilters(
+                    WebhookUpdateParams.EventFilters.builder()
+                        .putAdditionalProperty(
+                            "message",
+                            JsonValue.from(listOf("delivered", "failed")),
+                        )
+                        .build()
+                )
+                .addEventType("message")
                 .addEventType("templates")
                 .retryCount(5)
                 .timeoutSeconds(60)
@@ -82,7 +96,15 @@ internal class WebhookUpdateParamsTest {
                 .sandbox(false)
                 .displayName("Updated Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders-v2")
-                .addEventType("messages")
+                .eventFilters(
+                    WebhookUpdateParams.EventFilters.builder()
+                        .putAdditionalProperty(
+                            "message",
+                            JsonValue.from(listOf("delivered", "failed")),
+                        )
+                        .build()
+                )
+                .addEventType("message")
                 .addEventType("templates")
                 .retryCount(5)
                 .timeoutSeconds(60)
@@ -93,7 +115,13 @@ internal class WebhookUpdateParamsTest {
         assertThat(body.sandbox()).contains(false)
         assertThat(body.displayName()).contains("Updated Order Notifications")
         assertThat(body.endpointUrl()).contains("https://example.com/webhooks/orders-v2")
-        assertThat(body.eventTypes().getOrNull()).containsExactly("messages", "templates")
+        assertThat(body.eventFilters())
+            .contains(
+                WebhookUpdateParams.EventFilters.builder()
+                    .putAdditionalProperty("message", JsonValue.from(listOf("delivered", "failed")))
+                    .build()
+            )
+        assertThat(body.eventTypes().getOrNull()).containsExactly("message", "templates")
         assertThat(body.retryCount()).contains(5)
         assertThat(body.timeoutSeconds()).contains(60)
     }

@@ -405,8 +405,10 @@ private constructor(
         private constructor(
             private val description: JsonField<String>,
             private val displayName: JsonField<String>,
+            private val eventType: JsonField<String>,
             private val isActive: JsonField<Boolean>,
             private val name: JsonField<String>,
+            private val subTypes: JsonField<List<JsonValue>>,
             private val additionalProperties: MutableMap<String, JsonValue>,
         ) {
 
@@ -418,11 +420,17 @@ private constructor(
                 @JsonProperty("display_name")
                 @ExcludeMissing
                 displayName: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("event_type")
+                @ExcludeMissing
+                eventType: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("is_active")
                 @ExcludeMissing
                 isActive: JsonField<Boolean> = JsonMissing.of(),
                 @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
-            ) : this(description, displayName, isActive, name, mutableMapOf())
+                @JsonProperty("sub_types")
+                @ExcludeMissing
+                subTypes: JsonField<List<JsonValue>> = JsonMissing.of(),
+            ) : this(description, displayName, eventType, isActive, name, subTypes, mutableMapOf())
 
             /**
              * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -440,6 +448,12 @@ private constructor(
              * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
              */
+            fun eventType(): Optional<String> = eventType.getOptional("event_type")
+
+            /**
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
             fun isActive(): Optional<Boolean> = isActive.getOptional("is_active")
 
             /**
@@ -447,6 +461,12 @@ private constructor(
              *   the server responded with an unexpected value).
              */
             fun name(): Optional<String> = name.getOptional("name")
+
+            /**
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun subTypes(): Optional<List<JsonValue>> = subTypes.getOptional("sub_types")
 
             /**
              * Returns the raw JSON value of [description].
@@ -469,6 +489,16 @@ private constructor(
             fun _displayName(): JsonField<String> = displayName
 
             /**
+             * Returns the raw JSON value of [eventType].
+             *
+             * Unlike [eventType], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("event_type")
+            @ExcludeMissing
+            fun _eventType(): JsonField<String> = eventType
+
+            /**
              * Returns the raw JSON value of [isActive].
              *
              * Unlike [isActive], this method doesn't throw if the JSON field has an unexpected
@@ -484,6 +514,16 @@ private constructor(
              * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+            /**
+             * Returns the raw JSON value of [subTypes].
+             *
+             * Unlike [subTypes], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("sub_types")
+            @ExcludeMissing
+            fun _subTypes(): JsonField<List<JsonValue>> = subTypes
 
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -508,16 +548,20 @@ private constructor(
 
                 private var description: JsonField<String> = JsonMissing.of()
                 private var displayName: JsonField<String> = JsonMissing.of()
+                private var eventType: JsonField<String> = JsonMissing.of()
                 private var isActive: JsonField<Boolean> = JsonMissing.of()
                 private var name: JsonField<String> = JsonMissing.of()
+                private var subTypes: JsonField<MutableList<JsonValue>>? = null
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                 @JvmSynthetic
                 internal fun from(eventType: EventType) = apply {
                     description = eventType.description
                     displayName = eventType.displayName
+                    this.eventType = eventType.eventType
                     isActive = eventType.isActive
                     name = eventType.name
+                    subTypes = eventType.subTypes.map { it.toMutableList() }
                     additionalProperties = eventType.additionalProperties.toMutableMap()
                 }
 
@@ -552,6 +596,20 @@ private constructor(
                     this.displayName = displayName
                 }
 
+                fun eventType(eventType: String?) = eventType(JsonField.ofNullable(eventType))
+
+                /** Alias for calling [Builder.eventType] with `eventType.orElse(null)`. */
+                fun eventType(eventType: Optional<String>) = eventType(eventType.getOrNull())
+
+                /**
+                 * Sets [Builder.eventType] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.eventType] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun eventType(eventType: JsonField<String>) = apply { this.eventType = eventType }
+
                 fun isActive(isActive: Boolean) = isActive(JsonField.of(isActive))
 
                 /**
@@ -573,6 +631,34 @@ private constructor(
                  * supported value.
                  */
                 fun name(name: JsonField<String>) = apply { this.name = name }
+
+                fun subTypes(subTypes: List<JsonValue>?) = subTypes(JsonField.ofNullable(subTypes))
+
+                /** Alias for calling [Builder.subTypes] with `subTypes.orElse(null)`. */
+                fun subTypes(subTypes: Optional<List<JsonValue>>) = subTypes(subTypes.getOrNull())
+
+                /**
+                 * Sets [Builder.subTypes] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.subTypes] with a well-typed `List<JsonValue>`
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun subTypes(subTypes: JsonField<List<JsonValue>>) = apply {
+                    this.subTypes = subTypes.map { it.toMutableList() }
+                }
+
+                /**
+                 * Adds a single [JsonValue] to [subTypes].
+                 *
+                 * @throws IllegalStateException if the field was previously set to a non-list.
+                 */
+                fun addSubType(subType: JsonValue) = apply {
+                    subTypes =
+                        (subTypes ?: JsonField.of(mutableListOf())).also {
+                            checkKnown("subTypes", it).add(subType)
+                        }
+                }
 
                 fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                     this.additionalProperties.clear()
@@ -605,8 +691,10 @@ private constructor(
                     EventType(
                         description,
                         displayName,
+                        eventType,
                         isActive,
                         name,
+                        (subTypes ?: JsonMissing.of()).map { it.toImmutable() },
                         additionalProperties.toMutableMap(),
                     )
             }
@@ -620,8 +708,10 @@ private constructor(
 
                 description()
                 displayName()
+                eventType()
                 isActive()
                 name()
+                subTypes()
                 validated = true
             }
 
@@ -643,8 +733,10 @@ private constructor(
             internal fun validity(): Int =
                 (if (description.asKnown().isPresent) 1 else 0) +
                     (if (displayName.asKnown().isPresent) 1 else 0) +
+                    (if (eventType.asKnown().isPresent) 1 else 0) +
                     (if (isActive.asKnown().isPresent) 1 else 0) +
-                    (if (name.asKnown().isPresent) 1 else 0)
+                    (if (name.asKnown().isPresent) 1 else 0) +
+                    (subTypes.asKnown().getOrNull()?.size ?: 0)
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) {
@@ -654,19 +746,29 @@ private constructor(
                 return other is EventType &&
                     description == other.description &&
                     displayName == other.displayName &&
+                    eventType == other.eventType &&
                     isActive == other.isActive &&
                     name == other.name &&
+                    subTypes == other.subTypes &&
                     additionalProperties == other.additionalProperties
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(description, displayName, isActive, name, additionalProperties)
+                Objects.hash(
+                    description,
+                    displayName,
+                    eventType,
+                    isActive,
+                    name,
+                    subTypes,
+                    additionalProperties,
+                )
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "EventType{description=$description, displayName=$displayName, isActive=$isActive, name=$name, additionalProperties=$additionalProperties}"
+                "EventType{description=$description, displayName=$displayName, eventType=$eventType, isActive=$isActive, name=$name, subTypes=$subTypes, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {

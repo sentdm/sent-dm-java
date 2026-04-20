@@ -27,6 +27,7 @@ private constructor(
     private val createdAt: JsonField<OffsetDateTime>,
     private val displayName: JsonField<String>,
     private val endpointUrl: JsonField<String>,
+    private val eventFilters: JsonField<EventFilters>,
     private val eventTypes: JsonField<List<String>>,
     private val isActive: JsonField<Boolean>,
     private val lastDeliveryAttemptAt: JsonField<OffsetDateTime>,
@@ -53,6 +54,9 @@ private constructor(
         @JsonProperty("endpoint_url")
         @ExcludeMissing
         endpointUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("event_filters")
+        @ExcludeMissing
+        eventFilters: JsonField<EventFilters> = JsonMissing.of(),
         @JsonProperty("event_types")
         @ExcludeMissing
         eventTypes: JsonField<List<String>> = JsonMissing.of(),
@@ -79,6 +83,7 @@ private constructor(
         createdAt,
         displayName,
         endpointUrl,
+        eventFilters,
         eventTypes,
         isActive,
         lastDeliveryAttemptAt,
@@ -120,6 +125,12 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun endpointUrl(): Optional<String> = endpointUrl.getOptional("endpoint_url")
+
+    /**
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun eventFilters(): Optional<EventFilters> = eventFilters.getOptional("event_filters")
 
     /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -214,6 +225,15 @@ private constructor(
     @JsonProperty("endpoint_url")
     @ExcludeMissing
     fun _endpointUrl(): JsonField<String> = endpointUrl
+
+    /**
+     * Returns the raw JSON value of [eventFilters].
+     *
+     * Unlike [eventFilters], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("event_filters")
+    @ExcludeMissing
+    fun _eventFilters(): JsonField<EventFilters> = eventFilters
 
     /**
      * Returns the raw JSON value of [eventTypes].
@@ -311,6 +331,7 @@ private constructor(
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var displayName: JsonField<String> = JsonMissing.of()
         private var endpointUrl: JsonField<String> = JsonMissing.of()
+        private var eventFilters: JsonField<EventFilters> = JsonMissing.of()
         private var eventTypes: JsonField<MutableList<String>>? = null
         private var isActive: JsonField<Boolean> = JsonMissing.of()
         private var lastDeliveryAttemptAt: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -328,6 +349,7 @@ private constructor(
             createdAt = webhookResponse.createdAt
             displayName = webhookResponse.displayName
             endpointUrl = webhookResponse.endpointUrl
+            eventFilters = webhookResponse.eventFilters
             eventTypes = webhookResponse.eventTypes.map { it.toMutableList() }
             isActive = webhookResponse.isActive
             lastDeliveryAttemptAt = webhookResponse.lastDeliveryAttemptAt
@@ -395,6 +417,24 @@ private constructor(
          * value.
          */
         fun endpointUrl(endpointUrl: JsonField<String>) = apply { this.endpointUrl = endpointUrl }
+
+        fun eventFilters(eventFilters: EventFilters?) =
+            eventFilters(JsonField.ofNullable(eventFilters))
+
+        /** Alias for calling [Builder.eventFilters] with `eventFilters.orElse(null)`. */
+        fun eventFilters(eventFilters: Optional<EventFilters>) =
+            eventFilters(eventFilters.getOrNull())
+
+        /**
+         * Sets [Builder.eventFilters] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.eventFilters] with a well-typed [EventFilters] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun eventFilters(eventFilters: JsonField<EventFilters>) = apply {
+            this.eventFilters = eventFilters
+        }
 
         fun eventTypes(eventTypes: List<String>) = eventTypes(JsonField.of(eventTypes))
 
@@ -560,6 +600,7 @@ private constructor(
                 createdAt,
                 displayName,
                 endpointUrl,
+                eventFilters,
                 (eventTypes ?: JsonMissing.of()).map { it.toImmutable() },
                 isActive,
                 lastDeliveryAttemptAt,
@@ -584,6 +625,7 @@ private constructor(
         createdAt()
         displayName()
         endpointUrl()
+        eventFilters().ifPresent { it.validate() }
         eventTypes()
         isActive()
         lastDeliveryAttemptAt()
@@ -615,6 +657,7 @@ private constructor(
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (displayName.asKnown().isPresent) 1 else 0) +
             (if (endpointUrl.asKnown().isPresent) 1 else 0) +
+            (eventFilters.asKnown().getOrNull()?.validity() ?: 0) +
             (eventTypes.asKnown().getOrNull()?.size ?: 0) +
             (if (isActive.asKnown().isPresent) 1 else 0) +
             (if (lastDeliveryAttemptAt.asKnown().isPresent) 1 else 0) +
@@ -623,6 +666,105 @@ private constructor(
             (if (signingSecret.asKnown().isPresent) 1 else 0) +
             (if (timeoutSeconds.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
+
+    class EventFilters
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [EventFilters]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [EventFilters]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(eventFilters: EventFilters) = apply {
+                additionalProperties = eventFilters.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [EventFilters].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): EventFilters = EventFilters(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): EventFilters = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is EventFilters && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "EventFilters{additionalProperties=$additionalProperties}"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -635,6 +777,7 @@ private constructor(
             createdAt == other.createdAt &&
             displayName == other.displayName &&
             endpointUrl == other.endpointUrl &&
+            eventFilters == other.eventFilters &&
             eventTypes == other.eventTypes &&
             isActive == other.isActive &&
             lastDeliveryAttemptAt == other.lastDeliveryAttemptAt &&
@@ -653,6 +796,7 @@ private constructor(
             createdAt,
             displayName,
             endpointUrl,
+            eventFilters,
             eventTypes,
             isActive,
             lastDeliveryAttemptAt,
@@ -668,5 +812,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "WebhookResponse{id=$id, consecutiveFailures=$consecutiveFailures, createdAt=$createdAt, displayName=$displayName, endpointUrl=$endpointUrl, eventTypes=$eventTypes, isActive=$isActive, lastDeliveryAttemptAt=$lastDeliveryAttemptAt, lastSuccessfulDeliveryAt=$lastSuccessfulDeliveryAt, retryCount=$retryCount, signingSecret=$signingSecret, timeoutSeconds=$timeoutSeconds, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "WebhookResponse{id=$id, consecutiveFailures=$consecutiveFailures, createdAt=$createdAt, displayName=$displayName, endpointUrl=$endpointUrl, eventFilters=$eventFilters, eventTypes=$eventTypes, isActive=$isActive, lastDeliveryAttemptAt=$lastDeliveryAttemptAt, lastSuccessfulDeliveryAt=$lastSuccessfulDeliveryAt, retryCount=$retryCount, signingSecret=$signingSecret, timeoutSeconds=$timeoutSeconds, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }
