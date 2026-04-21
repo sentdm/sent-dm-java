@@ -3,6 +3,7 @@
 package dm.sent.models.contacts
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
@@ -16,6 +17,11 @@ internal class ContactResponseTest {
             ContactResponse.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .availableChannels("available_channels")
+                .channelConsent(
+                    ContactResponse.ChannelConsent.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .countryCode("country_code")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .defaultChannel("default_channel")
@@ -32,6 +38,12 @@ internal class ContactResponseTest {
 
         assertThat(contactResponse.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(contactResponse.availableChannels()).contains("available_channels")
+        assertThat(contactResponse.channelConsent())
+            .contains(
+                ContactResponse.ChannelConsent.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
         assertThat(contactResponse.countryCode()).contains("country_code")
         assertThat(contactResponse.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -55,6 +67,11 @@ internal class ContactResponseTest {
             ContactResponse.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .availableChannels("available_channels")
+                .channelConsent(
+                    ContactResponse.ChannelConsent.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .countryCode("country_code")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .defaultChannel("default_channel")

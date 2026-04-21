@@ -268,6 +268,7 @@ private constructor(
         private val contactId: JsonField<String>,
         private val createdAt: JsonField<OffsetDateTime>,
         private val customerId: JsonField<String>,
+        private val direction: JsonField<String>,
         private val events: JsonField<List<Event>>,
         private val messageBody: JsonField<MessageBody>,
         private val phone: JsonField<String>,
@@ -297,6 +298,9 @@ private constructor(
             @JsonProperty("customer_id")
             @ExcludeMissing
             customerId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("direction")
+            @ExcludeMissing
+            direction: JsonField<String> = JsonMissing.of(),
             @JsonProperty("events")
             @ExcludeMissing
             events: JsonField<List<Event>> = JsonMissing.of(),
@@ -328,6 +332,7 @@ private constructor(
             contactId,
             createdAt,
             customerId,
+            direction,
             events,
             messageBody,
             phone,
@@ -377,6 +382,12 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun customerId(): Optional<String> = customerId.getOptional("customer_id")
+
+        /**
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun direction(): Optional<String> = direction.getOptional("direction")
 
         /**
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -492,6 +503,13 @@ private constructor(
         fun _customerId(): JsonField<String> = customerId
 
         /**
+         * Returns the raw JSON value of [direction].
+         *
+         * Unlike [direction], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("direction") @ExcludeMissing fun _direction(): JsonField<String> = direction
+
+        /**
          * Returns the raw JSON value of [events].
          *
          * Unlike [events], this method doesn't throw if the JSON field has an unexpected type.
@@ -603,6 +621,7 @@ private constructor(
             private var contactId: JsonField<String> = JsonMissing.of()
             private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var customerId: JsonField<String> = JsonMissing.of()
+            private var direction: JsonField<String> = JsonMissing.of()
             private var events: JsonField<MutableList<Event>>? = null
             private var messageBody: JsonField<MessageBody> = JsonMissing.of()
             private var phone: JsonField<String> = JsonMissing.of()
@@ -623,6 +642,7 @@ private constructor(
                 contactId = data.contactId
                 createdAt = data.createdAt
                 customerId = data.customerId
+                direction = data.direction
                 events = data.events.map { it.toMutableList() }
                 messageBody = data.messageBody
                 phone = data.phone
@@ -721,6 +741,17 @@ private constructor(
              * supported value.
              */
             fun customerId(customerId: JsonField<String>) = apply { this.customerId = customerId }
+
+            fun direction(direction: String) = direction(JsonField.of(direction))
+
+            /**
+             * Sets [Builder.direction] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.direction] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun direction(direction: JsonField<String>) = apply { this.direction = direction }
 
             fun events(events: List<Event>?) = events(JsonField.ofNullable(events))
 
@@ -840,8 +871,14 @@ private constructor(
              */
             fun status(status: JsonField<String>) = apply { this.status = status }
 
-            fun templateCategory(templateCategory: String) =
-                templateCategory(JsonField.of(templateCategory))
+            fun templateCategory(templateCategory: String?) =
+                templateCategory(JsonField.ofNullable(templateCategory))
+
+            /**
+             * Alias for calling [Builder.templateCategory] with `templateCategory.orElse(null)`.
+             */
+            fun templateCategory(templateCategory: Optional<String>) =
+                templateCategory(templateCategory.getOrNull())
 
             /**
              * Sets [Builder.templateCategory] to an arbitrary JSON value.
@@ -868,7 +905,12 @@ private constructor(
              */
             fun templateId(templateId: JsonField<String>) = apply { this.templateId = templateId }
 
-            fun templateName(templateName: String) = templateName(JsonField.of(templateName))
+            fun templateName(templateName: String?) =
+                templateName(JsonField.ofNullable(templateName))
+
+            /** Alias for calling [Builder.templateName] with `templateName.orElse(null)`. */
+            fun templateName(templateName: Optional<String>) =
+                templateName(templateName.getOrNull())
 
             /**
              * Sets [Builder.templateName] to an arbitrary JSON value.
@@ -913,6 +955,7 @@ private constructor(
                     contactId,
                     createdAt,
                     customerId,
+                    direction,
                     (events ?: JsonMissing.of()).map { it.toImmutable() },
                     messageBody,
                     phone,
@@ -940,6 +983,7 @@ private constructor(
             contactId()
             createdAt()
             customerId()
+            direction()
             events().ifPresent { it.forEach { it.validate() } }
             messageBody().ifPresent { it.validate() }
             phone()
@@ -975,6 +1019,7 @@ private constructor(
                 (if (contactId.asKnown().isPresent) 1 else 0) +
                 (if (createdAt.asKnown().isPresent) 1 else 0) +
                 (if (customerId.asKnown().isPresent) 1 else 0) +
+                (if (direction.asKnown().isPresent) 1 else 0) +
                 (events.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (messageBody.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (phone.asKnown().isPresent) 1 else 0) +
@@ -1690,6 +1735,7 @@ private constructor(
                 contactId == other.contactId &&
                 createdAt == other.createdAt &&
                 customerId == other.customerId &&
+                direction == other.direction &&
                 events == other.events &&
                 messageBody == other.messageBody &&
                 phone == other.phone &&
@@ -1711,6 +1757,7 @@ private constructor(
                 contactId,
                 createdAt,
                 customerId,
+                direction,
                 events,
                 messageBody,
                 phone,
@@ -1728,7 +1775,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{id=$id, activeContactPrice=$activeContactPrice, channel=$channel, contactId=$contactId, createdAt=$createdAt, customerId=$customerId, events=$events, messageBody=$messageBody, phone=$phone, phoneInternational=$phoneInternational, price=$price, regionCode=$regionCode, status=$status, templateCategory=$templateCategory, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
+            "Data{id=$id, activeContactPrice=$activeContactPrice, channel=$channel, contactId=$contactId, createdAt=$createdAt, customerId=$customerId, direction=$direction, events=$events, messageBody=$messageBody, phone=$phone, phoneInternational=$phoneInternational, price=$price, regionCode=$regionCode, status=$status, templateCategory=$templateCategory, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
