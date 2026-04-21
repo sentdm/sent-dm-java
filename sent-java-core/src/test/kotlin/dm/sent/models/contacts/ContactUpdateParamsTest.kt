@@ -2,6 +2,7 @@
 
 package dm.sent.models.contacts
 
+import dm.sent.core.JsonValue
 import dm.sent.core.http.Headers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,6 +16,11 @@ internal class ContactUpdateParamsTest {
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .sandbox(false)
+            .channelConsent(
+                ContactUpdateParams.ChannelConsent.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
             .defaultChannel("whatsapp")
             .optOut(false)
             .build()
@@ -38,6 +44,11 @@ internal class ContactUpdateParamsTest {
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sandbox(false)
+                .channelConsent(
+                    ContactUpdateParams.ChannelConsent.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .defaultChannel("whatsapp")
                 .optOut(false)
                 .build()
@@ -71,6 +82,11 @@ internal class ContactUpdateParamsTest {
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sandbox(false)
+                .channelConsent(
+                    ContactUpdateParams.ChannelConsent.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .defaultChannel("whatsapp")
                 .optOut(false)
                 .build()
@@ -78,6 +94,12 @@ internal class ContactUpdateParamsTest {
         val body = params._body()
 
         assertThat(body.sandbox()).contains(false)
+        assertThat(body.channelConsent())
+            .contains(
+                ContactUpdateParams.ChannelConsent.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
         assertThat(body.defaultChannel()).contains("whatsapp")
         assertThat(body.optOut()).contains(false)
     }

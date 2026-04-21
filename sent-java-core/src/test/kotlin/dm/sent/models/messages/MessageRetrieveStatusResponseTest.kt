@@ -25,6 +25,7 @@ internal class MessageRetrieveStatusResponseTest {
                         .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .direction("direction")
                         .addEvent(
                             MessageRetrieveStatusResponse.Data.Event.builder()
                                 .description("description")
@@ -86,6 +87,7 @@ internal class MessageRetrieveStatusResponseTest {
                     .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .direction("direction")
                     .addEvent(
                         MessageRetrieveStatusResponse.Data.Event.builder()
                             .description("description")
@@ -153,6 +155,7 @@ internal class MessageRetrieveStatusResponseTest {
                         .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .direction("direction")
                         .addEvent(
                             MessageRetrieveStatusResponse.Data.Event.builder()
                                 .description("description")

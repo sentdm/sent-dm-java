@@ -10,6 +10,7 @@ import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
+import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import java.time.OffsetDateTime
 import java.util.Collections
@@ -23,6 +24,7 @@ class ContactResponse
 private constructor(
     private val id: JsonField<String>,
     private val availableChannels: JsonField<String>,
+    private val channelConsent: JsonField<ChannelConsent>,
     private val countryCode: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val defaultChannel: JsonField<String>,
@@ -44,6 +46,9 @@ private constructor(
         @JsonProperty("available_channels")
         @ExcludeMissing
         availableChannels: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("channel_consent")
+        @ExcludeMissing
+        channelConsent: JsonField<ChannelConsent> = JsonMissing.of(),
         @JsonProperty("country_code")
         @ExcludeMissing
         countryCode: JsonField<String> = JsonMissing.of(),
@@ -79,6 +84,7 @@ private constructor(
     ) : this(
         id,
         availableChannels,
+        channelConsent,
         countryCode,
         createdAt,
         defaultChannel,
@@ -109,6 +115,16 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun availableChannels(): Optional<String> = availableChannels.getOptional("available_channels")
+
+    /**
+     * Consent status by channel. Keys: "sms", "whatsapp". Values: "opted_in", "opted_out". All
+     * channels will have the same status because consent is global across channels. A STOP on any
+     * channel opts out of all channels; a START opts in to all.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun channelConsent(): Optional<ChannelConsent> = channelConsent.getOptional("channel_consent")
 
     /**
      * Country calling code (e.g., 1 for US/Canada)
@@ -223,6 +239,15 @@ private constructor(
     @JsonProperty("available_channels")
     @ExcludeMissing
     fun _availableChannels(): JsonField<String> = availableChannels
+
+    /**
+     * Returns the raw JSON value of [channelConsent].
+     *
+     * Unlike [channelConsent], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("channel_consent")
+    @ExcludeMissing
+    fun _channelConsent(): JsonField<ChannelConsent> = channelConsent
 
     /**
      * Returns the raw JSON value of [countryCode].
@@ -348,6 +373,7 @@ private constructor(
 
         private var id: JsonField<String> = JsonMissing.of()
         private var availableChannels: JsonField<String> = JsonMissing.of()
+        private var channelConsent: JsonField<ChannelConsent> = JsonMissing.of()
         private var countryCode: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var defaultChannel: JsonField<String> = JsonMissing.of()
@@ -366,6 +392,7 @@ private constructor(
         internal fun from(contactResponse: ContactResponse) = apply {
             id = contactResponse.id
             availableChannels = contactResponse.availableChannels
+            channelConsent = contactResponse.channelConsent
             countryCode = contactResponse.countryCode
             createdAt = contactResponse.createdAt
             defaultChannel = contactResponse.defaultChannel
@@ -405,6 +432,29 @@ private constructor(
          */
         fun availableChannels(availableChannels: JsonField<String>) = apply {
             this.availableChannels = availableChannels
+        }
+
+        /**
+         * Consent status by channel. Keys: "sms", "whatsapp". Values: "opted_in", "opted_out". All
+         * channels will have the same status because consent is global across channels. A STOP on
+         * any channel opts out of all channels; a START opts in to all.
+         */
+        fun channelConsent(channelConsent: ChannelConsent?) =
+            channelConsent(JsonField.ofNullable(channelConsent))
+
+        /** Alias for calling [Builder.channelConsent] with `channelConsent.orElse(null)`. */
+        fun channelConsent(channelConsent: Optional<ChannelConsent>) =
+            channelConsent(channelConsent.getOrNull())
+
+        /**
+         * Sets [Builder.channelConsent] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.channelConsent] with a well-typed [ChannelConsent] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun channelConsent(channelConsent: JsonField<ChannelConsent>) = apply {
+            this.channelConsent = channelConsent
         }
 
         /** Country calling code (e.g., 1 for US/Canada) */
@@ -588,6 +638,7 @@ private constructor(
             ContactResponse(
                 id,
                 availableChannels,
+                channelConsent,
                 countryCode,
                 createdAt,
                 defaultChannel,
@@ -613,6 +664,7 @@ private constructor(
 
         id()
         availableChannels()
+        channelConsent().ifPresent { it.validate() }
         countryCode()
         createdAt()
         defaultChannel()
@@ -645,6 +697,7 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (availableChannels.asKnown().isPresent) 1 else 0) +
+            (channelConsent.asKnown().getOrNull()?.validity() ?: 0) +
             (if (countryCode.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (defaultChannel.asKnown().isPresent) 1 else 0) +
@@ -658,6 +711,110 @@ private constructor(
             (if (regionCode.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
 
+    /**
+     * Consent status by channel. Keys: "sms", "whatsapp". Values: "opted_in", "opted_out". All
+     * channels will have the same status because consent is global across channels. A STOP on any
+     * channel opts out of all channels; a START opts in to all.
+     */
+    class ChannelConsent
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [ChannelConsent]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [ChannelConsent]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(channelConsent: ChannelConsent) = apply {
+                additionalProperties = channelConsent.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [ChannelConsent].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): ChannelConsent = ChannelConsent(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): ChannelConsent = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ChannelConsent && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "ChannelConsent{additionalProperties=$additionalProperties}"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -666,6 +823,7 @@ private constructor(
         return other is ContactResponse &&
             id == other.id &&
             availableChannels == other.availableChannels &&
+            channelConsent == other.channelConsent &&
             countryCode == other.countryCode &&
             createdAt == other.createdAt &&
             defaultChannel == other.defaultChannel &&
@@ -685,6 +843,7 @@ private constructor(
         Objects.hash(
             id,
             availableChannels,
+            channelConsent,
             countryCode,
             createdAt,
             defaultChannel,
@@ -704,5 +863,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ContactResponse{id=$id, availableChannels=$availableChannels, countryCode=$countryCode, createdAt=$createdAt, defaultChannel=$defaultChannel, formatE164=$formatE164, formatInternational=$formatInternational, formatNational=$formatNational, formatRfc=$formatRfc, isInherited=$isInherited, optOut=$optOut, phoneNumber=$phoneNumber, regionCode=$regionCode, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "ContactResponse{id=$id, availableChannels=$availableChannels, channelConsent=$channelConsent, countryCode=$countryCode, createdAt=$createdAt, defaultChannel=$defaultChannel, formatE164=$formatE164, formatInternational=$formatInternational, formatNational=$formatNational, formatRfc=$formatRfc, isInherited=$isInherited, optOut=$optOut, phoneNumber=$phoneNumber, regionCode=$regionCode, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

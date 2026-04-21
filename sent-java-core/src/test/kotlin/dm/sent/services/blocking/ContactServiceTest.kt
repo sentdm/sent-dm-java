@@ -3,6 +3,7 @@
 package dm.sent.services.blocking
 
 import dm.sent.client.okhttp.SentOkHttpClient
+import dm.sent.core.JsonValue
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
@@ -62,6 +63,11 @@ internal class ContactServiceTest {
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .sandbox(false)
+                    .channelConsent(
+                        ContactUpdateParams.ChannelConsent.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .defaultChannel("whatsapp")
                     .optOut(false)
                     .build()
