@@ -381,6 +381,14 @@ private constructor(
             (System.getProperty("sent.dmApiKey") ?: System.getenv("SENT_DM_API_KEY"))?.let {
                 apiKey(it)
             }
+            System.getenv("SENT_CUSTOM_HEADERS")?.let { customHeadersEnv ->
+                for (line in customHeadersEnv.split("\n")) {
+                    val colon = line.indexOf(':')
+                    if (colon >= 0) {
+                        putHeader(line.substring(0, colon).trim(), line.substring(colon + 1).trim())
+                    }
+                }
+            }
         }
 
         /**

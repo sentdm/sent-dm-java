@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.18.0 (2026-04-28)
+
+Full Changelog: [v0.17.0...v0.18.0](https://github.com/sentdm/sent-dm-java/compare/v0.17.0...v0.18.0)
+
+### Features
+
+* support setting headers via env ([f8682eb](https://github.com/sentdm/sent-dm-java/commit/f8682ebe6bcdd605eb10699c5290e63c324f56c9))
+
 ## 0.17.0 (2026-04-21)
 
 Full Changelog: [v0.16.0...v0.17.0](https://github.com/sentdm/sent-dm-java/compare/v0.16.0...v0.17.0)
