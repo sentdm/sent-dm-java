@@ -18,13 +18,13 @@ internal class WebhookListEventTypesResponseTest {
                 .data(
                     WebhookListEventTypesResponse.Data.builder()
                         .addEventType(
-                            WebhookListEventTypesResponse.Data.EventType.builder()
+                            WebhookEventType.builder()
                                 .description("description")
                                 .displayName("display_name")
                                 .eventType("event_type")
                                 .isActive(true)
                                 .name("name")
-                                .addSubType(JsonValue.from(mapOf<String, Any>()))
+                                .subTypes(listOf())
                                 .build()
                         )
                         .build()
@@ -55,13 +55,13 @@ internal class WebhookListEventTypesResponseTest {
             .contains(
                 WebhookListEventTypesResponse.Data.builder()
                     .addEventType(
-                        WebhookListEventTypesResponse.Data.EventType.builder()
+                        WebhookEventType.builder()
                             .description("description")
                             .displayName("display_name")
                             .eventType("event_type")
                             .isActive(true)
                             .name("name")
-                            .addSubType(JsonValue.from(mapOf<String, Any>()))
+                            .subTypes(listOf())
                             .build()
                     )
                     .build()
@@ -98,13 +98,13 @@ internal class WebhookListEventTypesResponseTest {
                 .data(
                     WebhookListEventTypesResponse.Data.builder()
                         .addEventType(
-                            WebhookListEventTypesResponse.Data.EventType.builder()
+                            WebhookEventType.builder()
                                 .description("description")
                                 .displayName("display_name")
                                 .eventType("event_type")
                                 .isActive(true)
                                 .name("name")
-                                .addSubType(JsonValue.from(mapOf<String, Any>()))
+                                .subTypes(listOf())
                                 .build()
                         )
                         .build()
