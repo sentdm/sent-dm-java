@@ -207,36 +207,26 @@ interface ProfileServiceAsync {
      * Soft deletes a sender profile. The profile will be marked as deleted but data is retained.
      * Requires admin role in the organization.
      */
-    fun delete(profileId: String): CompletableFuture<Void?> =
-        delete(profileId, ProfileDeleteParams.none())
+    fun delete(profileId: String, params: ProfileDeleteParams): CompletableFuture<Void?> =
+        delete(profileId, params, RequestOptions.none())
 
     /** @see delete */
     fun delete(
         profileId: String,
-        params: ProfileDeleteParams = ProfileDeleteParams.none(),
+        params: ProfileDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Void?> =
         delete(params.toBuilder().profileId(profileId).build(), requestOptions)
-
-    /** @see delete */
-    fun delete(
-        profileId: String,
-        params: ProfileDeleteParams = ProfileDeleteParams.none(),
-    ): CompletableFuture<Void?> = delete(profileId, params, RequestOptions.none())
-
-    /** @see delete */
-    fun delete(
-        params: ProfileDeleteParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
 
     /** @see delete */
     fun delete(params: ProfileDeleteParams): CompletableFuture<Void?> =
         delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(profileId: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
-        delete(profileId, ProfileDeleteParams.none(), requestOptions)
+    fun delete(
+        params: ProfileDeleteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?>
 
     /**
      * Final step in profile compliance workflow. Validates all prerequisites (general data, brand,
@@ -437,28 +427,18 @@ interface ProfileServiceAsync {
          * Returns a raw HTTP response for `delete /v3/profiles/{profileId}`, but is otherwise the
          * same as [ProfileServiceAsync.delete].
          */
-        fun delete(profileId: String): CompletableFuture<HttpResponse> =
-            delete(profileId, ProfileDeleteParams.none())
-
-        /** @see delete */
         fun delete(
             profileId: String,
-            params: ProfileDeleteParams = ProfileDeleteParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponse> =
-            delete(params.toBuilder().profileId(profileId).build(), requestOptions)
-
-        /** @see delete */
-        fun delete(
-            profileId: String,
-            params: ProfileDeleteParams = ProfileDeleteParams.none(),
+            params: ProfileDeleteParams,
         ): CompletableFuture<HttpResponse> = delete(profileId, params, RequestOptions.none())
 
         /** @see delete */
         fun delete(
+            profileId: String,
             params: ProfileDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponse>
+        ): CompletableFuture<HttpResponse> =
+            delete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see delete */
         fun delete(params: ProfileDeleteParams): CompletableFuture<HttpResponse> =
@@ -466,10 +446,9 @@ interface ProfileServiceAsync {
 
         /** @see delete */
         fun delete(
-            profileId: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponse> =
-            delete(profileId, ProfileDeleteParams.none(), requestOptions)
+            params: ProfileDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponse>
 
         /**
          * Returns a raw HTTP response for `post /v3/profiles/{profileId}/complete`, but is

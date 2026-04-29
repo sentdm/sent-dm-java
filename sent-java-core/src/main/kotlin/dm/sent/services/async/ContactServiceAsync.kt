@@ -141,34 +141,25 @@ interface ContactServiceAsync {
     /**
      * Dissociates a contact from the authenticated customer. Inherited contacts cannot be deleted.
      */
-    fun delete(id: String): CompletableFuture<Void?> = delete(id, ContactDeleteParams.none())
+    fun delete(id: String, params: ContactDeleteParams): CompletableFuture<Void?> =
+        delete(id, params, RequestOptions.none())
 
     /** @see delete */
     fun delete(
         id: String,
-        params: ContactDeleteParams = ContactDeleteParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?> = delete(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see delete */
-    fun delete(
-        id: String,
-        params: ContactDeleteParams = ContactDeleteParams.none(),
-    ): CompletableFuture<Void?> = delete(id, params, RequestOptions.none())
-
-    /** @see delete */
-    fun delete(
         params: ContactDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
+    ): CompletableFuture<Void?> = delete(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see delete */
     fun delete(params: ContactDeleteParams): CompletableFuture<Void?> =
         delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(id: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
-        delete(id, ContactDeleteParams.none(), requestOptions)
+    fun delete(
+        params: ContactDeleteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?>
 
     /**
      * A view of [ContactServiceAsync] that provides access to raw HTTP responses for each method.
@@ -310,35 +301,25 @@ interface ContactServiceAsync {
          * Returns a raw HTTP response for `delete /v3/contacts/{id}`, but is otherwise the same as
          * [ContactServiceAsync.delete].
          */
-        fun delete(id: String): CompletableFuture<HttpResponse> =
-            delete(id, ContactDeleteParams.none())
+        fun delete(id: String, params: ContactDeleteParams): CompletableFuture<HttpResponse> =
+            delete(id, params, RequestOptions.none())
 
         /** @see delete */
         fun delete(
             id: String,
-            params: ContactDeleteParams = ContactDeleteParams.none(),
+            params: ContactDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponse> =
             delete(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see delete */
-        fun delete(
-            id: String,
-            params: ContactDeleteParams = ContactDeleteParams.none(),
-        ): CompletableFuture<HttpResponse> = delete(id, params, RequestOptions.none())
-
-        /** @see delete */
-        fun delete(
-            params: ContactDeleteParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponse>
 
         /** @see delete */
         fun delete(params: ContactDeleteParams): CompletableFuture<HttpResponse> =
             delete(params, RequestOptions.none())
 
         /** @see delete */
-        fun delete(id: String, requestOptions: RequestOptions): CompletableFuture<HttpResponse> =
-            delete(id, ContactDeleteParams.none(), requestOptions)
+        fun delete(
+            params: ContactDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponse>
     }
 }

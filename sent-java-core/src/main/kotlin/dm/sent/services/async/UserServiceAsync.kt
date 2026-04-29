@@ -116,34 +116,25 @@ interface UserServiceAsync {
      * Removes a user's access to an organization or profile. Requires admin role. You cannot remove
      * yourself or remove the last admin.
      */
-    fun remove(userId: String): CompletableFuture<Void?> = remove(userId, UserRemoveParams.none())
+    fun remove(userId: String, params: UserRemoveParams): CompletableFuture<Void?> =
+        remove(userId, params, RequestOptions.none())
 
     /** @see remove */
     fun remove(
         userId: String,
-        params: UserRemoveParams = UserRemoveParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?> = remove(params.toBuilder().userId(userId).build(), requestOptions)
-
-    /** @see remove */
-    fun remove(
-        userId: String,
-        params: UserRemoveParams = UserRemoveParams.none(),
-    ): CompletableFuture<Void?> = remove(userId, params, RequestOptions.none())
-
-    /** @see remove */
-    fun remove(
         params: UserRemoveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
+    ): CompletableFuture<Void?> = remove(params.toBuilder().userId(userId).build(), requestOptions)
 
     /** @see remove */
     fun remove(params: UserRemoveParams): CompletableFuture<Void?> =
         remove(params, RequestOptions.none())
 
     /** @see remove */
-    fun remove(userId: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
-        remove(userId, UserRemoveParams.none(), requestOptions)
+    fun remove(
+        params: UserRemoveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?>
 
     /**
      * Updates a user's role in the organization or profile. Requires admin role. You cannot change
@@ -288,28 +279,16 @@ interface UserServiceAsync {
          * Returns a raw HTTP response for `delete /v3/users/{userId}`, but is otherwise the same as
          * [UserServiceAsync.remove].
          */
-        fun remove(userId: String): CompletableFuture<HttpResponse> =
-            remove(userId, UserRemoveParams.none())
+        fun remove(userId: String, params: UserRemoveParams): CompletableFuture<HttpResponse> =
+            remove(userId, params, RequestOptions.none())
 
         /** @see remove */
         fun remove(
             userId: String,
-            params: UserRemoveParams = UserRemoveParams.none(),
+            params: UserRemoveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponse> =
             remove(params.toBuilder().userId(userId).build(), requestOptions)
-
-        /** @see remove */
-        fun remove(
-            userId: String,
-            params: UserRemoveParams = UserRemoveParams.none(),
-        ): CompletableFuture<HttpResponse> = remove(userId, params, RequestOptions.none())
-
-        /** @see remove */
-        fun remove(
-            params: UserRemoveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponse>
 
         /** @see remove */
         fun remove(params: UserRemoveParams): CompletableFuture<HttpResponse> =
@@ -317,9 +296,9 @@ interface UserServiceAsync {
 
         /** @see remove */
         fun remove(
-            userId: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponse> = remove(userId, UserRemoveParams.none(), requestOptions)
+            params: UserRemoveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponse>
 
         /**
          * Returns a raw HTTP response for `patch /v3/users/{userId}`, but is otherwise the same as

@@ -10,6 +10,7 @@ import dm.sent.models.profiles.campaigns.CampaignListParams
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
 import dm.sent.models.profiles.campaigns.MessagingUseCaseUs
 import dm.sent.models.profiles.campaigns.SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -152,7 +153,7 @@ internal class CampaignServiceAsyncTest {
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
                     .campaignId("b2c3d4e5-f6a7-8901-bcde-f12345678901")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
+                    .mutationRequest(MutationRequest.builder().sandbox(false).build())
                     .build()
             )
 
