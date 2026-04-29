@@ -198,28 +198,21 @@ interface ProfileService {
      * Soft deletes a sender profile. The profile will be marked as deleted but data is retained.
      * Requires admin role in the organization.
      */
-    fun delete(profileId: String) = delete(profileId, ProfileDeleteParams.none())
+    fun delete(profileId: String, params: ProfileDeleteParams) =
+        delete(profileId, params, RequestOptions.none())
 
     /** @see delete */
     fun delete(
         profileId: String,
-        params: ProfileDeleteParams = ProfileDeleteParams.none(),
+        params: ProfileDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ) = delete(params.toBuilder().profileId(profileId).build(), requestOptions)
-
-    /** @see delete */
-    fun delete(profileId: String, params: ProfileDeleteParams = ProfileDeleteParams.none()) =
-        delete(profileId, params, RequestOptions.none())
-
-    /** @see delete */
-    fun delete(params: ProfileDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
     fun delete(params: ProfileDeleteParams) = delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(profileId: String, requestOptions: RequestOptions) =
-        delete(profileId, ProfileDeleteParams.none(), requestOptions)
+    fun delete(params: ProfileDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /**
      * Final step in profile compliance workflow. Validates all prerequisites (general data, brand,
@@ -419,29 +412,16 @@ interface ProfileService {
          * same as [ProfileService.delete].
          */
         @MustBeClosed
-        fun delete(profileId: String): HttpResponse = delete(profileId, ProfileDeleteParams.none())
+        fun delete(profileId: String, params: ProfileDeleteParams): HttpResponse =
+            delete(profileId, params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed
         fun delete(
             profileId: String,
-            params: ProfileDeleteParams = ProfileDeleteParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse = delete(params.toBuilder().profileId(profileId).build(), requestOptions)
-
-        /** @see delete */
-        @MustBeClosed
-        fun delete(
-            profileId: String,
-            params: ProfileDeleteParams = ProfileDeleteParams.none(),
-        ): HttpResponse = delete(profileId, params, RequestOptions.none())
-
-        /** @see delete */
-        @MustBeClosed
-        fun delete(
             params: ProfileDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        ): HttpResponse = delete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see delete */
         @MustBeClosed
@@ -450,8 +430,10 @@ interface ProfileService {
 
         /** @see delete */
         @MustBeClosed
-        fun delete(profileId: String, requestOptions: RequestOptions): HttpResponse =
-            delete(profileId, ProfileDeleteParams.none(), requestOptions)
+        fun delete(
+            params: ProfileDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponse
 
         /**
          * Returns a raw HTTP response for `post /v3/profiles/{profileId}/complete`, but is

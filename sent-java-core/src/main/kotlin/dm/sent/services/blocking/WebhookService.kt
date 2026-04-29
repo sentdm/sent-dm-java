@@ -194,35 +194,25 @@ interface WebhookService {
      * Generates a new signing secret for the specified webhook. The old secret is immediately
      * invalidated.
      */
-    fun rotateSecret(id: String): WebhookRotateSecretResponse =
-        rotateSecret(id, WebhookRotateSecretParams.none())
+    fun rotateSecret(id: String, params: WebhookRotateSecretParams): WebhookRotateSecretResponse =
+        rotateSecret(id, params, RequestOptions.none())
 
     /** @see rotateSecret */
     fun rotateSecret(
         id: String,
-        params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookRotateSecretResponse = rotateSecret(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see rotateSecret */
-    fun rotateSecret(
-        id: String,
-        params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
-    ): WebhookRotateSecretResponse = rotateSecret(id, params, RequestOptions.none())
-
-    /** @see rotateSecret */
-    fun rotateSecret(
         params: WebhookRotateSecretParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookRotateSecretResponse
+    ): WebhookRotateSecretResponse = rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see rotateSecret */
     fun rotateSecret(params: WebhookRotateSecretParams): WebhookRotateSecretResponse =
         rotateSecret(params, RequestOptions.none())
 
     /** @see rotateSecret */
-    fun rotateSecret(id: String, requestOptions: RequestOptions): WebhookRotateSecretResponse =
-        rotateSecret(id, WebhookRotateSecretParams.none(), requestOptions)
+    fun rotateSecret(
+        params: WebhookRotateSecretParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): WebhookRotateSecretResponse
 
     /** Sends a test event to the specified webhook endpoint to verify connectivity. */
     fun test(id: String): WebhookTestResponse = test(id, WebhookTestParams.none())
@@ -527,32 +517,20 @@ interface WebhookService {
          * the same as [WebhookService.rotateSecret].
          */
         @MustBeClosed
-        fun rotateSecret(id: String): HttpResponseFor<WebhookRotateSecretResponse> =
-            rotateSecret(id, WebhookRotateSecretParams.none())
-
-        /** @see rotateSecret */
-        @MustBeClosed
         fun rotateSecret(
             id: String,
-            params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookRotateSecretResponse> =
-            rotateSecret(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see rotateSecret */
-        @MustBeClosed
-        fun rotateSecret(
-            id: String,
-            params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
+            params: WebhookRotateSecretParams,
         ): HttpResponseFor<WebhookRotateSecretResponse> =
             rotateSecret(id, params, RequestOptions.none())
 
         /** @see rotateSecret */
         @MustBeClosed
         fun rotateSecret(
+            id: String,
             params: WebhookRotateSecretParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookRotateSecretResponse>
+        ): HttpResponseFor<WebhookRotateSecretResponse> =
+            rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see rotateSecret */
         @MustBeClosed
@@ -564,10 +542,9 @@ interface WebhookService {
         /** @see rotateSecret */
         @MustBeClosed
         fun rotateSecret(
-            id: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookRotateSecretResponse> =
-            rotateSecret(id, WebhookRotateSecretParams.none(), requestOptions)
+            params: WebhookRotateSecretParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<WebhookRotateSecretResponse>
 
         /**
          * Returns a raw HTTP response for `post /v3/webhooks/{id}/test`, but is otherwise the same

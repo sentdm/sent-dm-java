@@ -2,21 +2,12 @@
 
 package dm.sent.models.profiles.campaigns
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
-import com.fasterxml.jackson.annotation.JsonAnySetter
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
-import dm.sent.core.ExcludeMissing
-import dm.sent.core.JsonField
-import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.core.Params
 import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
-import dm.sent.errors.SentInvalidDataException
 import dm.sent.models.webhooks.MutationRequest
-import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -30,7 +21,7 @@ private constructor(
     private val profileId: String,
     private val campaignId: String?,
     private val xProfileId: String?,
-    private val body: Body,
+    private val mutationRequest: MutationRequest,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -41,23 +32,10 @@ private constructor(
 
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
-    /**
-     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
-     * integrations without actual execution
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun sandbox(): Optional<Boolean> = body.sandbox()
+    fun mutationRequest(): MutationRequest = mutationRequest
 
-    /**
-     * Returns the raw JSON value of [sandbox].
-     *
-     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _sandbox(): JsonField<Boolean> = body._sandbox()
-
-    fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
+    fun _additionalBodyProperties(): Map<String, JsonValue> =
+        mutationRequest._additionalProperties()
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -75,6 +53,7 @@ private constructor(
          * The following fields are required:
          * ```java
          * .profileId()
+         * .mutationRequest()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -86,7 +65,7 @@ private constructor(
         private var profileId: String? = null
         private var campaignId: String? = null
         private var xProfileId: String? = null
-        private var body: Body.Builder = Body.builder()
+        private var mutationRequest: MutationRequest? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -95,7 +74,7 @@ private constructor(
             profileId = campaignDeleteParams.profileId
             campaignId = campaignDeleteParams.campaignId
             xProfileId = campaignDeleteParams.xProfileId
-            body = campaignDeleteParams.body.toBuilder()
+            mutationRequest = campaignDeleteParams.mutationRequest
             additionalHeaders = campaignDeleteParams.additionalHeaders.toBuilder()
             additionalQueryParams = campaignDeleteParams.additionalQueryParams.toBuilder()
         }
@@ -112,46 +91,8 @@ private constructor(
         /** Alias for calling [Builder.xProfileId] with `xProfileId.orElse(null)`. */
         fun xProfileId(xProfileId: Optional<String>) = xProfileId(xProfileId.getOrNull())
 
-        /**
-         * Sets the entire request body.
-         *
-         * This is generally only useful if you are already constructing the body separately.
-         * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [sandbox]
-         */
-        fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         */
-        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
-
-        /**
-         * Sets [Builder.sandbox] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
-
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            body.additionalProperties(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            body.putAdditionalProperty(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                body.putAllAdditionalProperties(additionalBodyProperties)
-            }
-
-        fun removeAdditionalBodyProperty(key: String) = apply { body.removeAdditionalProperty(key) }
-
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            body.removeAllAdditionalProperties(keys)
+        fun mutationRequest(mutationRequest: MutationRequest) = apply {
+            this.mutationRequest = mutationRequest
         }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
@@ -260,6 +201,7 @@ private constructor(
          * The following fields are required:
          * ```java
          * .profileId()
+         * .mutationRequest()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -269,13 +211,13 @@ private constructor(
                 checkRequired("profileId", profileId),
                 campaignId,
                 xProfileId,
-                body.build(),
+                checkRequired("mutationRequest", mutationRequest),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
 
-    fun _body(): Body = body
+    fun _body(): MutationRequest = mutationRequest
 
     fun _pathParam(index: Int): String =
         when (index) {
@@ -294,155 +236,6 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** Request to delete a campaign from a brand */
-    class Body
-    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-    private constructor(
-        private val sandbox: JsonField<Boolean>,
-        private val additionalProperties: MutableMap<String, JsonValue>,
-    ) {
-
-        @JsonCreator
-        private constructor(
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of()
-        ) : this(sandbox, mutableMapOf())
-
-        fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
-
-        /**
-         * Returns the raw JSON value of [sandbox].
-         *
-         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
-
-        @JsonAnySetter
-        private fun putAdditionalProperty(key: String, value: JsonValue) {
-            additionalProperties.put(key, value)
-        }
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> =
-            Collections.unmodifiableMap(additionalProperties)
-
-        fun toBuilder() = Builder().from(this)
-
-        companion object {
-
-            /** Returns a mutable builder for constructing an instance of [Body]. */
-            @JvmStatic fun builder() = Builder()
-        }
-
-        /** A builder for [Body]. */
-        class Builder internal constructor() {
-
-            private var sandbox: JsonField<Boolean> = JsonMissing.of()
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-            @JvmSynthetic
-            internal fun from(body: Body) = apply {
-                sandbox = body.sandbox
-                additionalProperties = body.additionalProperties.toMutableMap()
-            }
-
-            /**
-             * Sandbox flag - when true, the operation is simulated without side effects Useful for
-             * testing integrations without actual execution
-             */
-            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
-
-            /**
-             * Sets [Builder.sandbox] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
-
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
-
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
-
-            /**
-             * Returns an immutable instance of [Body].
-             *
-             * Further updates to this [Builder] will not mutate the returned instance.
-             */
-            fun build(): Body = Body(sandbox, additionalProperties.toMutableMap())
-        }
-
-        private var validated: Boolean = false
-
-        fun validate(): Body = apply {
-            if (validated) {
-                return@apply
-            }
-
-            sandbox()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: SentInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic internal fun validity(): Int = (if (sandbox.asKnown().isPresent) 1 else 0)
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is Body &&
-                sandbox == other.sandbox &&
-                additionalProperties == other.additionalProperties
-        }
-
-        private val hashCode: Int by lazy { Objects.hash(sandbox, additionalProperties) }
-
-        override fun hashCode(): Int = hashCode
-
-        override fun toString() =
-            "Body{sandbox=$sandbox, additionalProperties=$additionalProperties}"
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -452,7 +245,7 @@ private constructor(
             profileId == other.profileId &&
             campaignId == other.campaignId &&
             xProfileId == other.xProfileId &&
-            body == other.body &&
+            mutationRequest == other.mutationRequest &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
@@ -462,11 +255,11 @@ private constructor(
             profileId,
             campaignId,
             xProfileId,
-            body,
+            mutationRequest,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "CampaignDeleteParams{profileId=$profileId, campaignId=$campaignId, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "CampaignDeleteParams{profileId=$profileId, campaignId=$campaignId, xProfileId=$xProfileId, mutationRequest=$mutationRequest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

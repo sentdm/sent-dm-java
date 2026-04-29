@@ -129,28 +129,20 @@ interface ContactService {
     /**
      * Dissociates a contact from the authenticated customer. Inherited contacts cannot be deleted.
      */
-    fun delete(id: String) = delete(id, ContactDeleteParams.none())
+    fun delete(id: String, params: ContactDeleteParams) = delete(id, params, RequestOptions.none())
 
     /** @see delete */
     fun delete(
         id: String,
-        params: ContactDeleteParams = ContactDeleteParams.none(),
+        params: ContactDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ) = delete(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see delete */
-    fun delete(id: String, params: ContactDeleteParams = ContactDeleteParams.none()) =
-        delete(id, params, RequestOptions.none())
-
-    /** @see delete */
-    fun delete(params: ContactDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
     fun delete(params: ContactDeleteParams) = delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(id: String, requestOptions: RequestOptions) =
-        delete(id, ContactDeleteParams.none(), requestOptions)
+    fun delete(params: ContactDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** A view of [ContactService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -294,29 +286,17 @@ interface ContactService {
          * Returns a raw HTTP response for `delete /v3/contacts/{id}`, but is otherwise the same as
          * [ContactService.delete].
          */
-        @MustBeClosed fun delete(id: String): HttpResponse = delete(id, ContactDeleteParams.none())
+        @MustBeClosed
+        fun delete(id: String, params: ContactDeleteParams): HttpResponse =
+            delete(id, params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed
         fun delete(
             id: String,
-            params: ContactDeleteParams = ContactDeleteParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse = delete(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see delete */
-        @MustBeClosed
-        fun delete(
-            id: String,
-            params: ContactDeleteParams = ContactDeleteParams.none(),
-        ): HttpResponse = delete(id, params, RequestOptions.none())
-
-        /** @see delete */
-        @MustBeClosed
-        fun delete(
             params: ContactDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        ): HttpResponse = delete(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see delete */
         @MustBeClosed
@@ -325,7 +305,9 @@ interface ContactService {
 
         /** @see delete */
         @MustBeClosed
-        fun delete(id: String, requestOptions: RequestOptions): HttpResponse =
-            delete(id, ContactDeleteParams.none(), requestOptions)
+        fun delete(
+            params: ContactDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponse
     }
 }

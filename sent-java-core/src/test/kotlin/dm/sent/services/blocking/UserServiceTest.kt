@@ -8,6 +8,7 @@ import dm.sent.models.users.UserListParams
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserRetrieveParams
 import dm.sent.models.users.UserUpdateRoleParams
+import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -75,7 +76,7 @@ internal class UserServiceTest {
             UserRemoveParams.builder()
                 .userId("userId")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
+                .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
         )
     }

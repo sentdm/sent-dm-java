@@ -18,6 +18,7 @@ import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequ
 import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
 import dm.sent.models.profiles.TcrBrandRelationship
 import dm.sent.models.profiles.TcrVertical
+import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -278,7 +279,7 @@ internal class ProfileServiceAsyncTest {
                 ProfileDeleteParams.builder()
                     .profileId("profileId")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
+                    .mutationRequest(MutationRequest.builder().sandbox(false).build())
                     .build()
             )
 
