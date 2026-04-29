@@ -215,29 +215,19 @@ interface WebhookServiceAsync {
      * Generates a new signing secret for the specified webhook. The old secret is immediately
      * invalidated.
      */
-    fun rotateSecret(id: String): CompletableFuture<WebhookRotateSecretResponse> =
-        rotateSecret(id, WebhookRotateSecretParams.none())
-
-    /** @see rotateSecret */
     fun rotateSecret(
         id: String,
-        params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookRotateSecretResponse> =
-        rotateSecret(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see rotateSecret */
-    fun rotateSecret(
-        id: String,
-        params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
+        params: WebhookRotateSecretParams,
     ): CompletableFuture<WebhookRotateSecretResponse> =
         rotateSecret(id, params, RequestOptions.none())
 
     /** @see rotateSecret */
     fun rotateSecret(
+        id: String,
         params: WebhookRotateSecretParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookRotateSecretResponse>
+    ): CompletableFuture<WebhookRotateSecretResponse> =
+        rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see rotateSecret */
     fun rotateSecret(
@@ -246,10 +236,9 @@ interface WebhookServiceAsync {
 
     /** @see rotateSecret */
     fun rotateSecret(
-        id: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookRotateSecretResponse> =
-        rotateSecret(id, WebhookRotateSecretParams.none(), requestOptions)
+        params: WebhookRotateSecretParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<WebhookRotateSecretResponse>
 
     /** Sends a test event to the specified webhook endpoint to verify connectivity. */
     fun test(id: String): CompletableFuture<WebhookTestResponse> =
@@ -549,30 +538,18 @@ interface WebhookServiceAsync {
          * the same as [WebhookServiceAsync.rotateSecret].
          */
         fun rotateSecret(
-            id: String
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
-            rotateSecret(id, WebhookRotateSecretParams.none())
-
-        /** @see rotateSecret */
-        fun rotateSecret(
             id: String,
-            params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
-            rotateSecret(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see rotateSecret */
-        fun rotateSecret(
-            id: String,
-            params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
+            params: WebhookRotateSecretParams,
         ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
             rotateSecret(id, params, RequestOptions.none())
 
         /** @see rotateSecret */
         fun rotateSecret(
+            id: String,
             params: WebhookRotateSecretParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>>
+        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
+            rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see rotateSecret */
         fun rotateSecret(
@@ -582,10 +559,9 @@ interface WebhookServiceAsync {
 
         /** @see rotateSecret */
         fun rotateSecret(
-            id: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
-            rotateSecret(id, WebhookRotateSecretParams.none(), requestOptions)
+            params: WebhookRotateSecretParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>>
 
         /**
          * Returns a raw HTTP response for `post /v3/webhooks/{id}/test`, but is otherwise the same

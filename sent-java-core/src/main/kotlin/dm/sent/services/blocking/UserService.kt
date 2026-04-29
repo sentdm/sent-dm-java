@@ -110,28 +110,21 @@ interface UserService {
      * Removes a user's access to an organization or profile. Requires admin role. You cannot remove
      * yourself or remove the last admin.
      */
-    fun remove(userId: String) = remove(userId, UserRemoveParams.none())
+    fun remove(userId: String, params: UserRemoveParams) =
+        remove(userId, params, RequestOptions.none())
 
     /** @see remove */
     fun remove(
         userId: String,
-        params: UserRemoveParams = UserRemoveParams.none(),
+        params: UserRemoveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ) = remove(params.toBuilder().userId(userId).build(), requestOptions)
-
-    /** @see remove */
-    fun remove(userId: String, params: UserRemoveParams = UserRemoveParams.none()) =
-        remove(userId, params, RequestOptions.none())
-
-    /** @see remove */
-    fun remove(params: UserRemoveParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see remove */
     fun remove(params: UserRemoveParams) = remove(params, RequestOptions.none())
 
     /** @see remove */
-    fun remove(userId: String, requestOptions: RequestOptions) =
-        remove(userId, UserRemoveParams.none(), requestOptions)
+    fun remove(params: UserRemoveParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /**
      * Updates a user's role in the organization or profile. Requires admin role. You cannot change
@@ -275,29 +268,16 @@ interface UserService {
          * [UserService.remove].
          */
         @MustBeClosed
-        fun remove(userId: String): HttpResponse = remove(userId, UserRemoveParams.none())
+        fun remove(userId: String, params: UserRemoveParams): HttpResponse =
+            remove(userId, params, RequestOptions.none())
 
         /** @see remove */
         @MustBeClosed
         fun remove(
             userId: String,
-            params: UserRemoveParams = UserRemoveParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse = remove(params.toBuilder().userId(userId).build(), requestOptions)
-
-        /** @see remove */
-        @MustBeClosed
-        fun remove(
-            userId: String,
-            params: UserRemoveParams = UserRemoveParams.none(),
-        ): HttpResponse = remove(userId, params, RequestOptions.none())
-
-        /** @see remove */
-        @MustBeClosed
-        fun remove(
             params: UserRemoveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        ): HttpResponse = remove(params.toBuilder().userId(userId).build(), requestOptions)
 
         /** @see remove */
         @MustBeClosed
@@ -305,8 +285,10 @@ interface UserService {
 
         /** @see remove */
         @MustBeClosed
-        fun remove(userId: String, requestOptions: RequestOptions): HttpResponse =
-            remove(userId, UserRemoveParams.none(), requestOptions)
+        fun remove(
+            params: UserRemoveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponse
 
         /**
          * Returns a raw HTTP response for `patch /v3/users/{userId}`, but is otherwise the same as
