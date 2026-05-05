@@ -8,7 +8,7 @@ repositories {
 
 allprojects {
     group = "dm.sent"
-    version = "0.20.0" // x-release-please-version
+    version = "0.21.0" // x-release-please-version
 }
 
 subprojects {
@@ -21,7 +21,6 @@ subprojects {
         group = "Verification"
         description = "Verifies all source files are formatted."
     }
-    apply(plugin = "org.jetbrains.dokka")
 }
 
 subprojects {
