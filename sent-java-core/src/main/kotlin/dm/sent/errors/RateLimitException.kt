@@ -5,12 +5,16 @@ package dm.sent.errors
 import dm.sent.core.JsonValue
 import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
+import dm.sent.core.jsonMapper
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 class RateLimitException
 private constructor(private val headers: Headers, private val body: JsonValue, cause: Throwable?) :
-    SentServiceException("429: $body", cause) {
+    SentServiceException(
+        "429: ${if (body.isMissing()) "Unknown" else jsonMapper().writeValueAsString(body)}",
+        cause,
+    ) {
 
     override fun statusCode(): Int = 429
 
