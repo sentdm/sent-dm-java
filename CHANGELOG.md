@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.21.0 (2026-05-05)
+
+Full Changelog: [v0.20.0...v0.21.0](https://github.com/sentdm/sent-dm-java/compare/v0.20.0...v0.21.0)
+
+### Features
+
+* **client:** more robust error parsing ([1d58773](https://github.com/sentdm/sent-dm-java/commit/1d5877312d94beebe7a889a8f46416c27d365c1d))
+
+
+### Performance Improvements
+
+* **client:** create one json mapper ([8504a49](https://github.com/sentdm/sent-dm-java/commit/8504a490cf78879086fa62316899d496195d0530))
+
+
+### Chores
+
+* remove duplicated dokka setup ([724ab01](https://github.com/sentdm/sent-dm-java/commit/724ab012a886eb1df086f654427eb284836c6053))
+
+
+### Documentation
+
+* clarify forwards compat behavior ([d15dba2](https://github.com/sentdm/sent-dm-java/commit/d15dba28288befeff7fa60e6cb521d9e7f8cf034))
+
 ## 0.20.0 (2026-04-29)
 
 Full Changelog: [v0.19.0...v0.20.0](https://github.com/sentdm/sent-dm-java/compare/v0.19.0...v0.20.0)
