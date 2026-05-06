@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.22.0 (2026-05-06)
+
+Full Changelog: [v0.21.0...v0.22.0](https://github.com/sentdm/sent-dm-java/compare/v0.21.0...v0.22.0)
+
+### Features
+
+* **client:** support proxy authentication ([9aa3cbc](https://github.com/sentdm/sent-dm-java/commit/9aa3cbc4241db013098568f6eb16f60937ec7f75))
+
 ## 0.21.0 (2026-05-05)
 
 Full Changelog: [v0.20.0...v0.21.0](https://github.com/sentdm/sent-dm-java/compare/v0.20.0...v0.21.0)
