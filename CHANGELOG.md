@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.23.0 (2026-05-07)
+
+Full Changelog: [v0.22.0...v0.23.0](https://github.com/sentdm/sent-dm-java/compare/v0.22.0...v0.23.0)
+
+### Features
+
+* **client:** improve logging ([fcbd456](https://github.com/sentdm/sent-dm-java/commit/fcbd4563cbfd02d714a9dfe8fdbf991c4f10161b))
+
 ## 0.22.0 (2026-05-06)
 
 Full Changelog: [v0.21.0...v0.22.0](https://github.com/sentdm/sent-dm-java/compare/v0.21.0...v0.22.0)
