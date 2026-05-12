@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.22.0)
-[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.22.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java/0.22.0)
+[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.23.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.23.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java/0.23.0)
 
 <!-- x-release-please-end -->
 
@@ -22,7 +22,7 @@ Use the Sent MCP Server to enable AI assistants to interact with this API, allow
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-java/0.22.0).
+The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-java/0.23.0).
 
 <!-- x-release-please-end -->
 
@@ -33,7 +33,7 @@ The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm).
 ### Gradle
 
 ```kotlin
-implementation("dm.sent:sent-java:0.22.0")
+implementation("dm.sent:sent-java:0.23.0")
 ```
 
 ### Maven
@@ -42,7 +42,7 @@ implementation("dm.sent:sent-java:0.22.0")
 <dependency>
   <groupId>dm.sent</groupId>
   <artifactId>sent-java</artifactId>
-  <version>0.22.0</version>
+  <version>0.23.0</version>
 </dependency>
 ```
 
@@ -294,8 +294,6 @@ The SDK throws custom unchecked exception types:
 
 ## Logging
 
-The SDK uses the standard [OkHttp logging interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor).
-
 Enable logging by setting the `SENT_LOG` environment variable to `info`:
 
 ```sh
@@ -306,6 +304,19 @@ Or to `debug` for more verbose logging:
 
 ```sh
 export SENT_LOG=debug
+```
+
+Or configure the client manually using the `logLevel` method:
+
+```java
+import dm.sent.client.SentClient;
+import dm.sent.client.okhttp.SentOkHttpClient;
+import dm.sent.core.LogLevel;
+
+SentClient client = SentOkHttpClient.builder()
+    .fromEnv()
+    .logLevel(LogLevel.INFO)
+    .build();
 ```
 
 ## ProGuard and R8

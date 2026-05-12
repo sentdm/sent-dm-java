@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import dm.sent.client.SentClientAsync
 import dm.sent.client.SentClientAsyncImpl
 import dm.sent.core.ClientOptions
+import dm.sent.core.LogLevel
 import dm.sent.core.Sleeper
 import dm.sent.core.Timeout
 import dm.sent.core.http.Headers
@@ -276,6 +277,15 @@ class SentOkHttpClientAsync private constructor() {
          * Defaults to 2.
          */
         fun maxRetries(maxRetries: Int) = apply { clientOptions.maxRetries(maxRetries) }
+
+        /**
+         * The level at which to log request and response information.
+         *
+         * [fromEnv] will set the level from environment variables. See [LogLevel.fromEnv].
+         *
+         * Defaults to [LogLevel.fromEnv].
+         */
+        fun logLevel(logLevel: LogLevel) = apply { clientOptions.logLevel(logLevel) }
 
         /**
          * Customer API key for authentication. Use `sk_live_*` keys for production and `sk_test_*`
