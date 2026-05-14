@@ -31,6 +31,10 @@ kotlin {
 }
 
 tasks.withType<Test>().configureEach {
+    // Mockito dynamically attaches its byte-buddy agent; without this flag the JDK prints a warning
+    // to stderr that breaks tests asserting on captured log output (e.g. LoggingHttpClientTest).
+    jvmArgs("-XX:+EnableDynamicAgentLoading")
+
     systemProperty("junit.jupiter.execution.parallel.enabled", true)
     systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
 
