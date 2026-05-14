@@ -6,8 +6,8 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.webhooks.ApiResponseWebhook
 import dm.sent.models.webhooks.WebhookCreateParams
-import dm.sent.models.webhooks.WebhookCreateResponse
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
 import dm.sent.models.webhooks.WebhookListEventTypesResponse
@@ -16,15 +16,12 @@ import dm.sent.models.webhooks.WebhookListEventsResponse
 import dm.sent.models.webhooks.WebhookListParams
 import dm.sent.models.webhooks.WebhookListResponse
 import dm.sent.models.webhooks.WebhookRetrieveParams
-import dm.sent.models.webhooks.WebhookRetrieveResponse
 import dm.sent.models.webhooks.WebhookRotateSecretParams
 import dm.sent.models.webhooks.WebhookRotateSecretResponse
 import dm.sent.models.webhooks.WebhookTestParams
 import dm.sent.models.webhooks.WebhookTestResponse
 import dm.sent.models.webhooks.WebhookToggleStatusParams
-import dm.sent.models.webhooks.WebhookToggleStatusResponse
 import dm.sent.models.webhooks.WebhookUpdateParams
-import dm.sent.models.webhooks.WebhookUpdateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -44,25 +41,25 @@ interface WebhookServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): WebhookServiceAsync
 
     /** Creates a new webhook endpoint for the authenticated customer. */
-    fun create(): CompletableFuture<WebhookCreateResponse> = create(WebhookCreateParams.none())
+    fun create(): CompletableFuture<ApiResponseWebhook> = create(WebhookCreateParams.none())
 
     /** @see create */
     fun create(
         params: WebhookCreateParams = WebhookCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookCreateResponse>
+    ): CompletableFuture<ApiResponseWebhook>
 
     /** @see create */
     fun create(
         params: WebhookCreateParams = WebhookCreateParams.none()
-    ): CompletableFuture<WebhookCreateResponse> = create(params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseWebhook> = create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(requestOptions: RequestOptions): CompletableFuture<WebhookCreateResponse> =
+    fun create(requestOptions: RequestOptions): CompletableFuture<ApiResponseWebhook> =
         create(WebhookCreateParams.none(), requestOptions)
 
     /** Retrieves a single webhook by ID for the authenticated customer. */
-    fun retrieve(id: String): CompletableFuture<WebhookRetrieveResponse> =
+    fun retrieve(id: String): CompletableFuture<ApiResponseWebhook> =
         retrieve(id, WebhookRetrieveParams.none())
 
     /** @see retrieve */
@@ -70,34 +67,34 @@ interface WebhookServiceAsync {
         id: String,
         params: WebhookRetrieveParams = WebhookRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookRetrieveResponse> =
+    ): CompletableFuture<ApiResponseWebhook> =
         retrieve(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: WebhookRetrieveParams = WebhookRetrieveParams.none(),
-    ): CompletableFuture<WebhookRetrieveResponse> = retrieve(id, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseWebhook> = retrieve(id, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: WebhookRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookRetrieveResponse>
+    ): CompletableFuture<ApiResponseWebhook>
 
     /** @see retrieve */
-    fun retrieve(params: WebhookRetrieveParams): CompletableFuture<WebhookRetrieveResponse> =
+    fun retrieve(params: WebhookRetrieveParams): CompletableFuture<ApiResponseWebhook> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookRetrieveResponse> =
+    ): CompletableFuture<ApiResponseWebhook> =
         retrieve(id, WebhookRetrieveParams.none(), requestOptions)
 
     /** Updates an existing webhook for the authenticated customer. */
-    fun update(id: String): CompletableFuture<WebhookUpdateResponse> =
+    fun update(id: String): CompletableFuture<ApiResponseWebhook> =
         update(id, WebhookUpdateParams.none())
 
     /** @see update */
@@ -105,30 +102,27 @@ interface WebhookServiceAsync {
         id: String,
         params: WebhookUpdateParams = WebhookUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookUpdateResponse> =
+    ): CompletableFuture<ApiResponseWebhook> =
         update(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see update */
     fun update(
         id: String,
         params: WebhookUpdateParams = WebhookUpdateParams.none(),
-    ): CompletableFuture<WebhookUpdateResponse> = update(id, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseWebhook> = update(id, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: WebhookUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookUpdateResponse>
+    ): CompletableFuture<ApiResponseWebhook>
 
     /** @see update */
-    fun update(params: WebhookUpdateParams): CompletableFuture<WebhookUpdateResponse> =
+    fun update(params: WebhookUpdateParams): CompletableFuture<ApiResponseWebhook> =
         update(params, RequestOptions.none())
 
     /** @see update */
-    fun update(
-        id: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookUpdateResponse> =
+    fun update(id: String, requestOptions: RequestOptions): CompletableFuture<ApiResponseWebhook> =
         update(id, WebhookUpdateParams.none(), requestOptions)
 
     /** Retrieves a paginated list of webhooks for the authenticated customer. */
@@ -221,29 +215,19 @@ interface WebhookServiceAsync {
      * Generates a new signing secret for the specified webhook. The old secret is immediately
      * invalidated.
      */
-    fun rotateSecret(id: String): CompletableFuture<WebhookRotateSecretResponse> =
-        rotateSecret(id, WebhookRotateSecretParams.none())
-
-    /** @see rotateSecret */
     fun rotateSecret(
         id: String,
-        params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookRotateSecretResponse> =
-        rotateSecret(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see rotateSecret */
-    fun rotateSecret(
-        id: String,
-        params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
+        params: WebhookRotateSecretParams,
     ): CompletableFuture<WebhookRotateSecretResponse> =
         rotateSecret(id, params, RequestOptions.none())
 
     /** @see rotateSecret */
     fun rotateSecret(
+        id: String,
         params: WebhookRotateSecretParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookRotateSecretResponse>
+    ): CompletableFuture<WebhookRotateSecretResponse> =
+        rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see rotateSecret */
     fun rotateSecret(
@@ -252,10 +236,9 @@ interface WebhookServiceAsync {
 
     /** @see rotateSecret */
     fun rotateSecret(
-        id: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookRotateSecretResponse> =
-        rotateSecret(id, WebhookRotateSecretParams.none(), requestOptions)
+        params: WebhookRotateSecretParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<WebhookRotateSecretResponse>
 
     /** Sends a test event to the specified webhook endpoint to verify connectivity. */
     fun test(id: String): CompletableFuture<WebhookTestResponse> =
@@ -290,7 +273,7 @@ interface WebhookServiceAsync {
         test(id, WebhookTestParams.none(), requestOptions)
 
     /** Activates or deactivates a webhook for the authenticated customer. */
-    fun toggleStatus(id: String): CompletableFuture<WebhookToggleStatusResponse> =
+    fun toggleStatus(id: String): CompletableFuture<ApiResponseWebhook> =
         toggleStatus(id, WebhookToggleStatusParams.none())
 
     /** @see toggleStatus */
@@ -298,32 +281,30 @@ interface WebhookServiceAsync {
         id: String,
         params: WebhookToggleStatusParams = WebhookToggleStatusParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookToggleStatusResponse> =
+    ): CompletableFuture<ApiResponseWebhook> =
         toggleStatus(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see toggleStatus */
     fun toggleStatus(
         id: String,
         params: WebhookToggleStatusParams = WebhookToggleStatusParams.none(),
-    ): CompletableFuture<WebhookToggleStatusResponse> =
-        toggleStatus(id, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseWebhook> = toggleStatus(id, params, RequestOptions.none())
 
     /** @see toggleStatus */
     fun toggleStatus(
         params: WebhookToggleStatusParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookToggleStatusResponse>
+    ): CompletableFuture<ApiResponseWebhook>
 
     /** @see toggleStatus */
-    fun toggleStatus(
-        params: WebhookToggleStatusParams
-    ): CompletableFuture<WebhookToggleStatusResponse> = toggleStatus(params, RequestOptions.none())
+    fun toggleStatus(params: WebhookToggleStatusParams): CompletableFuture<ApiResponseWebhook> =
+        toggleStatus(params, RequestOptions.none())
 
     /** @see toggleStatus */
     fun toggleStatus(
         id: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookToggleStatusResponse> =
+    ): CompletableFuture<ApiResponseWebhook> =
         toggleStatus(id, WebhookToggleStatusParams.none(), requestOptions)
 
     /**
@@ -344,32 +325,32 @@ interface WebhookServiceAsync {
          * Returns a raw HTTP response for `post /v3/webhooks`, but is otherwise the same as
          * [WebhookServiceAsync.create].
          */
-        fun create(): CompletableFuture<HttpResponseFor<WebhookCreateResponse>> =
+        fun create(): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             create(WebhookCreateParams.none())
 
         /** @see create */
         fun create(
             params: WebhookCreateParams = WebhookCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookCreateResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>>
 
         /** @see create */
         fun create(
             params: WebhookCreateParams = WebhookCreateParams.none()
-        ): CompletableFuture<HttpResponseFor<WebhookCreateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<WebhookCreateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             create(WebhookCreateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /v3/webhooks/{id}`, but is otherwise the same as
          * [WebhookServiceAsync.retrieve].
          */
-        fun retrieve(id: String): CompletableFuture<HttpResponseFor<WebhookRetrieveResponse>> =
+        fun retrieve(id: String): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             retrieve(id, WebhookRetrieveParams.none())
 
         /** @see retrieve */
@@ -377,40 +358,40 @@ interface WebhookServiceAsync {
             id: String,
             params: WebhookRetrieveParams = WebhookRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieve */
         fun retrieve(
             id: String,
             params: WebhookRetrieveParams = WebhookRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             params: WebhookRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookRetrieveResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>>
 
         /** @see retrieve */
         fun retrieve(
             params: WebhookRetrieveParams
-        ): CompletableFuture<HttpResponseFor<WebhookRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             id: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             retrieve(id, WebhookRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `put /v3/webhooks/{id}`, but is otherwise the same as
          * [WebhookServiceAsync.update].
          */
-        fun update(id: String): CompletableFuture<HttpResponseFor<WebhookUpdateResponse>> =
+        fun update(id: String): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             update(id, WebhookUpdateParams.none())
 
         /** @see update */
@@ -418,33 +399,33 @@ interface WebhookServiceAsync {
             id: String,
             params: WebhookUpdateParams = WebhookUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             update(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see update */
         fun update(
             id: String,
             params: WebhookUpdateParams = WebhookUpdateParams.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             update(id, params, RequestOptions.none())
 
         /** @see update */
         fun update(
             params: WebhookUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookUpdateResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>>
 
         /** @see update */
         fun update(
             params: WebhookUpdateParams
-        ): CompletableFuture<HttpResponseFor<WebhookUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             update(params, RequestOptions.none())
 
         /** @see update */
         fun update(
             id: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             update(id, WebhookUpdateParams.none(), requestOptions)
 
         /**
@@ -557,30 +538,18 @@ interface WebhookServiceAsync {
          * the same as [WebhookServiceAsync.rotateSecret].
          */
         fun rotateSecret(
-            id: String
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
-            rotateSecret(id, WebhookRotateSecretParams.none())
-
-        /** @see rotateSecret */
-        fun rotateSecret(
             id: String,
-            params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
-            rotateSecret(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see rotateSecret */
-        fun rotateSecret(
-            id: String,
-            params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
+            params: WebhookRotateSecretParams,
         ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
             rotateSecret(id, params, RequestOptions.none())
 
         /** @see rotateSecret */
         fun rotateSecret(
+            id: String,
             params: WebhookRotateSecretParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>>
+        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
+            rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see rotateSecret */
         fun rotateSecret(
@@ -590,10 +559,9 @@ interface WebhookServiceAsync {
 
         /** @see rotateSecret */
         fun rotateSecret(
-            id: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
-            rotateSecret(id, WebhookRotateSecretParams.none(), requestOptions)
+            params: WebhookRotateSecretParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>>
 
         /**
          * Returns a raw HTTP response for `post /v3/webhooks/{id}/test`, but is otherwise the same
@@ -640,9 +608,7 @@ interface WebhookServiceAsync {
          * Returns a raw HTTP response for `patch /v3/webhooks/{id}/toggle-status`, but is otherwise
          * the same as [WebhookServiceAsync.toggleStatus].
          */
-        fun toggleStatus(
-            id: String
-        ): CompletableFuture<HttpResponseFor<WebhookToggleStatusResponse>> =
+        fun toggleStatus(id: String): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             toggleStatus(id, WebhookToggleStatusParams.none())
 
         /** @see toggleStatus */
@@ -650,33 +616,33 @@ interface WebhookServiceAsync {
             id: String,
             params: WebhookToggleStatusParams = WebhookToggleStatusParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookToggleStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             toggleStatus(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see toggleStatus */
         fun toggleStatus(
             id: String,
             params: WebhookToggleStatusParams = WebhookToggleStatusParams.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookToggleStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             toggleStatus(id, params, RequestOptions.none())
 
         /** @see toggleStatus */
         fun toggleStatus(
             params: WebhookToggleStatusParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookToggleStatusResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>>
 
         /** @see toggleStatus */
         fun toggleStatus(
             params: WebhookToggleStatusParams
-        ): CompletableFuture<HttpResponseFor<WebhookToggleStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             toggleStatus(params, RequestOptions.none())
 
         /** @see toggleStatus */
         fun toggleStatus(
             id: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookToggleStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> =
             toggleStatus(id, WebhookToggleStatusParams.none(), requestOptions)
     }
 }

@@ -7,13 +7,12 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.profiles.campaigns.ApiResponseOfTcrCampaignWithUseCases
 import dm.sent.models.profiles.campaigns.CampaignCreateParams
-import dm.sent.models.profiles.campaigns.CampaignCreateResponse
 import dm.sent.models.profiles.campaigns.CampaignDeleteParams
 import dm.sent.models.profiles.campaigns.CampaignListParams
 import dm.sent.models.profiles.campaigns.CampaignListResponse
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
-import dm.sent.models.profiles.campaigns.CampaignUpdateResponse
 import java.util.function.Consumer
 
 /** Manage organization profiles */
@@ -35,51 +34,55 @@ interface CampaignService {
      * Creates a new campaign scoped under the brand of the specified profile. Each campaign must
      * include at least one use case with sample messages.
      */
-    fun create(profileId: String, params: CampaignCreateParams): CampaignCreateResponse =
-        create(profileId, params, RequestOptions.none())
+    fun create(
+        profileId: String,
+        params: CampaignCreateParams,
+    ): ApiResponseOfTcrCampaignWithUseCases = create(profileId, params, RequestOptions.none())
 
     /** @see create */
     fun create(
         profileId: String,
         params: CampaignCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CampaignCreateResponse =
+    ): ApiResponseOfTcrCampaignWithUseCases =
         create(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see create */
-    fun create(params: CampaignCreateParams): CampaignCreateResponse =
+    fun create(params: CampaignCreateParams): ApiResponseOfTcrCampaignWithUseCases =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: CampaignCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CampaignCreateResponse
+    ): ApiResponseOfTcrCampaignWithUseCases
 
     /**
      * Updates an existing campaign under the brand of the specified profile. Cannot update
      * campaigns that have already been submitted to TCR.
      */
-    fun update(campaignId: String, params: CampaignUpdateParams): CampaignUpdateResponse =
-        update(campaignId, params, RequestOptions.none())
+    fun update(
+        campaignId: String,
+        params: CampaignUpdateParams,
+    ): ApiResponseOfTcrCampaignWithUseCases = update(campaignId, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         campaignId: String,
         params: CampaignUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CampaignUpdateResponse =
+    ): ApiResponseOfTcrCampaignWithUseCases =
         update(params.toBuilder().campaignId(campaignId).build(), requestOptions)
 
     /** @see update */
-    fun update(params: CampaignUpdateParams): CampaignUpdateResponse =
+    fun update(params: CampaignUpdateParams): ApiResponseOfTcrCampaignWithUseCases =
         update(params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: CampaignUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CampaignUpdateResponse
+    ): ApiResponseOfTcrCampaignWithUseCases
 
     /**
      * Retrieves all campaigns linked to the profile's brand, including use cases and sample
@@ -151,7 +154,7 @@ interface CampaignService {
         fun create(
             profileId: String,
             params: CampaignCreateParams,
-        ): HttpResponseFor<CampaignCreateResponse> =
+        ): HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases> =
             create(profileId, params, RequestOptions.none())
 
         /** @see create */
@@ -160,12 +163,14 @@ interface CampaignService {
             profileId: String,
             params: CampaignCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<CampaignCreateResponse> =
+        ): HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases> =
             create(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see create */
         @MustBeClosed
-        fun create(params: CampaignCreateParams): HttpResponseFor<CampaignCreateResponse> =
+        fun create(
+            params: CampaignCreateParams
+        ): HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases> =
             create(params, RequestOptions.none())
 
         /** @see create */
@@ -173,7 +178,7 @@ interface CampaignService {
         fun create(
             params: CampaignCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<CampaignCreateResponse>
+        ): HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases>
 
         /**
          * Returns a raw HTTP response for `put /v3/profiles/{profileId}/campaigns/{campaignId}`,
@@ -183,7 +188,7 @@ interface CampaignService {
         fun update(
             campaignId: String,
             params: CampaignUpdateParams,
-        ): HttpResponseFor<CampaignUpdateResponse> =
+        ): HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases> =
             update(campaignId, params, RequestOptions.none())
 
         /** @see update */
@@ -192,12 +197,14 @@ interface CampaignService {
             campaignId: String,
             params: CampaignUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<CampaignUpdateResponse> =
+        ): HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases> =
             update(params.toBuilder().campaignId(campaignId).build(), requestOptions)
 
         /** @see update */
         @MustBeClosed
-        fun update(params: CampaignUpdateParams): HttpResponseFor<CampaignUpdateResponse> =
+        fun update(
+            params: CampaignUpdateParams
+        ): HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -205,7 +212,7 @@ interface CampaignService {
         fun update(
             params: CampaignUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<CampaignUpdateResponse>
+        ): HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases>
 
         /**
          * Returns a raw HTTP response for `get /v3/profiles/{profileId}/campaigns`, but is

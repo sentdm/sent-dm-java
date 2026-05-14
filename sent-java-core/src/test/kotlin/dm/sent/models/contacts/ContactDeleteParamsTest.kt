@@ -3,6 +3,7 @@
 package dm.sent.models.contacts
 
 import dm.sent.core.http.Headers
+import dm.sent.models.webhooks.MutationRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -13,14 +14,17 @@ internal class ContactDeleteParamsTest {
         ContactDeleteParams.builder()
             .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .sandbox(false)
+            .mutationRequest(MutationRequest.builder().sandbox(false).build())
             .build()
     }
 
     @Test
     fun pathParams() {
         val params =
-            ContactDeleteParams.builder().id("6ba7b810-9dad-11d1-80b4-00c04fd430c8").build()
+            ContactDeleteParams.builder()
+                .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+                .mutationRequest(MutationRequest.builder().build())
+                .build()
 
         assertThat(params._pathParam(0)).isEqualTo("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
         // out-of-bound path param
@@ -33,7 +37,7 @@ internal class ContactDeleteParamsTest {
             ContactDeleteParams.builder()
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
+                .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
 
         val headers = params._headers()
@@ -49,7 +53,10 @@ internal class ContactDeleteParamsTest {
     @Test
     fun headersWithoutOptionalFields() {
         val params =
-            ContactDeleteParams.builder().id("6ba7b810-9dad-11d1-80b4-00c04fd430c8").build()
+            ContactDeleteParams.builder()
+                .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+                .mutationRequest(MutationRequest.builder().build())
+                .build()
 
         val headers = params._headers()
 
@@ -62,19 +69,24 @@ internal class ContactDeleteParamsTest {
             ContactDeleteParams.builder()
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
+                .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
 
         val body = params._body()
 
-        assertThat(body.sandbox()).contains(false)
+        assertThat(body).isEqualTo(MutationRequest.builder().sandbox(false).build())
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
         val params =
-            ContactDeleteParams.builder().id("6ba7b810-9dad-11d1-80b4-00c04fd430c8").build()
+            ContactDeleteParams.builder()
+                .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+                .mutationRequest(MutationRequest.builder().build())
+                .build()
 
         val body = params._body()
+
+        assertThat(body).isEqualTo(MutationRequest.builder().build())
     }
 }

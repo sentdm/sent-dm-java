@@ -17,8 +17,8 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
+import dm.sent.models.webhooks.ApiResponseWebhook
 import dm.sent.models.webhooks.WebhookCreateParams
-import dm.sent.models.webhooks.WebhookCreateResponse
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
 import dm.sent.models.webhooks.WebhookListEventTypesResponse
@@ -27,15 +27,12 @@ import dm.sent.models.webhooks.WebhookListEventsResponse
 import dm.sent.models.webhooks.WebhookListParams
 import dm.sent.models.webhooks.WebhookListResponse
 import dm.sent.models.webhooks.WebhookRetrieveParams
-import dm.sent.models.webhooks.WebhookRetrieveResponse
 import dm.sent.models.webhooks.WebhookRotateSecretParams
 import dm.sent.models.webhooks.WebhookRotateSecretResponse
 import dm.sent.models.webhooks.WebhookTestParams
 import dm.sent.models.webhooks.WebhookTestResponse
 import dm.sent.models.webhooks.WebhookToggleStatusParams
-import dm.sent.models.webhooks.WebhookToggleStatusResponse
 import dm.sent.models.webhooks.WebhookUpdateParams
-import dm.sent.models.webhooks.WebhookUpdateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -56,21 +53,21 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun create(
         params: WebhookCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookCreateResponse> =
+    ): CompletableFuture<ApiResponseWebhook> =
         // post /v3/webhooks
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieve(
         params: WebhookRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookRetrieveResponse> =
+    ): CompletableFuture<ApiResponseWebhook> =
         // get /v3/webhooks/{id}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun update(
         params: WebhookUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookUpdateResponse> =
+    ): CompletableFuture<ApiResponseWebhook> =
         // put /v3/webhooks/{id}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
@@ -119,7 +116,7 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun toggleStatus(
         params: WebhookToggleStatusParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookToggleStatusResponse> =
+    ): CompletableFuture<ApiResponseWebhook> =
         // patch /v3/webhooks/{id}/toggle-status
         withRawResponse().toggleStatus(params, requestOptions).thenApply { it.parse() }
 
@@ -136,13 +133,13 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<WebhookCreateResponse> =
-            jsonHandler<WebhookCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<ApiResponseWebhook> =
+            jsonHandler<ApiResponseWebhook>(clientOptions.jsonMapper)
 
         override fun create(
             params: WebhookCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookCreateResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -167,13 +164,13 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val retrieveHandler: Handler<WebhookRetrieveResponse> =
-            jsonHandler<WebhookRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<ApiResponseWebhook> =
+            jsonHandler<ApiResponseWebhook>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: WebhookRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookRetrieveResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -200,13 +197,13 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val updateHandler: Handler<WebhookUpdateResponse> =
-            jsonHandler<WebhookUpdateResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<ApiResponseWebhook> =
+            jsonHandler<ApiResponseWebhook>(clientOptions.jsonMapper)
 
         override fun update(
             params: WebhookUpdateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookUpdateResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -422,13 +419,13 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val toggleStatusHandler: Handler<WebhookToggleStatusResponse> =
-            jsonHandler<WebhookToggleStatusResponse>(clientOptions.jsonMapper)
+        private val toggleStatusHandler: Handler<ApiResponseWebhook> =
+            jsonHandler<ApiResponseWebhook>(clientOptions.jsonMapper)
 
         override fun toggleStatus(
             params: WebhookToggleStatusParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookToggleStatusResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseWebhook>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

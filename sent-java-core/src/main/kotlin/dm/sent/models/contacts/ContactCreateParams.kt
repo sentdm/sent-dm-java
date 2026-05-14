@@ -14,6 +14,7 @@ import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentInvalidDataException
+import dm.sent.models.webhooks.MutationRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -34,14 +35,6 @@ private constructor(
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /**
-     * Phone number of the contact to create
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun phoneNumber(): Optional<String> = body.phoneNumber()
-
-    /**
      * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
      * integrations without actual execution
      *
@@ -51,11 +44,12 @@ private constructor(
     fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
-     * Returns the raw JSON value of [phoneNumber].
+     * Phone number of the contact to create
      *
-     * Unlike [phoneNumber], this method doesn't throw if the JSON field has an unexpected type.
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
      */
-    fun _phoneNumber(): JsonField<String> = body._phoneNumber()
+    fun phoneNumber(): Optional<String> = body.phoneNumber()
 
     /**
      * Returns the raw JSON value of [sandbox].
@@ -63,6 +57,13 @@ private constructor(
      * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
+
+    /**
+     * Returns the raw JSON value of [phoneNumber].
+     *
+     * Unlike [phoneNumber], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _phoneNumber(): JsonField<String> = body._phoneNumber()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -116,22 +117,10 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [phoneNumber]
          * - [sandbox]
+         * - [phoneNumber]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        /** Phone number of the contact to create */
-        fun phoneNumber(phoneNumber: String) = apply { body.phoneNumber(phoneNumber) }
-
-        /**
-         * Sets [Builder.phoneNumber] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.phoneNumber] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun phoneNumber(phoneNumber: JsonField<String>) = apply { body.phoneNumber(phoneNumber) }
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -146,6 +135,18 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
+
+        /** Phone number of the contact to create */
+        fun phoneNumber(phoneNumber: String) = apply { body.phoneNumber(phoneNumber) }
+
+        /**
+         * Sets [Builder.phoneNumber] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.phoneNumber] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun phoneNumber(phoneNumber: JsonField<String>) = apply { body.phoneNumber(phoneNumber) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -292,29 +293,25 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
+    /** Request to create a new contact */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val phoneNumber: JsonField<String>,
         private val sandbox: JsonField<Boolean>,
+        private val phoneNumber: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("phone_number")
             @ExcludeMissing
             phoneNumber: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
-        ) : this(phoneNumber, sandbox, mutableMapOf())
+        ) : this(sandbox, phoneNumber, mutableMapOf())
 
-        /**
-         * Phone number of the contact to create
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun phoneNumber(): Optional<String> = phoneNumber.getOptional("phone_number")
+        fun toMutationRequest(): MutationRequest =
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -326,13 +323,12 @@ private constructor(
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
-         * Returns the raw JSON value of [phoneNumber].
+         * Phone number of the contact to create
          *
-         * Unlike [phoneNumber], this method doesn't throw if the JSON field has an unexpected type.
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
          */
-        @JsonProperty("phone_number")
-        @ExcludeMissing
-        fun _phoneNumber(): JsonField<String> = phoneNumber
+        fun phoneNumber(): Optional<String> = phoneNumber.getOptional("phone_number")
 
         /**
          * Returns the raw JSON value of [sandbox].
@@ -340,6 +336,15 @@ private constructor(
          * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
+        /**
+         * Returns the raw JSON value of [phoneNumber].
+         *
+         * Unlike [phoneNumber], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("phone_number")
+        @ExcludeMissing
+        fun _phoneNumber(): JsonField<String> = phoneNumber
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -362,29 +367,15 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var phoneNumber: JsonField<String> = JsonMissing.of()
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
+            private var phoneNumber: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                phoneNumber = body.phoneNumber
                 sandbox = body.sandbox
+                phoneNumber = body.phoneNumber
                 additionalProperties = body.additionalProperties.toMutableMap()
-            }
-
-            /** Phone number of the contact to create */
-            fun phoneNumber(phoneNumber: String) = phoneNumber(JsonField.of(phoneNumber))
-
-            /**
-             * Sets [Builder.phoneNumber] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.phoneNumber] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun phoneNumber(phoneNumber: JsonField<String>) = apply {
-                this.phoneNumber = phoneNumber
             }
 
             /**
@@ -401,6 +392,20 @@ private constructor(
              * supported value.
              */
             fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
+            /** Phone number of the contact to create */
+            fun phoneNumber(phoneNumber: String) = phoneNumber(JsonField.of(phoneNumber))
+
+            /**
+             * Sets [Builder.phoneNumber] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.phoneNumber] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun phoneNumber(phoneNumber: JsonField<String>) = apply {
+                this.phoneNumber = phoneNumber
+            }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -426,7 +431,7 @@ private constructor(
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              */
-            fun build(): Body = Body(phoneNumber, sandbox, additionalProperties.toMutableMap())
+            fun build(): Body = Body(sandbox, phoneNumber, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -445,8 +450,8 @@ private constructor(
                 return@apply
             }
 
-            phoneNumber()
             sandbox()
+            phoneNumber()
             validated = true
         }
 
@@ -466,8 +471,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (phoneNumber.asKnown().isPresent) 1 else 0) +
-                (if (sandbox.asKnown().isPresent) 1 else 0)
+            (if (sandbox.asKnown().isPresent) 1 else 0) +
+                (if (phoneNumber.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -475,19 +480,19 @@ private constructor(
             }
 
             return other is Body &&
-                phoneNumber == other.phoneNumber &&
                 sandbox == other.sandbox &&
+                phoneNumber == other.phoneNumber &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(phoneNumber, sandbox, additionalProperties)
+            Objects.hash(sandbox, phoneNumber, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{phoneNumber=$phoneNumber, sandbox=$sandbox, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, phoneNumber=$phoneNumber, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

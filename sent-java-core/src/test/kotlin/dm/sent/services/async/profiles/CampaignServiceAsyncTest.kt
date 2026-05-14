@@ -4,9 +4,13 @@ package dm.sent.services.async.profiles
 
 import dm.sent.client.okhttp.SentOkHttpClientAsync
 import dm.sent.models.profiles.campaigns.CampaignCreateParams
+import dm.sent.models.profiles.campaigns.CampaignData
 import dm.sent.models.profiles.campaigns.CampaignDeleteParams
 import dm.sent.models.profiles.campaigns.CampaignListParams
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
+import dm.sent.models.profiles.campaigns.MessagingUseCaseUs
+import dm.sent.models.profiles.campaigns.SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -18,23 +22,22 @@ internal class CampaignServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.profiles().campaigns()
 
-        val campaignFuture =
+        val apiResponseOfTcrCampaignWithUseCasesFuture =
             campaignServiceAsync.create(
                 CampaignCreateParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .campaign(
-                        CampaignCreateParams.Campaign.builder()
+                        CampaignData.builder()
                             .description("Appointment reminders and account notifications")
                             .name("Customer Notifications")
                             .type("App")
                             .addUseCase(
-                                CampaignCreateParams.Campaign.UseCase.builder()
-                                    .messagingUseCaseUs(
-                                        CampaignCreateParams.Campaign.UseCase.MessagingUseCaseUs
-                                            .ACCOUNT_NOTIFICATION
-                                    )
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+                                    .builder()
+                                    .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                     .addSampleMessage(
                                         "Hi {name}, your appointment is confirmed for {date} at {time}."
                                     )
@@ -62,12 +65,11 @@ internal class CampaignServiceAsyncTest {
                             .termsAndConditionsLink("https://acmecorp.com/terms")
                             .build()
                     )
-                    .sandbox(false)
                     .build()
             )
 
-        val campaign = campaignFuture.get()
-        campaign.validate()
+        val apiResponseOfTcrCampaignWithUseCases = apiResponseOfTcrCampaignWithUseCasesFuture.get()
+        apiResponseOfTcrCampaignWithUseCases.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -76,24 +78,23 @@ internal class CampaignServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.profiles().campaigns()
 
-        val campaignFuture =
+        val apiResponseOfTcrCampaignWithUseCasesFuture =
             campaignServiceAsync.update(
                 CampaignUpdateParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
                     .campaignId("b2c3d4e5-f6a7-8901-bcde-f12345678901")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .campaign(
-                        CampaignUpdateParams.Campaign.builder()
+                        CampaignData.builder()
                             .description("Updated appointment reminders and account notifications")
                             .name("Customer Notifications Updated")
                             .type("App")
                             .addUseCase(
-                                CampaignUpdateParams.Campaign.UseCase.builder()
-                                    .messagingUseCaseUs(
-                                        CampaignUpdateParams.Campaign.UseCase.MessagingUseCaseUs
-                                            .ACCOUNT_NOTIFICATION
-                                    )
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+                                    .builder()
+                                    .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                     .addSampleMessage(
                                         "Hi {name}, your appointment is confirmed for {date} at {time}."
                                     )
@@ -115,12 +116,11 @@ internal class CampaignServiceAsyncTest {
                             .termsAndConditionsLink(null)
                             .build()
                     )
-                    .sandbox(false)
                     .build()
             )
 
-        val campaign = campaignFuture.get()
-        campaign.validate()
+        val apiResponseOfTcrCampaignWithUseCases = apiResponseOfTcrCampaignWithUseCasesFuture.get()
+        apiResponseOfTcrCampaignWithUseCases.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -153,7 +153,7 @@ internal class CampaignServiceAsyncTest {
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
                     .campaignId("b2c3d4e5-f6a7-8901-bcde-f12345678901")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
+                    .mutationRequest(MutationRequest.builder().sandbox(false).build())
                     .build()
             )
 

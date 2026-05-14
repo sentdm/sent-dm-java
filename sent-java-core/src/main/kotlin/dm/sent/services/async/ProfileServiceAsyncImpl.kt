@@ -17,17 +17,15 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
+import dm.sent.models.profiles.ApiResponseOfProfileDetail
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
-import dm.sent.models.profiles.ProfileCreateResponse
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
-import dm.sent.models.profiles.ProfileRetrieveResponse
 import dm.sent.models.profiles.ProfileUpdateParams
-import dm.sent.models.profiles.ProfileUpdateResponse
 import dm.sent.services.async.profiles.CampaignServiceAsync
 import dm.sent.services.async.profiles.CampaignServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
@@ -55,21 +53,21 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun create(
         params: ProfileCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ProfileCreateResponse> =
+    ): CompletableFuture<ApiResponseOfProfileDetail> =
         // post /v3/profiles
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieve(
         params: ProfileRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ProfileRetrieveResponse> =
+    ): CompletableFuture<ApiResponseOfProfileDetail> =
         // get /v3/profiles/{profileId}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun update(
         params: ProfileUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ProfileUpdateResponse> =
+    ): CompletableFuture<ApiResponseOfProfileDetail> =
         // patch /v3/profiles/{profileId}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
@@ -114,13 +112,13 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
         /** Manage organization profiles */
         override fun campaigns(): CampaignServiceAsync.WithRawResponse = campaigns
 
-        private val createHandler: Handler<ProfileCreateResponse> =
-            jsonHandler<ProfileCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<ApiResponseOfProfileDetail> =
+            jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
 
         override fun create(
             params: ProfileCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ProfileCreateResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -145,13 +143,13 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val retrieveHandler: Handler<ProfileRetrieveResponse> =
-            jsonHandler<ProfileRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<ApiResponseOfProfileDetail> =
+            jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: ProfileRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ProfileRetrieveResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -178,13 +176,13 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val updateHandler: Handler<ProfileUpdateResponse> =
-            jsonHandler<ProfileUpdateResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<ApiResponseOfProfileDetail> =
+            jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
 
         override fun update(
             params: ProfileUpdateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ProfileUpdateResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())

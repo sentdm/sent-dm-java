@@ -8,6 +8,7 @@ import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
+import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -19,18 +20,18 @@ internal class ContactServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val contactServiceAsync = client.contacts()
 
-        val contactFuture =
+        val apiResponseOfContactFuture =
             contactServiceAsync.create(
                 ContactCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .phoneNumber("+1234567890")
                     .sandbox(false)
+                    .phoneNumber("+1234567890")
                     .build()
             )
 
-        val contact = contactFuture.get()
-        contact.validate()
+        val apiResponseOfContact = apiResponseOfContactFuture.get()
+        apiResponseOfContact.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -39,7 +40,7 @@ internal class ContactServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val contactServiceAsync = client.contacts()
 
-        val contactFuture =
+        val apiResponseOfContactFuture =
             contactServiceAsync.retrieve(
                 ContactRetrieveParams.builder()
                     .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
@@ -47,8 +48,8 @@ internal class ContactServiceAsyncTest {
                     .build()
             )
 
-        val contact = contactFuture.get()
-        contact.validate()
+        val apiResponseOfContact = apiResponseOfContactFuture.get()
+        apiResponseOfContact.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -57,20 +58,20 @@ internal class ContactServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val contactServiceAsync = client.contacts()
 
-        val contactFuture =
+        val apiResponseOfContactFuture =
             contactServiceAsync.update(
                 ContactUpdateParams.builder()
                     .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .defaultChannel("whatsapp")
                     .optOut(false)
-                    .sandbox(false)
                     .build()
             )
 
-        val contact = contactFuture.get()
-        contact.validate()
+        val apiResponseOfContact = apiResponseOfContactFuture.get()
+        apiResponseOfContact.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -106,7 +107,7 @@ internal class ContactServiceAsyncTest {
                 ContactDeleteParams.builder()
                     .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
+                    .mutationRequest(MutationRequest.builder().sandbox(false).build())
                     .build()
             )
 
