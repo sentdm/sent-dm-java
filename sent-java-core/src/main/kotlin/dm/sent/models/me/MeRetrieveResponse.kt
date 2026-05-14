@@ -13,8 +13,6 @@ import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
@@ -26,8 +24,8 @@ class MeRetrieveResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val data: JsonField<Data>,
-    private val error: JsonField<ErrorDetail>,
-    private val meta: JsonField<ApiMeta>,
+    private val error: JsonField<Error>,
+    private val meta: JsonField<Meta>,
     private val success: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -35,8 +33,8 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("data") @ExcludeMissing data: JsonField<Data> = JsonMissing.of(),
-        @JsonProperty("error") @ExcludeMissing error: JsonField<ErrorDetail> = JsonMissing.of(),
-        @JsonProperty("meta") @ExcludeMissing meta: JsonField<ApiMeta> = JsonMissing.of(),
+        @JsonProperty("error") @ExcludeMissing error: JsonField<Error> = JsonMissing.of(),
+        @JsonProperty("meta") @ExcludeMissing meta: JsonField<Meta> = JsonMissing.of(),
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
@@ -56,7 +54,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun error(): Optional<ErrorDetail> = error.getOptional("error")
+    fun error(): Optional<Error> = error.getOptional("error")
 
     /**
      * Request and response metadata
@@ -64,7 +62,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun meta(): Optional<ApiMeta> = meta.getOptional("meta")
+    fun meta(): Optional<Meta> = meta.getOptional("meta")
 
     /**
      * Indicates whether the request was successful
@@ -86,14 +84,14 @@ private constructor(
      *
      * Unlike [error], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<ErrorDetail> = error
+    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<Error> = error
 
     /**
      * Returns the raw JSON value of [meta].
      *
      * Unlike [meta], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("meta") @ExcludeMissing fun _meta(): JsonField<ApiMeta> = meta
+    @JsonProperty("meta") @ExcludeMissing fun _meta(): JsonField<Meta> = meta
 
     /**
      * Returns the raw JSON value of [success].
@@ -124,8 +122,8 @@ private constructor(
     class Builder internal constructor() {
 
         private var data: JsonField<Data> = JsonMissing.of()
-        private var error: JsonField<ErrorDetail> = JsonMissing.of()
-        private var meta: JsonField<ApiMeta> = JsonMissing.of()
+        private var error: JsonField<Error> = JsonMissing.of()
+        private var meta: JsonField<Meta> = JsonMissing.of()
         private var success: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -157,30 +155,29 @@ private constructor(
         fun data(data: JsonField<Data>) = apply { this.data = data }
 
         /** Error information */
-        fun error(error: ErrorDetail?) = error(JsonField.ofNullable(error))
+        fun error(error: Error?) = error(JsonField.ofNullable(error))
 
         /** Alias for calling [Builder.error] with `error.orElse(null)`. */
-        fun error(error: Optional<ErrorDetail>) = error(error.getOrNull())
+        fun error(error: Optional<Error>) = error(error.getOrNull())
 
         /**
          * Sets [Builder.error] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.error] with a well-typed [ErrorDetail] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.error] with a well-typed [Error] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun error(error: JsonField<ErrorDetail>) = apply { this.error = error }
+        fun error(error: JsonField<Error>) = apply { this.error = error }
 
         /** Request and response metadata */
-        fun meta(meta: ApiMeta) = meta(JsonField.of(meta))
+        fun meta(meta: Meta) = meta(JsonField.of(meta))
 
         /**
          * Sets [Builder.meta] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.meta] with a well-typed [ApiMeta] value instead. This
+         * You should usually call [Builder.meta] with a well-typed [Meta] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun meta(meta: JsonField<ApiMeta>) = apply { this.meta = meta }
+        fun meta(meta: JsonField<Meta>) = apply { this.meta = meta }
 
         /** Indicates whether the request was successful */
         fun success(success: Boolean) = success(JsonField.of(success))
@@ -280,7 +277,7 @@ private constructor(
         private val name: JsonField<String>,
         private val organizationId: JsonField<String>,
         private val profiles: JsonField<List<Profile>>,
-        private val settings: JsonField<ProfileSettings>,
+        private val settings: JsonField<Settings>,
         private val shortName: JsonField<String>,
         private val status: JsonField<String>,
         private val type: JsonField<String>,
@@ -310,7 +307,7 @@ private constructor(
             profiles: JsonField<List<Profile>> = JsonMissing.of(),
             @JsonProperty("settings")
             @ExcludeMissing
-            settings: JsonField<ProfileSettings> = JsonMissing.of(),
+            settings: JsonField<Settings> = JsonMissing.of(),
             @JsonProperty("short_name")
             @ExcludeMissing
             shortName: JsonField<String> = JsonMissing.of(),
@@ -412,7 +409,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun settings(): Optional<ProfileSettings> = settings.getOptional("settings")
+        fun settings(): Optional<Settings> = settings.getOptional("settings")
 
         /**
          * Short name / abbreviation (only for profile type)
@@ -516,9 +513,7 @@ private constructor(
          *
          * Unlike [settings], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("settings")
-        @ExcludeMissing
-        fun _settings(): JsonField<ProfileSettings> = settings
+        @JsonProperty("settings") @ExcludeMissing fun _settings(): JsonField<Settings> = settings
 
         /**
          * Returns the raw JSON value of [shortName].
@@ -571,7 +566,7 @@ private constructor(
             private var name: JsonField<String> = JsonMissing.of()
             private var organizationId: JsonField<String> = JsonMissing.of()
             private var profiles: JsonField<MutableList<Profile>>? = null
-            private var settings: JsonField<ProfileSettings> = JsonMissing.of()
+            private var settings: JsonField<Settings> = JsonMissing.of()
             private var shortName: JsonField<String> = JsonMissing.of()
             private var status: JsonField<String> = JsonMissing.of()
             private var type: JsonField<String> = JsonMissing.of()
@@ -743,19 +738,19 @@ private constructor(
             }
 
             /** Profile configuration settings */
-            fun settings(settings: ProfileSettings?) = settings(JsonField.ofNullable(settings))
+            fun settings(settings: Settings?) = settings(JsonField.ofNullable(settings))
 
             /** Alias for calling [Builder.settings] with `settings.orElse(null)`. */
-            fun settings(settings: Optional<ProfileSettings>) = settings(settings.getOrNull())
+            fun settings(settings: Optional<Settings>) = settings(settings.getOrNull())
 
             /**
              * Sets [Builder.settings] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.settings] with a well-typed [ProfileSettings] value
+             * You should usually call [Builder.settings] with a well-typed [Settings] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun settings(settings: JsonField<ProfileSettings>) = apply { this.settings = settings }
+            fun settings(settings: JsonField<Settings>) = apply { this.settings = settings }
 
             /** Short name / abbreviation (only for profile type) */
             fun shortName(shortName: String?) = shortName(JsonField.ofNullable(shortName))
@@ -1856,7 +1851,7 @@ private constructor(
             private val icon: JsonField<String>,
             private val name: JsonField<String>,
             private val role: JsonField<String>,
-            private val settings: JsonField<ProfileSettings>,
+            private val settings: JsonField<Settings>,
             private val shortName: JsonField<String>,
             private val status: JsonField<String>,
             private val additionalProperties: MutableMap<String, JsonValue>,
@@ -1876,7 +1871,7 @@ private constructor(
                 @JsonProperty("role") @ExcludeMissing role: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("settings")
                 @ExcludeMissing
-                settings: JsonField<ProfileSettings> = JsonMissing.of(),
+                settings: JsonField<Settings> = JsonMissing.of(),
                 @JsonProperty("short_name")
                 @ExcludeMissing
                 shortName: JsonField<String> = JsonMissing.of(),
@@ -1949,7 +1944,7 @@ private constructor(
              * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
              */
-            fun settings(): Optional<ProfileSettings> = settings.getOptional("settings")
+            fun settings(): Optional<Settings> = settings.getOptional("settings")
 
             /**
              * Profile short name (abbreviation)
@@ -2023,7 +2018,7 @@ private constructor(
              */
             @JsonProperty("settings")
             @ExcludeMissing
-            fun _settings(): JsonField<ProfileSettings> = settings
+            fun _settings(): JsonField<Settings> = settings
 
             /**
              * Returns the raw JSON value of [shortName].
@@ -2069,7 +2064,7 @@ private constructor(
                 private var icon: JsonField<String> = JsonMissing.of()
                 private var name: JsonField<String> = JsonMissing.of()
                 private var role: JsonField<String> = JsonMissing.of()
-                private var settings: JsonField<ProfileSettings> = JsonMissing.of()
+                private var settings: JsonField<Settings> = JsonMissing.of()
                 private var shortName: JsonField<String> = JsonMissing.of()
                 private var status: JsonField<String> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -2179,18 +2174,16 @@ private constructor(
                 fun role(role: JsonField<String>) = apply { this.role = role }
 
                 /** Profile configuration settings */
-                fun settings(settings: ProfileSettings) = settings(JsonField.of(settings))
+                fun settings(settings: Settings) = settings(JsonField.of(settings))
 
                 /**
                  * Sets [Builder.settings] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.settings] with a well-typed [ProfileSettings]
-                 * value instead. This method is primarily for setting the field to an undocumented
-                 * or not yet supported value.
+                 * You should usually call [Builder.settings] with a well-typed [Settings] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
                  */
-                fun settings(settings: JsonField<ProfileSettings>) = apply {
-                    this.settings = settings
-                }
+                fun settings(settings: JsonField<Settings>) = apply { this.settings = settings }
 
                 /** Profile short name (abbreviation) */
                 fun shortName(shortName: String?) = shortName(JsonField.ofNullable(shortName))
@@ -2319,6 +2312,555 @@ private constructor(
                     (if (shortName.asKnown().isPresent) 1 else 0) +
                     (if (status.asKnown().isPresent) 1 else 0)
 
+            /** Profile configuration settings */
+            class Settings
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val allowContactSharing: JsonField<Boolean>,
+                private val allowTemplateSharing: JsonField<Boolean>,
+                private val billingModel: JsonField<String>,
+                private val inheritContacts: JsonField<Boolean>,
+                private val inheritTcrBrand: JsonField<Boolean>,
+                private val inheritTcrCampaign: JsonField<Boolean>,
+                private val inheritTemplates: JsonField<Boolean>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("allow_contact_sharing")
+                    @ExcludeMissing
+                    allowContactSharing: JsonField<Boolean> = JsonMissing.of(),
+                    @JsonProperty("allow_template_sharing")
+                    @ExcludeMissing
+                    allowTemplateSharing: JsonField<Boolean> = JsonMissing.of(),
+                    @JsonProperty("billing_model")
+                    @ExcludeMissing
+                    billingModel: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("inherit_contacts")
+                    @ExcludeMissing
+                    inheritContacts: JsonField<Boolean> = JsonMissing.of(),
+                    @JsonProperty("inherit_tcr_brand")
+                    @ExcludeMissing
+                    inheritTcrBrand: JsonField<Boolean> = JsonMissing.of(),
+                    @JsonProperty("inherit_tcr_campaign")
+                    @ExcludeMissing
+                    inheritTcrCampaign: JsonField<Boolean> = JsonMissing.of(),
+                    @JsonProperty("inherit_templates")
+                    @ExcludeMissing
+                    inheritTemplates: JsonField<Boolean> = JsonMissing.of(),
+                ) : this(
+                    allowContactSharing,
+                    allowTemplateSharing,
+                    billingModel,
+                    inheritContacts,
+                    inheritTcrBrand,
+                    inheritTcrCampaign,
+                    inheritTemplates,
+                    mutableMapOf(),
+                )
+
+                /**
+                 * Whether contacts are shared across profiles in the organization
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun allowContactSharing(): Optional<Boolean> =
+                    allowContactSharing.getOptional("allow_contact_sharing")
+
+                /**
+                 * Whether templates are shared across profiles in the organization
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun allowTemplateSharing(): Optional<Boolean> =
+                    allowTemplateSharing.getOptional("allow_template_sharing")
+
+                /**
+                 * Billing model: profile, organization, or profile_and_organization
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun billingModel(): Optional<String> = billingModel.getOptional("billing_model")
+
+                /**
+                 * Whether this profile inherits contacts from the organization
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun inheritContacts(): Optional<Boolean> =
+                    inheritContacts.getOptional("inherit_contacts")
+
+                /**
+                 * Whether this profile inherits TCR brand from the organization
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun inheritTcrBrand(): Optional<Boolean> =
+                    inheritTcrBrand.getOptional("inherit_tcr_brand")
+
+                /**
+                 * Whether this profile inherits TCR campaign from the organization
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun inheritTcrCampaign(): Optional<Boolean> =
+                    inheritTcrCampaign.getOptional("inherit_tcr_campaign")
+
+                /**
+                 * Whether this profile inherits templates from the organization
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun inheritTemplates(): Optional<Boolean> =
+                    inheritTemplates.getOptional("inherit_templates")
+
+                /**
+                 * Returns the raw JSON value of [allowContactSharing].
+                 *
+                 * Unlike [allowContactSharing], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("allow_contact_sharing")
+                @ExcludeMissing
+                fun _allowContactSharing(): JsonField<Boolean> = allowContactSharing
+
+                /**
+                 * Returns the raw JSON value of [allowTemplateSharing].
+                 *
+                 * Unlike [allowTemplateSharing], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("allow_template_sharing")
+                @ExcludeMissing
+                fun _allowTemplateSharing(): JsonField<Boolean> = allowTemplateSharing
+
+                /**
+                 * Returns the raw JSON value of [billingModel].
+                 *
+                 * Unlike [billingModel], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("billing_model")
+                @ExcludeMissing
+                fun _billingModel(): JsonField<String> = billingModel
+
+                /**
+                 * Returns the raw JSON value of [inheritContacts].
+                 *
+                 * Unlike [inheritContacts], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("inherit_contacts")
+                @ExcludeMissing
+                fun _inheritContacts(): JsonField<Boolean> = inheritContacts
+
+                /**
+                 * Returns the raw JSON value of [inheritTcrBrand].
+                 *
+                 * Unlike [inheritTcrBrand], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("inherit_tcr_brand")
+                @ExcludeMissing
+                fun _inheritTcrBrand(): JsonField<Boolean> = inheritTcrBrand
+
+                /**
+                 * Returns the raw JSON value of [inheritTcrCampaign].
+                 *
+                 * Unlike [inheritTcrCampaign], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("inherit_tcr_campaign")
+                @ExcludeMissing
+                fun _inheritTcrCampaign(): JsonField<Boolean> = inheritTcrCampaign
+
+                /**
+                 * Returns the raw JSON value of [inheritTemplates].
+                 *
+                 * Unlike [inheritTemplates], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("inherit_templates")
+                @ExcludeMissing
+                fun _inheritTemplates(): JsonField<Boolean> = inheritTemplates
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /** Returns a mutable builder for constructing an instance of [Settings]. */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [Settings]. */
+                class Builder internal constructor() {
+
+                    private var allowContactSharing: JsonField<Boolean> = JsonMissing.of()
+                    private var allowTemplateSharing: JsonField<Boolean> = JsonMissing.of()
+                    private var billingModel: JsonField<String> = JsonMissing.of()
+                    private var inheritContacts: JsonField<Boolean> = JsonMissing.of()
+                    private var inheritTcrBrand: JsonField<Boolean> = JsonMissing.of()
+                    private var inheritTcrCampaign: JsonField<Boolean> = JsonMissing.of()
+                    private var inheritTemplates: JsonField<Boolean> = JsonMissing.of()
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(settings: Settings) = apply {
+                        allowContactSharing = settings.allowContactSharing
+                        allowTemplateSharing = settings.allowTemplateSharing
+                        billingModel = settings.billingModel
+                        inheritContacts = settings.inheritContacts
+                        inheritTcrBrand = settings.inheritTcrBrand
+                        inheritTcrCampaign = settings.inheritTcrCampaign
+                        inheritTemplates = settings.inheritTemplates
+                        additionalProperties = settings.additionalProperties.toMutableMap()
+                    }
+
+                    /** Whether contacts are shared across profiles in the organization */
+                    fun allowContactSharing(allowContactSharing: Boolean?) =
+                        allowContactSharing(JsonField.ofNullable(allowContactSharing))
+
+                    /**
+                     * Alias for [Builder.allowContactSharing].
+                     *
+                     * This unboxed primitive overload exists for backwards compatibility.
+                     */
+                    fun allowContactSharing(allowContactSharing: Boolean) =
+                        allowContactSharing(allowContactSharing as Boolean?)
+
+                    /**
+                     * Alias for calling [Builder.allowContactSharing] with
+                     * `allowContactSharing.orElse(null)`.
+                     */
+                    fun allowContactSharing(allowContactSharing: Optional<Boolean>) =
+                        allowContactSharing(allowContactSharing.getOrNull())
+
+                    /**
+                     * Sets [Builder.allowContactSharing] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.allowContactSharing] with a well-typed
+                     * [Boolean] value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun allowContactSharing(allowContactSharing: JsonField<Boolean>) = apply {
+                        this.allowContactSharing = allowContactSharing
+                    }
+
+                    /** Whether templates are shared across profiles in the organization */
+                    fun allowTemplateSharing(allowTemplateSharing: Boolean?) =
+                        allowTemplateSharing(JsonField.ofNullable(allowTemplateSharing))
+
+                    /**
+                     * Alias for [Builder.allowTemplateSharing].
+                     *
+                     * This unboxed primitive overload exists for backwards compatibility.
+                     */
+                    fun allowTemplateSharing(allowTemplateSharing: Boolean) =
+                        allowTemplateSharing(allowTemplateSharing as Boolean?)
+
+                    /**
+                     * Alias for calling [Builder.allowTemplateSharing] with
+                     * `allowTemplateSharing.orElse(null)`.
+                     */
+                    fun allowTemplateSharing(allowTemplateSharing: Optional<Boolean>) =
+                        allowTemplateSharing(allowTemplateSharing.getOrNull())
+
+                    /**
+                     * Sets [Builder.allowTemplateSharing] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.allowTemplateSharing] with a well-typed
+                     * [Boolean] value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun allowTemplateSharing(allowTemplateSharing: JsonField<Boolean>) = apply {
+                        this.allowTemplateSharing = allowTemplateSharing
+                    }
+
+                    /** Billing model: profile, organization, or profile_and_organization */
+                    fun billingModel(billingModel: String?) =
+                        billingModel(JsonField.ofNullable(billingModel))
+
+                    /**
+                     * Alias for calling [Builder.billingModel] with `billingModel.orElse(null)`.
+                     */
+                    fun billingModel(billingModel: Optional<String>) =
+                        billingModel(billingModel.getOrNull())
+
+                    /**
+                     * Sets [Builder.billingModel] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.billingModel] with a well-typed [String]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun billingModel(billingModel: JsonField<String>) = apply {
+                        this.billingModel = billingModel
+                    }
+
+                    /** Whether this profile inherits contacts from the organization */
+                    fun inheritContacts(inheritContacts: Boolean?) =
+                        inheritContacts(JsonField.ofNullable(inheritContacts))
+
+                    /**
+                     * Alias for [Builder.inheritContacts].
+                     *
+                     * This unboxed primitive overload exists for backwards compatibility.
+                     */
+                    fun inheritContacts(inheritContacts: Boolean) =
+                        inheritContacts(inheritContacts as Boolean?)
+
+                    /**
+                     * Alias for calling [Builder.inheritContacts] with
+                     * `inheritContacts.orElse(null)`.
+                     */
+                    fun inheritContacts(inheritContacts: Optional<Boolean>) =
+                        inheritContacts(inheritContacts.getOrNull())
+
+                    /**
+                     * Sets [Builder.inheritContacts] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.inheritContacts] with a well-typed [Boolean]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun inheritContacts(inheritContacts: JsonField<Boolean>) = apply {
+                        this.inheritContacts = inheritContacts
+                    }
+
+                    /** Whether this profile inherits TCR brand from the organization */
+                    fun inheritTcrBrand(inheritTcrBrand: Boolean?) =
+                        inheritTcrBrand(JsonField.ofNullable(inheritTcrBrand))
+
+                    /**
+                     * Alias for [Builder.inheritTcrBrand].
+                     *
+                     * This unboxed primitive overload exists for backwards compatibility.
+                     */
+                    fun inheritTcrBrand(inheritTcrBrand: Boolean) =
+                        inheritTcrBrand(inheritTcrBrand as Boolean?)
+
+                    /**
+                     * Alias for calling [Builder.inheritTcrBrand] with
+                     * `inheritTcrBrand.orElse(null)`.
+                     */
+                    fun inheritTcrBrand(inheritTcrBrand: Optional<Boolean>) =
+                        inheritTcrBrand(inheritTcrBrand.getOrNull())
+
+                    /**
+                     * Sets [Builder.inheritTcrBrand] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.inheritTcrBrand] with a well-typed [Boolean]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun inheritTcrBrand(inheritTcrBrand: JsonField<Boolean>) = apply {
+                        this.inheritTcrBrand = inheritTcrBrand
+                    }
+
+                    /** Whether this profile inherits TCR campaign from the organization */
+                    fun inheritTcrCampaign(inheritTcrCampaign: Boolean?) =
+                        inheritTcrCampaign(JsonField.ofNullable(inheritTcrCampaign))
+
+                    /**
+                     * Alias for [Builder.inheritTcrCampaign].
+                     *
+                     * This unboxed primitive overload exists for backwards compatibility.
+                     */
+                    fun inheritTcrCampaign(inheritTcrCampaign: Boolean) =
+                        inheritTcrCampaign(inheritTcrCampaign as Boolean?)
+
+                    /**
+                     * Alias for calling [Builder.inheritTcrCampaign] with
+                     * `inheritTcrCampaign.orElse(null)`.
+                     */
+                    fun inheritTcrCampaign(inheritTcrCampaign: Optional<Boolean>) =
+                        inheritTcrCampaign(inheritTcrCampaign.getOrNull())
+
+                    /**
+                     * Sets [Builder.inheritTcrCampaign] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.inheritTcrCampaign] with a well-typed
+                     * [Boolean] value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun inheritTcrCampaign(inheritTcrCampaign: JsonField<Boolean>) = apply {
+                        this.inheritTcrCampaign = inheritTcrCampaign
+                    }
+
+                    /** Whether this profile inherits templates from the organization */
+                    fun inheritTemplates(inheritTemplates: Boolean?) =
+                        inheritTemplates(JsonField.ofNullable(inheritTemplates))
+
+                    /**
+                     * Alias for [Builder.inheritTemplates].
+                     *
+                     * This unboxed primitive overload exists for backwards compatibility.
+                     */
+                    fun inheritTemplates(inheritTemplates: Boolean) =
+                        inheritTemplates(inheritTemplates as Boolean?)
+
+                    /**
+                     * Alias for calling [Builder.inheritTemplates] with
+                     * `inheritTemplates.orElse(null)`.
+                     */
+                    fun inheritTemplates(inheritTemplates: Optional<Boolean>) =
+                        inheritTemplates(inheritTemplates.getOrNull())
+
+                    /**
+                     * Sets [Builder.inheritTemplates] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.inheritTemplates] with a well-typed
+                     * [Boolean] value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun inheritTemplates(inheritTemplates: JsonField<Boolean>) = apply {
+                        this.inheritTemplates = inheritTemplates
+                    }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [Settings].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     */
+                    fun build(): Settings =
+                        Settings(
+                            allowContactSharing,
+                            allowTemplateSharing,
+                            billingModel,
+                            inheritContacts,
+                            inheritTcrBrand,
+                            inheritTcrCampaign,
+                            inheritTemplates,
+                            additionalProperties.toMutableMap(),
+                        )
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws SentInvalidDataException if any value type in this object doesn't match
+                 *   its expected type.
+                 */
+                fun validate(): Settings = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    allowContactSharing()
+                    allowTemplateSharing()
+                    billingModel()
+                    inheritContacts()
+                    inheritTcrBrand()
+                    inheritTcrCampaign()
+                    inheritTemplates()
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: SentInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (if (allowContactSharing.asKnown().isPresent) 1 else 0) +
+                        (if (allowTemplateSharing.asKnown().isPresent) 1 else 0) +
+                        (if (billingModel.asKnown().isPresent) 1 else 0) +
+                        (if (inheritContacts.asKnown().isPresent) 1 else 0) +
+                        (if (inheritTcrBrand.asKnown().isPresent) 1 else 0) +
+                        (if (inheritTcrCampaign.asKnown().isPresent) 1 else 0) +
+                        (if (inheritTemplates.asKnown().isPresent) 1 else 0)
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Settings &&
+                        allowContactSharing == other.allowContactSharing &&
+                        allowTemplateSharing == other.allowTemplateSharing &&
+                        billingModel == other.billingModel &&
+                        inheritContacts == other.inheritContacts &&
+                        inheritTcrBrand == other.inheritTcrBrand &&
+                        inheritTcrCampaign == other.inheritTcrCampaign &&
+                        inheritTemplates == other.inheritTemplates &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy {
+                    Objects.hash(
+                        allowContactSharing,
+                        allowTemplateSharing,
+                        billingModel,
+                        inheritContacts,
+                        inheritTcrBrand,
+                        inheritTcrCampaign,
+                        inheritTemplates,
+                        additionalProperties,
+                    )
+                }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "Settings{allowContactSharing=$allowContactSharing, allowTemplateSharing=$allowTemplateSharing, billingModel=$billingModel, inheritContacts=$inheritContacts, inheritTcrBrand=$inheritTcrBrand, inheritTcrCampaign=$inheritTcrCampaign, inheritTemplates=$inheritTemplates, additionalProperties=$additionalProperties}"
+            }
+
             override fun equals(other: Any?): Boolean {
                 if (this === other) {
                     return true
@@ -2356,6 +2898,551 @@ private constructor(
 
             override fun toString() =
                 "Profile{id=$id, createdAt=$createdAt, description=$description, icon=$icon, name=$name, role=$role, settings=$settings, shortName=$shortName, status=$status, additionalProperties=$additionalProperties}"
+        }
+
+        /** Profile configuration settings */
+        class Settings
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val allowContactSharing: JsonField<Boolean>,
+            private val allowTemplateSharing: JsonField<Boolean>,
+            private val billingModel: JsonField<String>,
+            private val inheritContacts: JsonField<Boolean>,
+            private val inheritTcrBrand: JsonField<Boolean>,
+            private val inheritTcrCampaign: JsonField<Boolean>,
+            private val inheritTemplates: JsonField<Boolean>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("allow_contact_sharing")
+                @ExcludeMissing
+                allowContactSharing: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("allow_template_sharing")
+                @ExcludeMissing
+                allowTemplateSharing: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("billing_model")
+                @ExcludeMissing
+                billingModel: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("inherit_contacts")
+                @ExcludeMissing
+                inheritContacts: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("inherit_tcr_brand")
+                @ExcludeMissing
+                inheritTcrBrand: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("inherit_tcr_campaign")
+                @ExcludeMissing
+                inheritTcrCampaign: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("inherit_templates")
+                @ExcludeMissing
+                inheritTemplates: JsonField<Boolean> = JsonMissing.of(),
+            ) : this(
+                allowContactSharing,
+                allowTemplateSharing,
+                billingModel,
+                inheritContacts,
+                inheritTcrBrand,
+                inheritTcrCampaign,
+                inheritTemplates,
+                mutableMapOf(),
+            )
+
+            /**
+             * Whether contacts are shared across profiles in the organization
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun allowContactSharing(): Optional<Boolean> =
+                allowContactSharing.getOptional("allow_contact_sharing")
+
+            /**
+             * Whether templates are shared across profiles in the organization
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun allowTemplateSharing(): Optional<Boolean> =
+                allowTemplateSharing.getOptional("allow_template_sharing")
+
+            /**
+             * Billing model: profile, organization, or profile_and_organization
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun billingModel(): Optional<String> = billingModel.getOptional("billing_model")
+
+            /**
+             * Whether this profile inherits contacts from the organization
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun inheritContacts(): Optional<Boolean> =
+                inheritContacts.getOptional("inherit_contacts")
+
+            /**
+             * Whether this profile inherits TCR brand from the organization
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun inheritTcrBrand(): Optional<Boolean> =
+                inheritTcrBrand.getOptional("inherit_tcr_brand")
+
+            /**
+             * Whether this profile inherits TCR campaign from the organization
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun inheritTcrCampaign(): Optional<Boolean> =
+                inheritTcrCampaign.getOptional("inherit_tcr_campaign")
+
+            /**
+             * Whether this profile inherits templates from the organization
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun inheritTemplates(): Optional<Boolean> =
+                inheritTemplates.getOptional("inherit_templates")
+
+            /**
+             * Returns the raw JSON value of [allowContactSharing].
+             *
+             * Unlike [allowContactSharing], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("allow_contact_sharing")
+            @ExcludeMissing
+            fun _allowContactSharing(): JsonField<Boolean> = allowContactSharing
+
+            /**
+             * Returns the raw JSON value of [allowTemplateSharing].
+             *
+             * Unlike [allowTemplateSharing], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("allow_template_sharing")
+            @ExcludeMissing
+            fun _allowTemplateSharing(): JsonField<Boolean> = allowTemplateSharing
+
+            /**
+             * Returns the raw JSON value of [billingModel].
+             *
+             * Unlike [billingModel], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("billing_model")
+            @ExcludeMissing
+            fun _billingModel(): JsonField<String> = billingModel
+
+            /**
+             * Returns the raw JSON value of [inheritContacts].
+             *
+             * Unlike [inheritContacts], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("inherit_contacts")
+            @ExcludeMissing
+            fun _inheritContacts(): JsonField<Boolean> = inheritContacts
+
+            /**
+             * Returns the raw JSON value of [inheritTcrBrand].
+             *
+             * Unlike [inheritTcrBrand], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("inherit_tcr_brand")
+            @ExcludeMissing
+            fun _inheritTcrBrand(): JsonField<Boolean> = inheritTcrBrand
+
+            /**
+             * Returns the raw JSON value of [inheritTcrCampaign].
+             *
+             * Unlike [inheritTcrCampaign], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("inherit_tcr_campaign")
+            @ExcludeMissing
+            fun _inheritTcrCampaign(): JsonField<Boolean> = inheritTcrCampaign
+
+            /**
+             * Returns the raw JSON value of [inheritTemplates].
+             *
+             * Unlike [inheritTemplates], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("inherit_templates")
+            @ExcludeMissing
+            fun _inheritTemplates(): JsonField<Boolean> = inheritTemplates
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Settings]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Settings]. */
+            class Builder internal constructor() {
+
+                private var allowContactSharing: JsonField<Boolean> = JsonMissing.of()
+                private var allowTemplateSharing: JsonField<Boolean> = JsonMissing.of()
+                private var billingModel: JsonField<String> = JsonMissing.of()
+                private var inheritContacts: JsonField<Boolean> = JsonMissing.of()
+                private var inheritTcrBrand: JsonField<Boolean> = JsonMissing.of()
+                private var inheritTcrCampaign: JsonField<Boolean> = JsonMissing.of()
+                private var inheritTemplates: JsonField<Boolean> = JsonMissing.of()
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(settings: Settings) = apply {
+                    allowContactSharing = settings.allowContactSharing
+                    allowTemplateSharing = settings.allowTemplateSharing
+                    billingModel = settings.billingModel
+                    inheritContacts = settings.inheritContacts
+                    inheritTcrBrand = settings.inheritTcrBrand
+                    inheritTcrCampaign = settings.inheritTcrCampaign
+                    inheritTemplates = settings.inheritTemplates
+                    additionalProperties = settings.additionalProperties.toMutableMap()
+                }
+
+                /** Whether contacts are shared across profiles in the organization */
+                fun allowContactSharing(allowContactSharing: Boolean?) =
+                    allowContactSharing(JsonField.ofNullable(allowContactSharing))
+
+                /**
+                 * Alias for [Builder.allowContactSharing].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                fun allowContactSharing(allowContactSharing: Boolean) =
+                    allowContactSharing(allowContactSharing as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.allowContactSharing] with
+                 * `allowContactSharing.orElse(null)`.
+                 */
+                fun allowContactSharing(allowContactSharing: Optional<Boolean>) =
+                    allowContactSharing(allowContactSharing.getOrNull())
+
+                /**
+                 * Sets [Builder.allowContactSharing] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.allowContactSharing] with a well-typed [Boolean]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun allowContactSharing(allowContactSharing: JsonField<Boolean>) = apply {
+                    this.allowContactSharing = allowContactSharing
+                }
+
+                /** Whether templates are shared across profiles in the organization */
+                fun allowTemplateSharing(allowTemplateSharing: Boolean?) =
+                    allowTemplateSharing(JsonField.ofNullable(allowTemplateSharing))
+
+                /**
+                 * Alias for [Builder.allowTemplateSharing].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                fun allowTemplateSharing(allowTemplateSharing: Boolean) =
+                    allowTemplateSharing(allowTemplateSharing as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.allowTemplateSharing] with
+                 * `allowTemplateSharing.orElse(null)`.
+                 */
+                fun allowTemplateSharing(allowTemplateSharing: Optional<Boolean>) =
+                    allowTemplateSharing(allowTemplateSharing.getOrNull())
+
+                /**
+                 * Sets [Builder.allowTemplateSharing] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.allowTemplateSharing] with a well-typed
+                 * [Boolean] value instead. This method is primarily for setting the field to an
+                 * undocumented or not yet supported value.
+                 */
+                fun allowTemplateSharing(allowTemplateSharing: JsonField<Boolean>) = apply {
+                    this.allowTemplateSharing = allowTemplateSharing
+                }
+
+                /** Billing model: profile, organization, or profile_and_organization */
+                fun billingModel(billingModel: String?) =
+                    billingModel(JsonField.ofNullable(billingModel))
+
+                /** Alias for calling [Builder.billingModel] with `billingModel.orElse(null)`. */
+                fun billingModel(billingModel: Optional<String>) =
+                    billingModel(billingModel.getOrNull())
+
+                /**
+                 * Sets [Builder.billingModel] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.billingModel] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun billingModel(billingModel: JsonField<String>) = apply {
+                    this.billingModel = billingModel
+                }
+
+                /** Whether this profile inherits contacts from the organization */
+                fun inheritContacts(inheritContacts: Boolean?) =
+                    inheritContacts(JsonField.ofNullable(inheritContacts))
+
+                /**
+                 * Alias for [Builder.inheritContacts].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                fun inheritContacts(inheritContacts: Boolean) =
+                    inheritContacts(inheritContacts as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.inheritContacts] with `inheritContacts.orElse(null)`.
+                 */
+                fun inheritContacts(inheritContacts: Optional<Boolean>) =
+                    inheritContacts(inheritContacts.getOrNull())
+
+                /**
+                 * Sets [Builder.inheritContacts] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.inheritContacts] with a well-typed [Boolean]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun inheritContacts(inheritContacts: JsonField<Boolean>) = apply {
+                    this.inheritContacts = inheritContacts
+                }
+
+                /** Whether this profile inherits TCR brand from the organization */
+                fun inheritTcrBrand(inheritTcrBrand: Boolean?) =
+                    inheritTcrBrand(JsonField.ofNullable(inheritTcrBrand))
+
+                /**
+                 * Alias for [Builder.inheritTcrBrand].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                fun inheritTcrBrand(inheritTcrBrand: Boolean) =
+                    inheritTcrBrand(inheritTcrBrand as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.inheritTcrBrand] with `inheritTcrBrand.orElse(null)`.
+                 */
+                fun inheritTcrBrand(inheritTcrBrand: Optional<Boolean>) =
+                    inheritTcrBrand(inheritTcrBrand.getOrNull())
+
+                /**
+                 * Sets [Builder.inheritTcrBrand] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.inheritTcrBrand] with a well-typed [Boolean]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun inheritTcrBrand(inheritTcrBrand: JsonField<Boolean>) = apply {
+                    this.inheritTcrBrand = inheritTcrBrand
+                }
+
+                /** Whether this profile inherits TCR campaign from the organization */
+                fun inheritTcrCampaign(inheritTcrCampaign: Boolean?) =
+                    inheritTcrCampaign(JsonField.ofNullable(inheritTcrCampaign))
+
+                /**
+                 * Alias for [Builder.inheritTcrCampaign].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                fun inheritTcrCampaign(inheritTcrCampaign: Boolean) =
+                    inheritTcrCampaign(inheritTcrCampaign as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.inheritTcrCampaign] with
+                 * `inheritTcrCampaign.orElse(null)`.
+                 */
+                fun inheritTcrCampaign(inheritTcrCampaign: Optional<Boolean>) =
+                    inheritTcrCampaign(inheritTcrCampaign.getOrNull())
+
+                /**
+                 * Sets [Builder.inheritTcrCampaign] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.inheritTcrCampaign] with a well-typed [Boolean]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun inheritTcrCampaign(inheritTcrCampaign: JsonField<Boolean>) = apply {
+                    this.inheritTcrCampaign = inheritTcrCampaign
+                }
+
+                /** Whether this profile inherits templates from the organization */
+                fun inheritTemplates(inheritTemplates: Boolean?) =
+                    inheritTemplates(JsonField.ofNullable(inheritTemplates))
+
+                /**
+                 * Alias for [Builder.inheritTemplates].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                fun inheritTemplates(inheritTemplates: Boolean) =
+                    inheritTemplates(inheritTemplates as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.inheritTemplates] with
+                 * `inheritTemplates.orElse(null)`.
+                 */
+                fun inheritTemplates(inheritTemplates: Optional<Boolean>) =
+                    inheritTemplates(inheritTemplates.getOrNull())
+
+                /**
+                 * Sets [Builder.inheritTemplates] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.inheritTemplates] with a well-typed [Boolean]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun inheritTemplates(inheritTemplates: JsonField<Boolean>) = apply {
+                    this.inheritTemplates = inheritTemplates
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Settings].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Settings =
+                    Settings(
+                        allowContactSharing,
+                        allowTemplateSharing,
+                        billingModel,
+                        inheritContacts,
+                        inheritTcrBrand,
+                        inheritTcrCampaign,
+                        inheritTemplates,
+                        additionalProperties.toMutableMap(),
+                    )
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws SentInvalidDataException if any value type in this object doesn't match its
+             *   expected type.
+             */
+            fun validate(): Settings = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                allowContactSharing()
+                allowTemplateSharing()
+                billingModel()
+                inheritContacts()
+                inheritTcrBrand()
+                inheritTcrCampaign()
+                inheritTemplates()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: SentInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (if (allowContactSharing.asKnown().isPresent) 1 else 0) +
+                    (if (allowTemplateSharing.asKnown().isPresent) 1 else 0) +
+                    (if (billingModel.asKnown().isPresent) 1 else 0) +
+                    (if (inheritContacts.asKnown().isPresent) 1 else 0) +
+                    (if (inheritTcrBrand.asKnown().isPresent) 1 else 0) +
+                    (if (inheritTcrCampaign.asKnown().isPresent) 1 else 0) +
+                    (if (inheritTemplates.asKnown().isPresent) 1 else 0)
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Settings &&
+                    allowContactSharing == other.allowContactSharing &&
+                    allowTemplateSharing == other.allowTemplateSharing &&
+                    billingModel == other.billingModel &&
+                    inheritContacts == other.inheritContacts &&
+                    inheritTcrBrand == other.inheritTcrBrand &&
+                    inheritTcrCampaign == other.inheritTcrCampaign &&
+                    inheritTemplates == other.inheritTemplates &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy {
+                Objects.hash(
+                    allowContactSharing,
+                    allowTemplateSharing,
+                    billingModel,
+                    inheritContacts,
+                    inheritTcrBrand,
+                    inheritTcrCampaign,
+                    inheritTemplates,
+                    additionalProperties,
+                )
+            }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "Settings{allowContactSharing=$allowContactSharing, allowTemplateSharing=$allowTemplateSharing, billingModel=$billingModel, inheritContacts=$inheritContacts, inheritTcrBrand=$inheritTcrBrand, inheritTcrCampaign=$inheritTcrCampaign, inheritTemplates=$inheritTemplates, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {
@@ -2403,6 +3490,615 @@ private constructor(
 
         override fun toString() =
             "Data{id=$id, channels=$channels, createdAt=$createdAt, description=$description, email=$email, icon=$icon, name=$name, organizationId=$organizationId, profiles=$profiles, settings=$settings, shortName=$shortName, status=$status, type=$type, additionalProperties=$additionalProperties}"
+    }
+
+    /** Error information */
+    class Error
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val code: JsonField<String>,
+        private val details: JsonField<Details>,
+        private val docUrl: JsonField<String>,
+        private val message: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("code") @ExcludeMissing code: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("details") @ExcludeMissing details: JsonField<Details> = JsonMissing.of(),
+            @JsonProperty("doc_url") @ExcludeMissing docUrl: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("message") @ExcludeMissing message: JsonField<String> = JsonMissing.of(),
+        ) : this(code, details, docUrl, message, mutableMapOf())
+
+        /**
+         * Machine-readable error code (e.g., "RESOURCE_001")
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun code(): Optional<String> = code.getOptional("code")
+
+        /**
+         * Additional validation error details (field-level errors)
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun details(): Optional<Details> = details.getOptional("details")
+
+        /**
+         * URL to documentation about this error
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun docUrl(): Optional<String> = docUrl.getOptional("doc_url")
+
+        /**
+         * Human-readable error message
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun message(): Optional<String> = message.getOptional("message")
+
+        /**
+         * Returns the raw JSON value of [code].
+         *
+         * Unlike [code], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("code") @ExcludeMissing fun _code(): JsonField<String> = code
+
+        /**
+         * Returns the raw JSON value of [details].
+         *
+         * Unlike [details], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("details") @ExcludeMissing fun _details(): JsonField<Details> = details
+
+        /**
+         * Returns the raw JSON value of [docUrl].
+         *
+         * Unlike [docUrl], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("doc_url") @ExcludeMissing fun _docUrl(): JsonField<String> = docUrl
+
+        /**
+         * Returns the raw JSON value of [message].
+         *
+         * Unlike [message], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("message") @ExcludeMissing fun _message(): JsonField<String> = message
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Error]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Error]. */
+        class Builder internal constructor() {
+
+            private var code: JsonField<String> = JsonMissing.of()
+            private var details: JsonField<Details> = JsonMissing.of()
+            private var docUrl: JsonField<String> = JsonMissing.of()
+            private var message: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(error: Error) = apply {
+                code = error.code
+                details = error.details
+                docUrl = error.docUrl
+                message = error.message
+                additionalProperties = error.additionalProperties.toMutableMap()
+            }
+
+            /** Machine-readable error code (e.g., "RESOURCE_001") */
+            fun code(code: String) = code(JsonField.of(code))
+
+            /**
+             * Sets [Builder.code] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.code] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun code(code: JsonField<String>) = apply { this.code = code }
+
+            /** Additional validation error details (field-level errors) */
+            fun details(details: Details?) = details(JsonField.ofNullable(details))
+
+            /** Alias for calling [Builder.details] with `details.orElse(null)`. */
+            fun details(details: Optional<Details>) = details(details.getOrNull())
+
+            /**
+             * Sets [Builder.details] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.details] with a well-typed [Details] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun details(details: JsonField<Details>) = apply { this.details = details }
+
+            /** URL to documentation about this error */
+            fun docUrl(docUrl: String?) = docUrl(JsonField.ofNullable(docUrl))
+
+            /** Alias for calling [Builder.docUrl] with `docUrl.orElse(null)`. */
+            fun docUrl(docUrl: Optional<String>) = docUrl(docUrl.getOrNull())
+
+            /**
+             * Sets [Builder.docUrl] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.docUrl] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun docUrl(docUrl: JsonField<String>) = apply { this.docUrl = docUrl }
+
+            /** Human-readable error message */
+            fun message(message: String) = message(JsonField.of(message))
+
+            /**
+             * Sets [Builder.message] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.message] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun message(message: JsonField<String>) = apply { this.message = message }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Error].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Error =
+                Error(code, details, docUrl, message, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws SentInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Error = apply {
+            if (validated) {
+                return@apply
+            }
+
+            code()
+            details().ifPresent { it.validate() }
+            docUrl()
+            message()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (code.asKnown().isPresent) 1 else 0) +
+                (details.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (docUrl.asKnown().isPresent) 1 else 0) +
+                (if (message.asKnown().isPresent) 1 else 0)
+
+        /** Additional validation error details (field-level errors) */
+        class Details
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Details]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Details]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(details: Details) = apply {
+                    additionalProperties = details.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Details].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Details = Details(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws SentInvalidDataException if any value type in this object doesn't match its
+             *   expected type.
+             */
+            fun validate(): Details = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: SentInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Details && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "Details{additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Error &&
+                code == other.code &&
+                details == other.details &&
+                docUrl == other.docUrl &&
+                message == other.message &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(code, details, docUrl, message, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Error{code=$code, details=$details, docUrl=$docUrl, message=$message, additionalProperties=$additionalProperties}"
+    }
+
+    /** Request and response metadata */
+    class Meta
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val requestId: JsonField<String>,
+        private val timestamp: JsonField<OffsetDateTime>,
+        private val version: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("request_id")
+            @ExcludeMissing
+            requestId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("timestamp")
+            @ExcludeMissing
+            timestamp: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("version") @ExcludeMissing version: JsonField<String> = JsonMissing.of(),
+        ) : this(requestId, timestamp, version, mutableMapOf())
+
+        /**
+         * Unique identifier for this request (for tracing and support)
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun requestId(): Optional<String> = requestId.getOptional("request_id")
+
+        /**
+         * Server timestamp when the response was generated
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun timestamp(): Optional<OffsetDateTime> = timestamp.getOptional("timestamp")
+
+        /**
+         * API version used for this request
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun version(): Optional<String> = version.getOptional("version")
+
+        /**
+         * Returns the raw JSON value of [requestId].
+         *
+         * Unlike [requestId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("request_id") @ExcludeMissing fun _requestId(): JsonField<String> = requestId
+
+        /**
+         * Returns the raw JSON value of [timestamp].
+         *
+         * Unlike [timestamp], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("timestamp")
+        @ExcludeMissing
+        fun _timestamp(): JsonField<OffsetDateTime> = timestamp
+
+        /**
+         * Returns the raw JSON value of [version].
+         *
+         * Unlike [version], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("version") @ExcludeMissing fun _version(): JsonField<String> = version
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Meta]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Meta]. */
+        class Builder internal constructor() {
+
+            private var requestId: JsonField<String> = JsonMissing.of()
+            private var timestamp: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var version: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(meta: Meta) = apply {
+                requestId = meta.requestId
+                timestamp = meta.timestamp
+                version = meta.version
+                additionalProperties = meta.additionalProperties.toMutableMap()
+            }
+
+            /** Unique identifier for this request (for tracing and support) */
+            fun requestId(requestId: String) = requestId(JsonField.of(requestId))
+
+            /**
+             * Sets [Builder.requestId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.requestId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun requestId(requestId: JsonField<String>) = apply { this.requestId = requestId }
+
+            /** Server timestamp when the response was generated */
+            fun timestamp(timestamp: OffsetDateTime) = timestamp(JsonField.of(timestamp))
+
+            /**
+             * Sets [Builder.timestamp] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.timestamp] with a well-typed [OffsetDateTime] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun timestamp(timestamp: JsonField<OffsetDateTime>) = apply {
+                this.timestamp = timestamp
+            }
+
+            /** API version used for this request */
+            fun version(version: String) = version(JsonField.of(version))
+
+            /**
+             * Sets [Builder.version] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.version] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun version(version: JsonField<String>) = apply { this.version = version }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Meta].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Meta =
+                Meta(requestId, timestamp, version, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws SentInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Meta = apply {
+            if (validated) {
+                return@apply
+            }
+
+            requestId()
+            timestamp()
+            version()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (requestId.asKnown().isPresent) 1 else 0) +
+                (if (timestamp.asKnown().isPresent) 1 else 0) +
+                (if (version.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Meta &&
+                requestId == other.requestId &&
+                timestamp == other.timestamp &&
+                version == other.version &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(requestId, timestamp, version, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Meta{requestId=$requestId, timestamp=$timestamp, version=$version, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

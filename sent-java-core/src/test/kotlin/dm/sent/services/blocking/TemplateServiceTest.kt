@@ -3,20 +3,11 @@
 package dm.sent.services.blocking
 
 import dm.sent.client.okhttp.SentOkHttpClient
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsAuthenticationConfig
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateBody
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateButton
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateButtonProps
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateFooter
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateHeader
-import dm.sent.models.templates.TemplateBodyContent
 import dm.sent.models.templates.TemplateCreateParams
-import dm.sent.models.templates.TemplateDefinition
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
-import dm.sent.models.templates.TemplateVariable
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -28,29 +19,34 @@ internal class TemplateServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
-        val apiResponseTemplate =
+        val template =
             templateService.create(
                 TemplateCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .category("MARKETING")
                     .creationSource(null)
                     .definition(
-                        TemplateDefinition.builder()
+                        TemplateCreateParams.Definition.builder()
                             .body(
-                                SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                                TemplateCreateParams.Definition.Body.builder()
                                     .multiChannel(
-                                        TemplateBodyContent.builder()
+                                        TemplateCreateParams.Definition.Body.MultiChannel.builder()
                                             .template(
                                                 "Hello {{0:variable}}! Welcome to {{1:variable}}."
                                             )
                                             .type(null)
                                             .addVariable(
-                                                TemplateVariable.builder()
+                                                TemplateCreateParams.Definition.Body.MultiChannel
+                                                    .Variable
+                                                    .builder()
                                                     .name("name")
                                                     .props(
-                                                        TemplateVariable.Props.builder()
+                                                        TemplateCreateParams.Definition.Body
+                                                            .MultiChannel
+                                                            .Variable
+                                                            .Props
+                                                            .builder()
                                                             .mediaType("x")
                                                             .sample("John")
                                                             .url("x")
@@ -65,10 +61,16 @@ internal class TemplateServiceTest {
                                                     .build()
                                             )
                                             .addVariable(
-                                                TemplateVariable.builder()
+                                                TemplateCreateParams.Definition.Body.MultiChannel
+                                                    .Variable
+                                                    .builder()
                                                     .name("company")
                                                     .props(
-                                                        TemplateVariable.Props.builder()
+                                                        TemplateCreateParams.Definition.Body
+                                                            .MultiChannel
+                                                            .Variable
+                                                            .Props
+                                                            .builder()
                                                             .mediaType("x")
                                                             .sample("SentDM")
                                                             .url("x")
@@ -84,15 +86,47 @@ internal class TemplateServiceTest {
                                             )
                                             .build()
                                     )
-                                    .sms(
-                                        TemplateBodyContent.builder()
+                                    .rcs(
+                                        TemplateCreateParams.Definition.Body.Rcs.builder()
                                             .template("template")
                                             .type("type")
                                             .addVariable(
-                                                TemplateVariable.builder()
+                                                TemplateCreateParams.Definition.Body.Rcs.Variable
+                                                    .builder()
                                                     .name("x")
                                                     .props(
-                                                        TemplateVariable.Props.builder()
+                                                        TemplateCreateParams.Definition.Body.Rcs
+                                                            .Variable
+                                                            .Props
+                                                            .builder()
+                                                            .mediaType("x")
+                                                            .sample("x")
+                                                            .url("x")
+                                                            .variableType("x")
+                                                            .alt("alt")
+                                                            .regex("regex")
+                                                            .shortUrl("shortUrl")
+                                                            .build()
+                                                    )
+                                                    .type("x")
+                                                    .id(0)
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .sms(
+                                        TemplateCreateParams.Definition.Body.Sms.builder()
+                                            .template("template")
+                                            .type("type")
+                                            .addVariable(
+                                                TemplateCreateParams.Definition.Body.Sms.Variable
+                                                    .builder()
+                                                    .name("x")
+                                                    .props(
+                                                        TemplateCreateParams.Definition.Body.Sms
+                                                            .Variable
+                                                            .Props
+                                                            .builder()
                                                             .mediaType("x")
                                                             .sample("x")
                                                             .url("x")
@@ -109,14 +143,20 @@ internal class TemplateServiceTest {
                                             .build()
                                     )
                                     .whatsapp(
-                                        TemplateBodyContent.builder()
+                                        TemplateCreateParams.Definition.Body.Whatsapp.builder()
                                             .template("template")
                                             .type("type")
                                             .addVariable(
-                                                TemplateVariable.builder()
+                                                TemplateCreateParams.Definition.Body.Whatsapp
+                                                    .Variable
+                                                    .builder()
                                                     .name("x")
                                                     .props(
-                                                        TemplateVariable.Props.builder()
+                                                        TemplateCreateParams.Definition.Body
+                                                            .Whatsapp
+                                                            .Variable
+                                                            .Props
+                                                            .builder()
                                                             .mediaType("x")
                                                             .sample("x")
                                                             .url("x")
@@ -135,16 +175,15 @@ internal class TemplateServiceTest {
                                     .build()
                             )
                             .authenticationConfig(
-                                SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                                TemplateCreateParams.Definition.AuthenticationConfig.builder()
                                     .addSecurityRecommendation(true)
                                     .codeExpirationMinutes(0)
                                     .build()
                             )
                             .addButton(
-                                SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                                TemplateCreateParams.Definition.Button.builder()
                                     .props(
-                                        SentDmServicesCommonContractsPocOsTemplateButtonProps
-                                            .builder()
+                                        TemplateCreateParams.Definition.Button.Props.builder()
                                             .activeFor(1)
                                             .countryCode("x")
                                             .offerCode("x")
@@ -165,14 +204,16 @@ internal class TemplateServiceTest {
                             )
                             .definitionVersion("1.0")
                             .footer(
-                                SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                                TemplateCreateParams.Definition.Footer.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateCreateParams.Definition.Footer.Variable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateCreateParams.Definition.Footer.Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -189,14 +230,16 @@ internal class TemplateServiceTest {
                                     .build()
                             )
                             .header(
-                                SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                                TemplateCreateParams.Definition.Header.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateCreateParams.Definition.Header.Variable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateCreateParams.Definition.Header.Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -215,11 +258,12 @@ internal class TemplateServiceTest {
                             .build()
                     )
                     .language("en_US")
+                    .sandbox(false)
                     .submitForReview(false)
                     .build()
             )
 
-        apiResponseTemplate.validate()
+        template.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -228,7 +272,7 @@ internal class TemplateServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
-        val apiResponseTemplate =
+        val template =
             templateService.retrieve(
                 TemplateRetrieveParams.builder()
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -236,7 +280,7 @@ internal class TemplateServiceTest {
                     .build()
             )
 
-        apiResponseTemplate.validate()
+        template.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -245,27 +289,60 @@ internal class TemplateServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
-        val apiResponseTemplate =
+        val template =
             templateService.update(
                 TemplateUpdateParams.builder()
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .category("MARKETING")
                     .definition(
-                        TemplateDefinition.builder()
+                        TemplateUpdateParams.Definition.builder()
                             .body(
-                                SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                                TemplateUpdateParams.Definition.Body.builder()
                                     .multiChannel(
-                                        TemplateBodyContent.builder()
+                                        TemplateUpdateParams.Definition.Body.MultiChannel.builder()
                                             .template("template")
                                             .type("type")
                                             .addVariable(
-                                                TemplateVariable.builder()
+                                                TemplateUpdateParams.Definition.Body.MultiChannel
+                                                    .Variable
+                                                    .builder()
                                                     .name("x")
                                                     .props(
-                                                        TemplateVariable.Props.builder()
+                                                        TemplateUpdateParams.Definition.Body
+                                                            .MultiChannel
+                                                            .Variable
+                                                            .Props
+                                                            .builder()
+                                                            .mediaType("x")
+                                                            .sample("x")
+                                                            .url("x")
+                                                            .variableType("x")
+                                                            .alt("alt")
+                                                            .regex("regex")
+                                                            .shortUrl("shortUrl")
+                                                            .build()
+                                                    )
+                                                    .type("x")
+                                                    .id(0)
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .rcs(
+                                        TemplateUpdateParams.Definition.Body.Rcs.builder()
+                                            .template("template")
+                                            .type("type")
+                                            .addVariable(
+                                                TemplateUpdateParams.Definition.Body.Rcs.Variable
+                                                    .builder()
+                                                    .name("x")
+                                                    .props(
+                                                        TemplateUpdateParams.Definition.Body.Rcs
+                                                            .Variable
+                                                            .Props
+                                                            .builder()
                                                             .mediaType("x")
                                                             .sample("x")
                                                             .url("x")
@@ -282,14 +359,18 @@ internal class TemplateServiceTest {
                                             .build()
                                     )
                                     .sms(
-                                        TemplateBodyContent.builder()
+                                        TemplateUpdateParams.Definition.Body.Sms.builder()
                                             .template("template")
                                             .type("type")
                                             .addVariable(
-                                                TemplateVariable.builder()
+                                                TemplateUpdateParams.Definition.Body.Sms.Variable
+                                                    .builder()
                                                     .name("x")
                                                     .props(
-                                                        TemplateVariable.Props.builder()
+                                                        TemplateUpdateParams.Definition.Body.Sms
+                                                            .Variable
+                                                            .Props
+                                                            .builder()
                                                             .mediaType("x")
                                                             .sample("x")
                                                             .url("x")
@@ -306,14 +387,20 @@ internal class TemplateServiceTest {
                                             .build()
                                     )
                                     .whatsapp(
-                                        TemplateBodyContent.builder()
+                                        TemplateUpdateParams.Definition.Body.Whatsapp.builder()
                                             .template("template")
                                             .type("type")
                                             .addVariable(
-                                                TemplateVariable.builder()
+                                                TemplateUpdateParams.Definition.Body.Whatsapp
+                                                    .Variable
+                                                    .builder()
                                                     .name("x")
                                                     .props(
-                                                        TemplateVariable.Props.builder()
+                                                        TemplateUpdateParams.Definition.Body
+                                                            .Whatsapp
+                                                            .Variable
+                                                            .Props
+                                                            .builder()
                                                             .mediaType("x")
                                                             .sample("x")
                                                             .url("x")
@@ -332,16 +419,15 @@ internal class TemplateServiceTest {
                                     .build()
                             )
                             .authenticationConfig(
-                                SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                                TemplateUpdateParams.Definition.AuthenticationConfig.builder()
                                     .addSecurityRecommendation(true)
                                     .codeExpirationMinutes(0)
                                     .build()
                             )
                             .addButton(
-                                SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                                TemplateUpdateParams.Definition.Button.builder()
                                     .props(
-                                        SentDmServicesCommonContractsPocOsTemplateButtonProps
-                                            .builder()
+                                        TemplateUpdateParams.Definition.Button.Props.builder()
                                             .activeFor(1)
                                             .countryCode("x")
                                             .offerCode("x")
@@ -362,14 +448,16 @@ internal class TemplateServiceTest {
                             )
                             .definitionVersion("definitionVersion")
                             .footer(
-                                SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                                TemplateUpdateParams.Definition.Footer.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateUpdateParams.Definition.Footer.Variable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateUpdateParams.Definition.Footer.Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -386,14 +474,16 @@ internal class TemplateServiceTest {
                                     .build()
                             )
                             .header(
-                                SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                                TemplateUpdateParams.Definition.Header.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateUpdateParams.Definition.Header.Variable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateUpdateParams.Definition.Header.Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -413,11 +503,12 @@ internal class TemplateServiceTest {
                     )
                     .language(null)
                     .name("Updated Welcome Message")
+                    .sandbox(false)
                     .submitForReview(false)
                     .build()
             )
 
-        apiResponseTemplate.validate()
+        template.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -452,8 +543,8 @@ internal class TemplateServiceTest {
             TemplateDeleteParams.builder()
                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .deleteFromMeta(false)
+                .sandbox(false)
                 .build()
         )
     }

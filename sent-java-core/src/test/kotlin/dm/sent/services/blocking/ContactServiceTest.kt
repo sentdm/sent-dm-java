@@ -3,13 +3,11 @@
 package dm.sent.services.blocking
 
 import dm.sent.client.okhttp.SentOkHttpClient
-import dm.sent.core.JsonValue
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
-import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -21,17 +19,17 @@ internal class ContactServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val contactService = client.contacts()
 
-        val apiResponseOfContact =
+        val contact =
             contactService.create(
                 ContactCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .phoneNumber("+1234567890")
+                    .sandbox(false)
                     .build()
             )
 
-        apiResponseOfContact.validate()
+        contact.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -40,7 +38,7 @@ internal class ContactServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val contactService = client.contacts()
 
-        val apiResponseOfContact =
+        val contact =
             contactService.retrieve(
                 ContactRetrieveParams.builder()
                     .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
@@ -48,7 +46,7 @@ internal class ContactServiceTest {
                     .build()
             )
 
-        apiResponseOfContact.validate()
+        contact.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -57,24 +55,19 @@ internal class ContactServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val contactService = client.contacts()
 
-        val apiResponseOfContact =
+        val contact =
             contactService.update(
                 ContactUpdateParams.builder()
                     .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
-                    .channelConsent(
-                        ContactUpdateParams.ChannelConsent.builder()
-                            .putAdditionalProperty("foo", JsonValue.from("string"))
-                            .build()
-                    )
                     .defaultChannel("whatsapp")
                     .optOut(false)
+                    .sandbox(false)
                     .build()
             )
 
-        apiResponseOfContact.validate()
+        contact.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -108,7 +101,7 @@ internal class ContactServiceTest {
             ContactDeleteParams.builder()
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                .sandbox(false)
                 .build()
         )
     }

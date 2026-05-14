@@ -7,9 +7,6 @@ import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
-import dm.sent.models.profiles.TcrBrandRelationship
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
@@ -83,10 +80,10 @@ internal class ProGuardCompatibilityTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    MessageRetrieveActivitiesResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            MessageRetrieveActivitiesResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -95,7 +92,7 @@ internal class ProGuardCompatibilityTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    MessageRetrieveActivitiesResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -112,19 +109,5 @@ internal class ProGuardCompatibilityTest {
 
         assertThat(roundtrippedMessageRetrieveActivitiesResponse)
             .isEqualTo(messageRetrieveActivitiesResponse)
-    }
-
-    @Test
-    fun tcrBrandRelationshipRoundtrip() {
-        val jsonMapper = jsonMapper()
-        val tcrBrandRelationship = TcrBrandRelationship.BASIC_ACCOUNT
-
-        val roundtrippedTcrBrandRelationship =
-            jsonMapper.readValue(
-                jsonMapper.writeValueAsString(tcrBrandRelationship),
-                jacksonTypeRef<TcrBrandRelationship>(),
-            )
-
-        assertThat(roundtrippedTcrBrandRelationship).isEqualTo(tcrBrandRelationship)
     }
 }

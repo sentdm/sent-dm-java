@@ -6,12 +6,13 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.profiles.campaigns.ApiResponseOfTcrCampaignWithUseCases
 import dm.sent.models.profiles.campaigns.CampaignCreateParams
+import dm.sent.models.profiles.campaigns.CampaignCreateResponse
 import dm.sent.models.profiles.campaigns.CampaignDeleteParams
 import dm.sent.models.profiles.campaigns.CampaignListParams
 import dm.sent.models.profiles.campaigns.CampaignListResponse
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
+import dm.sent.models.profiles.campaigns.CampaignUpdateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -37,28 +38,25 @@ interface CampaignServiceAsync {
     fun create(
         profileId: String,
         params: CampaignCreateParams,
-    ): CompletableFuture<ApiResponseOfTcrCampaignWithUseCases> =
-        create(profileId, params, RequestOptions.none())
+    ): CompletableFuture<CampaignCreateResponse> = create(profileId, params, RequestOptions.none())
 
     /** @see create */
     fun create(
         profileId: String,
         params: CampaignCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfTcrCampaignWithUseCases> =
+    ): CompletableFuture<CampaignCreateResponse> =
         create(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see create */
-    fun create(
-        params: CampaignCreateParams
-    ): CompletableFuture<ApiResponseOfTcrCampaignWithUseCases> =
+    fun create(params: CampaignCreateParams): CompletableFuture<CampaignCreateResponse> =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: CampaignCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfTcrCampaignWithUseCases>
+    ): CompletableFuture<CampaignCreateResponse>
 
     /**
      * Updates an existing campaign under the brand of the specified profile. Cannot update
@@ -67,28 +65,25 @@ interface CampaignServiceAsync {
     fun update(
         campaignId: String,
         params: CampaignUpdateParams,
-    ): CompletableFuture<ApiResponseOfTcrCampaignWithUseCases> =
-        update(campaignId, params, RequestOptions.none())
+    ): CompletableFuture<CampaignUpdateResponse> = update(campaignId, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         campaignId: String,
         params: CampaignUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfTcrCampaignWithUseCases> =
+    ): CompletableFuture<CampaignUpdateResponse> =
         update(params.toBuilder().campaignId(campaignId).build(), requestOptions)
 
     /** @see update */
-    fun update(
-        params: CampaignUpdateParams
-    ): CompletableFuture<ApiResponseOfTcrCampaignWithUseCases> =
+    fun update(params: CampaignUpdateParams): CompletableFuture<CampaignUpdateResponse> =
         update(params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: CampaignUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfTcrCampaignWithUseCases>
+    ): CompletableFuture<CampaignUpdateResponse>
 
     /**
      * Retrieves all campaigns linked to the profile's brand, including use cases and sample
@@ -174,7 +169,7 @@ interface CampaignServiceAsync {
         fun create(
             profileId: String,
             params: CampaignCreateParams,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases>> =
+        ): CompletableFuture<HttpResponseFor<CampaignCreateResponse>> =
             create(profileId, params, RequestOptions.none())
 
         /** @see create */
@@ -182,20 +177,20 @@ interface CampaignServiceAsync {
             profileId: String,
             params: CampaignCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases>> =
+        ): CompletableFuture<HttpResponseFor<CampaignCreateResponse>> =
             create(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see create */
         fun create(
             params: CampaignCreateParams
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases>> =
+        ): CompletableFuture<HttpResponseFor<CampaignCreateResponse>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
             params: CampaignCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases>>
+        ): CompletableFuture<HttpResponseFor<CampaignCreateResponse>>
 
         /**
          * Returns a raw HTTP response for `put /v3/profiles/{profileId}/campaigns/{campaignId}`,
@@ -204,7 +199,7 @@ interface CampaignServiceAsync {
         fun update(
             campaignId: String,
             params: CampaignUpdateParams,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases>> =
+        ): CompletableFuture<HttpResponseFor<CampaignUpdateResponse>> =
             update(campaignId, params, RequestOptions.none())
 
         /** @see update */
@@ -212,20 +207,20 @@ interface CampaignServiceAsync {
             campaignId: String,
             params: CampaignUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases>> =
+        ): CompletableFuture<HttpResponseFor<CampaignUpdateResponse>> =
             update(params.toBuilder().campaignId(campaignId).build(), requestOptions)
 
         /** @see update */
         fun update(
             params: CampaignUpdateParams
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases>> =
+        ): CompletableFuture<HttpResponseFor<CampaignUpdateResponse>> =
             update(params, RequestOptions.none())
 
         /** @see update */
         fun update(
             params: CampaignUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases>>
+        ): CompletableFuture<HttpResponseFor<CampaignUpdateResponse>>
 
         /**
          * Returns a raw HTTP response for `get /v3/profiles/{profileId}/campaigns`, but is

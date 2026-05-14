@@ -5,8 +5,6 @@ package dm.sent.models.me
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -58,7 +56,7 @@ internal class MeRetrieveResponseTest {
                                 .name("name")
                                 .role("role")
                                 .settings(
-                                    ProfileSettings.builder()
+                                    MeRetrieveResponse.Data.Profile.Settings.builder()
                                         .allowContactSharing(true)
                                         .allowTemplateSharing(true)
                                         .billingModel("billing_model")
@@ -73,7 +71,7 @@ internal class MeRetrieveResponseTest {
                                 .build()
                         )
                         .settings(
-                            ProfileSettings.builder()
+                            MeRetrieveResponse.Data.Settings.builder()
                                 .allowContactSharing(true)
                                 .allowTemplateSharing(true)
                                 .billingModel("billing_model")
@@ -89,10 +87,10 @@ internal class MeRetrieveResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    MeRetrieveResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            MeRetrieveResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -101,7 +99,7 @@ internal class MeRetrieveResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    MeRetrieveResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -152,7 +150,7 @@ internal class MeRetrieveResponseTest {
                             .name("name")
                             .role("role")
                             .settings(
-                                ProfileSettings.builder()
+                                MeRetrieveResponse.Data.Profile.Settings.builder()
                                     .allowContactSharing(true)
                                     .allowTemplateSharing(true)
                                     .billingModel("billing_model")
@@ -167,7 +165,7 @@ internal class MeRetrieveResponseTest {
                             .build()
                     )
                     .settings(
-                        ProfileSettings.builder()
+                        MeRetrieveResponse.Data.Settings.builder()
                             .allowContactSharing(true)
                             .allowTemplateSharing(true)
                             .billingModel("billing_model")
@@ -184,10 +182,10 @@ internal class MeRetrieveResponseTest {
             )
         assertThat(meRetrieveResponse.error())
             .contains(
-                ErrorDetail.builder()
+                MeRetrieveResponse.Error.builder()
                     .code("code")
                     .details(
-                        ErrorDetail.Details.builder()
+                        MeRetrieveResponse.Error.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -197,7 +195,7 @@ internal class MeRetrieveResponseTest {
             )
         assertThat(meRetrieveResponse.meta())
             .contains(
-                ApiMeta.builder()
+                MeRetrieveResponse.Meta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -252,7 +250,7 @@ internal class MeRetrieveResponseTest {
                                 .name("name")
                                 .role("role")
                                 .settings(
-                                    ProfileSettings.builder()
+                                    MeRetrieveResponse.Data.Profile.Settings.builder()
                                         .allowContactSharing(true)
                                         .allowTemplateSharing(true)
                                         .billingModel("billing_model")
@@ -267,7 +265,7 @@ internal class MeRetrieveResponseTest {
                                 .build()
                         )
                         .settings(
-                            ProfileSettings.builder()
+                            MeRetrieveResponse.Data.Settings.builder()
                                 .allowContactSharing(true)
                                 .allowTemplateSharing(true)
                                 .billingModel("billing_model")
@@ -283,10 +281,10 @@ internal class MeRetrieveResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    MeRetrieveResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            MeRetrieveResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -295,7 +293,7 @@ internal class MeRetrieveResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    MeRetrieveResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

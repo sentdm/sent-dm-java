@@ -5,9 +5,6 @@ package dm.sent.models.templates
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
-import dm.sent.models.webhooks.PaginationMeta
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -21,9 +18,9 @@ internal class TemplateListResponseTest {
                 .data(
                     TemplateListResponse.Data.builder()
                         .pagination(
-                            PaginationMeta.builder()
+                            TemplateListResponse.Data.Pagination.builder()
                                 .cursors(
-                                    PaginationMeta.Cursors.builder()
+                                    TemplateListResponse.Data.Pagination.Cursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -36,7 +33,7 @@ internal class TemplateListResponseTest {
                                 .build()
                         )
                         .addTemplate(
-                            Template.builder()
+                            TemplateListResponse.Data.Template.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .category("category")
                                 .addChannel("string")
@@ -52,10 +49,10 @@ internal class TemplateListResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    TemplateListResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            TemplateListResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -64,7 +61,7 @@ internal class TemplateListResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    TemplateListResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -77,9 +74,9 @@ internal class TemplateListResponseTest {
             .contains(
                 TemplateListResponse.Data.builder()
                     .pagination(
-                        PaginationMeta.builder()
+                        TemplateListResponse.Data.Pagination.builder()
                             .cursors(
-                                PaginationMeta.Cursors.builder()
+                                TemplateListResponse.Data.Pagination.Cursors.builder()
                                     .after("after")
                                     .before("before")
                                     .build()
@@ -92,7 +89,7 @@ internal class TemplateListResponseTest {
                             .build()
                     )
                     .addTemplate(
-                        Template.builder()
+                        TemplateListResponse.Data.Template.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .category("category")
                             .addChannel("string")
@@ -109,10 +106,10 @@ internal class TemplateListResponseTest {
             )
         assertThat(templateListResponse.error())
             .contains(
-                ErrorDetail.builder()
+                TemplateListResponse.Error.builder()
                     .code("code")
                     .details(
-                        ErrorDetail.Details.builder()
+                        TemplateListResponse.Error.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -122,7 +119,7 @@ internal class TemplateListResponseTest {
             )
         assertThat(templateListResponse.meta())
             .contains(
-                ApiMeta.builder()
+                TemplateListResponse.Meta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -139,9 +136,9 @@ internal class TemplateListResponseTest {
                 .data(
                     TemplateListResponse.Data.builder()
                         .pagination(
-                            PaginationMeta.builder()
+                            TemplateListResponse.Data.Pagination.builder()
                                 .cursors(
-                                    PaginationMeta.Cursors.builder()
+                                    TemplateListResponse.Data.Pagination.Cursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -154,7 +151,7 @@ internal class TemplateListResponseTest {
                                 .build()
                         )
                         .addTemplate(
-                            Template.builder()
+                            TemplateListResponse.Data.Template.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .category("category")
                                 .addChannel("string")
@@ -170,10 +167,10 @@ internal class TemplateListResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    TemplateListResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            TemplateListResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -182,7 +179,7 @@ internal class TemplateListResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    TemplateListResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
