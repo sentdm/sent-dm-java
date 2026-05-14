@@ -7,13 +7,15 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.users.ApiResponseOfUser
 import dm.sent.models.users.UserInviteParams
+import dm.sent.models.users.UserInviteResponse
 import dm.sent.models.users.UserListParams
 import dm.sent.models.users.UserListResponse
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserRetrieveParams
+import dm.sent.models.users.UserRetrieveResponse
 import dm.sent.models.users.UserUpdateRoleParams
+import dm.sent.models.users.UserUpdateRoleResponse
 import java.util.function.Consumer
 
 /** Invite, update, and manage organization users and roles */
@@ -35,33 +37,33 @@ interface UserService {
      * Retrieves detailed information about a specific user in an organization or profile. Requires
      * developer role or higher.
      */
-    fun retrieve(userId: String): ApiResponseOfUser = retrieve(userId, UserRetrieveParams.none())
+    fun retrieve(userId: String): UserRetrieveResponse = retrieve(userId, UserRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         userId: String,
         params: UserRetrieveParams = UserRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfUser = retrieve(params.toBuilder().userId(userId).build(), requestOptions)
+    ): UserRetrieveResponse = retrieve(params.toBuilder().userId(userId).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         userId: String,
         params: UserRetrieveParams = UserRetrieveParams.none(),
-    ): ApiResponseOfUser = retrieve(userId, params, RequestOptions.none())
+    ): UserRetrieveResponse = retrieve(userId, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: UserRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfUser
+    ): UserRetrieveResponse
 
     /** @see retrieve */
-    fun retrieve(params: UserRetrieveParams): ApiResponseOfUser =
+    fun retrieve(params: UserRetrieveParams): UserRetrieveResponse =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(userId: String, requestOptions: RequestOptions): ApiResponseOfUser =
+    fun retrieve(userId: String, requestOptions: RequestOptions): UserRetrieveResponse =
         retrieve(userId, UserRetrieveParams.none(), requestOptions)
 
     /**
@@ -90,47 +92,54 @@ interface UserService {
      * Requires admin role. The user will receive an invitation email with a token to accept.
      * Invitation tokens expire after 7 days.
      */
-    fun invite(): ApiResponseOfUser = invite(UserInviteParams.none())
+    fun invite(): UserInviteResponse = invite(UserInviteParams.none())
 
     /** @see invite */
     fun invite(
         params: UserInviteParams = UserInviteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfUser
+    ): UserInviteResponse
 
     /** @see invite */
-    fun invite(params: UserInviteParams = UserInviteParams.none()): ApiResponseOfUser =
+    fun invite(params: UserInviteParams = UserInviteParams.none()): UserInviteResponse =
         invite(params, RequestOptions.none())
 
     /** @see invite */
-    fun invite(requestOptions: RequestOptions): ApiResponseOfUser =
+    fun invite(requestOptions: RequestOptions): UserInviteResponse =
         invite(UserInviteParams.none(), requestOptions)
 
     /**
      * Removes a user's access to an organization or profile. Requires admin role. You cannot remove
      * yourself or remove the last admin.
      */
-    fun remove(userId: String, params: UserRemoveParams) =
-        remove(userId, params, RequestOptions.none())
+    fun remove(userId: String) = remove(userId, UserRemoveParams.none())
 
     /** @see remove */
     fun remove(
         userId: String,
-        params: UserRemoveParams,
+        params: UserRemoveParams = UserRemoveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ) = remove(params.toBuilder().userId(userId).build(), requestOptions)
+
+    /** @see remove */
+    fun remove(userId: String, params: UserRemoveParams = UserRemoveParams.none()) =
+        remove(userId, params, RequestOptions.none())
+
+    /** @see remove */
+    fun remove(params: UserRemoveParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see remove */
     fun remove(params: UserRemoveParams) = remove(params, RequestOptions.none())
 
     /** @see remove */
-    fun remove(params: UserRemoveParams, requestOptions: RequestOptions = RequestOptions.none())
+    fun remove(userId: String, requestOptions: RequestOptions) =
+        remove(userId, UserRemoveParams.none(), requestOptions)
 
     /**
      * Updates a user's role in the organization or profile. Requires admin role. You cannot change
      * your own role or demote the last admin.
      */
-    fun updateRole(userId: String): ApiResponseOfUser =
+    fun updateRole(userId: String): UserUpdateRoleResponse =
         updateRole(userId, UserUpdateRoleParams.none())
 
     /** @see updateRole */
@@ -138,26 +147,27 @@ interface UserService {
         userId: String,
         params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfUser = updateRole(params.toBuilder().userId(userId).build(), requestOptions)
+    ): UserUpdateRoleResponse =
+        updateRole(params.toBuilder().userId(userId).build(), requestOptions)
 
     /** @see updateRole */
     fun updateRole(
         userId: String,
         params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
-    ): ApiResponseOfUser = updateRole(userId, params, RequestOptions.none())
+    ): UserUpdateRoleResponse = updateRole(userId, params, RequestOptions.none())
 
     /** @see updateRole */
     fun updateRole(
         params: UserUpdateRoleParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfUser
+    ): UserUpdateRoleResponse
 
     /** @see updateRole */
-    fun updateRole(params: UserUpdateRoleParams): ApiResponseOfUser =
+    fun updateRole(params: UserUpdateRoleParams): UserUpdateRoleResponse =
         updateRole(params, RequestOptions.none())
 
     /** @see updateRole */
-    fun updateRole(userId: String, requestOptions: RequestOptions): ApiResponseOfUser =
+    fun updateRole(userId: String, requestOptions: RequestOptions): UserUpdateRoleResponse =
         updateRole(userId, UserUpdateRoleParams.none(), requestOptions)
 
     /** A view of [UserService] that provides access to raw HTTP responses for each method. */
@@ -175,7 +185,7 @@ interface UserService {
          * [UserService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(userId: String): HttpResponseFor<ApiResponseOfUser> =
+        fun retrieve(userId: String): HttpResponseFor<UserRetrieveResponse> =
             retrieve(userId, UserRetrieveParams.none())
 
         /** @see retrieve */
@@ -184,7 +194,7 @@ interface UserService {
             userId: String,
             params: UserRetrieveParams = UserRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfUser> =
+        ): HttpResponseFor<UserRetrieveResponse> =
             retrieve(params.toBuilder().userId(userId).build(), requestOptions)
 
         /** @see retrieve */
@@ -192,18 +202,18 @@ interface UserService {
         fun retrieve(
             userId: String,
             params: UserRetrieveParams = UserRetrieveParams.none(),
-        ): HttpResponseFor<ApiResponseOfUser> = retrieve(userId, params, RequestOptions.none())
+        ): HttpResponseFor<UserRetrieveResponse> = retrieve(userId, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: UserRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfUser>
+        ): HttpResponseFor<UserRetrieveResponse>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(params: UserRetrieveParams): HttpResponseFor<ApiResponseOfUser> =
+        fun retrieve(params: UserRetrieveParams): HttpResponseFor<UserRetrieveResponse> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
@@ -211,7 +221,7 @@ interface UserService {
         fun retrieve(
             userId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfUser> =
+        ): HttpResponseFor<UserRetrieveResponse> =
             retrieve(userId, UserRetrieveParams.none(), requestOptions)
 
         /**
@@ -243,24 +253,24 @@ interface UserService {
          * [UserService.invite].
          */
         @MustBeClosed
-        fun invite(): HttpResponseFor<ApiResponseOfUser> = invite(UserInviteParams.none())
+        fun invite(): HttpResponseFor<UserInviteResponse> = invite(UserInviteParams.none())
 
         /** @see invite */
         @MustBeClosed
         fun invite(
             params: UserInviteParams = UserInviteParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfUser>
+        ): HttpResponseFor<UserInviteResponse>
 
         /** @see invite */
         @MustBeClosed
         fun invite(
             params: UserInviteParams = UserInviteParams.none()
-        ): HttpResponseFor<ApiResponseOfUser> = invite(params, RequestOptions.none())
+        ): HttpResponseFor<UserInviteResponse> = invite(params, RequestOptions.none())
 
         /** @see invite */
         @MustBeClosed
-        fun invite(requestOptions: RequestOptions): HttpResponseFor<ApiResponseOfUser> =
+        fun invite(requestOptions: RequestOptions): HttpResponseFor<UserInviteResponse> =
             invite(UserInviteParams.none(), requestOptions)
 
         /**
@@ -268,20 +278,22 @@ interface UserService {
          * [UserService.remove].
          */
         @MustBeClosed
-        fun remove(userId: String, params: UserRemoveParams): HttpResponse =
-            remove(userId, params, RequestOptions.none())
+        fun remove(userId: String): HttpResponse = remove(userId, UserRemoveParams.none())
 
         /** @see remove */
         @MustBeClosed
         fun remove(
             userId: String,
-            params: UserRemoveParams,
+            params: UserRemoveParams = UserRemoveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponse = remove(params.toBuilder().userId(userId).build(), requestOptions)
 
         /** @see remove */
         @MustBeClosed
-        fun remove(params: UserRemoveParams): HttpResponse = remove(params, RequestOptions.none())
+        fun remove(
+            userId: String,
+            params: UserRemoveParams = UserRemoveParams.none(),
+        ): HttpResponse = remove(userId, params, RequestOptions.none())
 
         /** @see remove */
         @MustBeClosed
@@ -290,12 +302,21 @@ interface UserService {
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponse
 
+        /** @see remove */
+        @MustBeClosed
+        fun remove(params: UserRemoveParams): HttpResponse = remove(params, RequestOptions.none())
+
+        /** @see remove */
+        @MustBeClosed
+        fun remove(userId: String, requestOptions: RequestOptions): HttpResponse =
+            remove(userId, UserRemoveParams.none(), requestOptions)
+
         /**
          * Returns a raw HTTP response for `patch /v3/users/{userId}`, but is otherwise the same as
          * [UserService.updateRole].
          */
         @MustBeClosed
-        fun updateRole(userId: String): HttpResponseFor<ApiResponseOfUser> =
+        fun updateRole(userId: String): HttpResponseFor<UserUpdateRoleResponse> =
             updateRole(userId, UserUpdateRoleParams.none())
 
         /** @see updateRole */
@@ -304,7 +325,7 @@ interface UserService {
             userId: String,
             params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfUser> =
+        ): HttpResponseFor<UserUpdateRoleResponse> =
             updateRole(params.toBuilder().userId(userId).build(), requestOptions)
 
         /** @see updateRole */
@@ -312,18 +333,19 @@ interface UserService {
         fun updateRole(
             userId: String,
             params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
-        ): HttpResponseFor<ApiResponseOfUser> = updateRole(userId, params, RequestOptions.none())
+        ): HttpResponseFor<UserUpdateRoleResponse> =
+            updateRole(userId, params, RequestOptions.none())
 
         /** @see updateRole */
         @MustBeClosed
         fun updateRole(
             params: UserUpdateRoleParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfUser>
+        ): HttpResponseFor<UserUpdateRoleResponse>
 
         /** @see updateRole */
         @MustBeClosed
-        fun updateRole(params: UserUpdateRoleParams): HttpResponseFor<ApiResponseOfUser> =
+        fun updateRole(params: UserUpdateRoleParams): HttpResponseFor<UserUpdateRoleResponse> =
             updateRole(params, RequestOptions.none())
 
         /** @see updateRole */
@@ -331,7 +353,7 @@ interface UserService {
         fun updateRole(
             userId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfUser> =
+        ): HttpResponseFor<UserUpdateRoleResponse> =
             updateRole(userId, UserUpdateRoleParams.none(), requestOptions)
     }
 }

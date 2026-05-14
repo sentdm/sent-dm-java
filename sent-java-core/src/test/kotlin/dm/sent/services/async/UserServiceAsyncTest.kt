@@ -8,7 +8,6 @@ import dm.sent.models.users.UserListParams
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserRetrieveParams
 import dm.sent.models.users.UserUpdateRoleParams
-import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -20,7 +19,7 @@ internal class UserServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val userServiceAsync = client.users()
 
-        val apiResponseOfUserFuture =
+        val userFuture =
             userServiceAsync.retrieve(
                 UserRetrieveParams.builder()
                     .userId("userId")
@@ -28,8 +27,8 @@ internal class UserServiceAsyncTest {
                     .build()
             )
 
-        val apiResponseOfUser = apiResponseOfUserFuture.get()
-        apiResponseOfUser.validate()
+        val user = userFuture.get()
+        user.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -53,20 +52,20 @@ internal class UserServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val userServiceAsync = client.users()
 
-        val apiResponseOfUserFuture =
+        val responseFuture =
             userServiceAsync.invite(
                 UserInviteParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .email("newuser@example.com")
                     .name("New User")
                     .role("developer")
+                    .sandbox(false)
                     .build()
             )
 
-        val apiResponseOfUser = apiResponseOfUserFuture.get()
-        apiResponseOfUser.validate()
+        val response = responseFuture.get()
+        response.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -80,7 +79,7 @@ internal class UserServiceAsyncTest {
                 UserRemoveParams.builder()
                     .userId("userId")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                    .sandbox(false)
                     .build()
             )
 
@@ -93,18 +92,18 @@ internal class UserServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val userServiceAsync = client.users()
 
-        val apiResponseOfUserFuture =
+        val responseFuture =
             userServiceAsync.updateRole(
                 UserUpdateRoleParams.builder()
                     .userId("userId")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .role("billing")
+                    .sandbox(false)
                     .build()
             )
 
-        val apiResponseOfUser = apiResponseOfUserFuture.get()
-        apiResponseOfUser.validate()
+        val response = responseFuture.get()
+        response.validate()
     }
 }

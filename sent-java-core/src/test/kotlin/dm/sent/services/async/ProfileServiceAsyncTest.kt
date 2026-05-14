@@ -3,22 +3,12 @@
 package dm.sent.services.async
 
 import dm.sent.client.okhttp.SentOkHttpClientAsync
-import dm.sent.models.profiles.BillingContactInfo
-import dm.sent.models.profiles.BrandsBrandData
-import dm.sent.models.profiles.DestinationCountry
-import dm.sent.models.profiles.PaymentDetails
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
-import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-import dm.sent.models.profiles.SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-import dm.sent.models.profiles.TcrBrandRelationship
-import dm.sent.models.profiles.TcrVertical
-import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -30,16 +20,15 @@ internal class ProfileServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val profileServiceAsync = client.profiles()
 
-        val apiResponseOfProfileDetailFuture =
+        val profileFuture =
             profileServiceAsync.create(
                 ProfileCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .allowContactSharing(true)
                     .allowTemplateSharing(false)
                     .billingContact(
-                        BillingContactInfo.builder()
+                        ProfileCreateParams.BillingContact.builder()
                             .email("billing@acmecorp.com")
                             .name("Acme Corp")
                             .address("123 Main Street, New York, NY 10001, US")
@@ -48,14 +37,22 @@ internal class ProfileServiceAsyncTest {
                     )
                     .billingModel("profile")
                     .brand(
-                        BrandsBrandData.builder()
+                        ProfileCreateParams.Brand.builder()
                             .compliance(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                                    .builder()
-                                    .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
-                                    .vertical(TcrVertical.PROFESSIONAL)
+                                ProfileCreateParams.Brand.Compliance.builder()
+                                    .brandRelationship(
+                                        ProfileCreateParams.Brand.Compliance.BrandRelationship
+                                            .SMALL_ACCOUNT
+                                    )
+                                    .vertical(
+                                        ProfileCreateParams.Brand.Compliance.Vertical.PROFESSIONAL
+                                    )
                                     .addDestinationCountry(
-                                        DestinationCountry.builder().id("US").isMain(false).build()
+                                        ProfileCreateParams.Brand.Compliance.DestinationCountry
+                                            .builder()
+                                            .id("US")
+                                            .isMain(false)
+                                            .build()
                                     )
                                     .expectedMessagingVolume("10000")
                                     .isTcrApplication(true)
@@ -67,8 +64,7 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .contact(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-                                    .builder()
+                                ProfileCreateParams.Brand.Contact.builder()
                                     .name("John Smith")
                                     .businessName("Acme Corp")
                                     .email("john@acmecorp.com")
@@ -78,15 +74,12 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .business(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                                    .builder()
+                                ProfileCreateParams.Brand.Business.builder()
                                     .city("New York")
                                     .country("US")
                                     .countryOfRegistration("US")
                                     .entityType(
-                                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                                            .EntityType
-                                            .PRIVATE_PROFIT
+                                        ProfileCreateParams.Brand.Business.EntityType.PRIVATE_PROFIT
                                     )
                                     .legalName("Acme Corporation LLC")
                                     .postalCode("10001")
@@ -107,13 +100,14 @@ internal class ProfileServiceAsyncTest {
                     .inheritTemplates(true)
                     .name("Sales Team")
                     .paymentDetails(
-                        PaymentDetails.builder()
+                        ProfileCreateParams.PaymentDetails.builder()
                             .cardNumber("4111111111111111")
                             .cvc("123")
                             .expiry("09/27")
                             .zipCode("10001")
                             .build()
                     )
+                    .sandbox(false)
                     .shortName("SALES")
                     .whatsappBusinessAccount(
                         ProfileCreateParams.WhatsappBusinessAccount.builder()
@@ -125,8 +119,8 @@ internal class ProfileServiceAsyncTest {
                     .build()
             )
 
-        val apiResponseOfProfileDetail = apiResponseOfProfileDetailFuture.get()
-        apiResponseOfProfileDetail.validate()
+        val profile = profileFuture.get()
+        profile.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -135,7 +129,7 @@ internal class ProfileServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val profileServiceAsync = client.profiles()
 
-        val apiResponseOfProfileDetailFuture =
+        val profileFuture =
             profileServiceAsync.retrieve(
                 ProfileRetrieveParams.builder()
                     .profileId("profileId")
@@ -143,8 +137,8 @@ internal class ProfileServiceAsyncTest {
                     .build()
             )
 
-        val apiResponseOfProfileDetail = apiResponseOfProfileDetailFuture.get()
-        apiResponseOfProfileDetail.validate()
+        val profile = profileFuture.get()
+        profile.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -153,18 +147,17 @@ internal class ProfileServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val profileServiceAsync = client.profiles()
 
-        val apiResponseOfProfileDetailFuture =
+        val profileFuture =
             profileServiceAsync.update(
                 ProfileUpdateParams.builder()
                     .profileId("profileId")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .allowContactSharing(true)
                     .allowNumberChangeDuringOnboarding(null)
                     .allowTemplateSharing(null)
                     .billingContact(
-                        BillingContactInfo.builder()
+                        ProfileUpdateParams.BillingContact.builder()
                             .email("dev@stainless.com")
                             .name("x")
                             .address("address")
@@ -173,14 +166,22 @@ internal class ProfileServiceAsyncTest {
                     )
                     .billingModel("organization")
                     .brand(
-                        BrandsBrandData.builder()
+                        ProfileUpdateParams.Brand.builder()
                             .compliance(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                                    .builder()
-                                    .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
-                                    .vertical(TcrVertical.PROFESSIONAL)
+                                ProfileUpdateParams.Brand.Compliance.builder()
+                                    .brandRelationship(
+                                        ProfileUpdateParams.Brand.Compliance.BrandRelationship
+                                            .SMALL_ACCOUNT
+                                    )
+                                    .vertical(
+                                        ProfileUpdateParams.Brand.Compliance.Vertical.PROFESSIONAL
+                                    )
                                     .addDestinationCountry(
-                                        DestinationCountry.builder().id("US").isMain(false).build()
+                                        ProfileUpdateParams.Brand.Compliance.DestinationCountry
+                                            .builder()
+                                            .id("US")
+                                            .isMain(false)
+                                            .build()
                                     )
                                     .expectedMessagingVolume("10000")
                                     .isTcrApplication(true)
@@ -192,8 +193,7 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .contact(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-                                    .builder()
+                                ProfileUpdateParams.Brand.Contact.builder()
                                     .name("John Smith")
                                     .businessName("Acme Corp")
                                     .email("john@acmecorp.com")
@@ -203,15 +203,12 @@ internal class ProfileServiceAsyncTest {
                                     .build()
                             )
                             .business(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                                    .builder()
+                                ProfileUpdateParams.Brand.Business.builder()
                                     .city("New York")
                                     .country("US")
                                     .countryOfRegistration("US")
                                     .entityType(
-                                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                                            .EntityType
-                                            .PRIVATE_PROFIT
+                                        ProfileUpdateParams.Brand.Business.EntityType.PRIVATE_PROFIT
                                     )
                                     .legalName("Acme Corporation LLC")
                                     .postalCode("10001")
@@ -232,13 +229,14 @@ internal class ProfileServiceAsyncTest {
                     .inheritTemplates(null)
                     .name("Sales Team - Updated")
                     .paymentDetails(
-                        PaymentDetails.builder()
+                        ProfileUpdateParams.PaymentDetails.builder()
                             .cardNumber("3216699102256101")
                             .cvc("3216")
                             .expiry("11/66")
                             .zipCode("x")
                             .build()
                     )
+                    .sandbox(false)
                     .sendingPhoneNumber(null)
                     .sendingPhoneNumberProfileId(null)
                     .sendingWhatsappNumberProfileId(null)
@@ -247,8 +245,8 @@ internal class ProfileServiceAsyncTest {
                     .build()
             )
 
-        val apiResponseOfProfileDetail = apiResponseOfProfileDetailFuture.get()
-        apiResponseOfProfileDetail.validate()
+        val profile = profileFuture.get()
+        profile.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -279,7 +277,7 @@ internal class ProfileServiceAsyncTest {
                 ProfileDeleteParams.builder()
                     .profileId("profileId")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                    .sandbox(false)
                     .build()
             )
 
@@ -298,8 +296,8 @@ internal class ProfileServiceAsyncTest {
                     .profileId("660e8400-e29b-41d4-a716-446655440000")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .webHookUrl("https://your-app.com/webhook/profile-complete")
+                    .sandbox(false)
                     .build()
             )
 
