@@ -17,10 +17,10 @@ internal class WebhookTestResponseTest {
             WebhookTestResponse.builder()
                 .data(WebhookTestResponse.Data.builder().message("message").success(true).build())
                 .error(
-                    ErrorDetail.builder()
+                    WebhookTestResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            WebhookTestResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -29,7 +29,7 @@ internal class WebhookTestResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    WebhookTestResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -42,10 +42,10 @@ internal class WebhookTestResponseTest {
             .contains(WebhookTestResponse.Data.builder().message("message").success(true).build())
         assertThat(webhookTestResponse.error())
             .contains(
-                ErrorDetail.builder()
+                WebhookTestResponse.Error.builder()
                     .code("code")
                     .details(
-                        ErrorDetail.Details.builder()
+                        WebhookTestResponse.Error.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -55,7 +55,7 @@ internal class WebhookTestResponseTest {
             )
         assertThat(webhookTestResponse.meta())
             .contains(
-                ApiMeta.builder()
+                WebhookTestResponse.Meta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -71,10 +71,10 @@ internal class WebhookTestResponseTest {
             WebhookTestResponse.builder()
                 .data(WebhookTestResponse.Data.builder().message("message").success(true).build())
                 .error(
-                    ErrorDetail.builder()
+                    WebhookTestResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            WebhookTestResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -83,7 +83,7 @@ internal class WebhookTestResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    WebhookTestResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

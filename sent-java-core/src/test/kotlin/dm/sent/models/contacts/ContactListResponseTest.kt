@@ -5,9 +5,6 @@ package dm.sent.models.contacts
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
-import dm.sent.models.webhooks.PaginationMeta
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -21,14 +18,9 @@ internal class ContactListResponseTest {
                 .data(
                     ContactListResponse.Data.builder()
                         .addContact(
-                            ContactResponse.builder()
+                            ContactListResponse.Data.Contact.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .availableChannels("available_channels")
-                                .channelConsent(
-                                    ContactResponse.ChannelConsent.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("string"))
-                                        .build()
-                                )
                                 .countryCode("country_code")
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .defaultChannel("default_channel")
@@ -44,9 +36,9 @@ internal class ContactListResponseTest {
                                 .build()
                         )
                         .pagination(
-                            PaginationMeta.builder()
+                            ContactListResponse.Data.Pagination.builder()
                                 .cursors(
-                                    PaginationMeta.Cursors.builder()
+                                    ContactListResponse.Data.Pagination.Cursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -61,10 +53,10 @@ internal class ContactListResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    ContactListResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            ContactListResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -73,7 +65,7 @@ internal class ContactListResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    ContactListResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -86,14 +78,9 @@ internal class ContactListResponseTest {
             .contains(
                 ContactListResponse.Data.builder()
                     .addContact(
-                        ContactResponse.builder()
+                        ContactListResponse.Data.Contact.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .availableChannels("available_channels")
-                            .channelConsent(
-                                ContactResponse.ChannelConsent.builder()
-                                    .putAdditionalProperty("foo", JsonValue.from("string"))
-                                    .build()
-                            )
                             .countryCode("country_code")
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .defaultChannel("default_channel")
@@ -109,9 +96,9 @@ internal class ContactListResponseTest {
                             .build()
                     )
                     .pagination(
-                        PaginationMeta.builder()
+                        ContactListResponse.Data.Pagination.builder()
                             .cursors(
-                                PaginationMeta.Cursors.builder()
+                                ContactListResponse.Data.Pagination.Cursors.builder()
                                     .after("after")
                                     .before("before")
                                     .build()
@@ -127,10 +114,10 @@ internal class ContactListResponseTest {
             )
         assertThat(contactListResponse.error())
             .contains(
-                ErrorDetail.builder()
+                ContactListResponse.Error.builder()
                     .code("code")
                     .details(
-                        ErrorDetail.Details.builder()
+                        ContactListResponse.Error.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -140,7 +127,7 @@ internal class ContactListResponseTest {
             )
         assertThat(contactListResponse.meta())
             .contains(
-                ApiMeta.builder()
+                ContactListResponse.Meta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -157,14 +144,9 @@ internal class ContactListResponseTest {
                 .data(
                     ContactListResponse.Data.builder()
                         .addContact(
-                            ContactResponse.builder()
+                            ContactListResponse.Data.Contact.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .availableChannels("available_channels")
-                                .channelConsent(
-                                    ContactResponse.ChannelConsent.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("string"))
-                                        .build()
-                                )
                                 .countryCode("country_code")
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .defaultChannel("default_channel")
@@ -180,9 +162,9 @@ internal class ContactListResponseTest {
                                 .build()
                         )
                         .pagination(
-                            PaginationMeta.builder()
+                            ContactListResponse.Data.Pagination.builder()
                                 .cursors(
-                                    PaginationMeta.Cursors.builder()
+                                    ContactListResponse.Data.Pagination.Cursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -197,10 +179,10 @@ internal class ContactListResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    ContactListResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            ContactListResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -209,7 +191,7 @@ internal class ContactListResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    ContactListResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

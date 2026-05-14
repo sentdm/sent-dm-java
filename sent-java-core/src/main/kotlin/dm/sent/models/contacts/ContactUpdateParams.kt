@@ -13,9 +13,7 @@ import dm.sent.core.JsonValue
 import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
-import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
-import dm.sent.models.webhooks.MutationRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -41,27 +39,6 @@ private constructor(
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /**
-     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
-     * integrations without actual execution
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun sandbox(): Optional<Boolean> = body.sandbox()
-
-    /**
-     * Consent status by channel. Keys: "sms", "whatsapp". Values: "opted_in", "opted_out". All
-     * entries must have the same status — mixed values (e.g., sms: opted_out + whatsapp: opted_in)
-     * are rejected with 400. The provided status is applied to ALL channels regardless of which
-     * keys are specified, because consent is global across channels. When provided, takes
-     * precedence over the opt_out field.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun channelConsent(): Optional<ChannelConsent> = body.channelConsent()
-
-    /**
      * Default messaging channel: "sms" or "whatsapp"
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -70,7 +47,8 @@ private constructor(
     fun defaultChannel(): Optional<String> = body.defaultChannel()
 
     /**
-     * Whether the contact has opted out of messaging
+     * Whether the contact has opted out of messaging. Single source of truth — opt-out is
+     * per-contact, not per-channel.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -78,18 +56,13 @@ private constructor(
     fun optOut(): Optional<Boolean> = body.optOut()
 
     /**
-     * Returns the raw JSON value of [sandbox].
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
      *
-     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
      */
-    fun _sandbox(): JsonField<Boolean> = body._sandbox()
-
-    /**
-     * Returns the raw JSON value of [channelConsent].
-     *
-     * Unlike [channelConsent], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _channelConsent(): JsonField<ChannelConsent> = body._channelConsent()
+    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * Returns the raw JSON value of [defaultChannel].
@@ -104,6 +77,13 @@ private constructor(
      * Unlike [optOut], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _optOut(): JsonField<Boolean> = body._optOut()
+
+    /**
+     * Returns the raw JSON value of [sandbox].
+     *
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -164,52 +144,11 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [sandbox]
-         * - [channelConsent]
          * - [defaultChannel]
          * - [optOut]
+         * - [sandbox]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         */
-        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
-
-        /**
-         * Sets [Builder.sandbox] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
-
-        /**
-         * Consent status by channel. Keys: "sms", "whatsapp". Values: "opted_in", "opted_out". All
-         * entries must have the same status — mixed values (e.g., sms: opted_out + whatsapp:
-         * opted_in) are rejected with 400. The provided status is applied to ALL channels
-         * regardless of which keys are specified, because consent is global across channels. When
-         * provided, takes precedence over the opt_out field.
-         */
-        fun channelConsent(channelConsent: ChannelConsent?) = apply {
-            body.channelConsent(channelConsent)
-        }
-
-        /** Alias for calling [Builder.channelConsent] with `channelConsent.orElse(null)`. */
-        fun channelConsent(channelConsent: Optional<ChannelConsent>) =
-            channelConsent(channelConsent.getOrNull())
-
-        /**
-         * Sets [Builder.channelConsent] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.channelConsent] with a well-typed [ChannelConsent] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
-         */
-        fun channelConsent(channelConsent: JsonField<ChannelConsent>) = apply {
-            body.channelConsent(channelConsent)
-        }
 
         /** Default messaging channel: "sms" or "whatsapp" */
         fun defaultChannel(defaultChannel: String?) = apply { body.defaultChannel(defaultChannel) }
@@ -229,7 +168,10 @@ private constructor(
             body.defaultChannel(defaultChannel)
         }
 
-        /** Whether the contact has opted out of messaging */
+        /**
+         * Whether the contact has opted out of messaging. Single source of truth — opt-out is
+         * per-contact, not per-channel.
+         */
         fun optOut(optOut: Boolean?) = apply { body.optOut(optOut) }
 
         /**
@@ -249,6 +191,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun optOut(optOut: JsonField<Boolean>) = apply { body.optOut(optOut) }
+
+        /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         */
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
+
+        /**
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -402,53 +358,23 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** Request to update a contact */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val sandbox: JsonField<Boolean>,
-        private val channelConsent: JsonField<ChannelConsent>,
         private val defaultChannel: JsonField<String>,
         private val optOut: JsonField<Boolean>,
+        private val sandbox: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
-            @JsonProperty("channel_consent")
-            @ExcludeMissing
-            channelConsent: JsonField<ChannelConsent> = JsonMissing.of(),
             @JsonProperty("default_channel")
             @ExcludeMissing
             defaultChannel: JsonField<String> = JsonMissing.of(),
             @JsonProperty("opt_out") @ExcludeMissing optOut: JsonField<Boolean> = JsonMissing.of(),
-        ) : this(sandbox, channelConsent, defaultChannel, optOut, mutableMapOf())
-
-        fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
-
-        /**
-         * Consent status by channel. Keys: "sms", "whatsapp". Values: "opted_in", "opted_out". All
-         * entries must have the same status — mixed values (e.g., sms: opted_out + whatsapp:
-         * opted_in) are rejected with 400. The provided status is applied to ALL channels
-         * regardless of which keys are specified, because consent is global across channels. When
-         * provided, takes precedence over the opt_out field.
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun channelConsent(): Optional<ChannelConsent> =
-            channelConsent.getOptional("channel_consent")
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(defaultChannel, optOut, sandbox, mutableMapOf())
 
         /**
          * Default messaging channel: "sms" or "whatsapp"
@@ -459,7 +385,8 @@ private constructor(
         fun defaultChannel(): Optional<String> = defaultChannel.getOptional("default_channel")
 
         /**
-         * Whether the contact has opted out of messaging
+         * Whether the contact has opted out of messaging. Single source of truth — opt-out is
+         * per-contact, not per-channel.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -467,21 +394,13 @@ private constructor(
         fun optOut(): Optional<Boolean> = optOut.getOptional("opt_out")
 
         /**
-         * Returns the raw JSON value of [sandbox].
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
          *
-         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
          */
-        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
-
-        /**
-         * Returns the raw JSON value of [channelConsent].
-         *
-         * Unlike [channelConsent], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("channel_consent")
-        @ExcludeMissing
-        fun _channelConsent(): JsonField<ChannelConsent> = channelConsent
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * Returns the raw JSON value of [defaultChannel].
@@ -499,6 +418,13 @@ private constructor(
          * Unlike [optOut], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("opt_out") @ExcludeMissing fun _optOut(): JsonField<Boolean> = optOut
+
+        /**
+         * Returns the raw JSON value of [sandbox].
+         *
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -521,59 +447,17 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var sandbox: JsonField<Boolean> = JsonMissing.of()
-            private var channelConsent: JsonField<ChannelConsent> = JsonMissing.of()
             private var defaultChannel: JsonField<String> = JsonMissing.of()
             private var optOut: JsonField<Boolean> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                sandbox = body.sandbox
-                channelConsent = body.channelConsent
                 defaultChannel = body.defaultChannel
                 optOut = body.optOut
+                sandbox = body.sandbox
                 additionalProperties = body.additionalProperties.toMutableMap()
-            }
-
-            /**
-             * Sandbox flag - when true, the operation is simulated without side effects Useful for
-             * testing integrations without actual execution
-             */
-            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
-
-            /**
-             * Sets [Builder.sandbox] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
-
-            /**
-             * Consent status by channel. Keys: "sms", "whatsapp". Values: "opted_in", "opted_out".
-             * All entries must have the same status — mixed values (e.g., sms: opted_out +
-             * whatsapp: opted_in) are rejected with 400. The provided status is applied to ALL
-             * channels regardless of which keys are specified, because consent is global across
-             * channels. When provided, takes precedence over the opt_out field.
-             */
-            fun channelConsent(channelConsent: ChannelConsent?) =
-                channelConsent(JsonField.ofNullable(channelConsent))
-
-            /** Alias for calling [Builder.channelConsent] with `channelConsent.orElse(null)`. */
-            fun channelConsent(channelConsent: Optional<ChannelConsent>) =
-                channelConsent(channelConsent.getOrNull())
-
-            /**
-             * Sets [Builder.channelConsent] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.channelConsent] with a well-typed [ChannelConsent]
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
-             */
-            fun channelConsent(channelConsent: JsonField<ChannelConsent>) = apply {
-                this.channelConsent = channelConsent
             }
 
             /** Default messaging channel: "sms" or "whatsapp" */
@@ -595,7 +479,10 @@ private constructor(
                 this.defaultChannel = defaultChannel
             }
 
-            /** Whether the contact has opted out of messaging */
+            /**
+             * Whether the contact has opted out of messaging. Single source of truth — opt-out is
+             * per-contact, not per-channel.
+             */
             fun optOut(optOut: Boolean?) = optOut(JsonField.ofNullable(optOut))
 
             /**
@@ -616,6 +503,21 @@ private constructor(
              * supported value.
              */
             fun optOut(optOut: JsonField<Boolean>) = apply { this.optOut = optOut }
+
+            /**
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
+             */
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
+
+            /**
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -642,13 +544,7 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              */
             fun build(): Body =
-                Body(
-                    sandbox,
-                    channelConsent,
-                    defaultChannel,
-                    optOut,
-                    additionalProperties.toMutableMap(),
-                )
+                Body(defaultChannel, optOut, sandbox, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -667,10 +563,9 @@ private constructor(
                 return@apply
             }
 
-            sandbox()
-            channelConsent().ifPresent { it.validate() }
             defaultChannel()
             optOut()
+            sandbox()
             validated = true
         }
 
@@ -690,10 +585,9 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (sandbox.asKnown().isPresent) 1 else 0) +
-                (channelConsent.asKnown().getOrNull()?.validity() ?: 0) +
-                (if (defaultChannel.asKnown().isPresent) 1 else 0) +
-                (if (optOut.asKnown().isPresent) 1 else 0)
+            (if (defaultChannel.asKnown().isPresent) 1 else 0) +
+                (if (optOut.asKnown().isPresent) 1 else 0) +
+                (if (sandbox.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -701,136 +595,20 @@ private constructor(
             }
 
             return other is Body &&
-                sandbox == other.sandbox &&
-                channelConsent == other.channelConsent &&
                 defaultChannel == other.defaultChannel &&
                 optOut == other.optOut &&
+                sandbox == other.sandbox &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(sandbox, channelConsent, defaultChannel, optOut, additionalProperties)
+            Objects.hash(defaultChannel, optOut, sandbox, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, channelConsent=$channelConsent, defaultChannel=$defaultChannel, optOut=$optOut, additionalProperties=$additionalProperties}"
-    }
-
-    /**
-     * Consent status by channel. Keys: "sms", "whatsapp". Values: "opted_in", "opted_out". All
-     * entries must have the same status — mixed values (e.g., sms: opted_out + whatsapp: opted_in)
-     * are rejected with 400. The provided status is applied to ALL channels regardless of which
-     * keys are specified, because consent is global across channels. When provided, takes
-     * precedence over the opt_out field.
-     */
-    class ChannelConsent
-    @JsonCreator
-    private constructor(
-        @com.fasterxml.jackson.annotation.JsonValue
-        private val additionalProperties: Map<String, JsonValue>
-    ) {
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
-
-        fun toBuilder() = Builder().from(this)
-
-        companion object {
-
-            /** Returns a mutable builder for constructing an instance of [ChannelConsent]. */
-            @JvmStatic fun builder() = Builder()
-        }
-
-        /** A builder for [ChannelConsent]. */
-        class Builder internal constructor() {
-
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-            @JvmSynthetic
-            internal fun from(channelConsent: ChannelConsent) = apply {
-                additionalProperties = channelConsent.additionalProperties.toMutableMap()
-            }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
-
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
-
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
-
-            /**
-             * Returns an immutable instance of [ChannelConsent].
-             *
-             * Further updates to this [Builder] will not mutate the returned instance.
-             */
-            fun build(): ChannelConsent = ChannelConsent(additionalProperties.toImmutable())
-        }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws SentInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): ChannelConsent = apply {
-            if (validated) {
-                return@apply
-            }
-
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: SentInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is ChannelConsent && additionalProperties == other.additionalProperties
-        }
-
-        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
-
-        override fun hashCode(): Int = hashCode
-
-        override fun toString() = "ChannelConsent{additionalProperties=$additionalProperties}"
+            "Body{defaultChannel=$defaultChannel, optOut=$optOut, sandbox=$sandbox, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

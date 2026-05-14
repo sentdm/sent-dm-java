@@ -13,22 +13,25 @@ internal class TemplateCreateParamsTest {
         TemplateCreateParams.builder()
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .sandbox(false)
             .category("MARKETING")
             .creationSource(null)
             .definition(
-                TemplateDefinition.builder()
+                TemplateCreateParams.Definition.builder()
                     .body(
-                        SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                        TemplateCreateParams.Definition.Body.builder()
                             .multiChannel(
-                                TemplateBodyContent.builder()
+                                TemplateCreateParams.Definition.Body.MultiChannel.builder()
                                     .template("Hello {{0:variable}}! Welcome to {{1:variable}}.")
                                     .type(null)
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateCreateParams.Definition.Body.MultiChannel.Variable
+                                            .builder()
                                             .name("name")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateCreateParams.Definition.Body.MultiChannel
+                                                    .Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("John")
                                                     .url("x")
@@ -43,10 +46,14 @@ internal class TemplateCreateParamsTest {
                                             .build()
                                     )
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateCreateParams.Definition.Body.MultiChannel.Variable
+                                            .builder()
                                             .name("company")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateCreateParams.Definition.Body.MultiChannel
+                                                    .Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("SentDM")
                                                     .url("x")
@@ -62,15 +69,43 @@ internal class TemplateCreateParamsTest {
                                     )
                                     .build()
                             )
-                            .sms(
-                                TemplateBodyContent.builder()
+                            .rcs(
+                                TemplateCreateParams.Definition.Body.Rcs.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateCreateParams.Definition.Body.Rcs.Variable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateCreateParams.Definition.Body.Rcs.Variable
+                                                    .Props
+                                                    .builder()
+                                                    .mediaType("x")
+                                                    .sample("x")
+                                                    .url("x")
+                                                    .variableType("x")
+                                                    .alt("alt")
+                                                    .regex("regex")
+                                                    .shortUrl("shortUrl")
+                                                    .build()
+                                            )
+                                            .type("x")
+                                            .id(0)
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .sms(
+                                TemplateCreateParams.Definition.Body.Sms.builder()
+                                    .template("template")
+                                    .type("type")
+                                    .addVariable(
+                                        TemplateCreateParams.Definition.Body.Sms.Variable.builder()
+                                            .name("x")
+                                            .props(
+                                                TemplateCreateParams.Definition.Body.Sms.Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -87,14 +122,18 @@ internal class TemplateCreateParamsTest {
                                     .build()
                             )
                             .whatsapp(
-                                TemplateBodyContent.builder()
+                                TemplateCreateParams.Definition.Body.Whatsapp.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateCreateParams.Definition.Body.Whatsapp.Variable
+                                            .builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateCreateParams.Definition.Body.Whatsapp
+                                                    .Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -113,15 +152,15 @@ internal class TemplateCreateParamsTest {
                             .build()
                     )
                     .authenticationConfig(
-                        SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                        TemplateCreateParams.Definition.AuthenticationConfig.builder()
                             .addSecurityRecommendation(true)
                             .codeExpirationMinutes(0)
                             .build()
                     )
                     .addButton(
-                        SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                        TemplateCreateParams.Definition.Button.builder()
                             .props(
-                                SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                                TemplateCreateParams.Definition.Button.Props.builder()
                                     .activeFor(1)
                                     .countryCode("x")
                                     .offerCode("x")
@@ -142,14 +181,15 @@ internal class TemplateCreateParamsTest {
                     )
                     .definitionVersion("1.0")
                     .footer(
-                        SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                        TemplateCreateParams.Definition.Footer.builder()
                             .template("template")
                             .type("type")
                             .addVariable(
-                                TemplateVariable.builder()
+                                TemplateCreateParams.Definition.Footer.Variable.builder()
                                     .name("x")
                                     .props(
-                                        TemplateVariable.Props.builder()
+                                        TemplateCreateParams.Definition.Footer.Variable.Props
+                                            .builder()
                                             .mediaType("x")
                                             .sample("x")
                                             .url("x")
@@ -166,14 +206,15 @@ internal class TemplateCreateParamsTest {
                             .build()
                     )
                     .header(
-                        SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                        TemplateCreateParams.Definition.Header.builder()
                             .template("template")
                             .type("type")
                             .addVariable(
-                                TemplateVariable.builder()
+                                TemplateCreateParams.Definition.Header.Variable.builder()
                                     .name("x")
                                     .props(
-                                        TemplateVariable.Props.builder()
+                                        TemplateCreateParams.Definition.Header.Variable.Props
+                                            .builder()
                                             .mediaType("x")
                                             .sample("x")
                                             .url("x")
@@ -192,6 +233,7 @@ internal class TemplateCreateParamsTest {
                     .build()
             )
             .language("en_US")
+            .sandbox(false)
             .submitForReview(false)
             .build()
     }
@@ -202,24 +244,29 @@ internal class TemplateCreateParamsTest {
             TemplateCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .category("MARKETING")
                 .creationSource(null)
                 .definition(
-                    TemplateDefinition.builder()
+                    TemplateCreateParams.Definition.builder()
                         .body(
-                            SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                            TemplateCreateParams.Definition.Body.builder()
                                 .multiChannel(
-                                    TemplateBodyContent.builder()
+                                    TemplateCreateParams.Definition.Body.MultiChannel.builder()
                                         .template(
                                             "Hello {{0:variable}}! Welcome to {{1:variable}}."
                                         )
                                         .type(null)
                                         .addVariable(
-                                            TemplateVariable.builder()
+                                            TemplateCreateParams.Definition.Body.MultiChannel
+                                                .Variable
+                                                .builder()
                                                 .name("name")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateCreateParams.Definition.Body
+                                                        .MultiChannel
+                                                        .Variable
+                                                        .Props
+                                                        .builder()
                                                         .mediaType("x")
                                                         .sample("John")
                                                         .url("x")
@@ -234,10 +281,16 @@ internal class TemplateCreateParamsTest {
                                                 .build()
                                         )
                                         .addVariable(
-                                            TemplateVariable.builder()
+                                            TemplateCreateParams.Definition.Body.MultiChannel
+                                                .Variable
+                                                .builder()
                                                 .name("company")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateCreateParams.Definition.Body
+                                                        .MultiChannel
+                                                        .Variable
+                                                        .Props
+                                                        .builder()
                                                         .mediaType("x")
                                                         .sample("SentDM")
                                                         .url("x")
@@ -253,15 +306,47 @@ internal class TemplateCreateParamsTest {
                                         )
                                         .build()
                                 )
-                                .sms(
-                                    TemplateBodyContent.builder()
+                                .rcs(
+                                    TemplateCreateParams.Definition.Body.Rcs.builder()
                                         .template("template")
                                         .type("type")
                                         .addVariable(
-                                            TemplateVariable.builder()
+                                            TemplateCreateParams.Definition.Body.Rcs.Variable
+                                                .builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateCreateParams.Definition.Body.Rcs
+                                                        .Variable
+                                                        .Props
+                                                        .builder()
+                                                        .mediaType("x")
+                                                        .sample("x")
+                                                        .url("x")
+                                                        .variableType("x")
+                                                        .alt("alt")
+                                                        .regex("regex")
+                                                        .shortUrl("shortUrl")
+                                                        .build()
+                                                )
+                                                .type("x")
+                                                .id(0)
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .sms(
+                                    TemplateCreateParams.Definition.Body.Sms.builder()
+                                        .template("template")
+                                        .type("type")
+                                        .addVariable(
+                                            TemplateCreateParams.Definition.Body.Sms.Variable
+                                                .builder()
+                                                .name("x")
+                                                .props(
+                                                    TemplateCreateParams.Definition.Body.Sms
+                                                        .Variable
+                                                        .Props
+                                                        .builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -278,14 +363,18 @@ internal class TemplateCreateParamsTest {
                                         .build()
                                 )
                                 .whatsapp(
-                                    TemplateBodyContent.builder()
+                                    TemplateCreateParams.Definition.Body.Whatsapp.builder()
                                         .template("template")
                                         .type("type")
                                         .addVariable(
-                                            TemplateVariable.builder()
+                                            TemplateCreateParams.Definition.Body.Whatsapp.Variable
+                                                .builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateCreateParams.Definition.Body.Whatsapp
+                                                        .Variable
+                                                        .Props
+                                                        .builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -304,15 +393,15 @@ internal class TemplateCreateParamsTest {
                                 .build()
                         )
                         .authenticationConfig(
-                            SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                            TemplateCreateParams.Definition.AuthenticationConfig.builder()
                                 .addSecurityRecommendation(true)
                                 .codeExpirationMinutes(0)
                                 .build()
                         )
                         .addButton(
-                            SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                            TemplateCreateParams.Definition.Button.builder()
                                 .props(
-                                    SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                                    TemplateCreateParams.Definition.Button.Props.builder()
                                         .activeFor(1)
                                         .countryCode("x")
                                         .offerCode("x")
@@ -333,14 +422,15 @@ internal class TemplateCreateParamsTest {
                         )
                         .definitionVersion("1.0")
                         .footer(
-                            SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                            TemplateCreateParams.Definition.Footer.builder()
                                 .template("template")
                                 .type("type")
                                 .addVariable(
-                                    TemplateVariable.builder()
+                                    TemplateCreateParams.Definition.Footer.Variable.builder()
                                         .name("x")
                                         .props(
-                                            TemplateVariable.Props.builder()
+                                            TemplateCreateParams.Definition.Footer.Variable.Props
+                                                .builder()
                                                 .mediaType("x")
                                                 .sample("x")
                                                 .url("x")
@@ -357,14 +447,15 @@ internal class TemplateCreateParamsTest {
                                 .build()
                         )
                         .header(
-                            SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                            TemplateCreateParams.Definition.Header.builder()
                                 .template("template")
                                 .type("type")
                                 .addVariable(
-                                    TemplateVariable.builder()
+                                    TemplateCreateParams.Definition.Header.Variable.builder()
                                         .name("x")
                                         .props(
-                                            TemplateVariable.Props.builder()
+                                            TemplateCreateParams.Definition.Header.Variable.Props
+                                                .builder()
                                                 .mediaType("x")
                                                 .sample("x")
                                                 .url("x")
@@ -383,6 +474,7 @@ internal class TemplateCreateParamsTest {
                         .build()
                 )
                 .language("en_US")
+                .sandbox(false)
                 .submitForReview(false)
                 .build()
 
@@ -412,24 +504,29 @@ internal class TemplateCreateParamsTest {
             TemplateCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .category("MARKETING")
                 .creationSource(null)
                 .definition(
-                    TemplateDefinition.builder()
+                    TemplateCreateParams.Definition.builder()
                         .body(
-                            SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                            TemplateCreateParams.Definition.Body.builder()
                                 .multiChannel(
-                                    TemplateBodyContent.builder()
+                                    TemplateCreateParams.Definition.Body.MultiChannel.builder()
                                         .template(
                                             "Hello {{0:variable}}! Welcome to {{1:variable}}."
                                         )
                                         .type(null)
                                         .addVariable(
-                                            TemplateVariable.builder()
+                                            TemplateCreateParams.Definition.Body.MultiChannel
+                                                .Variable
+                                                .builder()
                                                 .name("name")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateCreateParams.Definition.Body
+                                                        .MultiChannel
+                                                        .Variable
+                                                        .Props
+                                                        .builder()
                                                         .mediaType("x")
                                                         .sample("John")
                                                         .url("x")
@@ -444,10 +541,16 @@ internal class TemplateCreateParamsTest {
                                                 .build()
                                         )
                                         .addVariable(
-                                            TemplateVariable.builder()
+                                            TemplateCreateParams.Definition.Body.MultiChannel
+                                                .Variable
+                                                .builder()
                                                 .name("company")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateCreateParams.Definition.Body
+                                                        .MultiChannel
+                                                        .Variable
+                                                        .Props
+                                                        .builder()
                                                         .mediaType("x")
                                                         .sample("SentDM")
                                                         .url("x")
@@ -463,15 +566,47 @@ internal class TemplateCreateParamsTest {
                                         )
                                         .build()
                                 )
-                                .sms(
-                                    TemplateBodyContent.builder()
+                                .rcs(
+                                    TemplateCreateParams.Definition.Body.Rcs.builder()
                                         .template("template")
                                         .type("type")
                                         .addVariable(
-                                            TemplateVariable.builder()
+                                            TemplateCreateParams.Definition.Body.Rcs.Variable
+                                                .builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateCreateParams.Definition.Body.Rcs
+                                                        .Variable
+                                                        .Props
+                                                        .builder()
+                                                        .mediaType("x")
+                                                        .sample("x")
+                                                        .url("x")
+                                                        .variableType("x")
+                                                        .alt("alt")
+                                                        .regex("regex")
+                                                        .shortUrl("shortUrl")
+                                                        .build()
+                                                )
+                                                .type("x")
+                                                .id(0)
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .sms(
+                                    TemplateCreateParams.Definition.Body.Sms.builder()
+                                        .template("template")
+                                        .type("type")
+                                        .addVariable(
+                                            TemplateCreateParams.Definition.Body.Sms.Variable
+                                                .builder()
+                                                .name("x")
+                                                .props(
+                                                    TemplateCreateParams.Definition.Body.Sms
+                                                        .Variable
+                                                        .Props
+                                                        .builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -488,14 +623,18 @@ internal class TemplateCreateParamsTest {
                                         .build()
                                 )
                                 .whatsapp(
-                                    TemplateBodyContent.builder()
+                                    TemplateCreateParams.Definition.Body.Whatsapp.builder()
                                         .template("template")
                                         .type("type")
                                         .addVariable(
-                                            TemplateVariable.builder()
+                                            TemplateCreateParams.Definition.Body.Whatsapp.Variable
+                                                .builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateCreateParams.Definition.Body.Whatsapp
+                                                        .Variable
+                                                        .Props
+                                                        .builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -514,15 +653,15 @@ internal class TemplateCreateParamsTest {
                                 .build()
                         )
                         .authenticationConfig(
-                            SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                            TemplateCreateParams.Definition.AuthenticationConfig.builder()
                                 .addSecurityRecommendation(true)
                                 .codeExpirationMinutes(0)
                                 .build()
                         )
                         .addButton(
-                            SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                            TemplateCreateParams.Definition.Button.builder()
                                 .props(
-                                    SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                                    TemplateCreateParams.Definition.Button.Props.builder()
                                         .activeFor(1)
                                         .countryCode("x")
                                         .offerCode("x")
@@ -543,14 +682,15 @@ internal class TemplateCreateParamsTest {
                         )
                         .definitionVersion("1.0")
                         .footer(
-                            SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                            TemplateCreateParams.Definition.Footer.builder()
                                 .template("template")
                                 .type("type")
                                 .addVariable(
-                                    TemplateVariable.builder()
+                                    TemplateCreateParams.Definition.Footer.Variable.builder()
                                         .name("x")
                                         .props(
-                                            TemplateVariable.Props.builder()
+                                            TemplateCreateParams.Definition.Footer.Variable.Props
+                                                .builder()
                                                 .mediaType("x")
                                                 .sample("x")
                                                 .url("x")
@@ -567,14 +707,15 @@ internal class TemplateCreateParamsTest {
                                 .build()
                         )
                         .header(
-                            SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                            TemplateCreateParams.Definition.Header.builder()
                                 .template("template")
                                 .type("type")
                                 .addVariable(
-                                    TemplateVariable.builder()
+                                    TemplateCreateParams.Definition.Header.Variable.builder()
                                         .name("x")
                                         .props(
-                                            TemplateVariable.Props.builder()
+                                            TemplateCreateParams.Definition.Header.Variable.Props
+                                                .builder()
                                                 .mediaType("x")
                                                 .sample("x")
                                                 .url("x")
@@ -593,28 +734,32 @@ internal class TemplateCreateParamsTest {
                         .build()
                 )
                 .language("en_US")
+                .sandbox(false)
                 .submitForReview(false)
                 .build()
 
         val body = params._body()
 
-        assertThat(body.sandbox()).contains(false)
         assertThat(body.category()).contains("MARKETING")
         assertThat(body.creationSource()).isEmpty
         assertThat(body.definition())
             .contains(
-                TemplateDefinition.builder()
+                TemplateCreateParams.Definition.builder()
                     .body(
-                        SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                        TemplateCreateParams.Definition.Body.builder()
                             .multiChannel(
-                                TemplateBodyContent.builder()
+                                TemplateCreateParams.Definition.Body.MultiChannel.builder()
                                     .template("Hello {{0:variable}}! Welcome to {{1:variable}}.")
                                     .type(null)
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateCreateParams.Definition.Body.MultiChannel.Variable
+                                            .builder()
                                             .name("name")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateCreateParams.Definition.Body.MultiChannel
+                                                    .Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("John")
                                                     .url("x")
@@ -629,10 +774,14 @@ internal class TemplateCreateParamsTest {
                                             .build()
                                     )
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateCreateParams.Definition.Body.MultiChannel.Variable
+                                            .builder()
                                             .name("company")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateCreateParams.Definition.Body.MultiChannel
+                                                    .Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("SentDM")
                                                     .url("x")
@@ -648,15 +797,43 @@ internal class TemplateCreateParamsTest {
                                     )
                                     .build()
                             )
-                            .sms(
-                                TemplateBodyContent.builder()
+                            .rcs(
+                                TemplateCreateParams.Definition.Body.Rcs.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateCreateParams.Definition.Body.Rcs.Variable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateCreateParams.Definition.Body.Rcs.Variable
+                                                    .Props
+                                                    .builder()
+                                                    .mediaType("x")
+                                                    .sample("x")
+                                                    .url("x")
+                                                    .variableType("x")
+                                                    .alt("alt")
+                                                    .regex("regex")
+                                                    .shortUrl("shortUrl")
+                                                    .build()
+                                            )
+                                            .type("x")
+                                            .id(0)
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .sms(
+                                TemplateCreateParams.Definition.Body.Sms.builder()
+                                    .template("template")
+                                    .type("type")
+                                    .addVariable(
+                                        TemplateCreateParams.Definition.Body.Sms.Variable.builder()
+                                            .name("x")
+                                            .props(
+                                                TemplateCreateParams.Definition.Body.Sms.Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -673,14 +850,18 @@ internal class TemplateCreateParamsTest {
                                     .build()
                             )
                             .whatsapp(
-                                TemplateBodyContent.builder()
+                                TemplateCreateParams.Definition.Body.Whatsapp.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
-                                        TemplateVariable.builder()
+                                        TemplateCreateParams.Definition.Body.Whatsapp.Variable
+                                            .builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateCreateParams.Definition.Body.Whatsapp
+                                                    .Variable
+                                                    .Props
+                                                    .builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -699,15 +880,15 @@ internal class TemplateCreateParamsTest {
                             .build()
                     )
                     .authenticationConfig(
-                        SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                        TemplateCreateParams.Definition.AuthenticationConfig.builder()
                             .addSecurityRecommendation(true)
                             .codeExpirationMinutes(0)
                             .build()
                     )
                     .addButton(
-                        SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                        TemplateCreateParams.Definition.Button.builder()
                             .props(
-                                SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                                TemplateCreateParams.Definition.Button.Props.builder()
                                     .activeFor(1)
                                     .countryCode("x")
                                     .offerCode("x")
@@ -728,14 +909,15 @@ internal class TemplateCreateParamsTest {
                     )
                     .definitionVersion("1.0")
                     .footer(
-                        SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                        TemplateCreateParams.Definition.Footer.builder()
                             .template("template")
                             .type("type")
                             .addVariable(
-                                TemplateVariable.builder()
+                                TemplateCreateParams.Definition.Footer.Variable.builder()
                                     .name("x")
                                     .props(
-                                        TemplateVariable.Props.builder()
+                                        TemplateCreateParams.Definition.Footer.Variable.Props
+                                            .builder()
                                             .mediaType("x")
                                             .sample("x")
                                             .url("x")
@@ -752,14 +934,15 @@ internal class TemplateCreateParamsTest {
                             .build()
                     )
                     .header(
-                        SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                        TemplateCreateParams.Definition.Header.builder()
                             .template("template")
                             .type("type")
                             .addVariable(
-                                TemplateVariable.builder()
+                                TemplateCreateParams.Definition.Header.Variable.builder()
                                     .name("x")
                                     .props(
-                                        TemplateVariable.Props.builder()
+                                        TemplateCreateParams.Definition.Header.Variable.Props
+                                            .builder()
                                             .mediaType("x")
                                             .sample("x")
                                             .url("x")
@@ -778,6 +961,7 @@ internal class TemplateCreateParamsTest {
                     .build()
             )
         assertThat(body.language()).contains("en_US")
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.submitForReview()).contains(false)
     }
 

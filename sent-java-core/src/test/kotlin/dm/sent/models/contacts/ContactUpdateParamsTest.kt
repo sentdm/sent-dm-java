@@ -2,7 +2,6 @@
 
 package dm.sent.models.contacts
 
-import dm.sent.core.JsonValue
 import dm.sent.core.http.Headers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,14 +14,9 @@ internal class ContactUpdateParamsTest {
             .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .sandbox(false)
-            .channelConsent(
-                ContactUpdateParams.ChannelConsent.builder()
-                    .putAdditionalProperty("foo", JsonValue.from("string"))
-                    .build()
-            )
             .defaultChannel("whatsapp")
             .optOut(false)
+            .sandbox(false)
             .build()
     }
 
@@ -43,14 +37,9 @@ internal class ContactUpdateParamsTest {
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
-                .channelConsent(
-                    ContactUpdateParams.ChannelConsent.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("string"))
-                        .build()
-                )
                 .defaultChannel("whatsapp")
                 .optOut(false)
+                .sandbox(false)
                 .build()
 
         val headers = params._headers()
@@ -81,27 +70,16 @@ internal class ContactUpdateParamsTest {
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
-                .channelConsent(
-                    ContactUpdateParams.ChannelConsent.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("string"))
-                        .build()
-                )
                 .defaultChannel("whatsapp")
                 .optOut(false)
+                .sandbox(false)
                 .build()
 
         val body = params._body()
 
-        assertThat(body.sandbox()).contains(false)
-        assertThat(body.channelConsent())
-            .contains(
-                ContactUpdateParams.ChannelConsent.builder()
-                    .putAdditionalProperty("foo", JsonValue.from("string"))
-                    .build()
-            )
         assertThat(body.defaultChannel()).contains("whatsapp")
         assertThat(body.optOut()).contains(false)
+        assertThat(body.sandbox()).contains(false)
     }
 
     @Test

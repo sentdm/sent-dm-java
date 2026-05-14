@@ -7,15 +7,17 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.profiles.ApiResponseOfProfileDetail
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
+import dm.sent.models.profiles.ProfileCreateResponse
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
+import dm.sent.models.profiles.ProfileRetrieveResponse
 import dm.sent.models.profiles.ProfileUpdateParams
+import dm.sent.models.profiles.ProfileUpdateResponse
 import dm.sent.services.blocking.profiles.CampaignService
 import java.util.function.Consumer
 
@@ -71,28 +73,27 @@ interface ProfileService {
      * payment processor. Providing `payment_details` when `billing_model` is `"organization"` is
      * not allowed.
      */
-    fun create(): ApiResponseOfProfileDetail = create(ProfileCreateParams.none())
+    fun create(): ProfileCreateResponse = create(ProfileCreateParams.none())
 
     /** @see create */
     fun create(
         params: ProfileCreateParams = ProfileCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfProfileDetail
+    ): ProfileCreateResponse
 
     /** @see create */
-    fun create(
-        params: ProfileCreateParams = ProfileCreateParams.none()
-    ): ApiResponseOfProfileDetail = create(params, RequestOptions.none())
+    fun create(params: ProfileCreateParams = ProfileCreateParams.none()): ProfileCreateResponse =
+        create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(requestOptions: RequestOptions): ApiResponseOfProfileDetail =
+    fun create(requestOptions: RequestOptions): ProfileCreateResponse =
         create(ProfileCreateParams.none(), requestOptions)
 
     /**
      * Retrieves detailed information about a specific sender profile within an organization,
      * including brand and KYC information if a brand has been configured.
      */
-    fun retrieve(profileId: String): ApiResponseOfProfileDetail =
+    fun retrieve(profileId: String): ProfileRetrieveResponse =
         retrieve(profileId, ProfileRetrieveParams.none())
 
     /** @see retrieve */
@@ -100,27 +101,27 @@ interface ProfileService {
         profileId: String,
         params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfProfileDetail =
+    ): ProfileRetrieveResponse =
         retrieve(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         profileId: String,
         params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
-    ): ApiResponseOfProfileDetail = retrieve(profileId, params, RequestOptions.none())
+    ): ProfileRetrieveResponse = retrieve(profileId, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: ProfileRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfProfileDetail
+    ): ProfileRetrieveResponse
 
     /** @see retrieve */
-    fun retrieve(params: ProfileRetrieveParams): ApiResponseOfProfileDetail =
+    fun retrieve(params: ProfileRetrieveParams): ProfileRetrieveResponse =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(profileId: String, requestOptions: RequestOptions): ApiResponseOfProfileDetail =
+    fun retrieve(profileId: String, requestOptions: RequestOptions): ProfileRetrieveResponse =
         retrieve(profileId, ProfileRetrieveParams.none(), requestOptions)
 
     /**
@@ -142,7 +143,7 @@ interface ProfileService {
      * payment processor. Providing `payment_details` when `billing_model` is `"organization"` is
      * not allowed.
      */
-    fun update(profileId: String): ApiResponseOfProfileDetail =
+    fun update(profileId: String): ProfileUpdateResponse =
         update(profileId, ProfileUpdateParams.none())
 
     /** @see update */
@@ -150,27 +151,27 @@ interface ProfileService {
         profileId: String,
         params: ProfileUpdateParams = ProfileUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfProfileDetail =
+    ): ProfileUpdateResponse =
         update(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see update */
     fun update(
         profileId: String,
         params: ProfileUpdateParams = ProfileUpdateParams.none(),
-    ): ApiResponseOfProfileDetail = update(profileId, params, RequestOptions.none())
+    ): ProfileUpdateResponse = update(profileId, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: ProfileUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfProfileDetail
+    ): ProfileUpdateResponse
 
     /** @see update */
-    fun update(params: ProfileUpdateParams): ApiResponseOfProfileDetail =
+    fun update(params: ProfileUpdateParams): ProfileUpdateResponse =
         update(params, RequestOptions.none())
 
     /** @see update */
-    fun update(profileId: String, requestOptions: RequestOptions): ApiResponseOfProfileDetail =
+    fun update(profileId: String, requestOptions: RequestOptions): ProfileUpdateResponse =
         update(profileId, ProfileUpdateParams.none(), requestOptions)
 
     /**
@@ -198,21 +199,28 @@ interface ProfileService {
      * Soft deletes a sender profile. The profile will be marked as deleted but data is retained.
      * Requires admin role in the organization.
      */
-    fun delete(profileId: String, params: ProfileDeleteParams) =
-        delete(profileId, params, RequestOptions.none())
+    fun delete(profileId: String) = delete(profileId, ProfileDeleteParams.none())
 
     /** @see delete */
     fun delete(
         profileId: String,
-        params: ProfileDeleteParams,
+        params: ProfileDeleteParams = ProfileDeleteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ) = delete(params.toBuilder().profileId(profileId).build(), requestOptions)
+
+    /** @see delete */
+    fun delete(profileId: String, params: ProfileDeleteParams = ProfileDeleteParams.none()) =
+        delete(profileId, params, RequestOptions.none())
+
+    /** @see delete */
+    fun delete(params: ProfileDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
     fun delete(params: ProfileDeleteParams) = delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(params: ProfileDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
+    fun delete(profileId: String, requestOptions: RequestOptions) =
+        delete(profileId, ProfileDeleteParams.none(), requestOptions)
 
     /**
      * Final step in profile compliance workflow. Validates all prerequisites (general data, brand,
@@ -271,25 +279,24 @@ interface ProfileService {
          * [ProfileService.create].
          */
         @MustBeClosed
-        fun create(): HttpResponseFor<ApiResponseOfProfileDetail> =
-            create(ProfileCreateParams.none())
+        fun create(): HttpResponseFor<ProfileCreateResponse> = create(ProfileCreateParams.none())
 
         /** @see create */
         @MustBeClosed
         fun create(
             params: ProfileCreateParams = ProfileCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfProfileDetail>
+        ): HttpResponseFor<ProfileCreateResponse>
 
         /** @see create */
         @MustBeClosed
         fun create(
             params: ProfileCreateParams = ProfileCreateParams.none()
-        ): HttpResponseFor<ApiResponseOfProfileDetail> = create(params, RequestOptions.none())
+        ): HttpResponseFor<ProfileCreateResponse> = create(params, RequestOptions.none())
 
         /** @see create */
         @MustBeClosed
-        fun create(requestOptions: RequestOptions): HttpResponseFor<ApiResponseOfProfileDetail> =
+        fun create(requestOptions: RequestOptions): HttpResponseFor<ProfileCreateResponse> =
             create(ProfileCreateParams.none(), requestOptions)
 
         /**
@@ -297,7 +304,7 @@ interface ProfileService {
          * as [ProfileService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(profileId: String): HttpResponseFor<ApiResponseOfProfileDetail> =
+        fun retrieve(profileId: String): HttpResponseFor<ProfileRetrieveResponse> =
             retrieve(profileId, ProfileRetrieveParams.none())
 
         /** @see retrieve */
@@ -306,7 +313,7 @@ interface ProfileService {
             profileId: String,
             params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfProfileDetail> =
+        ): HttpResponseFor<ProfileRetrieveResponse> =
             retrieve(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see retrieve */
@@ -314,7 +321,7 @@ interface ProfileService {
         fun retrieve(
             profileId: String,
             params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
-        ): HttpResponseFor<ApiResponseOfProfileDetail> =
+        ): HttpResponseFor<ProfileRetrieveResponse> =
             retrieve(profileId, params, RequestOptions.none())
 
         /** @see retrieve */
@@ -322,11 +329,11 @@ interface ProfileService {
         fun retrieve(
             params: ProfileRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfProfileDetail>
+        ): HttpResponseFor<ProfileRetrieveResponse>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(params: ProfileRetrieveParams): HttpResponseFor<ApiResponseOfProfileDetail> =
+        fun retrieve(params: ProfileRetrieveParams): HttpResponseFor<ProfileRetrieveResponse> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
@@ -334,7 +341,7 @@ interface ProfileService {
         fun retrieve(
             profileId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfProfileDetail> =
+        ): HttpResponseFor<ProfileRetrieveResponse> =
             retrieve(profileId, ProfileRetrieveParams.none(), requestOptions)
 
         /**
@@ -342,7 +349,7 @@ interface ProfileService {
          * same as [ProfileService.update].
          */
         @MustBeClosed
-        fun update(profileId: String): HttpResponseFor<ApiResponseOfProfileDetail> =
+        fun update(profileId: String): HttpResponseFor<ProfileUpdateResponse> =
             update(profileId, ProfileUpdateParams.none())
 
         /** @see update */
@@ -351,7 +358,7 @@ interface ProfileService {
             profileId: String,
             params: ProfileUpdateParams = ProfileUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfProfileDetail> =
+        ): HttpResponseFor<ProfileUpdateResponse> =
             update(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see update */
@@ -359,19 +366,18 @@ interface ProfileService {
         fun update(
             profileId: String,
             params: ProfileUpdateParams = ProfileUpdateParams.none(),
-        ): HttpResponseFor<ApiResponseOfProfileDetail> =
-            update(profileId, params, RequestOptions.none())
+        ): HttpResponseFor<ProfileUpdateResponse> = update(profileId, params, RequestOptions.none())
 
         /** @see update */
         @MustBeClosed
         fun update(
             params: ProfileUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfProfileDetail>
+        ): HttpResponseFor<ProfileUpdateResponse>
 
         /** @see update */
         @MustBeClosed
-        fun update(params: ProfileUpdateParams): HttpResponseFor<ApiResponseOfProfileDetail> =
+        fun update(params: ProfileUpdateParams): HttpResponseFor<ProfileUpdateResponse> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -379,7 +385,7 @@ interface ProfileService {
         fun update(
             profileId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfProfileDetail> =
+        ): HttpResponseFor<ProfileUpdateResponse> =
             update(profileId, ProfileUpdateParams.none(), requestOptions)
 
         /**
@@ -412,16 +418,29 @@ interface ProfileService {
          * same as [ProfileService.delete].
          */
         @MustBeClosed
-        fun delete(profileId: String, params: ProfileDeleteParams): HttpResponse =
-            delete(profileId, params, RequestOptions.none())
+        fun delete(profileId: String): HttpResponse = delete(profileId, ProfileDeleteParams.none())
 
         /** @see delete */
         @MustBeClosed
         fun delete(
             profileId: String,
-            params: ProfileDeleteParams,
+            params: ProfileDeleteParams = ProfileDeleteParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponse = delete(params.toBuilder().profileId(profileId).build(), requestOptions)
+
+        /** @see delete */
+        @MustBeClosed
+        fun delete(
+            profileId: String,
+            params: ProfileDeleteParams = ProfileDeleteParams.none(),
+        ): HttpResponse = delete(profileId, params, RequestOptions.none())
+
+        /** @see delete */
+        @MustBeClosed
+        fun delete(
+            params: ProfileDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponse
 
         /** @see delete */
         @MustBeClosed
@@ -430,10 +449,8 @@ interface ProfileService {
 
         /** @see delete */
         @MustBeClosed
-        fun delete(
-            params: ProfileDeleteParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        fun delete(profileId: String, requestOptions: RequestOptions): HttpResponse =
+            delete(profileId, ProfileDeleteParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /v3/profiles/{profileId}/complete`, but is

@@ -6,13 +6,15 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.users.ApiResponseOfUser
 import dm.sent.models.users.UserInviteParams
+import dm.sent.models.users.UserInviteResponse
 import dm.sent.models.users.UserListParams
 import dm.sent.models.users.UserListResponse
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserRetrieveParams
+import dm.sent.models.users.UserRetrieveResponse
 import dm.sent.models.users.UserUpdateRoleParams
+import dm.sent.models.users.UserUpdateRoleResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -35,7 +37,7 @@ interface UserServiceAsync {
      * Retrieves detailed information about a specific user in an organization or profile. Requires
      * developer role or higher.
      */
-    fun retrieve(userId: String): CompletableFuture<ApiResponseOfUser> =
+    fun retrieve(userId: String): CompletableFuture<UserRetrieveResponse> =
         retrieve(userId, UserRetrieveParams.none())
 
     /** @see retrieve */
@@ -43,30 +45,30 @@ interface UserServiceAsync {
         userId: String,
         params: UserRetrieveParams = UserRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfUser> =
+    ): CompletableFuture<UserRetrieveResponse> =
         retrieve(params.toBuilder().userId(userId).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         userId: String,
         params: UserRetrieveParams = UserRetrieveParams.none(),
-    ): CompletableFuture<ApiResponseOfUser> = retrieve(userId, params, RequestOptions.none())
+    ): CompletableFuture<UserRetrieveResponse> = retrieve(userId, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: UserRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfUser>
+    ): CompletableFuture<UserRetrieveResponse>
 
     /** @see retrieve */
-    fun retrieve(params: UserRetrieveParams): CompletableFuture<ApiResponseOfUser> =
+    fun retrieve(params: UserRetrieveParams): CompletableFuture<UserRetrieveResponse> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         userId: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfUser> =
+    ): CompletableFuture<UserRetrieveResponse> =
         retrieve(userId, UserRetrieveParams.none(), requestOptions)
 
     /**
@@ -95,40 +97,41 @@ interface UserServiceAsync {
      * Requires admin role. The user will receive an invitation email with a token to accept.
      * Invitation tokens expire after 7 days.
      */
-    fun invite(): CompletableFuture<ApiResponseOfUser> = invite(UserInviteParams.none())
+    fun invite(): CompletableFuture<UserInviteResponse> = invite(UserInviteParams.none())
 
     /** @see invite */
     fun invite(
         params: UserInviteParams = UserInviteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfUser>
+    ): CompletableFuture<UserInviteResponse>
 
     /** @see invite */
     fun invite(
         params: UserInviteParams = UserInviteParams.none()
-    ): CompletableFuture<ApiResponseOfUser> = invite(params, RequestOptions.none())
+    ): CompletableFuture<UserInviteResponse> = invite(params, RequestOptions.none())
 
     /** @see invite */
-    fun invite(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfUser> =
+    fun invite(requestOptions: RequestOptions): CompletableFuture<UserInviteResponse> =
         invite(UserInviteParams.none(), requestOptions)
 
     /**
      * Removes a user's access to an organization or profile. Requires admin role. You cannot remove
      * yourself or remove the last admin.
      */
-    fun remove(userId: String, params: UserRemoveParams): CompletableFuture<Void?> =
-        remove(userId, params, RequestOptions.none())
+    fun remove(userId: String): CompletableFuture<Void?> = remove(userId, UserRemoveParams.none())
 
     /** @see remove */
     fun remove(
         userId: String,
-        params: UserRemoveParams,
+        params: UserRemoveParams = UserRemoveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Void?> = remove(params.toBuilder().userId(userId).build(), requestOptions)
 
     /** @see remove */
-    fun remove(params: UserRemoveParams): CompletableFuture<Void?> =
-        remove(params, RequestOptions.none())
+    fun remove(
+        userId: String,
+        params: UserRemoveParams = UserRemoveParams.none(),
+    ): CompletableFuture<Void?> = remove(userId, params, RequestOptions.none())
 
     /** @see remove */
     fun remove(
@@ -136,11 +139,19 @@ interface UserServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Void?>
 
+    /** @see remove */
+    fun remove(params: UserRemoveParams): CompletableFuture<Void?> =
+        remove(params, RequestOptions.none())
+
+    /** @see remove */
+    fun remove(userId: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
+        remove(userId, UserRemoveParams.none(), requestOptions)
+
     /**
      * Updates a user's role in the organization or profile. Requires admin role. You cannot change
      * your own role or demote the last admin.
      */
-    fun updateRole(userId: String): CompletableFuture<ApiResponseOfUser> =
+    fun updateRole(userId: String): CompletableFuture<UserUpdateRoleResponse> =
         updateRole(userId, UserUpdateRoleParams.none())
 
     /** @see updateRole */
@@ -148,30 +159,30 @@ interface UserServiceAsync {
         userId: String,
         params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfUser> =
+    ): CompletableFuture<UserUpdateRoleResponse> =
         updateRole(params.toBuilder().userId(userId).build(), requestOptions)
 
     /** @see updateRole */
     fun updateRole(
         userId: String,
         params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
-    ): CompletableFuture<ApiResponseOfUser> = updateRole(userId, params, RequestOptions.none())
+    ): CompletableFuture<UserUpdateRoleResponse> = updateRole(userId, params, RequestOptions.none())
 
     /** @see updateRole */
     fun updateRole(
         params: UserUpdateRoleParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfUser>
+    ): CompletableFuture<UserUpdateRoleResponse>
 
     /** @see updateRole */
-    fun updateRole(params: UserUpdateRoleParams): CompletableFuture<ApiResponseOfUser> =
+    fun updateRole(params: UserUpdateRoleParams): CompletableFuture<UserUpdateRoleResponse> =
         updateRole(params, RequestOptions.none())
 
     /** @see updateRole */
     fun updateRole(
         userId: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfUser> =
+    ): CompletableFuture<UserUpdateRoleResponse> =
         updateRole(userId, UserUpdateRoleParams.none(), requestOptions)
 
     /** A view of [UserServiceAsync] that provides access to raw HTTP responses for each method. */
@@ -188,7 +199,7 @@ interface UserServiceAsync {
          * Returns a raw HTTP response for `get /v3/users/{userId}`, but is otherwise the same as
          * [UserServiceAsync.retrieve].
          */
-        fun retrieve(userId: String): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        fun retrieve(userId: String): CompletableFuture<HttpResponseFor<UserRetrieveResponse>> =
             retrieve(userId, UserRetrieveParams.none())
 
         /** @see retrieve */
@@ -196,33 +207,33 @@ interface UserServiceAsync {
             userId: String,
             params: UserRetrieveParams = UserRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        ): CompletableFuture<HttpResponseFor<UserRetrieveResponse>> =
             retrieve(params.toBuilder().userId(userId).build(), requestOptions)
 
         /** @see retrieve */
         fun retrieve(
             userId: String,
             params: UserRetrieveParams = UserRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        ): CompletableFuture<HttpResponseFor<UserRetrieveResponse>> =
             retrieve(userId, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             params: UserRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>>
+        ): CompletableFuture<HttpResponseFor<UserRetrieveResponse>>
 
         /** @see retrieve */
         fun retrieve(
             params: UserRetrieveParams
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        ): CompletableFuture<HttpResponseFor<UserRetrieveResponse>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             userId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        ): CompletableFuture<HttpResponseFor<UserRetrieveResponse>> =
             retrieve(userId, UserRetrieveParams.none(), requestOptions)
 
         /**
@@ -254,45 +265,47 @@ interface UserServiceAsync {
          * Returns a raw HTTP response for `post /v3/users`, but is otherwise the same as
          * [UserServiceAsync.invite].
          */
-        fun invite(): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        fun invite(): CompletableFuture<HttpResponseFor<UserInviteResponse>> =
             invite(UserInviteParams.none())
 
         /** @see invite */
         fun invite(
             params: UserInviteParams = UserInviteParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>>
+        ): CompletableFuture<HttpResponseFor<UserInviteResponse>>
 
         /** @see invite */
         fun invite(
             params: UserInviteParams = UserInviteParams.none()
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        ): CompletableFuture<HttpResponseFor<UserInviteResponse>> =
             invite(params, RequestOptions.none())
 
         /** @see invite */
         fun invite(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        ): CompletableFuture<HttpResponseFor<UserInviteResponse>> =
             invite(UserInviteParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /v3/users/{userId}`, but is otherwise the same as
          * [UserServiceAsync.remove].
          */
-        fun remove(userId: String, params: UserRemoveParams): CompletableFuture<HttpResponse> =
-            remove(userId, params, RequestOptions.none())
+        fun remove(userId: String): CompletableFuture<HttpResponse> =
+            remove(userId, UserRemoveParams.none())
 
         /** @see remove */
         fun remove(
             userId: String,
-            params: UserRemoveParams,
+            params: UserRemoveParams = UserRemoveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponse> =
             remove(params.toBuilder().userId(userId).build(), requestOptions)
 
         /** @see remove */
-        fun remove(params: UserRemoveParams): CompletableFuture<HttpResponse> =
-            remove(params, RequestOptions.none())
+        fun remove(
+            userId: String,
+            params: UserRemoveParams = UserRemoveParams.none(),
+        ): CompletableFuture<HttpResponse> = remove(userId, params, RequestOptions.none())
 
         /** @see remove */
         fun remove(
@@ -300,11 +313,21 @@ interface UserServiceAsync {
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponse>
 
+        /** @see remove */
+        fun remove(params: UserRemoveParams): CompletableFuture<HttpResponse> =
+            remove(params, RequestOptions.none())
+
+        /** @see remove */
+        fun remove(
+            userId: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponse> = remove(userId, UserRemoveParams.none(), requestOptions)
+
         /**
          * Returns a raw HTTP response for `patch /v3/users/{userId}`, but is otherwise the same as
          * [UserServiceAsync.updateRole].
          */
-        fun updateRole(userId: String): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        fun updateRole(userId: String): CompletableFuture<HttpResponseFor<UserUpdateRoleResponse>> =
             updateRole(userId, UserUpdateRoleParams.none())
 
         /** @see updateRole */
@@ -312,33 +335,33 @@ interface UserServiceAsync {
             userId: String,
             params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        ): CompletableFuture<HttpResponseFor<UserUpdateRoleResponse>> =
             updateRole(params.toBuilder().userId(userId).build(), requestOptions)
 
         /** @see updateRole */
         fun updateRole(
             userId: String,
             params: UserUpdateRoleParams = UserUpdateRoleParams.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        ): CompletableFuture<HttpResponseFor<UserUpdateRoleResponse>> =
             updateRole(userId, params, RequestOptions.none())
 
         /** @see updateRole */
         fun updateRole(
             params: UserUpdateRoleParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>>
+        ): CompletableFuture<HttpResponseFor<UserUpdateRoleResponse>>
 
         /** @see updateRole */
         fun updateRole(
             params: UserUpdateRoleParams
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        ): CompletableFuture<HttpResponseFor<UserUpdateRoleResponse>> =
             updateRole(params, RequestOptions.none())
 
         /** @see updateRole */
         fun updateRole(
             userId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> =
+        ): CompletableFuture<HttpResponseFor<UserUpdateRoleResponse>> =
             updateRole(userId, UserUpdateRoleParams.none(), requestOptions)
     }
 }

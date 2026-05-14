@@ -7,13 +7,15 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.templates.ApiResponseTemplate
 import dm.sent.models.templates.TemplateCreateParams
+import dm.sent.models.templates.TemplateCreateResponse
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateListResponse
 import dm.sent.models.templates.TemplateRetrieveParams
+import dm.sent.models.templates.TemplateRetrieveResponse
 import dm.sent.models.templates.TemplateUpdateParams
+import dm.sent.models.templates.TemplateUpdateResponse
 import java.util.function.Consumer
 
 /** Manage message templates with variable substitution */
@@ -35,86 +37,86 @@ interface TemplateService {
      * Creates a new message template with header, body, footer, and buttons. The template can be
      * submitted for review immediately or saved as draft for later submission.
      */
-    fun create(): ApiResponseTemplate = create(TemplateCreateParams.none())
+    fun create(): TemplateCreateResponse = create(TemplateCreateParams.none())
 
     /** @see create */
     fun create(
         params: TemplateCreateParams = TemplateCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseTemplate
+    ): TemplateCreateResponse
 
     /** @see create */
-    fun create(params: TemplateCreateParams = TemplateCreateParams.none()): ApiResponseTemplate =
+    fun create(params: TemplateCreateParams = TemplateCreateParams.none()): TemplateCreateResponse =
         create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(requestOptions: RequestOptions): ApiResponseTemplate =
+    fun create(requestOptions: RequestOptions): TemplateCreateResponse =
         create(TemplateCreateParams.none(), requestOptions)
 
     /**
      * Retrieves a specific template by its ID. Returns template details including name, category,
      * language, status, and definition.
      */
-    fun retrieve(id: String): ApiResponseTemplate = retrieve(id, TemplateRetrieveParams.none())
+    fun retrieve(id: String): TemplateRetrieveResponse = retrieve(id, TemplateRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseTemplate = retrieve(params.toBuilder().id(id).build(), requestOptions)
+    ): TemplateRetrieveResponse = retrieve(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-    ): ApiResponseTemplate = retrieve(id, params, RequestOptions.none())
+    ): TemplateRetrieveResponse = retrieve(id, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: TemplateRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseTemplate
+    ): TemplateRetrieveResponse
 
     /** @see retrieve */
-    fun retrieve(params: TemplateRetrieveParams): ApiResponseTemplate =
+    fun retrieve(params: TemplateRetrieveParams): TemplateRetrieveResponse =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(id: String, requestOptions: RequestOptions): ApiResponseTemplate =
+    fun retrieve(id: String, requestOptions: RequestOptions): TemplateRetrieveResponse =
         retrieve(id, TemplateRetrieveParams.none(), requestOptions)
 
     /**
      * Updates an existing template's name, category, language, definition, or submits it for
      * review.
      */
-    fun update(id: String): ApiResponseTemplate = update(id, TemplateUpdateParams.none())
+    fun update(id: String): TemplateUpdateResponse = update(id, TemplateUpdateParams.none())
 
     /** @see update */
     fun update(
         id: String,
         params: TemplateUpdateParams = TemplateUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseTemplate = update(params.toBuilder().id(id).build(), requestOptions)
+    ): TemplateUpdateResponse = update(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see update */
     fun update(
         id: String,
         params: TemplateUpdateParams = TemplateUpdateParams.none(),
-    ): ApiResponseTemplate = update(id, params, RequestOptions.none())
+    ): TemplateUpdateResponse = update(id, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: TemplateUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseTemplate
+    ): TemplateUpdateResponse
 
     /** @see update */
-    fun update(params: TemplateUpdateParams): ApiResponseTemplate =
+    fun update(params: TemplateUpdateParams): TemplateUpdateResponse =
         update(params, RequestOptions.none())
 
     /** @see update */
-    fun update(id: String, requestOptions: RequestOptions): ApiResponseTemplate =
+    fun update(id: String, requestOptions: RequestOptions): TemplateUpdateResponse =
         update(id, TemplateUpdateParams.none(), requestOptions)
 
     /**
@@ -171,24 +173,24 @@ interface TemplateService {
          * [TemplateService.create].
          */
         @MustBeClosed
-        fun create(): HttpResponseFor<ApiResponseTemplate> = create(TemplateCreateParams.none())
+        fun create(): HttpResponseFor<TemplateCreateResponse> = create(TemplateCreateParams.none())
 
         /** @see create */
         @MustBeClosed
         fun create(
             params: TemplateCreateParams = TemplateCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseTemplate>
+        ): HttpResponseFor<TemplateCreateResponse>
 
         /** @see create */
         @MustBeClosed
         fun create(
             params: TemplateCreateParams = TemplateCreateParams.none()
-        ): HttpResponseFor<ApiResponseTemplate> = create(params, RequestOptions.none())
+        ): HttpResponseFor<TemplateCreateResponse> = create(params, RequestOptions.none())
 
         /** @see create */
         @MustBeClosed
-        fun create(requestOptions: RequestOptions): HttpResponseFor<ApiResponseTemplate> =
+        fun create(requestOptions: RequestOptions): HttpResponseFor<TemplateCreateResponse> =
             create(TemplateCreateParams.none(), requestOptions)
 
         /**
@@ -196,7 +198,7 @@ interface TemplateService {
          * [TemplateService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(id: String): HttpResponseFor<ApiResponseTemplate> =
+        fun retrieve(id: String): HttpResponseFor<TemplateRetrieveResponse> =
             retrieve(id, TemplateRetrieveParams.none())
 
         /** @see retrieve */
@@ -205,7 +207,7 @@ interface TemplateService {
             id: String,
             params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseTemplate> =
+        ): HttpResponseFor<TemplateRetrieveResponse> =
             retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieve */
@@ -213,18 +215,18 @@ interface TemplateService {
         fun retrieve(
             id: String,
             params: TemplateRetrieveParams = TemplateRetrieveParams.none(),
-        ): HttpResponseFor<ApiResponseTemplate> = retrieve(id, params, RequestOptions.none())
+        ): HttpResponseFor<TemplateRetrieveResponse> = retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: TemplateRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseTemplate>
+        ): HttpResponseFor<TemplateRetrieveResponse>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(params: TemplateRetrieveParams): HttpResponseFor<ApiResponseTemplate> =
+        fun retrieve(params: TemplateRetrieveParams): HttpResponseFor<TemplateRetrieveResponse> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
@@ -232,7 +234,7 @@ interface TemplateService {
         fun retrieve(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseTemplate> =
+        ): HttpResponseFor<TemplateRetrieveResponse> =
             retrieve(id, TemplateRetrieveParams.none(), requestOptions)
 
         /**
@@ -240,7 +242,7 @@ interface TemplateService {
          * [TemplateService.update].
          */
         @MustBeClosed
-        fun update(id: String): HttpResponseFor<ApiResponseTemplate> =
+        fun update(id: String): HttpResponseFor<TemplateUpdateResponse> =
             update(id, TemplateUpdateParams.none())
 
         /** @see update */
@@ -249,7 +251,7 @@ interface TemplateService {
             id: String,
             params: TemplateUpdateParams = TemplateUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseTemplate> =
+        ): HttpResponseFor<TemplateUpdateResponse> =
             update(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see update */
@@ -257,18 +259,18 @@ interface TemplateService {
         fun update(
             id: String,
             params: TemplateUpdateParams = TemplateUpdateParams.none(),
-        ): HttpResponseFor<ApiResponseTemplate> = update(id, params, RequestOptions.none())
+        ): HttpResponseFor<TemplateUpdateResponse> = update(id, params, RequestOptions.none())
 
         /** @see update */
         @MustBeClosed
         fun update(
             params: TemplateUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseTemplate>
+        ): HttpResponseFor<TemplateUpdateResponse>
 
         /** @see update */
         @MustBeClosed
-        fun update(params: TemplateUpdateParams): HttpResponseFor<ApiResponseTemplate> =
+        fun update(params: TemplateUpdateParams): HttpResponseFor<TemplateUpdateResponse> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -276,7 +278,7 @@ interface TemplateService {
         fun update(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseTemplate> =
+        ): HttpResponseFor<TemplateUpdateResponse> =
             update(id, TemplateUpdateParams.none(), requestOptions)
 
         /**

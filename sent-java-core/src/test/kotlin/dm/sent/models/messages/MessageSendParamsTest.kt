@@ -15,9 +15,9 @@ internal class MessageSendParamsTest {
         MessageSendParams.builder()
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .sandbox(false)
             .addChannel("sms")
             .addChannel("whatsapp")
+            .sandbox(false)
             .template(
                 MessageSendParams.Template.builder()
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -41,9 +41,9 @@ internal class MessageSendParamsTest {
             MessageSendParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .addChannel("sms")
                 .addChannel("whatsapp")
+                .sandbox(false)
                 .template(
                     MessageSendParams.Template.builder()
                         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -86,9 +86,9 @@ internal class MessageSendParamsTest {
             MessageSendParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .addChannel("sms")
                 .addChannel("whatsapp")
+                .sandbox(false)
                 .template(
                     MessageSendParams.Template.builder()
                         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -107,8 +107,8 @@ internal class MessageSendParamsTest {
 
         val body = params._body()
 
-        assertThat(body.sandbox()).contains(false)
         assertThat(body.channel().getOrNull()).containsExactly("sms", "whatsapp")
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.template())
             .contains(
                 MessageSendParams.Template.builder()

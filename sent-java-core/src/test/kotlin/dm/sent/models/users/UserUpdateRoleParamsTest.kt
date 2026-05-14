@@ -14,8 +14,8 @@ internal class UserUpdateRoleParamsTest {
             .userId("userId")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .sandbox(false)
             .role("billing")
+            .sandbox(false)
             .build()
     }
 
@@ -35,8 +35,8 @@ internal class UserUpdateRoleParamsTest {
                 .userId("userId")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .role("billing")
+                .sandbox(false)
                 .build()
 
         val headers = params._headers()
@@ -66,14 +66,14 @@ internal class UserUpdateRoleParamsTest {
                 .userId("userId")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .role("billing")
+                .sandbox(false)
                 .build()
 
         val body = params._body()
 
-        assertThat(body.sandbox()).contains(false)
         assertThat(body.role()).contains("billing")
+        assertThat(body.sandbox()).contains(false)
     }
 
     @Test

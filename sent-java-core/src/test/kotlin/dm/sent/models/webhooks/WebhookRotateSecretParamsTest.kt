@@ -14,17 +14,14 @@ internal class WebhookRotateSecretParamsTest {
             .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .mutationRequest(MutationRequest.builder().sandbox(false).build())
+            .sandbox(false)
             .build()
     }
 
     @Test
     fun pathParams() {
         val params =
-            WebhookRotateSecretParams.builder()
-                .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
-                .mutationRequest(MutationRequest.builder().build())
-                .build()
+            WebhookRotateSecretParams.builder().id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8").build()
 
         assertThat(params._pathParam(0)).isEqualTo("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
         // out-of-bound path param
@@ -38,7 +35,7 @@ internal class WebhookRotateSecretParamsTest {
                 .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                .sandbox(false)
                 .build()
 
         val headers = params._headers()
@@ -55,10 +52,7 @@ internal class WebhookRotateSecretParamsTest {
     @Test
     fun headersWithoutOptionalFields() {
         val params =
-            WebhookRotateSecretParams.builder()
-                .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
-                .mutationRequest(MutationRequest.builder().build())
-                .build()
+            WebhookRotateSecretParams.builder().id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8").build()
 
         val headers = params._headers()
 
@@ -72,24 +66,19 @@ internal class WebhookRotateSecretParamsTest {
                 .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                .sandbox(false)
                 .build()
 
         val body = params._body()
 
-        assertThat(body).isEqualTo(MutationRequest.builder().sandbox(false).build())
+        assertThat(body.sandbox()).contains(false)
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
         val params =
-            WebhookRotateSecretParams.builder()
-                .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
-                .mutationRequest(MutationRequest.builder().build())
-                .build()
+            WebhookRotateSecretParams.builder().id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8").build()
 
         val body = params._body()
-
-        assertThat(body).isEqualTo(MutationRequest.builder().build())
     }
 }
