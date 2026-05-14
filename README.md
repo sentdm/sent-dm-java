@@ -650,19 +650,19 @@ To access a property's raw JSON value, which may be undocumented, call its `_` p
 import dm.sent.core.JsonField;
 import java.util.Optional;
 
-JsonField<List<String>> channel = client.messages().send(params)._channel();
+JsonField<Boolean> sandbox = client.messages().send(params)._sandbox();
 
-if (channel.isMissing()) {
+if (sandbox.isMissing()) {
   // The property is absent from the JSON response
-} else if (channel.isNull()) {
+} else if (sandbox.isNull()) {
   // The property was set to literal null
 } else {
   // Check if value was provided as a string
   // Other methods include `asNumber()`, `asBoolean()`, etc.
-  Optional<String> jsonString = channel.asString();
+  Optional<String> jsonString = sandbox.asString();
 
   // Try to deserialize into a custom type
-  MyClass myObject = channel.asUnknown().orElseThrow().convert(MyClass.class);
+  MyClass myObject = sandbox.asUnknown().orElseThrow().convert(MyClass.class);
 }
 ```
 

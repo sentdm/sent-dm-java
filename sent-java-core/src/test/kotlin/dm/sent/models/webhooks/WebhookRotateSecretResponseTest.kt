@@ -21,10 +21,10 @@ internal class WebhookRotateSecretResponseTest {
                         .build()
                 )
                 .error(
-                    WebhookRotateSecretResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            WebhookRotateSecretResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -33,7 +33,7 @@ internal class WebhookRotateSecretResponseTest {
                         .build()
                 )
                 .meta(
-                    WebhookRotateSecretResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -48,10 +48,10 @@ internal class WebhookRotateSecretResponseTest {
             )
         assertThat(webhookRotateSecretResponse.error())
             .contains(
-                WebhookRotateSecretResponse.Error.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        WebhookRotateSecretResponse.Error.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -61,7 +61,7 @@ internal class WebhookRotateSecretResponseTest {
             )
         assertThat(webhookRotateSecretResponse.meta())
             .contains(
-                WebhookRotateSecretResponse.Meta.builder()
+                ApiMeta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -81,10 +81,10 @@ internal class WebhookRotateSecretResponseTest {
                         .build()
                 )
                 .error(
-                    WebhookRotateSecretResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            WebhookRotateSecretResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -93,7 +93,7 @@ internal class WebhookRotateSecretResponseTest {
                         .build()
                 )
                 .meta(
-                    WebhookRotateSecretResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

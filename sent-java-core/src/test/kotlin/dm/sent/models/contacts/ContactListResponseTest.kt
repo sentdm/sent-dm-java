@@ -5,6 +5,9 @@ package dm.sent.models.contacts
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
+import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
+import dm.sent.models.webhooks.PaginationMeta
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -18,7 +21,7 @@ internal class ContactListResponseTest {
                 .data(
                     ContactListResponse.Data.builder()
                         .addContact(
-                            ContactListResponse.Data.Contact.builder()
+                            ContactResponse.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .availableChannels("available_channels")
                                 .countryCode("country_code")
@@ -36,9 +39,9 @@ internal class ContactListResponseTest {
                                 .build()
                         )
                         .pagination(
-                            ContactListResponse.Data.Pagination.builder()
+                            PaginationMeta.builder()
                                 .cursors(
-                                    ContactListResponse.Data.Pagination.Cursors.builder()
+                                    PaginationMeta.Cursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -53,10 +56,10 @@ internal class ContactListResponseTest {
                         .build()
                 )
                 .error(
-                    ContactListResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ContactListResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -65,7 +68,7 @@ internal class ContactListResponseTest {
                         .build()
                 )
                 .meta(
-                    ContactListResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -78,7 +81,7 @@ internal class ContactListResponseTest {
             .contains(
                 ContactListResponse.Data.builder()
                     .addContact(
-                        ContactListResponse.Data.Contact.builder()
+                        ContactResponse.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .availableChannels("available_channels")
                             .countryCode("country_code")
@@ -96,9 +99,9 @@ internal class ContactListResponseTest {
                             .build()
                     )
                     .pagination(
-                        ContactListResponse.Data.Pagination.builder()
+                        PaginationMeta.builder()
                             .cursors(
-                                ContactListResponse.Data.Pagination.Cursors.builder()
+                                PaginationMeta.Cursors.builder()
                                     .after("after")
                                     .before("before")
                                     .build()
@@ -114,10 +117,10 @@ internal class ContactListResponseTest {
             )
         assertThat(contactListResponse.error())
             .contains(
-                ContactListResponse.Error.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        ContactListResponse.Error.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -127,7 +130,7 @@ internal class ContactListResponseTest {
             )
         assertThat(contactListResponse.meta())
             .contains(
-                ContactListResponse.Meta.builder()
+                ApiMeta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -144,7 +147,7 @@ internal class ContactListResponseTest {
                 .data(
                     ContactListResponse.Data.builder()
                         .addContact(
-                            ContactListResponse.Data.Contact.builder()
+                            ContactResponse.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .availableChannels("available_channels")
                                 .countryCode("country_code")
@@ -162,9 +165,9 @@ internal class ContactListResponseTest {
                                 .build()
                         )
                         .pagination(
-                            ContactListResponse.Data.Pagination.builder()
+                            PaginationMeta.builder()
                                 .cursors(
-                                    ContactListResponse.Data.Pagination.Cursors.builder()
+                                    PaginationMeta.Cursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -179,10 +182,10 @@ internal class ContactListResponseTest {
                         .build()
                 )
                 .error(
-                    ContactListResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ContactListResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -191,7 +194,7 @@ internal class ContactListResponseTest {
                         .build()
                 )
                 .meta(
-                    ContactListResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

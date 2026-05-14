@@ -14,11 +14,12 @@ internal class ProfileUpdateParamsTest {
             .profileId("profileId")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .allowContactSharing(true)
             .allowNumberChangeDuringOnboarding(null)
             .allowTemplateSharing(null)
             .billingContact(
-                ProfileUpdateParams.BillingContact.builder()
+                BillingContactInfo.builder()
                     .email("dev@stainless.com")
                     .name("x")
                     .address("address")
@@ -27,18 +28,14 @@ internal class ProfileUpdateParamsTest {
             )
             .billingModel("organization")
             .brand(
-                ProfileUpdateParams.Brand.builder()
+                BrandsBrandData.builder()
                     .compliance(
-                        ProfileUpdateParams.Brand.Compliance.builder()
-                            .brandRelationship(
-                                ProfileUpdateParams.Brand.Compliance.BrandRelationship.SMALL_ACCOUNT
-                            )
-                            .vertical(ProfileUpdateParams.Brand.Compliance.Vertical.PROFESSIONAL)
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                            .builder()
+                            .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
+                            .vertical(TcrVertical.PROFESSIONAL)
                             .addDestinationCountry(
-                                ProfileUpdateParams.Brand.Compliance.DestinationCountry.builder()
-                                    .id("US")
-                                    .isMain(false)
-                                    .build()
+                                DestinationCountry.builder().id("US").isMain(false).build()
                             )
                             .expectedMessagingVolume("10000")
                             .isTcrApplication(true)
@@ -48,7 +45,8 @@ internal class ProfileUpdateParamsTest {
                             .build()
                     )
                     .contact(
-                        ProfileUpdateParams.Brand.Contact.builder()
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                            .builder()
                             .name("John Smith")
                             .businessName("Acme Corp")
                             .email("john@acmecorp.com")
@@ -58,12 +56,15 @@ internal class ProfileUpdateParamsTest {
                             .build()
                     )
                     .business(
-                        ProfileUpdateParams.Brand.Business.builder()
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                            .builder()
                             .city("New York")
                             .country("US")
                             .countryOfRegistration("US")
                             .entityType(
-                                ProfileUpdateParams.Brand.Business.EntityType.PRIVATE_PROFIT
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                    .EntityType
+                                    .PRIVATE_PROFIT
                             )
                             .legalName("Acme Corporation LLC")
                             .postalCode("10001")
@@ -84,14 +85,13 @@ internal class ProfileUpdateParamsTest {
             .inheritTemplates(null)
             .name("Sales Team - Updated")
             .paymentDetails(
-                ProfileUpdateParams.PaymentDetails.builder()
+                PaymentDetails.builder()
                     .cardNumber("3216699102256101")
                     .cvc("3216")
                     .expiry("11/66")
                     .zipCode("x")
                     .build()
             )
-            .sandbox(false)
             .sendingPhoneNumber(null)
             .sendingPhoneNumberProfileId(null)
             .sendingWhatsappNumberProfileId(null)
@@ -116,11 +116,12 @@ internal class ProfileUpdateParamsTest {
                 .profileId("profileId")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .allowContactSharing(true)
                 .allowNumberChangeDuringOnboarding(null)
                 .allowTemplateSharing(null)
                 .billingContact(
-                    ProfileUpdateParams.BillingContact.builder()
+                    BillingContactInfo.builder()
                         .email("dev@stainless.com")
                         .name("x")
                         .address("address")
@@ -129,22 +130,14 @@ internal class ProfileUpdateParamsTest {
                 )
                 .billingModel("organization")
                 .brand(
-                    ProfileUpdateParams.Brand.builder()
+                    BrandsBrandData.builder()
                         .compliance(
-                            ProfileUpdateParams.Brand.Compliance.builder()
-                                .brandRelationship(
-                                    ProfileUpdateParams.Brand.Compliance.BrandRelationship
-                                        .SMALL_ACCOUNT
-                                )
-                                .vertical(
-                                    ProfileUpdateParams.Brand.Compliance.Vertical.PROFESSIONAL
-                                )
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                                .builder()
+                                .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
+                                .vertical(TcrVertical.PROFESSIONAL)
                                 .addDestinationCountry(
-                                    ProfileUpdateParams.Brand.Compliance.DestinationCountry
-                                        .builder()
-                                        .id("US")
-                                        .isMain(false)
-                                        .build()
+                                    DestinationCountry.builder().id("US").isMain(false).build()
                                 )
                                 .expectedMessagingVolume("10000")
                                 .isTcrApplication(true)
@@ -154,7 +147,8 @@ internal class ProfileUpdateParamsTest {
                                 .build()
                         )
                         .contact(
-                            ProfileUpdateParams.Brand.Contact.builder()
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                                .builder()
                                 .name("John Smith")
                                 .businessName("Acme Corp")
                                 .email("john@acmecorp.com")
@@ -164,12 +158,15 @@ internal class ProfileUpdateParamsTest {
                                 .build()
                         )
                         .business(
-                            ProfileUpdateParams.Brand.Business.builder()
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                .builder()
                                 .city("New York")
                                 .country("US")
                                 .countryOfRegistration("US")
                                 .entityType(
-                                    ProfileUpdateParams.Brand.Business.EntityType.PRIVATE_PROFIT
+                                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                        .EntityType
+                                        .PRIVATE_PROFIT
                                 )
                                 .legalName("Acme Corporation LLC")
                                 .postalCode("10001")
@@ -190,14 +187,13 @@ internal class ProfileUpdateParamsTest {
                 .inheritTemplates(null)
                 .name("Sales Team - Updated")
                 .paymentDetails(
-                    ProfileUpdateParams.PaymentDetails.builder()
+                    PaymentDetails.builder()
                         .cardNumber("3216699102256101")
                         .cvc("3216")
                         .expiry("11/66")
                         .zipCode("x")
                         .build()
                 )
-                .sandbox(false)
                 .sendingPhoneNumber(null)
                 .sendingPhoneNumberProfileId(null)
                 .sendingWhatsappNumberProfileId(null)
@@ -232,11 +228,12 @@ internal class ProfileUpdateParamsTest {
                 .profileId("profileId")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .allowContactSharing(true)
                 .allowNumberChangeDuringOnboarding(null)
                 .allowTemplateSharing(null)
                 .billingContact(
-                    ProfileUpdateParams.BillingContact.builder()
+                    BillingContactInfo.builder()
                         .email("dev@stainless.com")
                         .name("x")
                         .address("address")
@@ -245,22 +242,14 @@ internal class ProfileUpdateParamsTest {
                 )
                 .billingModel("organization")
                 .brand(
-                    ProfileUpdateParams.Brand.builder()
+                    BrandsBrandData.builder()
                         .compliance(
-                            ProfileUpdateParams.Brand.Compliance.builder()
-                                .brandRelationship(
-                                    ProfileUpdateParams.Brand.Compliance.BrandRelationship
-                                        .SMALL_ACCOUNT
-                                )
-                                .vertical(
-                                    ProfileUpdateParams.Brand.Compliance.Vertical.PROFESSIONAL
-                                )
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                                .builder()
+                                .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
+                                .vertical(TcrVertical.PROFESSIONAL)
                                 .addDestinationCountry(
-                                    ProfileUpdateParams.Brand.Compliance.DestinationCountry
-                                        .builder()
-                                        .id("US")
-                                        .isMain(false)
-                                        .build()
+                                    DestinationCountry.builder().id("US").isMain(false).build()
                                 )
                                 .expectedMessagingVolume("10000")
                                 .isTcrApplication(true)
@@ -270,7 +259,8 @@ internal class ProfileUpdateParamsTest {
                                 .build()
                         )
                         .contact(
-                            ProfileUpdateParams.Brand.Contact.builder()
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                                .builder()
                                 .name("John Smith")
                                 .businessName("Acme Corp")
                                 .email("john@acmecorp.com")
@@ -280,12 +270,15 @@ internal class ProfileUpdateParamsTest {
                                 .build()
                         )
                         .business(
-                            ProfileUpdateParams.Brand.Business.builder()
+                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                .builder()
                                 .city("New York")
                                 .country("US")
                                 .countryOfRegistration("US")
                                 .entityType(
-                                    ProfileUpdateParams.Brand.Business.EntityType.PRIVATE_PROFIT
+                                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                        .EntityType
+                                        .PRIVATE_PROFIT
                                 )
                                 .legalName("Acme Corporation LLC")
                                 .postalCode("10001")
@@ -306,14 +299,13 @@ internal class ProfileUpdateParamsTest {
                 .inheritTemplates(null)
                 .name("Sales Team - Updated")
                 .paymentDetails(
-                    ProfileUpdateParams.PaymentDetails.builder()
+                    PaymentDetails.builder()
                         .cardNumber("3216699102256101")
                         .cvc("3216")
                         .expiry("11/66")
                         .zipCode("x")
                         .build()
                 )
-                .sandbox(false)
                 .sendingPhoneNumber(null)
                 .sendingPhoneNumberProfileId(null)
                 .sendingWhatsappNumberProfileId(null)
@@ -323,12 +315,13 @@ internal class ProfileUpdateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.allowContactSharing()).contains(true)
         assertThat(body.allowNumberChangeDuringOnboarding()).isEmpty
         assertThat(body.allowTemplateSharing()).isEmpty
         assertThat(body.billingContact())
             .contains(
-                ProfileUpdateParams.BillingContact.builder()
+                BillingContactInfo.builder()
                     .email("dev@stainless.com")
                     .name("x")
                     .address("address")
@@ -338,18 +331,14 @@ internal class ProfileUpdateParamsTest {
         assertThat(body.billingModel()).contains("organization")
         assertThat(body.brand())
             .contains(
-                ProfileUpdateParams.Brand.builder()
+                BrandsBrandData.builder()
                     .compliance(
-                        ProfileUpdateParams.Brand.Compliance.builder()
-                            .brandRelationship(
-                                ProfileUpdateParams.Brand.Compliance.BrandRelationship.SMALL_ACCOUNT
-                            )
-                            .vertical(ProfileUpdateParams.Brand.Compliance.Vertical.PROFESSIONAL)
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+                            .builder()
+                            .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
+                            .vertical(TcrVertical.PROFESSIONAL)
                             .addDestinationCountry(
-                                ProfileUpdateParams.Brand.Compliance.DestinationCountry.builder()
-                                    .id("US")
-                                    .isMain(false)
-                                    .build()
+                                DestinationCountry.builder().id("US").isMain(false).build()
                             )
                             .expectedMessagingVolume("10000")
                             .isTcrApplication(true)
@@ -359,7 +348,8 @@ internal class ProfileUpdateParamsTest {
                             .build()
                     )
                     .contact(
-                        ProfileUpdateParams.Brand.Contact.builder()
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+                            .builder()
                             .name("John Smith")
                             .businessName("Acme Corp")
                             .email("john@acmecorp.com")
@@ -369,12 +359,15 @@ internal class ProfileUpdateParamsTest {
                             .build()
                     )
                     .business(
-                        ProfileUpdateParams.Brand.Business.builder()
+                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                            .builder()
                             .city("New York")
                             .country("US")
                             .countryOfRegistration("US")
                             .entityType(
-                                ProfileUpdateParams.Brand.Business.EntityType.PRIVATE_PROFIT
+                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+                                    .EntityType
+                                    .PRIVATE_PROFIT
                             )
                             .legalName("Acme Corporation LLC")
                             .postalCode("10001")
@@ -396,14 +389,13 @@ internal class ProfileUpdateParamsTest {
         assertThat(body.name()).contains("Sales Team - Updated")
         assertThat(body.paymentDetails())
             .contains(
-                ProfileUpdateParams.PaymentDetails.builder()
+                PaymentDetails.builder()
                     .cardNumber("3216699102256101")
                     .cvc("3216")
                     .expiry("11/66")
                     .zipCode("x")
                     .build()
             )
-        assertThat(body.sandbox()).contains(false)
         assertThat(body.sendingPhoneNumber()).isEmpty
         assertThat(body.sendingPhoneNumberProfileId()).isEmpty
         assertThat(body.sendingWhatsappNumberProfileId()).isEmpty

@@ -5,6 +5,8 @@ package dm.sent.models.profiles.campaigns
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
+import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -17,12 +19,13 @@ internal class CampaignListResponseTest {
         val campaignListResponse =
             CampaignListResponse.builder()
                 .addData(
-                    CampaignListResponse.Data.builder()
+                    TcrCampaignWithUseCases.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .billedDate(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .brandId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .cost(0.0)
-                        .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .cspId("cspId")
                         .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .dcaElectionsComplete(true)
@@ -39,8 +42,8 @@ internal class CampaignListResponseTest {
                         .optoutMessage("optoutMessage")
                         .privacyPolicyLink("privacyPolicyLink")
                         .resellerId("resellerId")
-                        .sharingStatus(CampaignListResponse.Data.SharingStatus.PENDING)
-                        .status(CampaignListResponse.Data.Status.SENT_CREATED)
+                        .sharingStatus(TcrCampaignWithUseCases.SharingStatus.PENDING)
+                        .status(TcrCampaignWithUseCases.Status.SENT_CREATED)
                         .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .submittedToTcr(true)
                         .tcrCampaignId("tcrCampaignId")
@@ -48,28 +51,25 @@ internal class CampaignListResponseTest {
                         .telnyxCampaignId("telnyxCampaignId")
                         .termsAndConditionsLink("termsAndConditionsLink")
                         .type("type")
-                        .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .upstreamCnpId("upstreamCnpId")
                         .addUseCase(
-                            CampaignListResponse.Data.UseCase.builder()
+                            TcrCampaignWithUseCases.UseCase.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .messagingUseCaseUs(
-                                    CampaignListResponse.Data.UseCase.MessagingUseCaseUs.MARKETING
-                                )
-                                .addSampleMessage("string")
                                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .messagingUseCaseUs(MessagingUseCaseUs.MARKETING)
+                                .addSampleMessage("string")
                                 .build()
                         )
                         .build()
                 )
                 .error(
-                    CampaignListResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            CampaignListResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -78,7 +78,7 @@ internal class CampaignListResponseTest {
                         .build()
                 )
                 .meta(
-                    CampaignListResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -89,12 +89,13 @@ internal class CampaignListResponseTest {
 
         assertThat(campaignListResponse.data().getOrNull())
             .containsExactly(
-                CampaignListResponse.Data.builder()
+                TcrCampaignWithUseCases.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .billedDate(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .brandId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .cost(0.0)
-                    .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .cspId("cspId")
                     .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .dcaElectionsComplete(true)
@@ -111,8 +112,8 @@ internal class CampaignListResponseTest {
                     .optoutMessage("optoutMessage")
                     .privacyPolicyLink("privacyPolicyLink")
                     .resellerId("resellerId")
-                    .sharingStatus(CampaignListResponse.Data.SharingStatus.PENDING)
-                    .status(CampaignListResponse.Data.Status.SENT_CREATED)
+                    .sharingStatus(TcrCampaignWithUseCases.SharingStatus.PENDING)
+                    .status(TcrCampaignWithUseCases.Status.SENT_CREATED)
                     .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .submittedToTcr(true)
                     .tcrCampaignId("tcrCampaignId")
@@ -120,29 +121,26 @@ internal class CampaignListResponseTest {
                     .telnyxCampaignId("telnyxCampaignId")
                     .termsAndConditionsLink("termsAndConditionsLink")
                     .type("type")
-                    .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .upstreamCnpId("upstreamCnpId")
                     .addUseCase(
-                        CampaignListResponse.Data.UseCase.builder()
+                        TcrCampaignWithUseCases.UseCase.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .messagingUseCaseUs(
-                                CampaignListResponse.Data.UseCase.MessagingUseCaseUs.MARKETING
-                            )
-                            .addSampleMessage("string")
                             .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                            .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                            .messagingUseCaseUs(MessagingUseCaseUs.MARKETING)
+                            .addSampleMessage("string")
                             .build()
                     )
                     .build()
             )
         assertThat(campaignListResponse.error())
             .contains(
-                CampaignListResponse.Error.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        CampaignListResponse.Error.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -152,7 +150,7 @@ internal class CampaignListResponseTest {
             )
         assertThat(campaignListResponse.meta())
             .contains(
-                CampaignListResponse.Meta.builder()
+                ApiMeta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -167,12 +165,13 @@ internal class CampaignListResponseTest {
         val campaignListResponse =
             CampaignListResponse.builder()
                 .addData(
-                    CampaignListResponse.Data.builder()
+                    TcrCampaignWithUseCases.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .billedDate(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .brandId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .cost(0.0)
-                        .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .cspId("cspId")
                         .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .dcaElectionsComplete(true)
@@ -189,8 +188,8 @@ internal class CampaignListResponseTest {
                         .optoutMessage("optoutMessage")
                         .privacyPolicyLink("privacyPolicyLink")
                         .resellerId("resellerId")
-                        .sharingStatus(CampaignListResponse.Data.SharingStatus.PENDING)
-                        .status(CampaignListResponse.Data.Status.SENT_CREATED)
+                        .sharingStatus(TcrCampaignWithUseCases.SharingStatus.PENDING)
+                        .status(TcrCampaignWithUseCases.Status.SENT_CREATED)
                         .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .submittedToTcr(true)
                         .tcrCampaignId("tcrCampaignId")
@@ -198,28 +197,25 @@ internal class CampaignListResponseTest {
                         .telnyxCampaignId("telnyxCampaignId")
                         .termsAndConditionsLink("termsAndConditionsLink")
                         .type("type")
-                        .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .upstreamCnpId("upstreamCnpId")
                         .addUseCase(
-                            CampaignListResponse.Data.UseCase.builder()
+                            TcrCampaignWithUseCases.UseCase.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .messagingUseCaseUs(
-                                    CampaignListResponse.Data.UseCase.MessagingUseCaseUs.MARKETING
-                                )
-                                .addSampleMessage("string")
                                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .messagingUseCaseUs(MessagingUseCaseUs.MARKETING)
+                                .addSampleMessage("string")
                                 .build()
                         )
                         .build()
                 )
                 .error(
-                    CampaignListResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            CampaignListResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -228,7 +224,7 @@ internal class CampaignListResponseTest {
                         .build()
                 )
                 .meta(
-                    CampaignListResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

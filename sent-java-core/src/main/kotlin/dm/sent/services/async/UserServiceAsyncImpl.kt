@@ -17,15 +17,13 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
+import dm.sent.models.users.ApiResponseOfUser
 import dm.sent.models.users.UserInviteParams
-import dm.sent.models.users.UserInviteResponse
 import dm.sent.models.users.UserListParams
 import dm.sent.models.users.UserListResponse
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserRetrieveParams
-import dm.sent.models.users.UserRetrieveResponse
 import dm.sent.models.users.UserUpdateRoleParams
-import dm.sent.models.users.UserUpdateRoleResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -46,7 +44,7 @@ class UserServiceAsyncImpl internal constructor(private val clientOptions: Clien
     override fun retrieve(
         params: UserRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<UserRetrieveResponse> =
+    ): CompletableFuture<ApiResponseOfUser> =
         // get /v3/users/{userId}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
@@ -60,7 +58,7 @@ class UserServiceAsyncImpl internal constructor(private val clientOptions: Clien
     override fun invite(
         params: UserInviteParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<UserInviteResponse> =
+    ): CompletableFuture<ApiResponseOfUser> =
         // post /v3/users
         withRawResponse().invite(params, requestOptions).thenApply { it.parse() }
 
@@ -74,7 +72,7 @@ class UserServiceAsyncImpl internal constructor(private val clientOptions: Clien
     override fun updateRole(
         params: UserUpdateRoleParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<UserUpdateRoleResponse> =
+    ): CompletableFuture<ApiResponseOfUser> =
         // patch /v3/users/{userId}
         withRawResponse().updateRole(params, requestOptions).thenApply { it.parse() }
 
@@ -91,13 +89,13 @@ class UserServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val retrieveHandler: Handler<UserRetrieveResponse> =
-            jsonHandler<UserRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<ApiResponseOfUser> =
+            jsonHandler<ApiResponseOfUser>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: UserRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<UserRetrieveResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("userId", params.userId().getOrNull())
@@ -154,13 +152,13 @@ class UserServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 }
         }
 
-        private val inviteHandler: Handler<UserInviteResponse> =
-            jsonHandler<UserInviteResponse>(clientOptions.jsonMapper)
+        private val inviteHandler: Handler<ApiResponseOfUser> =
+            jsonHandler<ApiResponseOfUser>(clientOptions.jsonMapper)
 
         override fun invite(
             params: UserInviteParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<UserInviteResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -212,13 +210,13 @@ class UserServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 }
         }
 
-        private val updateRoleHandler: Handler<UserUpdateRoleResponse> =
-            jsonHandler<UserUpdateRoleResponse>(clientOptions.jsonMapper)
+        private val updateRoleHandler: Handler<ApiResponseOfUser> =
+            jsonHandler<ApiResponseOfUser>(clientOptions.jsonMapper)
 
         override fun updateRole(
             params: UserUpdateRoleParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<UserUpdateRoleResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfUser>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("userId", params.userId().getOrNull())
