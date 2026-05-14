@@ -7,8 +7,8 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.webhooks.ApiResponseWebhook
 import dm.sent.models.webhooks.WebhookCreateParams
-import dm.sent.models.webhooks.WebhookCreateResponse
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
 import dm.sent.models.webhooks.WebhookListEventTypesResponse
@@ -17,15 +17,12 @@ import dm.sent.models.webhooks.WebhookListEventsResponse
 import dm.sent.models.webhooks.WebhookListParams
 import dm.sent.models.webhooks.WebhookListResponse
 import dm.sent.models.webhooks.WebhookRetrieveParams
-import dm.sent.models.webhooks.WebhookRetrieveResponse
 import dm.sent.models.webhooks.WebhookRotateSecretParams
 import dm.sent.models.webhooks.WebhookRotateSecretResponse
 import dm.sent.models.webhooks.WebhookTestParams
 import dm.sent.models.webhooks.WebhookTestResponse
 import dm.sent.models.webhooks.WebhookToggleStatusParams
-import dm.sent.models.webhooks.WebhookToggleStatusResponse
 import dm.sent.models.webhooks.WebhookUpdateParams
-import dm.sent.models.webhooks.WebhookUpdateResponse
 import java.util.function.Consumer
 
 /** Configure webhook endpoints for real-time event delivery */
@@ -44,80 +41,80 @@ interface WebhookService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): WebhookService
 
     /** Creates a new webhook endpoint for the authenticated customer. */
-    fun create(): WebhookCreateResponse = create(WebhookCreateParams.none())
+    fun create(): ApiResponseWebhook = create(WebhookCreateParams.none())
 
     /** @see create */
     fun create(
         params: WebhookCreateParams = WebhookCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookCreateResponse
+    ): ApiResponseWebhook
 
     /** @see create */
-    fun create(params: WebhookCreateParams = WebhookCreateParams.none()): WebhookCreateResponse =
+    fun create(params: WebhookCreateParams = WebhookCreateParams.none()): ApiResponseWebhook =
         create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(requestOptions: RequestOptions): WebhookCreateResponse =
+    fun create(requestOptions: RequestOptions): ApiResponseWebhook =
         create(WebhookCreateParams.none(), requestOptions)
 
     /** Retrieves a single webhook by ID for the authenticated customer. */
-    fun retrieve(id: String): WebhookRetrieveResponse = retrieve(id, WebhookRetrieveParams.none())
+    fun retrieve(id: String): ApiResponseWebhook = retrieve(id, WebhookRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: WebhookRetrieveParams = WebhookRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookRetrieveResponse = retrieve(params.toBuilder().id(id).build(), requestOptions)
+    ): ApiResponseWebhook = retrieve(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: WebhookRetrieveParams = WebhookRetrieveParams.none(),
-    ): WebhookRetrieveResponse = retrieve(id, params, RequestOptions.none())
+    ): ApiResponseWebhook = retrieve(id, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: WebhookRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookRetrieveResponse
+    ): ApiResponseWebhook
 
     /** @see retrieve */
-    fun retrieve(params: WebhookRetrieveParams): WebhookRetrieveResponse =
+    fun retrieve(params: WebhookRetrieveParams): ApiResponseWebhook =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(id: String, requestOptions: RequestOptions): WebhookRetrieveResponse =
+    fun retrieve(id: String, requestOptions: RequestOptions): ApiResponseWebhook =
         retrieve(id, WebhookRetrieveParams.none(), requestOptions)
 
     /** Updates an existing webhook for the authenticated customer. */
-    fun update(id: String): WebhookUpdateResponse = update(id, WebhookUpdateParams.none())
+    fun update(id: String): ApiResponseWebhook = update(id, WebhookUpdateParams.none())
 
     /** @see update */
     fun update(
         id: String,
         params: WebhookUpdateParams = WebhookUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookUpdateResponse = update(params.toBuilder().id(id).build(), requestOptions)
+    ): ApiResponseWebhook = update(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see update */
     fun update(
         id: String,
         params: WebhookUpdateParams = WebhookUpdateParams.none(),
-    ): WebhookUpdateResponse = update(id, params, RequestOptions.none())
+    ): ApiResponseWebhook = update(id, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: WebhookUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookUpdateResponse
+    ): ApiResponseWebhook
 
     /** @see update */
-    fun update(params: WebhookUpdateParams): WebhookUpdateResponse =
+    fun update(params: WebhookUpdateParams): ApiResponseWebhook =
         update(params, RequestOptions.none())
 
     /** @see update */
-    fun update(id: String, requestOptions: RequestOptions): WebhookUpdateResponse =
+    fun update(id: String, requestOptions: RequestOptions): ApiResponseWebhook =
         update(id, WebhookUpdateParams.none(), requestOptions)
 
     /** Retrieves a paginated list of webhooks for the authenticated customer. */
@@ -197,35 +194,25 @@ interface WebhookService {
      * Generates a new signing secret for the specified webhook. The old secret is immediately
      * invalidated.
      */
-    fun rotateSecret(id: String): WebhookRotateSecretResponse =
-        rotateSecret(id, WebhookRotateSecretParams.none())
+    fun rotateSecret(id: String, params: WebhookRotateSecretParams): WebhookRotateSecretResponse =
+        rotateSecret(id, params, RequestOptions.none())
 
     /** @see rotateSecret */
     fun rotateSecret(
         id: String,
-        params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookRotateSecretResponse = rotateSecret(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see rotateSecret */
-    fun rotateSecret(
-        id: String,
-        params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
-    ): WebhookRotateSecretResponse = rotateSecret(id, params, RequestOptions.none())
-
-    /** @see rotateSecret */
-    fun rotateSecret(
         params: WebhookRotateSecretParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookRotateSecretResponse
+    ): WebhookRotateSecretResponse = rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see rotateSecret */
     fun rotateSecret(params: WebhookRotateSecretParams): WebhookRotateSecretResponse =
         rotateSecret(params, RequestOptions.none())
 
     /** @see rotateSecret */
-    fun rotateSecret(id: String, requestOptions: RequestOptions): WebhookRotateSecretResponse =
-        rotateSecret(id, WebhookRotateSecretParams.none(), requestOptions)
+    fun rotateSecret(
+        params: WebhookRotateSecretParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): WebhookRotateSecretResponse
 
     /** Sends a test event to the specified webhook endpoint to verify connectivity. */
     fun test(id: String): WebhookTestResponse = test(id, WebhookTestParams.none())
@@ -257,7 +244,7 @@ interface WebhookService {
         test(id, WebhookTestParams.none(), requestOptions)
 
     /** Activates or deactivates a webhook for the authenticated customer. */
-    fun toggleStatus(id: String): WebhookToggleStatusResponse =
+    fun toggleStatus(id: String): ApiResponseWebhook =
         toggleStatus(id, WebhookToggleStatusParams.none())
 
     /** @see toggleStatus */
@@ -265,26 +252,26 @@ interface WebhookService {
         id: String,
         params: WebhookToggleStatusParams = WebhookToggleStatusParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookToggleStatusResponse = toggleStatus(params.toBuilder().id(id).build(), requestOptions)
+    ): ApiResponseWebhook = toggleStatus(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see toggleStatus */
     fun toggleStatus(
         id: String,
         params: WebhookToggleStatusParams = WebhookToggleStatusParams.none(),
-    ): WebhookToggleStatusResponse = toggleStatus(id, params, RequestOptions.none())
+    ): ApiResponseWebhook = toggleStatus(id, params, RequestOptions.none())
 
     /** @see toggleStatus */
     fun toggleStatus(
         params: WebhookToggleStatusParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookToggleStatusResponse
+    ): ApiResponseWebhook
 
     /** @see toggleStatus */
-    fun toggleStatus(params: WebhookToggleStatusParams): WebhookToggleStatusResponse =
+    fun toggleStatus(params: WebhookToggleStatusParams): ApiResponseWebhook =
         toggleStatus(params, RequestOptions.none())
 
     /** @see toggleStatus */
-    fun toggleStatus(id: String, requestOptions: RequestOptions): WebhookToggleStatusResponse =
+    fun toggleStatus(id: String, requestOptions: RequestOptions): ApiResponseWebhook =
         toggleStatus(id, WebhookToggleStatusParams.none(), requestOptions)
 
     /** A view of [WebhookService] that provides access to raw HTTP responses for each method. */
@@ -302,24 +289,24 @@ interface WebhookService {
          * [WebhookService.create].
          */
         @MustBeClosed
-        fun create(): HttpResponseFor<WebhookCreateResponse> = create(WebhookCreateParams.none())
+        fun create(): HttpResponseFor<ApiResponseWebhook> = create(WebhookCreateParams.none())
 
         /** @see create */
         @MustBeClosed
         fun create(
             params: WebhookCreateParams = WebhookCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookCreateResponse>
+        ): HttpResponseFor<ApiResponseWebhook>
 
         /** @see create */
         @MustBeClosed
         fun create(
             params: WebhookCreateParams = WebhookCreateParams.none()
-        ): HttpResponseFor<WebhookCreateResponse> = create(params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseWebhook> = create(params, RequestOptions.none())
 
         /** @see create */
         @MustBeClosed
-        fun create(requestOptions: RequestOptions): HttpResponseFor<WebhookCreateResponse> =
+        fun create(requestOptions: RequestOptions): HttpResponseFor<ApiResponseWebhook> =
             create(WebhookCreateParams.none(), requestOptions)
 
         /**
@@ -327,7 +314,7 @@ interface WebhookService {
          * [WebhookService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(id: String): HttpResponseFor<WebhookRetrieveResponse> =
+        fun retrieve(id: String): HttpResponseFor<ApiResponseWebhook> =
             retrieve(id, WebhookRetrieveParams.none())
 
         /** @see retrieve */
@@ -336,7 +323,7 @@ interface WebhookService {
             id: String,
             params: WebhookRetrieveParams = WebhookRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookRetrieveResponse> =
+        ): HttpResponseFor<ApiResponseWebhook> =
             retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieve */
@@ -344,18 +331,18 @@ interface WebhookService {
         fun retrieve(
             id: String,
             params: WebhookRetrieveParams = WebhookRetrieveParams.none(),
-        ): HttpResponseFor<WebhookRetrieveResponse> = retrieve(id, params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseWebhook> = retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: WebhookRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookRetrieveResponse>
+        ): HttpResponseFor<ApiResponseWebhook>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(params: WebhookRetrieveParams): HttpResponseFor<WebhookRetrieveResponse> =
+        fun retrieve(params: WebhookRetrieveParams): HttpResponseFor<ApiResponseWebhook> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
@@ -363,7 +350,7 @@ interface WebhookService {
         fun retrieve(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookRetrieveResponse> =
+        ): HttpResponseFor<ApiResponseWebhook> =
             retrieve(id, WebhookRetrieveParams.none(), requestOptions)
 
         /**
@@ -371,7 +358,7 @@ interface WebhookService {
          * [WebhookService.update].
          */
         @MustBeClosed
-        fun update(id: String): HttpResponseFor<WebhookUpdateResponse> =
+        fun update(id: String): HttpResponseFor<ApiResponseWebhook> =
             update(id, WebhookUpdateParams.none())
 
         /** @see update */
@@ -380,7 +367,7 @@ interface WebhookService {
             id: String,
             params: WebhookUpdateParams = WebhookUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookUpdateResponse> =
+        ): HttpResponseFor<ApiResponseWebhook> =
             update(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see update */
@@ -388,18 +375,18 @@ interface WebhookService {
         fun update(
             id: String,
             params: WebhookUpdateParams = WebhookUpdateParams.none(),
-        ): HttpResponseFor<WebhookUpdateResponse> = update(id, params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseWebhook> = update(id, params, RequestOptions.none())
 
         /** @see update */
         @MustBeClosed
         fun update(
             params: WebhookUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookUpdateResponse>
+        ): HttpResponseFor<ApiResponseWebhook>
 
         /** @see update */
         @MustBeClosed
-        fun update(params: WebhookUpdateParams): HttpResponseFor<WebhookUpdateResponse> =
+        fun update(params: WebhookUpdateParams): HttpResponseFor<ApiResponseWebhook> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -407,7 +394,7 @@ interface WebhookService {
         fun update(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookUpdateResponse> =
+        ): HttpResponseFor<ApiResponseWebhook> =
             update(id, WebhookUpdateParams.none(), requestOptions)
 
         /**
@@ -530,32 +517,20 @@ interface WebhookService {
          * the same as [WebhookService.rotateSecret].
          */
         @MustBeClosed
-        fun rotateSecret(id: String): HttpResponseFor<WebhookRotateSecretResponse> =
-            rotateSecret(id, WebhookRotateSecretParams.none())
-
-        /** @see rotateSecret */
-        @MustBeClosed
         fun rotateSecret(
             id: String,
-            params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookRotateSecretResponse> =
-            rotateSecret(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see rotateSecret */
-        @MustBeClosed
-        fun rotateSecret(
-            id: String,
-            params: WebhookRotateSecretParams = WebhookRotateSecretParams.none(),
+            params: WebhookRotateSecretParams,
         ): HttpResponseFor<WebhookRotateSecretResponse> =
             rotateSecret(id, params, RequestOptions.none())
 
         /** @see rotateSecret */
         @MustBeClosed
         fun rotateSecret(
+            id: String,
             params: WebhookRotateSecretParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookRotateSecretResponse>
+        ): HttpResponseFor<WebhookRotateSecretResponse> =
+            rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see rotateSecret */
         @MustBeClosed
@@ -567,10 +542,9 @@ interface WebhookService {
         /** @see rotateSecret */
         @MustBeClosed
         fun rotateSecret(
-            id: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookRotateSecretResponse> =
-            rotateSecret(id, WebhookRotateSecretParams.none(), requestOptions)
+            params: WebhookRotateSecretParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<WebhookRotateSecretResponse>
 
         /**
          * Returns a raw HTTP response for `post /v3/webhooks/{id}/test`, but is otherwise the same
@@ -618,7 +592,7 @@ interface WebhookService {
          * the same as [WebhookService.toggleStatus].
          */
         @MustBeClosed
-        fun toggleStatus(id: String): HttpResponseFor<WebhookToggleStatusResponse> =
+        fun toggleStatus(id: String): HttpResponseFor<ApiResponseWebhook> =
             toggleStatus(id, WebhookToggleStatusParams.none())
 
         /** @see toggleStatus */
@@ -627,7 +601,7 @@ interface WebhookService {
             id: String,
             params: WebhookToggleStatusParams = WebhookToggleStatusParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookToggleStatusResponse> =
+        ): HttpResponseFor<ApiResponseWebhook> =
             toggleStatus(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see toggleStatus */
@@ -635,21 +609,18 @@ interface WebhookService {
         fun toggleStatus(
             id: String,
             params: WebhookToggleStatusParams = WebhookToggleStatusParams.none(),
-        ): HttpResponseFor<WebhookToggleStatusResponse> =
-            toggleStatus(id, params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseWebhook> = toggleStatus(id, params, RequestOptions.none())
 
         /** @see toggleStatus */
         @MustBeClosed
         fun toggleStatus(
             params: WebhookToggleStatusParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookToggleStatusResponse>
+        ): HttpResponseFor<ApiResponseWebhook>
 
         /** @see toggleStatus */
         @MustBeClosed
-        fun toggleStatus(
-            params: WebhookToggleStatusParams
-        ): HttpResponseFor<WebhookToggleStatusResponse> =
+        fun toggleStatus(params: WebhookToggleStatusParams): HttpResponseFor<ApiResponseWebhook> =
             toggleStatus(params, RequestOptions.none())
 
         /** @see toggleStatus */
@@ -657,7 +628,7 @@ interface WebhookService {
         fun toggleStatus(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookToggleStatusResponse> =
+        ): HttpResponseFor<ApiResponseWebhook> =
             toggleStatus(id, WebhookToggleStatusParams.none(), requestOptions)
     }
 }

@@ -16,6 +16,7 @@ import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
+import dm.sent.models.webhooks.MutationRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -41,15 +42,6 @@ private constructor(
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /**
-     * Channels to broadcast on, e.g. ["whatsapp", "sms"]. Each channel produces a separate message
-     * per recipient. "sent" = auto-detect. Defaults to ["sent"] (auto-detect) if omitted.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun channel(): Optional<List<String>> = body.channel()
-
-    /**
      * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
      * integrations without actual execution
      *
@@ -57,6 +49,15 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun sandbox(): Optional<Boolean> = body.sandbox()
+
+    /**
+     * Channels to broadcast on, e.g. ["whatsapp", "sms"]. Each channel produces a separate message
+     * per recipient. "sent" = auto-detect. Defaults to ["sent"] (auto-detect) if omitted.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun channel(): Optional<List<String>> = body.channel()
 
     /**
      * SDK-style template reference: resolve by ID or by name, with optional parameters.
@@ -75,18 +76,18 @@ private constructor(
     fun to(): Optional<List<String>> = body.to()
 
     /**
-     * Returns the raw JSON value of [channel].
-     *
-     * Unlike [channel], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _channel(): JsonField<List<String>> = body._channel()
-
-    /**
      * Returns the raw JSON value of [sandbox].
      *
      * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
+
+    /**
+     * Returns the raw JSON value of [channel].
+     *
+     * Unlike [channel], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _channel(): JsonField<List<String>> = body._channel()
 
     /**
      * Returns the raw JSON value of [template].
@@ -154,12 +155,26 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [channel]
          * - [sandbox]
+         * - [channel]
          * - [template]
          * - [to]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         */
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
+
+        /**
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /**
          * Channels to broadcast on, e.g. ["whatsapp", "sms"]. Each channel produces a separate
@@ -186,20 +201,6 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addChannel(channel: String) = apply { body.addChannel(channel) }
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         */
-        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
-
-        /**
-         * Sets [Builder.sandbox] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
         fun template(template: Template) = apply { body.template(template) }
@@ -376,11 +377,12 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
+    /** Request to send a message (v3 SDK-style with multi-recipient and multi-channel broadcast) */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val channel: JsonField<List<String>>,
         private val sandbox: JsonField<Boolean>,
+        private val channel: JsonField<List<String>>,
         private val template: JsonField<Template>,
         private val to: JsonField<List<String>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -388,15 +390,27 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("channel")
             @ExcludeMissing
             channel: JsonField<List<String>> = JsonMissing.of(),
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("template")
             @ExcludeMissing
             template: JsonField<Template> = JsonMissing.of(),
             @JsonProperty("to") @ExcludeMissing to: JsonField<List<String>> = JsonMissing.of(),
-        ) : this(channel, sandbox, template, to, mutableMapOf())
+        ) : this(sandbox, channel, template, to, mutableMapOf())
+
+        fun toMutationRequest(): MutationRequest =
+            MutationRequest.builder().sandbox(sandbox).build()
+
+        /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * Channels to broadcast on, e.g. ["whatsapp", "sms"]. Each channel produces a separate
@@ -407,15 +421,6 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun channel(): Optional<List<String>> = channel.getOptional("channel")
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * SDK-style template reference: resolve by ID or by name, with optional parameters.
@@ -434,18 +439,18 @@ private constructor(
         fun to(): Optional<List<String>> = to.getOptional("to")
 
         /**
-         * Returns the raw JSON value of [channel].
-         *
-         * Unlike [channel], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("channel") @ExcludeMissing fun _channel(): JsonField<List<String>> = channel
-
-        /**
          * Returns the raw JSON value of [sandbox].
          *
          * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
+        /**
+         * Returns the raw JSON value of [channel].
+         *
+         * Unlike [channel], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("channel") @ExcludeMissing fun _channel(): JsonField<List<String>> = channel
 
         /**
          * Returns the raw JSON value of [template].
@@ -482,20 +487,35 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var channel: JsonField<MutableList<String>>? = null
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
+            private var channel: JsonField<MutableList<String>>? = null
             private var template: JsonField<Template> = JsonMissing.of()
             private var to: JsonField<MutableList<String>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                channel = body.channel.map { it.toMutableList() }
                 sandbox = body.sandbox
+                channel = body.channel.map { it.toMutableList() }
                 template = body.template
                 to = body.to.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
+
+            /**
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
+             */
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
+
+            /**
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /**
              * Channels to broadcast on, e.g. ["whatsapp", "sms"]. Each channel produces a separate
@@ -529,21 +549,6 @@ private constructor(
                         checkKnown("channel", it).add(channel)
                     }
             }
-
-            /**
-             * Sandbox flag - when true, the operation is simulated without side effects Useful for
-             * testing integrations without actual execution
-             */
-            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
-
-            /**
-             * Sets [Builder.sandbox] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
             fun template(template: Template) = template(JsonField.of(template))
@@ -605,8 +610,8 @@ private constructor(
              */
             fun build(): Body =
                 Body(
-                    (channel ?: JsonMissing.of()).map { it.toImmutable() },
                     sandbox,
+                    (channel ?: JsonMissing.of()).map { it.toImmutable() },
                     template,
                     (to ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
@@ -629,8 +634,8 @@ private constructor(
                 return@apply
             }
 
-            channel()
             sandbox()
+            channel()
             template().ifPresent { it.validate() }
             to()
             validated = true
@@ -652,8 +657,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (channel.asKnown().getOrNull()?.size ?: 0) +
-                (if (sandbox.asKnown().isPresent) 1 else 0) +
+            (if (sandbox.asKnown().isPresent) 1 else 0) +
+                (channel.asKnown().getOrNull()?.size ?: 0) +
                 (template.asKnown().getOrNull()?.validity() ?: 0) +
                 (to.asKnown().getOrNull()?.size ?: 0)
 
@@ -663,21 +668,21 @@ private constructor(
             }
 
             return other is Body &&
-                channel == other.channel &&
                 sandbox == other.sandbox &&
+                channel == other.channel &&
                 template == other.template &&
                 to == other.to &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(channel, sandbox, template, to, additionalProperties)
+            Objects.hash(sandbox, channel, template, to, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{channel=$channel, sandbox=$sandbox, template=$template, to=$to, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, channel=$channel, template=$template, to=$to, additionalProperties=$additionalProperties}"
     }
 
     /** SDK-style template reference: resolve by ID or by name, with optional parameters. */

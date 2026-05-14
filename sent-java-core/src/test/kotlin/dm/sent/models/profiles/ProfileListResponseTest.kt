@@ -5,6 +5,8 @@ package dm.sent.models.profiles
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
+import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -18,13 +20,13 @@ internal class ProfileListResponseTest {
                 .data(
                     ProfileListResponse.Data.builder()
                         .addProfile(
-                            ProfileListResponse.Data.Profile.builder()
+                            ProfileDetail.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .allowContactSharing(true)
                                 .allowNumberChangeDuringOnboarding(true)
                                 .allowTemplateSharing(true)
                                 .billingContact(
-                                    ProfileListResponse.Data.Profile.BillingContact.builder()
+                                    ProfileDetail.BillingContact.builder()
                                         .address("address")
                                         .email("email")
                                         .name("name")
@@ -33,11 +35,10 @@ internal class ProfileListResponseTest {
                                 )
                                 .billingModel("billing_model")
                                 .brand(
-                                    ProfileListResponse.Data.Profile.Brand.builder()
+                                    ProfileDetail.Brand.builder()
                                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                         .business(
-                                            ProfileListResponse.Data.Profile.Brand.Business
-                                                .builder()
+                                            ProfileDetail.Brand.Business.builder()
                                                 .city("city")
                                                 .country("country")
                                                 .countryOfRegistration("country_of_registration")
@@ -52,19 +53,12 @@ internal class ProfileListResponseTest {
                                                 .build()
                                         )
                                         .compliance(
-                                            ProfileListResponse.Data.Profile.Brand.Compliance
-                                                .builder()
+                                            ProfileDetail.Brand.Compliance.builder()
                                                 .brandRelationship(
-                                                    ProfileListResponse.Data.Profile.Brand
-                                                        .Compliance
-                                                        .BrandRelationship
-                                                        .BASIC_ACCOUNT
+                                                    TcrBrandRelationship.BASIC_ACCOUNT
                                                 )
                                                 .addDestinationCountry(
-                                                    ProfileListResponse.Data.Profile.Brand
-                                                        .Compliance
-                                                        .DestinationCountry
-                                                        .builder()
+                                                    DestinationCountry.builder()
                                                         .id("id")
                                                         .isMain(true)
                                                         .build()
@@ -76,16 +70,11 @@ internal class ProfileListResponseTest {
                                                 .notes("notes")
                                                 .phoneNumberPrefix("phone_number_prefix")
                                                 .primaryUseCase("primary_use_case")
-                                                .vertical(
-                                                    ProfileListResponse.Data.Profile.Brand
-                                                        .Compliance
-                                                        .Vertical
-                                                        .PROFESSIONAL
-                                                )
+                                                .vertical(TcrVertical.PROFESSIONAL)
                                                 .build()
                                         )
                                         .contact(
-                                            ProfileListResponse.Data.Profile.Brand.Contact.builder()
+                                            ProfileDetail.Brand.Contact.builder()
                                                 .businessName("business_name")
                                                 .email("email")
                                                 .name("name")
@@ -97,13 +86,10 @@ internal class ProfileListResponseTest {
                                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                         .cspId("csp_id")
                                         .identityStatus(
-                                            ProfileListResponse.Data.Profile.Brand.IdentityStatus
-                                                .SELF_DECLARED
+                                            ProfileDetail.Brand.IdentityStatus.SELF_DECLARED
                                         )
                                         .isInherited(true)
-                                        .status(
-                                            ProfileListResponse.Data.Profile.Brand.Status.ACTIVE
-                                        )
+                                        .status(ProfileDetail.Brand.Status.ACTIVE)
                                         .submittedAt(
                                             OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                         )
@@ -138,10 +124,10 @@ internal class ProfileListResponseTest {
                         .build()
                 )
                 .error(
-                    ProfileListResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ProfileListResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -150,7 +136,7 @@ internal class ProfileListResponseTest {
                         .build()
                 )
                 .meta(
-                    ProfileListResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -163,13 +149,13 @@ internal class ProfileListResponseTest {
             .contains(
                 ProfileListResponse.Data.builder()
                     .addProfile(
-                        ProfileListResponse.Data.Profile.builder()
+                        ProfileDetail.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .allowContactSharing(true)
                             .allowNumberChangeDuringOnboarding(true)
                             .allowTemplateSharing(true)
                             .billingContact(
-                                ProfileListResponse.Data.Profile.BillingContact.builder()
+                                ProfileDetail.BillingContact.builder()
                                     .address("address")
                                     .email("email")
                                     .name("name")
@@ -178,10 +164,10 @@ internal class ProfileListResponseTest {
                             )
                             .billingModel("billing_model")
                             .brand(
-                                ProfileListResponse.Data.Profile.Brand.builder()
+                                ProfileDetail.Brand.builder()
                                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                     .business(
-                                        ProfileListResponse.Data.Profile.Brand.Business.builder()
+                                        ProfileDetail.Brand.Business.builder()
                                             .city("city")
                                             .country("country")
                                             .countryOfRegistration("country_of_registration")
@@ -196,16 +182,10 @@ internal class ProfileListResponseTest {
                                             .build()
                                     )
                                     .compliance(
-                                        ProfileListResponse.Data.Profile.Brand.Compliance.builder()
-                                            .brandRelationship(
-                                                ProfileListResponse.Data.Profile.Brand.Compliance
-                                                    .BrandRelationship
-                                                    .BASIC_ACCOUNT
-                                            )
+                                        ProfileDetail.Brand.Compliance.builder()
+                                            .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                                             .addDestinationCountry(
-                                                ProfileListResponse.Data.Profile.Brand.Compliance
-                                                    .DestinationCountry
-                                                    .builder()
+                                                DestinationCountry.builder()
                                                     .id("id")
                                                     .isMain(true)
                                                     .build()
@@ -215,15 +195,11 @@ internal class ProfileListResponseTest {
                                             .notes("notes")
                                             .phoneNumberPrefix("phone_number_prefix")
                                             .primaryUseCase("primary_use_case")
-                                            .vertical(
-                                                ProfileListResponse.Data.Profile.Brand.Compliance
-                                                    .Vertical
-                                                    .PROFESSIONAL
-                                            )
+                                            .vertical(TcrVertical.PROFESSIONAL)
                                             .build()
                                     )
                                     .contact(
-                                        ProfileListResponse.Data.Profile.Brand.Contact.builder()
+                                        ProfileDetail.Brand.Contact.builder()
                                             .businessName("business_name")
                                             .email("email")
                                             .name("name")
@@ -235,11 +211,10 @@ internal class ProfileListResponseTest {
                                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                     .cspId("csp_id")
                                     .identityStatus(
-                                        ProfileListResponse.Data.Profile.Brand.IdentityStatus
-                                            .SELF_DECLARED
+                                        ProfileDetail.Brand.IdentityStatus.SELF_DECLARED
                                     )
                                     .isInherited(true)
-                                    .status(ProfileListResponse.Data.Profile.Brand.Status.ACTIVE)
+                                    .status(ProfileDetail.Brand.Status.ACTIVE)
                                     .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                     .submittedToTcr(true)
                                     .tcrBrandId("tcr_brand_id")
@@ -271,10 +246,10 @@ internal class ProfileListResponseTest {
             )
         assertThat(profileListResponse.error())
             .contains(
-                ProfileListResponse.Error.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        ProfileListResponse.Error.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -284,7 +259,7 @@ internal class ProfileListResponseTest {
             )
         assertThat(profileListResponse.meta())
             .contains(
-                ProfileListResponse.Meta.builder()
+                ApiMeta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -301,13 +276,13 @@ internal class ProfileListResponseTest {
                 .data(
                     ProfileListResponse.Data.builder()
                         .addProfile(
-                            ProfileListResponse.Data.Profile.builder()
+                            ProfileDetail.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .allowContactSharing(true)
                                 .allowNumberChangeDuringOnboarding(true)
                                 .allowTemplateSharing(true)
                                 .billingContact(
-                                    ProfileListResponse.Data.Profile.BillingContact.builder()
+                                    ProfileDetail.BillingContact.builder()
                                         .address("address")
                                         .email("email")
                                         .name("name")
@@ -316,11 +291,10 @@ internal class ProfileListResponseTest {
                                 )
                                 .billingModel("billing_model")
                                 .brand(
-                                    ProfileListResponse.Data.Profile.Brand.builder()
+                                    ProfileDetail.Brand.builder()
                                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                         .business(
-                                            ProfileListResponse.Data.Profile.Brand.Business
-                                                .builder()
+                                            ProfileDetail.Brand.Business.builder()
                                                 .city("city")
                                                 .country("country")
                                                 .countryOfRegistration("country_of_registration")
@@ -335,19 +309,12 @@ internal class ProfileListResponseTest {
                                                 .build()
                                         )
                                         .compliance(
-                                            ProfileListResponse.Data.Profile.Brand.Compliance
-                                                .builder()
+                                            ProfileDetail.Brand.Compliance.builder()
                                                 .brandRelationship(
-                                                    ProfileListResponse.Data.Profile.Brand
-                                                        .Compliance
-                                                        .BrandRelationship
-                                                        .BASIC_ACCOUNT
+                                                    TcrBrandRelationship.BASIC_ACCOUNT
                                                 )
                                                 .addDestinationCountry(
-                                                    ProfileListResponse.Data.Profile.Brand
-                                                        .Compliance
-                                                        .DestinationCountry
-                                                        .builder()
+                                                    DestinationCountry.builder()
                                                         .id("id")
                                                         .isMain(true)
                                                         .build()
@@ -359,16 +326,11 @@ internal class ProfileListResponseTest {
                                                 .notes("notes")
                                                 .phoneNumberPrefix("phone_number_prefix")
                                                 .primaryUseCase("primary_use_case")
-                                                .vertical(
-                                                    ProfileListResponse.Data.Profile.Brand
-                                                        .Compliance
-                                                        .Vertical
-                                                        .PROFESSIONAL
-                                                )
+                                                .vertical(TcrVertical.PROFESSIONAL)
                                                 .build()
                                         )
                                         .contact(
-                                            ProfileListResponse.Data.Profile.Brand.Contact.builder()
+                                            ProfileDetail.Brand.Contact.builder()
                                                 .businessName("business_name")
                                                 .email("email")
                                                 .name("name")
@@ -380,13 +342,10 @@ internal class ProfileListResponseTest {
                                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                         .cspId("csp_id")
                                         .identityStatus(
-                                            ProfileListResponse.Data.Profile.Brand.IdentityStatus
-                                                .SELF_DECLARED
+                                            ProfileDetail.Brand.IdentityStatus.SELF_DECLARED
                                         )
                                         .isInherited(true)
-                                        .status(
-                                            ProfileListResponse.Data.Profile.Brand.Status.ACTIVE
-                                        )
+                                        .status(ProfileDetail.Brand.Status.ACTIVE)
                                         .submittedAt(
                                             OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                         )
@@ -421,10 +380,10 @@ internal class ProfileListResponseTest {
                         .build()
                 )
                 .error(
-                    ProfileListResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            ProfileListResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -433,7 +392,7 @@ internal class ProfileListResponseTest {
                         .build()
                 )
                 .meta(
-                    ProfileListResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
