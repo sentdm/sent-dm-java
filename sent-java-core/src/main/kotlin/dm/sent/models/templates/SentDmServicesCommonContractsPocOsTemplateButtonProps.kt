@@ -10,7 +10,9 @@ import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
+import dm.sent.core.checkKnown
 import dm.sent.core.checkRequired
+import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -28,6 +30,7 @@ private constructor(
     private val text: JsonField<String>,
     private val url: JsonField<String>,
     private val urlType: JsonField<String>,
+    private val variables: JsonField<List<TemplateVariable>>,
     private val autofillText: JsonField<String>,
     private val otpType: JsonField<String>,
     private val packageName: JsonField<String>,
@@ -51,6 +54,9 @@ private constructor(
         @JsonProperty("text") @ExcludeMissing text: JsonField<String> = JsonMissing.of(),
         @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
         @JsonProperty("urlType") @ExcludeMissing urlType: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("variables")
+        @ExcludeMissing
+        variables: JsonField<List<TemplateVariable>> = JsonMissing.of(),
         @JsonProperty("autofillText")
         @ExcludeMissing
         autofillText: JsonField<String> = JsonMissing.of(),
@@ -70,6 +76,7 @@ private constructor(
         text,
         url,
         urlType,
+        variables,
         autofillText,
         otpType,
         packageName,
@@ -124,6 +131,16 @@ private constructor(
      *   missing or null (e.g. if the server responded with an unexpected value).
      */
     fun urlType(): String = urlType.getRequired("urlType")
+
+    /**
+     * Variables embedded in a dynamic URL button (only when UrlType = dynamic). Count is capped by
+     * TemplateContentLimits.MaxUrlButtonVariables; the placeholder must appear at the end of Url
+     * (validated in TemplateDefinitionValidator).
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun variables(): List<TemplateVariable> = variables.getRequired("variables")
 
     /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -208,6 +225,15 @@ private constructor(
     @JsonProperty("urlType") @ExcludeMissing fun _urlType(): JsonField<String> = urlType
 
     /**
+     * Returns the raw JSON value of [variables].
+     *
+     * Unlike [variables], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("variables")
+    @ExcludeMissing
+    fun _variables(): JsonField<List<TemplateVariable>> = variables
+
+    /**
      * Returns the raw JSON value of [autofillText].
      *
      * Unlike [autofillText], this method doesn't throw if the JSON field has an unexpected type.
@@ -267,6 +293,7 @@ private constructor(
          * .text()
          * .url()
          * .urlType()
+         * .variables()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -283,6 +310,7 @@ private constructor(
         private var text: JsonField<String>? = null
         private var url: JsonField<String>? = null
         private var urlType: JsonField<String>? = null
+        private var variables: JsonField<MutableList<TemplateVariable>>? = null
         private var autofillText: JsonField<String> = JsonMissing.of()
         private var otpType: JsonField<String> = JsonMissing.of()
         private var packageName: JsonField<String> = JsonMissing.of()
@@ -302,6 +330,10 @@ private constructor(
             text = sentDmServicesCommonContractsPocOsTemplateButtonProps.text
             url = sentDmServicesCommonContractsPocOsTemplateButtonProps.url
             urlType = sentDmServicesCommonContractsPocOsTemplateButtonProps.urlType
+            variables =
+                sentDmServicesCommonContractsPocOsTemplateButtonProps.variables.map {
+                    it.toMutableList()
+                }
             autofillText = sentDmServicesCommonContractsPocOsTemplateButtonProps.autofillText
             otpType = sentDmServicesCommonContractsPocOsTemplateButtonProps.otpType
             packageName = sentDmServicesCommonContractsPocOsTemplateButtonProps.packageName
@@ -396,6 +428,36 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun urlType(urlType: JsonField<String>) = apply { this.urlType = urlType }
+
+        /**
+         * Variables embedded in a dynamic URL button (only when UrlType = dynamic). Count is capped
+         * by TemplateContentLimits.MaxUrlButtonVariables; the placeholder must appear at the end of
+         * Url (validated in TemplateDefinitionValidator).
+         */
+        fun variables(variables: List<TemplateVariable>) = variables(JsonField.of(variables))
+
+        /**
+         * Sets [Builder.variables] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.variables] with a well-typed `List<TemplateVariable>`
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun variables(variables: JsonField<List<TemplateVariable>>) = apply {
+            this.variables = variables.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [TemplateVariable] to [variables].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addVariable(variable: TemplateVariable) = apply {
+            variables =
+                (variables ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("variables", it).add(variable)
+                }
+        }
 
         fun autofillText(autofillText: String?) = autofillText(JsonField.ofNullable(autofillText))
 
@@ -492,6 +554,7 @@ private constructor(
          * .text()
          * .url()
          * .urlType()
+         * .variables()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -506,6 +569,7 @@ private constructor(
                 checkRequired("text", text),
                 checkRequired("url", url),
                 checkRequired("urlType", urlType),
+                checkRequired("variables", variables).map { it.toImmutable() },
                 autofillText,
                 otpType,
                 packageName,
@@ -537,6 +601,7 @@ private constructor(
         text()
         url()
         urlType()
+        variables().forEach { it.validate() }
         autofillText()
         otpType()
         packageName()
@@ -567,6 +632,7 @@ private constructor(
             (if (text.asKnown().isPresent) 1 else 0) +
             (if (url.asKnown().isPresent) 1 else 0) +
             (if (urlType.asKnown().isPresent) 1 else 0) +
+            (variables.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (autofillText.asKnown().isPresent) 1 else 0) +
             (if (otpType.asKnown().isPresent) 1 else 0) +
             (if (packageName.asKnown().isPresent) 1 else 0) +
@@ -586,6 +652,7 @@ private constructor(
             text == other.text &&
             url == other.url &&
             urlType == other.urlType &&
+            variables == other.variables &&
             autofillText == other.autofillText &&
             otpType == other.otpType &&
             packageName == other.packageName &&
@@ -603,6 +670,7 @@ private constructor(
             text,
             url,
             urlType,
+            variables,
             autofillText,
             otpType,
             packageName,
@@ -614,5 +682,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SentDmServicesCommonContractsPocOsTemplateButtonProps{activeFor=$activeFor, countryCode=$countryCode, offerCode=$offerCode, phoneNumber=$phoneNumber, quickReplyType=$quickReplyType, text=$text, url=$url, urlType=$urlType, autofillText=$autofillText, otpType=$otpType, packageName=$packageName, signatureHash=$signatureHash, additionalProperties=$additionalProperties}"
+        "SentDmServicesCommonContractsPocOsTemplateButtonProps{activeFor=$activeFor, countryCode=$countryCode, offerCode=$offerCode, phoneNumber=$phoneNumber, quickReplyType=$quickReplyType, text=$text, url=$url, urlType=$urlType, variables=$variables, autofillText=$autofillText, otpType=$otpType, packageName=$packageName, signatureHash=$signatureHash, additionalProperties=$additionalProperties}"
 }
