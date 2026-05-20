@@ -870,8 +870,23 @@ private constructor(
          */
         fun customerId(customerId: JsonField<String>) = apply { this.customerId = customerId }
 
+        fun dcaElectionsComplete(dcaElectionsComplete: Boolean?) =
+            dcaElectionsComplete(JsonField.ofNullable(dcaElectionsComplete))
+
+        /**
+         * Alias for [Builder.dcaElectionsComplete].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
         fun dcaElectionsComplete(dcaElectionsComplete: Boolean) =
-            dcaElectionsComplete(JsonField.of(dcaElectionsComplete))
+            dcaElectionsComplete(dcaElectionsComplete as Boolean?)
+
+        /**
+         * Alias for calling [Builder.dcaElectionsComplete] with
+         * `dcaElectionsComplete.orElse(null)`.
+         */
+        fun dcaElectionsComplete(dcaElectionsComplete: Optional<Boolean>) =
+            dcaElectionsComplete(dcaElectionsComplete.getOrNull())
 
         /**
          * Sets [Builder.dcaElectionsComplete] to an arbitrary JSON value.
