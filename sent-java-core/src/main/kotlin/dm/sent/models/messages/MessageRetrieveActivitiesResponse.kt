@@ -537,7 +537,8 @@ private constructor(
             fun price(): Optional<String> = price.getOptional("price")
 
             /**
-             * Activity status (e.g., QUEUED, PROCESSED, ROUTED, SENT, DELIVERED, FAILED)
+             * Activity status. Outbound: QUEUED, PROCESSED, ROUTED, SENT, DELIVERED, READ, FAILED.
+             * Inbound (from contact): RECEIVED (terminal).
              *
              * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
@@ -719,7 +720,10 @@ private constructor(
                  */
                 fun price(price: JsonField<String>) = apply { this.price = price }
 
-                /** Activity status (e.g., QUEUED, PROCESSED, ROUTED, SENT, DELIVERED, FAILED) */
+                /**
+                 * Activity status. Outbound: QUEUED, PROCESSED, ROUTED, SENT, DELIVERED, READ,
+                 * FAILED. Inbound (from contact): RECEIVED (terminal).
+                 */
                 fun status(status: String) = status(JsonField.of(status))
 
                 /**
