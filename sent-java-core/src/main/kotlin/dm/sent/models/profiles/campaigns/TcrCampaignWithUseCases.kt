@@ -34,6 +34,7 @@ private constructor(
     private val dcaElectionsComplete: JsonField<Boolean>,
     private val dcaElectionsCompletedAt: JsonField<OffsetDateTime>,
     private val description: JsonField<String>,
+    private val hasSubmissionTransaction: JsonField<Boolean>,
     private val helpKeywords: JsonField<String>,
     private val helpMessage: JsonField<String>,
     private val kycSubmissionFormId: JsonField<String>,
@@ -86,6 +87,9 @@ private constructor(
         @JsonProperty("description")
         @ExcludeMissing
         description: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("hasSubmissionTransaction")
+        @ExcludeMissing
+        hasSubmissionTransaction: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("helpKeywords")
         @ExcludeMissing
         helpKeywords: JsonField<String> = JsonMissing.of(),
@@ -158,6 +162,7 @@ private constructor(
         dcaElectionsComplete,
         dcaElectionsCompletedAt,
         description,
+        hasSubmissionTransaction,
         helpKeywords,
         helpMessage,
         kycSubmissionFormId,
@@ -255,6 +260,17 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun description(): Optional<String> = description.getOptional("description")
+
+    /**
+     * True when this campaign already has a billing transaction of reference type
+     * TCR_CAMPAIGN_SUBMISSION (the one-time submission fee was charged). Populated only by the
+     * campaigns-list path; defaults false on other responses.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun hasSubmissionTransaction(): Optional<Boolean> =
+        hasSubmissionTransaction.getOptional("hasSubmissionTransaction")
 
     /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -480,6 +496,16 @@ private constructor(
     @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
 
     /**
+     * Returns the raw JSON value of [hasSubmissionTransaction].
+     *
+     * Unlike [hasSubmissionTransaction], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("hasSubmissionTransaction")
+    @ExcludeMissing
+    fun _hasSubmissionTransaction(): JsonField<Boolean> = hasSubmissionTransaction
+
+    /**
      * Returns the raw JSON value of [helpKeywords].
      *
      * Unlike [helpKeywords], this method doesn't throw if the JSON field has an unexpected type.
@@ -699,6 +725,7 @@ private constructor(
         private var dcaElectionsComplete: JsonField<Boolean> = JsonMissing.of()
         private var dcaElectionsCompletedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var description: JsonField<String> = JsonMissing.of()
+        private var hasSubmissionTransaction: JsonField<Boolean> = JsonMissing.of()
         private var helpKeywords: JsonField<String> = JsonMissing.of()
         private var helpMessage: JsonField<String> = JsonMissing.of()
         private var kycSubmissionFormId: JsonField<String> = JsonMissing.of()
@@ -736,6 +763,7 @@ private constructor(
             dcaElectionsComplete = tcrCampaignWithUseCases.dcaElectionsComplete
             dcaElectionsCompletedAt = tcrCampaignWithUseCases.dcaElectionsCompletedAt
             description = tcrCampaignWithUseCases.description
+            hasSubmissionTransaction = tcrCampaignWithUseCases.hasSubmissionTransaction
             helpKeywords = tcrCampaignWithUseCases.helpKeywords
             helpMessage = tcrCampaignWithUseCases.helpMessage
             kycSubmissionFormId = tcrCampaignWithUseCases.kycSubmissionFormId
@@ -930,6 +958,25 @@ private constructor(
          * value.
          */
         fun description(description: JsonField<String>) = apply { this.description = description }
+
+        /**
+         * True when this campaign already has a billing transaction of reference type
+         * TCR_CAMPAIGN_SUBMISSION (the one-time submission fee was charged). Populated only by the
+         * campaigns-list path; defaults false on other responses.
+         */
+        fun hasSubmissionTransaction(hasSubmissionTransaction: Boolean) =
+            hasSubmissionTransaction(JsonField.of(hasSubmissionTransaction))
+
+        /**
+         * Sets [Builder.hasSubmissionTransaction] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.hasSubmissionTransaction] with a well-typed [Boolean]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun hasSubmissionTransaction(hasSubmissionTransaction: JsonField<Boolean>) = apply {
+            this.hasSubmissionTransaction = hasSubmissionTransaction
+        }
 
         fun helpKeywords(helpKeywords: String?) = helpKeywords(JsonField.ofNullable(helpKeywords))
 
@@ -1332,6 +1379,7 @@ private constructor(
                 dcaElectionsComplete,
                 dcaElectionsCompletedAt,
                 description,
+                hasSubmissionTransaction,
                 helpKeywords,
                 helpMessage,
                 kycSubmissionFormId,
@@ -1384,6 +1432,7 @@ private constructor(
         dcaElectionsComplete()
         dcaElectionsCompletedAt()
         description()
+        hasSubmissionTransaction()
         helpKeywords()
         helpMessage()
         kycSubmissionFormId()
@@ -1435,6 +1484,7 @@ private constructor(
             (if (dcaElectionsComplete.asKnown().isPresent) 1 else 0) +
             (if (dcaElectionsCompletedAt.asKnown().isPresent) 1 else 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
+            (if (hasSubmissionTransaction.asKnown().isPresent) 1 else 0) +
             (if (helpKeywords.asKnown().isPresent) 1 else 0) +
             (if (helpMessage.asKnown().isPresent) 1 else 0) +
             (if (kycSubmissionFormId.asKnown().isPresent) 1 else 0) +
@@ -2180,6 +2230,7 @@ private constructor(
             dcaElectionsComplete == other.dcaElectionsComplete &&
             dcaElectionsCompletedAt == other.dcaElectionsCompletedAt &&
             description == other.description &&
+            hasSubmissionTransaction == other.hasSubmissionTransaction &&
             helpKeywords == other.helpKeywords &&
             helpMessage == other.helpMessage &&
             kycSubmissionFormId == other.kycSubmissionFormId &&
@@ -2218,6 +2269,7 @@ private constructor(
             dcaElectionsComplete,
             dcaElectionsCompletedAt,
             description,
+            hasSubmissionTransaction,
             helpKeywords,
             helpMessage,
             kycSubmissionFormId,
@@ -2247,5 +2299,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TcrCampaignWithUseCases{id=$id, createdAt=$createdAt, updatedAt=$updatedAt, billedDate=$billedDate, brandId=$brandId, cost=$cost, cspId=$cspId, customerId=$customerId, dcaElectionsComplete=$dcaElectionsComplete, dcaElectionsCompletedAt=$dcaElectionsCompletedAt, description=$description, helpKeywords=$helpKeywords, helpMessage=$helpMessage, kycSubmissionFormId=$kycSubmissionFormId, messageFlow=$messageFlow, name=$name, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, resellerId=$resellerId, sharingStatus=$sharingStatus, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrCampaignId=$tcrCampaignId, tcrSyncError=$tcrSyncError, telnyxCampaignId=$telnyxCampaignId, termsAndConditionsLink=$termsAndConditionsLink, type=$type, upstreamCnpId=$upstreamCnpId, useCases=$useCases, additionalProperties=$additionalProperties}"
+        "TcrCampaignWithUseCases{id=$id, createdAt=$createdAt, updatedAt=$updatedAt, billedDate=$billedDate, brandId=$brandId, cost=$cost, cspId=$cspId, customerId=$customerId, dcaElectionsComplete=$dcaElectionsComplete, dcaElectionsCompletedAt=$dcaElectionsCompletedAt, description=$description, hasSubmissionTransaction=$hasSubmissionTransaction, helpKeywords=$helpKeywords, helpMessage=$helpMessage, kycSubmissionFormId=$kycSubmissionFormId, messageFlow=$messageFlow, name=$name, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, resellerId=$resellerId, sharingStatus=$sharingStatus, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrCampaignId=$tcrCampaignId, tcrSyncError=$tcrSyncError, telnyxCampaignId=$telnyxCampaignId, termsAndConditionsLink=$termsAndConditionsLink, type=$type, upstreamCnpId=$upstreamCnpId, useCases=$useCases, additionalProperties=$additionalProperties}"
 }
