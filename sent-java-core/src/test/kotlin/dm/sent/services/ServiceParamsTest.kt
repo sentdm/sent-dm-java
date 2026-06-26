@@ -61,6 +61,7 @@ internal class ServiceParamsTest {
                         )
                         .build()
                 )
+                .text(null)
                 .addTo("+14155551234")
                 .addTo("+14155555678")
                 .putAdditionalHeader("Secret-Header", "42")
