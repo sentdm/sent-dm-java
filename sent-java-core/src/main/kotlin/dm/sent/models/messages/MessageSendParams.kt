@@ -68,6 +68,14 @@ private constructor(
     fun template(): Optional<Template> = body.template()
 
     /**
+     * Plain-text (free-form) message body. Provide either Template or this.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun text(): Optional<String> = body.text()
+
+    /**
      * List of recipient phone numbers in E.164 format (multi-recipient fan-out)
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -95,6 +103,13 @@ private constructor(
      * Unlike [template], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _template(): JsonField<Template> = body._template()
+
+    /**
+     * Returns the raw JSON value of [text].
+     *
+     * Unlike [text], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _text(): JsonField<String> = body._text()
 
     /**
      * Returns the raw JSON value of [to].
@@ -158,7 +173,9 @@ private constructor(
          * - [sandbox]
          * - [channel]
          * - [template]
+         * - [text]
          * - [to]
+         * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -203,7 +220,10 @@ private constructor(
         fun addChannel(channel: String) = apply { body.addChannel(channel) }
 
         /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
-        fun template(template: Template) = apply { body.template(template) }
+        fun template(template: Template?) = apply { body.template(template) }
+
+        /** Alias for calling [Builder.template] with `template.orElse(null)`. */
+        fun template(template: Optional<Template>) = template(template.getOrNull())
 
         /**
          * Sets [Builder.template] to an arbitrary JSON value.
@@ -213,6 +233,20 @@ private constructor(
          * value.
          */
         fun template(template: JsonField<Template>) = apply { body.template(template) }
+
+        /** Plain-text (free-form) message body. Provide either Template or this. */
+        fun text(text: String?) = apply { body.text(text) }
+
+        /** Alias for calling [Builder.text] with `text.orElse(null)`. */
+        fun text(text: Optional<String>) = text(text.getOrNull())
+
+        /**
+         * Sets [Builder.text] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.text] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun text(text: JsonField<String>) = apply { body.text(text) }
 
         /** List of recipient phone numbers in E.164 format (multi-recipient fan-out) */
         fun to(to: List<String>) = apply { body.to(to) }
@@ -384,6 +418,7 @@ private constructor(
         private val sandbox: JsonField<Boolean>,
         private val channel: JsonField<List<String>>,
         private val template: JsonField<Template>,
+        private val text: JsonField<String>,
         private val to: JsonField<List<String>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -397,8 +432,9 @@ private constructor(
             @JsonProperty("template")
             @ExcludeMissing
             template: JsonField<Template> = JsonMissing.of(),
+            @JsonProperty("text") @ExcludeMissing text: JsonField<String> = JsonMissing.of(),
             @JsonProperty("to") @ExcludeMissing to: JsonField<List<String>> = JsonMissing.of(),
-        ) : this(sandbox, channel, template, to, mutableMapOf())
+        ) : this(sandbox, channel, template, text, to, mutableMapOf())
 
         fun toMutationRequest(): MutationRequest =
             MutationRequest.builder().sandbox(sandbox).build()
@@ -431,6 +467,14 @@ private constructor(
         fun template(): Optional<Template> = template.getOptional("template")
 
         /**
+         * Plain-text (free-form) message body. Provide either Template or this.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun text(): Optional<String> = text.getOptional("text")
+
+        /**
          * List of recipient phone numbers in E.164 format (multi-recipient fan-out)
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -458,6 +502,13 @@ private constructor(
          * Unlike [template], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("template") @ExcludeMissing fun _template(): JsonField<Template> = template
+
+        /**
+         * Returns the raw JSON value of [text].
+         *
+         * Unlike [text], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("text") @ExcludeMissing fun _text(): JsonField<String> = text
 
         /**
          * Returns the raw JSON value of [to].
@@ -490,6 +541,7 @@ private constructor(
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var channel: JsonField<MutableList<String>>? = null
             private var template: JsonField<Template> = JsonMissing.of()
+            private var text: JsonField<String> = JsonMissing.of()
             private var to: JsonField<MutableList<String>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -498,6 +550,7 @@ private constructor(
                 sandbox = body.sandbox
                 channel = body.channel.map { it.toMutableList() }
                 template = body.template
+                text = body.text
                 to = body.to.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -551,7 +604,10 @@ private constructor(
             }
 
             /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
-            fun template(template: Template) = template(JsonField.of(template))
+            fun template(template: Template?) = template(JsonField.ofNullable(template))
+
+            /** Alias for calling [Builder.template] with `template.orElse(null)`. */
+            fun template(template: Optional<Template>) = template(template.getOrNull())
 
             /**
              * Sets [Builder.template] to an arbitrary JSON value.
@@ -561,6 +617,21 @@ private constructor(
              * supported value.
              */
             fun template(template: JsonField<Template>) = apply { this.template = template }
+
+            /** Plain-text (free-form) message body. Provide either Template or this. */
+            fun text(text: String?) = text(JsonField.ofNullable(text))
+
+            /** Alias for calling [Builder.text] with `text.orElse(null)`. */
+            fun text(text: Optional<String>) = text(text.getOrNull())
+
+            /**
+             * Sets [Builder.text] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.text] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun text(text: JsonField<String>) = apply { this.text = text }
 
             /** List of recipient phone numbers in E.164 format (multi-recipient fan-out) */
             fun to(to: List<String>) = to(JsonField.of(to))
@@ -613,6 +684,7 @@ private constructor(
                     sandbox,
                     (channel ?: JsonMissing.of()).map { it.toImmutable() },
                     template,
+                    text,
                     (to ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
@@ -637,6 +709,7 @@ private constructor(
             sandbox()
             channel()
             template().ifPresent { it.validate() }
+            text()
             to()
             validated = true
         }
@@ -660,6 +733,7 @@ private constructor(
             (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (channel.asKnown().getOrNull()?.size ?: 0) +
                 (template.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (text.asKnown().isPresent) 1 else 0) +
                 (to.asKnown().getOrNull()?.size ?: 0)
 
         override fun equals(other: Any?): Boolean {
@@ -671,18 +745,19 @@ private constructor(
                 sandbox == other.sandbox &&
                 channel == other.channel &&
                 template == other.template &&
+                text == other.text &&
                 to == other.to &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(sandbox, channel, template, to, additionalProperties)
+            Objects.hash(sandbox, channel, template, text, to, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, channel=$channel, template=$template, to=$to, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, channel=$channel, template=$template, text=$text, to=$to, additionalProperties=$additionalProperties}"
     }
 
     /** SDK-style template reference: resolve by ID or by name, with optional parameters. */

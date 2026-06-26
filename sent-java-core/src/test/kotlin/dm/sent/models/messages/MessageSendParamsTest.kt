@@ -30,6 +30,7 @@ internal class MessageSendParamsTest {
                     )
                     .build()
             )
+            .text(null)
             .addTo("+14155551234")
             .addTo("+14155555678")
             .build()
@@ -56,6 +57,7 @@ internal class MessageSendParamsTest {
                         )
                         .build()
                 )
+                .text(null)
                 .addTo("+14155551234")
                 .addTo("+14155555678")
                 .build()
@@ -101,6 +103,7 @@ internal class MessageSendParamsTest {
                         )
                         .build()
                 )
+                .text(null)
                 .addTo("+14155551234")
                 .addTo("+14155555678")
                 .build()
@@ -122,6 +125,7 @@ internal class MessageSendParamsTest {
                     )
                     .build()
             )
+        assertThat(body.text()).isEmpty
         assertThat(body.to().getOrNull()).containsExactly("+14155551234", "+14155555678")
     }
 
