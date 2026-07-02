@@ -12,6 +12,7 @@ import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
+import dm.sent.core.checkRequired
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import java.time.OffsetDateTime
@@ -26,6 +27,9 @@ private constructor(
     private val id: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val updatedAt: JsonField<OffsetDateTime>,
+    private val description: JsonField<String>,
+    private val name: JsonField<String>,
+    private val type: JsonField<String>,
     private val billedDate: JsonField<OffsetDateTime>,
     private val brandId: JsonField<String>,
     private val cost: JsonField<Double>,
@@ -33,13 +37,11 @@ private constructor(
     private val customerId: JsonField<String>,
     private val dcaElectionsComplete: JsonField<Boolean>,
     private val dcaElectionsCompletedAt: JsonField<OffsetDateTime>,
-    private val description: JsonField<String>,
     private val hasSubmissionTransaction: JsonField<Boolean>,
     private val helpKeywords: JsonField<String>,
     private val helpMessage: JsonField<String>,
     private val kycSubmissionFormId: JsonField<String>,
     private val messageFlow: JsonField<String>,
-    private val name: JsonField<String>,
     private val optinKeywords: JsonField<String>,
     private val optinMessage: JsonField<String>,
     private val optoutKeywords: JsonField<String>,
@@ -54,7 +56,6 @@ private constructor(
     private val tcrSyncError: JsonField<String>,
     private val telnyxCampaignId: JsonField<String>,
     private val termsAndConditionsLink: JsonField<String>,
-    private val type: JsonField<String>,
     private val upstreamCnpId: JsonField<String>,
     private val useCases: JsonField<List<UseCase>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -69,6 +70,11 @@ private constructor(
         @JsonProperty("updatedAt")
         @ExcludeMissing
         updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("description")
+        @ExcludeMissing
+        description: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("type") @ExcludeMissing type: JsonField<String> = JsonMissing.of(),
         @JsonProperty("billedDate")
         @ExcludeMissing
         billedDate: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -84,9 +90,6 @@ private constructor(
         @JsonProperty("dcaElectionsCompletedAt")
         @ExcludeMissing
         dcaElectionsCompletedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
-        @JsonProperty("description")
-        @ExcludeMissing
-        description: JsonField<String> = JsonMissing.of(),
         @JsonProperty("hasSubmissionTransaction")
         @ExcludeMissing
         hasSubmissionTransaction: JsonField<Boolean> = JsonMissing.of(),
@@ -102,7 +105,6 @@ private constructor(
         @JsonProperty("messageFlow")
         @ExcludeMissing
         messageFlow: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("optinKeywords")
         @ExcludeMissing
         optinKeywords: JsonField<String> = JsonMissing.of(),
@@ -143,7 +145,6 @@ private constructor(
         @JsonProperty("termsAndConditionsLink")
         @ExcludeMissing
         termsAndConditionsLink: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("type") @ExcludeMissing type: JsonField<String> = JsonMissing.of(),
         @JsonProperty("upstreamCnpId")
         @ExcludeMissing
         upstreamCnpId: JsonField<String> = JsonMissing.of(),
@@ -154,6 +155,9 @@ private constructor(
         id,
         createdAt,
         updatedAt,
+        description,
+        name,
+        type,
         billedDate,
         brandId,
         cost,
@@ -161,13 +165,11 @@ private constructor(
         customerId,
         dcaElectionsComplete,
         dcaElectionsCompletedAt,
-        description,
         hasSubmissionTransaction,
         helpKeywords,
         helpMessage,
         kycSubmissionFormId,
         messageFlow,
-        name,
         optinKeywords,
         optinMessage,
         optoutKeywords,
@@ -182,7 +184,6 @@ private constructor(
         tcrSyncError,
         telnyxCampaignId,
         termsAndConditionsLink,
-        type,
         upstreamCnpId,
         useCases,
         mutableMapOf(),
@@ -210,6 +211,24 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun updatedAt(): Optional<OffsetDateTime> = updatedAt.getOptional("updatedAt")
+
+    /**
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun description(): String = description.getRequired("description")
+
+    /**
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun name(): String = name.getRequired("name")
+
+    /**
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun type(): String = type.getRequired("type")
 
     /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -256,12 +275,6 @@ private constructor(
         dcaElectionsCompletedAt.getOptional("dcaElectionsCompletedAt")
 
     /**
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun description(): Optional<String> = description.getOptional("description")
-
-    /**
      * True when this campaign already has a billing transaction of reference type
      * TCR_CAMPAIGN_SUBMISSION (the one-time submission fee was charged). Populated only by the
      * campaigns-list path; defaults false on other responses.
@@ -296,12 +309,6 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun messageFlow(): Optional<String> = messageFlow.getOptional("messageFlow")
-
-    /**
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun name(): Optional<String> = name.getOptional("name")
 
     /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -392,12 +399,6 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun type(): Optional<String> = type.getOptional("type")
-
-    /**
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
     fun upstreamCnpId(): Optional<String> = upstreamCnpId.getOptional("upstreamCnpId")
 
     /**
@@ -430,6 +431,27 @@ private constructor(
     @JsonProperty("updatedAt")
     @ExcludeMissing
     fun _updatedAt(): JsonField<OffsetDateTime> = updatedAt
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
+
+    /**
+     * Returns the raw JSON value of [name].
+     *
+     * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+    /**
+     * Returns the raw JSON value of [type].
+     *
+     * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<String> = type
 
     /**
      * Returns the raw JSON value of [billedDate].
@@ -489,13 +511,6 @@ private constructor(
     fun _dcaElectionsCompletedAt(): JsonField<OffsetDateTime> = dcaElectionsCompletedAt
 
     /**
-     * Returns the raw JSON value of [description].
-     *
-     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
-
-    /**
      * Returns the raw JSON value of [hasSubmissionTransaction].
      *
      * Unlike [hasSubmissionTransaction], this method doesn't throw if the JSON field has an
@@ -537,13 +552,6 @@ private constructor(
      * Unlike [messageFlow], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("messageFlow") @ExcludeMissing fun _messageFlow(): JsonField<String> = messageFlow
-
-    /**
-     * Returns the raw JSON value of [name].
-     *
-     * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
     /**
      * Returns the raw JSON value of [optinKeywords].
@@ -671,13 +679,6 @@ private constructor(
     fun _termsAndConditionsLink(): JsonField<String> = termsAndConditionsLink
 
     /**
-     * Returns the raw JSON value of [type].
-     *
-     * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<String> = type
-
-    /**
      * Returns the raw JSON value of [upstreamCnpId].
      *
      * Unlike [upstreamCnpId], this method doesn't throw if the JSON field has an unexpected type.
@@ -707,7 +708,16 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [TcrCampaignWithUseCases]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [TcrCampaignWithUseCases].
+         *
+         * The following fields are required:
+         * ```java
+         * .description()
+         * .name()
+         * .type()
+         * ```
+         */
         @JvmStatic fun builder() = Builder()
     }
 
@@ -717,6 +727,9 @@ private constructor(
         private var id: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var description: JsonField<String>? = null
+        private var name: JsonField<String>? = null
+        private var type: JsonField<String>? = null
         private var billedDate: JsonField<OffsetDateTime> = JsonMissing.of()
         private var brandId: JsonField<String> = JsonMissing.of()
         private var cost: JsonField<Double> = JsonMissing.of()
@@ -724,13 +737,11 @@ private constructor(
         private var customerId: JsonField<String> = JsonMissing.of()
         private var dcaElectionsComplete: JsonField<Boolean> = JsonMissing.of()
         private var dcaElectionsCompletedAt: JsonField<OffsetDateTime> = JsonMissing.of()
-        private var description: JsonField<String> = JsonMissing.of()
         private var hasSubmissionTransaction: JsonField<Boolean> = JsonMissing.of()
         private var helpKeywords: JsonField<String> = JsonMissing.of()
         private var helpMessage: JsonField<String> = JsonMissing.of()
         private var kycSubmissionFormId: JsonField<String> = JsonMissing.of()
         private var messageFlow: JsonField<String> = JsonMissing.of()
-        private var name: JsonField<String> = JsonMissing.of()
         private var optinKeywords: JsonField<String> = JsonMissing.of()
         private var optinMessage: JsonField<String> = JsonMissing.of()
         private var optoutKeywords: JsonField<String> = JsonMissing.of()
@@ -745,7 +756,6 @@ private constructor(
         private var tcrSyncError: JsonField<String> = JsonMissing.of()
         private var telnyxCampaignId: JsonField<String> = JsonMissing.of()
         private var termsAndConditionsLink: JsonField<String> = JsonMissing.of()
-        private var type: JsonField<String> = JsonMissing.of()
         private var upstreamCnpId: JsonField<String> = JsonMissing.of()
         private var useCases: JsonField<MutableList<UseCase>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -755,6 +765,9 @@ private constructor(
             id = tcrCampaignWithUseCases.id
             createdAt = tcrCampaignWithUseCases.createdAt
             updatedAt = tcrCampaignWithUseCases.updatedAt
+            description = tcrCampaignWithUseCases.description
+            name = tcrCampaignWithUseCases.name
+            type = tcrCampaignWithUseCases.type
             billedDate = tcrCampaignWithUseCases.billedDate
             brandId = tcrCampaignWithUseCases.brandId
             cost = tcrCampaignWithUseCases.cost
@@ -762,13 +775,11 @@ private constructor(
             customerId = tcrCampaignWithUseCases.customerId
             dcaElectionsComplete = tcrCampaignWithUseCases.dcaElectionsComplete
             dcaElectionsCompletedAt = tcrCampaignWithUseCases.dcaElectionsCompletedAt
-            description = tcrCampaignWithUseCases.description
             hasSubmissionTransaction = tcrCampaignWithUseCases.hasSubmissionTransaction
             helpKeywords = tcrCampaignWithUseCases.helpKeywords
             helpMessage = tcrCampaignWithUseCases.helpMessage
             kycSubmissionFormId = tcrCampaignWithUseCases.kycSubmissionFormId
             messageFlow = tcrCampaignWithUseCases.messageFlow
-            name = tcrCampaignWithUseCases.name
             optinKeywords = tcrCampaignWithUseCases.optinKeywords
             optinMessage = tcrCampaignWithUseCases.optinMessage
             optoutKeywords = tcrCampaignWithUseCases.optoutKeywords
@@ -783,7 +794,6 @@ private constructor(
             tcrSyncError = tcrCampaignWithUseCases.tcrSyncError
             telnyxCampaignId = tcrCampaignWithUseCases.telnyxCampaignId
             termsAndConditionsLink = tcrCampaignWithUseCases.termsAndConditionsLink
-            type = tcrCampaignWithUseCases.type
             upstreamCnpId = tcrCampaignWithUseCases.upstreamCnpId
             useCases = tcrCampaignWithUseCases.useCases.map { it.toMutableList() }
             additionalProperties = tcrCampaignWithUseCases.additionalProperties.toMutableMap()
@@ -824,6 +834,37 @@ private constructor(
          * supported value.
          */
         fun updatedAt(updatedAt: JsonField<OffsetDateTime>) = apply { this.updatedAt = updatedAt }
+
+        fun description(description: String) = description(JsonField.of(description))
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { this.description = description }
+
+        fun name(name: String) = name(JsonField.of(name))
+
+        /**
+         * Sets [Builder.name] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.name] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun name(name: JsonField<String>) = apply { this.name = name }
+
+        fun type(type: String) = type(JsonField.of(type))
+
+        /**
+         * Sets [Builder.type] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.type] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun type(type: JsonField<String>) = apply { this.type = type }
 
         fun billedDate(billedDate: OffsetDateTime?) = billedDate(JsonField.ofNullable(billedDate))
 
@@ -948,17 +989,6 @@ private constructor(
             this.dcaElectionsCompletedAt = dcaElectionsCompletedAt
         }
 
-        fun description(description: String) = description(JsonField.of(description))
-
-        /**
-         * Sets [Builder.description] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.description] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun description(description: JsonField<String>) = apply { this.description = description }
-
         /**
          * True when this campaign already has a billing transaction of reference type
          * TCR_CAMPAIGN_SUBMISSION (the one-time submission fee was charged). Populated only by the
@@ -1041,16 +1071,6 @@ private constructor(
          * value.
          */
         fun messageFlow(messageFlow: JsonField<String>) = apply { this.messageFlow = messageFlow }
-
-        fun name(name: String) = name(JsonField.of(name))
-
-        /**
-         * Sets [Builder.name] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.name] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun name(name: JsonField<String>) = apply { this.name = name }
 
         fun optinKeywords(optinKeywords: String?) =
             optinKeywords(JsonField.ofNullable(optinKeywords))
@@ -1289,16 +1309,6 @@ private constructor(
             this.termsAndConditionsLink = termsAndConditionsLink
         }
 
-        fun type(type: String) = type(JsonField.of(type))
-
-        /**
-         * Sets [Builder.type] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.type] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun type(type: JsonField<String>) = apply { this.type = type }
-
         fun upstreamCnpId(upstreamCnpId: String?) =
             upstreamCnpId(JsonField.ofNullable(upstreamCnpId))
 
@@ -1365,12 +1375,24 @@ private constructor(
          * Returns an immutable instance of [TcrCampaignWithUseCases].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .description()
+         * .name()
+         * .type()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): TcrCampaignWithUseCases =
             TcrCampaignWithUseCases(
                 id,
                 createdAt,
                 updatedAt,
+                checkRequired("description", description),
+                checkRequired("name", name),
+                checkRequired("type", type),
                 billedDate,
                 brandId,
                 cost,
@@ -1378,13 +1400,11 @@ private constructor(
                 customerId,
                 dcaElectionsComplete,
                 dcaElectionsCompletedAt,
-                description,
                 hasSubmissionTransaction,
                 helpKeywords,
                 helpMessage,
                 kycSubmissionFormId,
                 messageFlow,
-                name,
                 optinKeywords,
                 optinMessage,
                 optoutKeywords,
@@ -1399,7 +1419,6 @@ private constructor(
                 tcrSyncError,
                 telnyxCampaignId,
                 termsAndConditionsLink,
-                type,
                 upstreamCnpId,
                 (useCases ?: JsonMissing.of()).map { it.toImmutable() },
                 additionalProperties.toMutableMap(),
@@ -1424,6 +1443,9 @@ private constructor(
         id()
         createdAt()
         updatedAt()
+        description()
+        name()
+        type()
         billedDate()
         brandId()
         cost()
@@ -1431,13 +1453,11 @@ private constructor(
         customerId()
         dcaElectionsComplete()
         dcaElectionsCompletedAt()
-        description()
         hasSubmissionTransaction()
         helpKeywords()
         helpMessage()
         kycSubmissionFormId()
         messageFlow()
-        name()
         optinKeywords()
         optinMessage()
         optoutKeywords()
@@ -1452,7 +1472,6 @@ private constructor(
         tcrSyncError()
         telnyxCampaignId()
         termsAndConditionsLink()
-        type()
         upstreamCnpId()
         useCases().ifPresent { it.forEach { it.validate() } }
         validated = true
@@ -1476,6 +1495,9 @@ private constructor(
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
+            (if (description.asKnown().isPresent) 1 else 0) +
+            (if (name.asKnown().isPresent) 1 else 0) +
+            (if (type.asKnown().isPresent) 1 else 0) +
             (if (billedDate.asKnown().isPresent) 1 else 0) +
             (if (brandId.asKnown().isPresent) 1 else 0) +
             (if (cost.asKnown().isPresent) 1 else 0) +
@@ -1483,13 +1505,11 @@ private constructor(
             (if (customerId.asKnown().isPresent) 1 else 0) +
             (if (dcaElectionsComplete.asKnown().isPresent) 1 else 0) +
             (if (dcaElectionsCompletedAt.asKnown().isPresent) 1 else 0) +
-            (if (description.asKnown().isPresent) 1 else 0) +
             (if (hasSubmissionTransaction.asKnown().isPresent) 1 else 0) +
             (if (helpKeywords.asKnown().isPresent) 1 else 0) +
             (if (helpMessage.asKnown().isPresent) 1 else 0) +
             (if (kycSubmissionFormId.asKnown().isPresent) 1 else 0) +
             (if (messageFlow.asKnown().isPresent) 1 else 0) +
-            (if (name.asKnown().isPresent) 1 else 0) +
             (if (optinKeywords.asKnown().isPresent) 1 else 0) +
             (if (optinMessage.asKnown().isPresent) 1 else 0) +
             (if (optoutKeywords.asKnown().isPresent) 1 else 0) +
@@ -1504,7 +1524,6 @@ private constructor(
             (if (tcrSyncError.asKnown().isPresent) 1 else 0) +
             (if (telnyxCampaignId.asKnown().isPresent) 1 else 0) +
             (if (termsAndConditionsLink.asKnown().isPresent) 1 else 0) +
-            (if (type.asKnown().isPresent) 1 else 0) +
             (if (upstreamCnpId.asKnown().isPresent) 1 else 0) +
             (useCases.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
@@ -1796,10 +1815,10 @@ private constructor(
         private val id: JsonField<String>,
         private val createdAt: JsonField<OffsetDateTime>,
         private val updatedAt: JsonField<OffsetDateTime>,
+        private val sampleMessages: JsonField<List<String>>,
         private val campaignId: JsonField<String>,
         private val customerId: JsonField<String>,
         private val messagingUseCaseUs: JsonField<MessagingUseCaseUs>,
-        private val sampleMessages: JsonField<List<String>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -1812,6 +1831,9 @@ private constructor(
             @JsonProperty("updatedAt")
             @ExcludeMissing
             updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("sampleMessages")
+            @ExcludeMissing
+            sampleMessages: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("campaignId")
             @ExcludeMissing
             campaignId: JsonField<String> = JsonMissing.of(),
@@ -1821,17 +1843,14 @@ private constructor(
             @JsonProperty("messagingUseCaseUs")
             @ExcludeMissing
             messagingUseCaseUs: JsonField<MessagingUseCaseUs> = JsonMissing.of(),
-            @JsonProperty("sampleMessages")
-            @ExcludeMissing
-            sampleMessages: JsonField<List<String>> = JsonMissing.of(),
         ) : this(
             id,
             createdAt,
             updatedAt,
+            sampleMessages,
             campaignId,
             customerId,
             messagingUseCaseUs,
-            sampleMessages,
             mutableMapOf(),
         )
 
@@ -1859,6 +1878,12 @@ private constructor(
         fun updatedAt(): Optional<OffsetDateTime> = updatedAt.getOptional("updatedAt")
 
         /**
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun sampleMessages(): List<String> = sampleMessages.getRequired("sampleMessages")
+
+        /**
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
@@ -1876,12 +1901,6 @@ private constructor(
          */
         fun messagingUseCaseUs(): Optional<MessagingUseCaseUs> =
             messagingUseCaseUs.getOptional("messagingUseCaseUs")
-
-        /**
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun sampleMessages(): Optional<List<String>> = sampleMessages.getOptional("sampleMessages")
 
         /**
          * Returns the raw JSON value of [id].
@@ -1907,6 +1926,16 @@ private constructor(
         @JsonProperty("updatedAt")
         @ExcludeMissing
         fun _updatedAt(): JsonField<OffsetDateTime> = updatedAt
+
+        /**
+         * Returns the raw JSON value of [sampleMessages].
+         *
+         * Unlike [sampleMessages], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("sampleMessages")
+        @ExcludeMissing
+        fun _sampleMessages(): JsonField<List<String>> = sampleMessages
 
         /**
          * Returns the raw JSON value of [campaignId].
@@ -1936,16 +1965,6 @@ private constructor(
         @ExcludeMissing
         fun _messagingUseCaseUs(): JsonField<MessagingUseCaseUs> = messagingUseCaseUs
 
-        /**
-         * Returns the raw JSON value of [sampleMessages].
-         *
-         * Unlike [sampleMessages], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("sampleMessages")
-        @ExcludeMissing
-        fun _sampleMessages(): JsonField<List<String>> = sampleMessages
-
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -1960,7 +1979,14 @@ private constructor(
 
         companion object {
 
-            /** Returns a mutable builder for constructing an instance of [UseCase]. */
+            /**
+             * Returns a mutable builder for constructing an instance of [UseCase].
+             *
+             * The following fields are required:
+             * ```java
+             * .sampleMessages()
+             * ```
+             */
             @JvmStatic fun builder() = Builder()
         }
 
@@ -1970,10 +1996,10 @@ private constructor(
             private var id: JsonField<String> = JsonMissing.of()
             private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var sampleMessages: JsonField<MutableList<String>>? = null
             private var campaignId: JsonField<String> = JsonMissing.of()
             private var customerId: JsonField<String> = JsonMissing.of()
             private var messagingUseCaseUs: JsonField<MessagingUseCaseUs> = JsonMissing.of()
-            private var sampleMessages: JsonField<MutableList<String>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -1981,10 +2007,10 @@ private constructor(
                 id = useCase.id
                 createdAt = useCase.createdAt
                 updatedAt = useCase.updatedAt
+                sampleMessages = useCase.sampleMessages.map { it.toMutableList() }
                 campaignId = useCase.campaignId
                 customerId = useCase.customerId
                 messagingUseCaseUs = useCase.messagingUseCaseUs
-                sampleMessages = useCase.sampleMessages.map { it.toMutableList() }
                 additionalProperties = useCase.additionalProperties.toMutableMap()
             }
 
@@ -2029,6 +2055,32 @@ private constructor(
                 this.updatedAt = updatedAt
             }
 
+            fun sampleMessages(sampleMessages: List<String>) =
+                sampleMessages(JsonField.of(sampleMessages))
+
+            /**
+             * Sets [Builder.sampleMessages] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sampleMessages] with a well-typed `List<String>`
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun sampleMessages(sampleMessages: JsonField<List<String>>) = apply {
+                this.sampleMessages = sampleMessages.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [sampleMessages].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addSampleMessage(sampleMessage: String) = apply {
+                sampleMessages =
+                    (sampleMessages ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("sampleMessages", it).add(sampleMessage)
+                    }
+            }
+
             fun campaignId(campaignId: String) = campaignId(JsonField.of(campaignId))
 
             /**
@@ -2065,32 +2117,6 @@ private constructor(
                 this.messagingUseCaseUs = messagingUseCaseUs
             }
 
-            fun sampleMessages(sampleMessages: List<String>) =
-                sampleMessages(JsonField.of(sampleMessages))
-
-            /**
-             * Sets [Builder.sampleMessages] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sampleMessages] with a well-typed `List<String>`
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
-             */
-            fun sampleMessages(sampleMessages: JsonField<List<String>>) = apply {
-                this.sampleMessages = sampleMessages.map { it.toMutableList() }
-            }
-
-            /**
-             * Adds a single [String] to [sampleMessages].
-             *
-             * @throws IllegalStateException if the field was previously set to a non-list.
-             */
-            fun addSampleMessage(sampleMessage: String) = apply {
-                sampleMessages =
-                    (sampleMessages ?: JsonField.of(mutableListOf())).also {
-                        checkKnown("sampleMessages", it).add(sampleMessage)
-                    }
-            }
-
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -2114,16 +2140,23 @@ private constructor(
              * Returns an immutable instance of [UseCase].
              *
              * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .sampleMessages()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
              */
             fun build(): UseCase =
                 UseCase(
                     id,
                     createdAt,
                     updatedAt,
+                    checkRequired("sampleMessages", sampleMessages).map { it.toImmutable() },
                     campaignId,
                     customerId,
                     messagingUseCaseUs,
-                    (sampleMessages ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -2147,10 +2180,10 @@ private constructor(
             id()
             createdAt()
             updatedAt()
+            sampleMessages()
             campaignId()
             customerId()
             messagingUseCaseUs().ifPresent { it.validate() }
-            sampleMessages()
             validated = true
         }
 
@@ -2173,10 +2206,10 @@ private constructor(
             (if (id.asKnown().isPresent) 1 else 0) +
                 (if (createdAt.asKnown().isPresent) 1 else 0) +
                 (if (updatedAt.asKnown().isPresent) 1 else 0) +
+                (sampleMessages.asKnown().getOrNull()?.size ?: 0) +
                 (if (campaignId.asKnown().isPresent) 1 else 0) +
                 (if (customerId.asKnown().isPresent) 1 else 0) +
-                (messagingUseCaseUs.asKnown().getOrNull()?.validity() ?: 0) +
-                (sampleMessages.asKnown().getOrNull()?.size ?: 0)
+                (messagingUseCaseUs.asKnown().getOrNull()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -2187,10 +2220,10 @@ private constructor(
                 id == other.id &&
                 createdAt == other.createdAt &&
                 updatedAt == other.updatedAt &&
+                sampleMessages == other.sampleMessages &&
                 campaignId == other.campaignId &&
                 customerId == other.customerId &&
                 messagingUseCaseUs == other.messagingUseCaseUs &&
-                sampleMessages == other.sampleMessages &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -2199,10 +2232,10 @@ private constructor(
                 id,
                 createdAt,
                 updatedAt,
+                sampleMessages,
                 campaignId,
                 customerId,
                 messagingUseCaseUs,
-                sampleMessages,
                 additionalProperties,
             )
         }
@@ -2210,7 +2243,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "UseCase{id=$id, createdAt=$createdAt, updatedAt=$updatedAt, campaignId=$campaignId, customerId=$customerId, messagingUseCaseUs=$messagingUseCaseUs, sampleMessages=$sampleMessages, additionalProperties=$additionalProperties}"
+            "UseCase{id=$id, createdAt=$createdAt, updatedAt=$updatedAt, sampleMessages=$sampleMessages, campaignId=$campaignId, customerId=$customerId, messagingUseCaseUs=$messagingUseCaseUs, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -2222,6 +2255,9 @@ private constructor(
             id == other.id &&
             createdAt == other.createdAt &&
             updatedAt == other.updatedAt &&
+            description == other.description &&
+            name == other.name &&
+            type == other.type &&
             billedDate == other.billedDate &&
             brandId == other.brandId &&
             cost == other.cost &&
@@ -2229,13 +2265,11 @@ private constructor(
             customerId == other.customerId &&
             dcaElectionsComplete == other.dcaElectionsComplete &&
             dcaElectionsCompletedAt == other.dcaElectionsCompletedAt &&
-            description == other.description &&
             hasSubmissionTransaction == other.hasSubmissionTransaction &&
             helpKeywords == other.helpKeywords &&
             helpMessage == other.helpMessage &&
             kycSubmissionFormId == other.kycSubmissionFormId &&
             messageFlow == other.messageFlow &&
-            name == other.name &&
             optinKeywords == other.optinKeywords &&
             optinMessage == other.optinMessage &&
             optoutKeywords == other.optoutKeywords &&
@@ -2250,7 +2284,6 @@ private constructor(
             tcrSyncError == other.tcrSyncError &&
             telnyxCampaignId == other.telnyxCampaignId &&
             termsAndConditionsLink == other.termsAndConditionsLink &&
-            type == other.type &&
             upstreamCnpId == other.upstreamCnpId &&
             useCases == other.useCases &&
             additionalProperties == other.additionalProperties
@@ -2261,6 +2294,9 @@ private constructor(
             id,
             createdAt,
             updatedAt,
+            description,
+            name,
+            type,
             billedDate,
             brandId,
             cost,
@@ -2268,13 +2304,11 @@ private constructor(
             customerId,
             dcaElectionsComplete,
             dcaElectionsCompletedAt,
-            description,
             hasSubmissionTransaction,
             helpKeywords,
             helpMessage,
             kycSubmissionFormId,
             messageFlow,
-            name,
             optinKeywords,
             optinMessage,
             optoutKeywords,
@@ -2289,7 +2323,6 @@ private constructor(
             tcrSyncError,
             telnyxCampaignId,
             termsAndConditionsLink,
-            type,
             upstreamCnpId,
             useCases,
             additionalProperties,
@@ -2299,5 +2332,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TcrCampaignWithUseCases{id=$id, createdAt=$createdAt, updatedAt=$updatedAt, billedDate=$billedDate, brandId=$brandId, cost=$cost, cspId=$cspId, customerId=$customerId, dcaElectionsComplete=$dcaElectionsComplete, dcaElectionsCompletedAt=$dcaElectionsCompletedAt, description=$description, hasSubmissionTransaction=$hasSubmissionTransaction, helpKeywords=$helpKeywords, helpMessage=$helpMessage, kycSubmissionFormId=$kycSubmissionFormId, messageFlow=$messageFlow, name=$name, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, resellerId=$resellerId, sharingStatus=$sharingStatus, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrCampaignId=$tcrCampaignId, tcrSyncError=$tcrSyncError, telnyxCampaignId=$telnyxCampaignId, termsAndConditionsLink=$termsAndConditionsLink, type=$type, upstreamCnpId=$upstreamCnpId, useCases=$useCases, additionalProperties=$additionalProperties}"
+        "TcrCampaignWithUseCases{id=$id, createdAt=$createdAt, updatedAt=$updatedAt, description=$description, name=$name, type=$type, billedDate=$billedDate, brandId=$brandId, cost=$cost, cspId=$cspId, customerId=$customerId, dcaElectionsComplete=$dcaElectionsComplete, dcaElectionsCompletedAt=$dcaElectionsCompletedAt, hasSubmissionTransaction=$hasSubmissionTransaction, helpKeywords=$helpKeywords, helpMessage=$helpMessage, kycSubmissionFormId=$kycSubmissionFormId, messageFlow=$messageFlow, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, resellerId=$resellerId, sharingStatus=$sharingStatus, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrCampaignId=$tcrCampaignId, tcrSyncError=$tcrSyncError, telnyxCampaignId=$telnyxCampaignId, termsAndConditionsLink=$termsAndConditionsLink, upstreamCnpId=$upstreamCnpId, useCases=$useCases, additionalProperties=$additionalProperties}"
 }

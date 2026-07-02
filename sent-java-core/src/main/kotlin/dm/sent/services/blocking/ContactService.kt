@@ -32,21 +32,14 @@ interface ContactService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ContactService
 
     /** Creates a new contact by phone number and associates it with the authenticated customer. */
-    fun create(): ApiResponseOfContact = create(ContactCreateParams.none())
-
-    /** @see create */
-    fun create(
-        params: ContactCreateParams = ContactCreateParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfContact
-
-    /** @see create */
-    fun create(params: ContactCreateParams = ContactCreateParams.none()): ApiResponseOfContact =
+    fun create(params: ContactCreateParams): ApiResponseOfContact =
         create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(requestOptions: RequestOptions): ApiResponseOfContact =
-        create(ContactCreateParams.none(), requestOptions)
+    fun create(
+        params: ContactCreateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ApiResponseOfContact
 
     /**
      * Retrieves a specific contact by their unique identifier. Returns detailed contact information
@@ -159,25 +152,15 @@ interface ContactService {
          * [ContactService.create].
          */
         @MustBeClosed
-        fun create(): HttpResponseFor<ApiResponseOfContact> = create(ContactCreateParams.none())
+        fun create(params: ContactCreateParams): HttpResponseFor<ApiResponseOfContact> =
+            create(params, RequestOptions.none())
 
         /** @see create */
         @MustBeClosed
         fun create(
-            params: ContactCreateParams = ContactCreateParams.none(),
+            params: ContactCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<ApiResponseOfContact>
-
-        /** @see create */
-        @MustBeClosed
-        fun create(
-            params: ContactCreateParams = ContactCreateParams.none()
-        ): HttpResponseFor<ApiResponseOfContact> = create(params, RequestOptions.none())
-
-        /** @see create */
-        @MustBeClosed
-        fun create(requestOptions: RequestOptions): HttpResponseFor<ApiResponseOfContact> =
-            create(ContactCreateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /v3/contacts/{id}`, but is otherwise the same as

@@ -11,6 +11,7 @@ import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.core.Params
+import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentInvalidDataException
@@ -46,10 +47,10 @@ private constructor(
     /**
      * Phone number of the contact to create
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun phoneNumber(): Optional<String> = body.phoneNumber()
+    fun phoneNumber(): String = body.phoneNumber()
 
     /**
      * Returns the raw JSON value of [sandbox].
@@ -77,9 +78,14 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): ContactCreateParams = builder().build()
-
-        /** Returns a mutable builder for constructing an instance of [ContactCreateParams]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [ContactCreateParams].
+         *
+         * The following fields are required:
+         * ```java
+         * .phoneNumber()
+         * ```
+         */
         @JvmStatic fun builder() = Builder()
     }
 
@@ -269,6 +275,13 @@ private constructor(
          * Returns an immutable instance of [ContactCreateParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .phoneNumber()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): ContactCreateParams =
             ContactCreateParams(
@@ -325,10 +338,10 @@ private constructor(
         /**
          * Phone number of the contact to create
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun phoneNumber(): Optional<String> = phoneNumber.getOptional("phone_number")
+        fun phoneNumber(): String = phoneNumber.getRequired("phone_number")
 
         /**
          * Returns the raw JSON value of [sandbox].
@@ -360,7 +373,14 @@ private constructor(
 
         companion object {
 
-            /** Returns a mutable builder for constructing an instance of [Body]. */
+            /**
+             * Returns a mutable builder for constructing an instance of [Body].
+             *
+             * The following fields are required:
+             * ```java
+             * .phoneNumber()
+             * ```
+             */
             @JvmStatic fun builder() = Builder()
         }
 
@@ -368,7 +388,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
-            private var phoneNumber: JsonField<String> = JsonMissing.of()
+            private var phoneNumber: JsonField<String>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -430,8 +450,20 @@ private constructor(
              * Returns an immutable instance of [Body].
              *
              * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .phoneNumber()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
              */
-            fun build(): Body = Body(sandbox, phoneNumber, additionalProperties.toMutableMap())
+            fun build(): Body =
+                Body(
+                    sandbox,
+                    checkRequired("phoneNumber", phoneNumber),
+                    additionalProperties.toMutableMap(),
+                )
         }
 
         private var validated: Boolean = false
