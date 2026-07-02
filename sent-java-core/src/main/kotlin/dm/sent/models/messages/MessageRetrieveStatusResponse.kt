@@ -11,6 +11,7 @@ import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
+import dm.sent.core.checkRequired
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import dm.sent.models.webhooks.ApiMeta
@@ -1052,52 +1053,44 @@ private constructor(
         class Event
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
-            private val description: JsonField<String>,
             private val status: JsonField<String>,
             private val timestamp: JsonField<OffsetDateTime>,
+            private val description: JsonField<String>,
             private val additionalProperties: MutableMap<String, JsonValue>,
         ) {
 
             @JsonCreator
             private constructor(
-                @JsonProperty("description")
-                @ExcludeMissing
-                description: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("status")
                 @ExcludeMissing
                 status: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("timestamp")
                 @ExcludeMissing
                 timestamp: JsonField<OffsetDateTime> = JsonMissing.of(),
-            ) : this(description, status, timestamp, mutableMapOf())
+                @JsonProperty("description")
+                @ExcludeMissing
+                description: JsonField<String> = JsonMissing.of(),
+            ) : this(status, timestamp, description, mutableMapOf())
+
+            /**
+             * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun status(): String = status.getRequired("status")
+
+            /**
+             * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun timestamp(): OffsetDateTime = timestamp.getRequired("timestamp")
 
             /**
              * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
              */
             fun description(): Optional<String> = description.getOptional("description")
-
-            /**
-             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
-             */
-            fun status(): Optional<String> = status.getOptional("status")
-
-            /**
-             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
-             */
-            fun timestamp(): Optional<OffsetDateTime> = timestamp.getOptional("timestamp")
-
-            /**
-             * Returns the raw JSON value of [description].
-             *
-             * Unlike [description], this method doesn't throw if the JSON field has an unexpected
-             * type.
-             */
-            @JsonProperty("description")
-            @ExcludeMissing
-            fun _description(): JsonField<String> = description
 
             /**
              * Returns the raw JSON value of [status].
@@ -1116,6 +1109,16 @@ private constructor(
             @ExcludeMissing
             fun _timestamp(): JsonField<OffsetDateTime> = timestamp
 
+            /**
+             * Returns the raw JSON value of [description].
+             *
+             * Unlike [description], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("description")
+            @ExcludeMissing
+            fun _description(): JsonField<String> = description
+
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
                 additionalProperties.put(key, value)
@@ -1130,42 +1133,32 @@ private constructor(
 
             companion object {
 
-                /** Returns a mutable builder for constructing an instance of [Event]. */
+                /**
+                 * Returns a mutable builder for constructing an instance of [Event].
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .status()
+                 * .timestamp()
+                 * ```
+                 */
                 @JvmStatic fun builder() = Builder()
             }
 
             /** A builder for [Event]. */
             class Builder internal constructor() {
 
+                private var status: JsonField<String>? = null
+                private var timestamp: JsonField<OffsetDateTime>? = null
                 private var description: JsonField<String> = JsonMissing.of()
-                private var status: JsonField<String> = JsonMissing.of()
-                private var timestamp: JsonField<OffsetDateTime> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                 @JvmSynthetic
                 internal fun from(event: Event) = apply {
-                    description = event.description
                     status = event.status
                     timestamp = event.timestamp
+                    description = event.description
                     additionalProperties = event.additionalProperties.toMutableMap()
-                }
-
-                fun description(description: String?) =
-                    description(JsonField.ofNullable(description))
-
-                /** Alias for calling [Builder.description] with `description.orElse(null)`. */
-                fun description(description: Optional<String>) =
-                    description(description.getOrNull())
-
-                /**
-                 * Sets [Builder.description] to an arbitrary JSON value.
-                 *
-                 * You should usually call [Builder.description] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
-                 */
-                fun description(description: JsonField<String>) = apply {
-                    this.description = description
                 }
 
                 fun status(status: String) = status(JsonField.of(status))
@@ -1190,6 +1183,24 @@ private constructor(
                  */
                 fun timestamp(timestamp: JsonField<OffsetDateTime>) = apply {
                     this.timestamp = timestamp
+                }
+
+                fun description(description: String?) =
+                    description(JsonField.ofNullable(description))
+
+                /** Alias for calling [Builder.description] with `description.orElse(null)`. */
+                fun description(description: Optional<String>) =
+                    description(description.getOrNull())
+
+                /**
+                 * Sets [Builder.description] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.description] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun description(description: JsonField<String>) = apply {
+                    this.description = description
                 }
 
                 fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
@@ -1218,9 +1229,22 @@ private constructor(
                  * Returns an immutable instance of [Event].
                  *
                  * Further updates to this [Builder] will not mutate the returned instance.
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .status()
+                 * .timestamp()
+                 * ```
+                 *
+                 * @throws IllegalStateException if any required field is unset.
                  */
                 fun build(): Event =
-                    Event(description, status, timestamp, additionalProperties.toMutableMap())
+                    Event(
+                        checkRequired("status", status),
+                        checkRequired("timestamp", timestamp),
+                        description,
+                        additionalProperties.toMutableMap(),
+                    )
             }
 
             private var validated: Boolean = false
@@ -1240,9 +1264,9 @@ private constructor(
                     return@apply
                 }
 
-                description()
                 status()
                 timestamp()
+                description()
                 validated = true
             }
 
@@ -1262,9 +1286,9 @@ private constructor(
              */
             @JvmSynthetic
             internal fun validity(): Int =
-                (if (description.asKnown().isPresent) 1 else 0) +
-                    (if (status.asKnown().isPresent) 1 else 0) +
-                    (if (timestamp.asKnown().isPresent) 1 else 0)
+                (if (status.asKnown().isPresent) 1 else 0) +
+                    (if (timestamp.asKnown().isPresent) 1 else 0) +
+                    (if (description.asKnown().isPresent) 1 else 0)
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) {
@@ -1272,20 +1296,20 @@ private constructor(
                 }
 
                 return other is Event &&
-                    description == other.description &&
                     status == other.status &&
                     timestamp == other.timestamp &&
+                    description == other.description &&
                     additionalProperties == other.additionalProperties
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(description, status, timestamp, additionalProperties)
+                Objects.hash(status, timestamp, description, additionalProperties)
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Event{description=$description, status=$status, timestamp=$timestamp, additionalProperties=$additionalProperties}"
+                "Event{status=$status, timestamp=$timestamp, description=$description, additionalProperties=$additionalProperties}"
         }
 
         /**
