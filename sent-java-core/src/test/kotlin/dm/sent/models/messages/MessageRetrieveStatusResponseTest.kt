@@ -28,9 +28,9 @@ internal class MessageRetrieveStatusResponseTest {
                         .direction("direction")
                         .addEvent(
                             MessageRetrieveStatusResponse.Data.Event.builder()
-                                .description("description")
                                 .status("status")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .description("description")
                                 .build()
                         )
                         .messageBody(
@@ -92,9 +92,9 @@ internal class MessageRetrieveStatusResponseTest {
                     .direction("direction")
                     .addEvent(
                         MessageRetrieveStatusResponse.Data.Event.builder()
-                            .description("description")
                             .status("status")
                             .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .description("description")
                             .build()
                     )
                     .messageBody(
@@ -162,9 +162,9 @@ internal class MessageRetrieveStatusResponseTest {
                         .direction("direction")
                         .addEvent(
                             MessageRetrieveStatusResponse.Data.Event.builder()
-                                .description("description")
                                 .status("status")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .description("description")
                                 .build()
                         )
                         .messageBody(

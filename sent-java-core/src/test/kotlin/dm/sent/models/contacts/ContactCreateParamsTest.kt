@@ -41,7 +41,7 @@ internal class ContactCreateParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = ContactCreateParams.builder().build()
+        val params = ContactCreateParams.builder().phoneNumber("+1234567890").build()
 
         val headers = params._headers()
 
@@ -61,13 +61,15 @@ internal class ContactCreateParamsTest {
         val body = params._body()
 
         assertThat(body.sandbox()).contains(false)
-        assertThat(body.phoneNumber()).contains("+1234567890")
+        assertThat(body.phoneNumber()).isEqualTo("+1234567890")
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = ContactCreateParams.builder().build()
+        val params = ContactCreateParams.builder().phoneNumber("+1234567890").build()
 
         val body = params._body()
+
+        assertThat(body.phoneNumber()).isEqualTo("+1234567890")
     }
 }

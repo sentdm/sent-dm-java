@@ -32,22 +32,14 @@ interface ContactServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ContactServiceAsync
 
     /** Creates a new contact by phone number and associates it with the authenticated customer. */
-    fun create(): CompletableFuture<ApiResponseOfContact> = create(ContactCreateParams.none())
+    fun create(params: ContactCreateParams): CompletableFuture<ApiResponseOfContact> =
+        create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
-        params: ContactCreateParams = ContactCreateParams.none(),
+        params: ContactCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ApiResponseOfContact>
-
-    /** @see create */
-    fun create(
-        params: ContactCreateParams = ContactCreateParams.none()
-    ): CompletableFuture<ApiResponseOfContact> = create(params, RequestOptions.none())
-
-    /** @see create */
-    fun create(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfContact> =
-        create(ContactCreateParams.none(), requestOptions)
 
     /**
      * Retrieves a specific contact by their unique identifier. Returns detailed contact information
@@ -179,26 +171,16 @@ interface ContactServiceAsync {
          * Returns a raw HTTP response for `post /v3/contacts`, but is otherwise the same as
          * [ContactServiceAsync.create].
          */
-        fun create(): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
-            create(ContactCreateParams.none())
-
-        /** @see create */
         fun create(
-            params: ContactCreateParams = ContactCreateParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>>
-
-        /** @see create */
-        fun create(
-            params: ContactCreateParams = ContactCreateParams.none()
+            params: ContactCreateParams
         ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
-            requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>> =
-            create(ContactCreateParams.none(), requestOptions)
+            params: ContactCreateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContact>>
 
         /**
          * Returns a raw HTTP response for `get /v3/contacts/{id}`, but is otherwise the same as
