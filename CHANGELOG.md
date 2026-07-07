@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.30.0](https://github.com/sentdm/sent-dm-java/compare/v0.29.0...v0.30.0) (2026-07-07)
+
+
+### Features
+
+* enable release-please releases and back-sync trigger ([f3cfa9b](https://github.com/sentdm/sent-dm-java/commit/f3cfa9b19e7221bbdd4d6bee93545d4e6a555246))
+* initial stlc build ([4928a02](https://github.com/sentdm/sent-dm-java/commit/4928a02f2d91910764c85135c839c6ed6e8a6bc8))
+
+
+### Chores
+
+* add promote, back-sync, and trunk-lock workflows ([1a43fb5](https://github.com/sentdm/sent-dm-java/commit/1a43fb5c306ea1e5e248e9744aa8b351f7cd6dc4))
+* add release back-sync trigger workflow ([9201222](https://github.com/sentdm/sent-dm-java/commit/9201222c885a8495cc13599d7d20b29be15b6d4a))
+
 ## 0.29.0 (2026-07-02)
 
 Full Changelog: [v0.28.0...v0.29.0](https://github.com/sentdm/sent-dm-java/compare/v0.28.0...v0.29.0)
