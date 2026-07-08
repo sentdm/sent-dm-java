@@ -3,7 +3,7 @@
 <!-- x-release-please-start-version -->
 
 [![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.30.0)
-[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.30.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java/0.29.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.30.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java/0.30.0)
 
 <!-- x-release-please-end -->
 
