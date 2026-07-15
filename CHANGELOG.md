@@ -1,0 +1,352 @@
+# Changelog
+
+## [0.30.0](https://github.com/sentdm/sent-dm-java/compare/v0.29.0...v0.30.0) (2026-07-07)
+
+
+### Features
+
+* enable release-please releases and back-sync trigger ([f3cfa9b](https://github.com/sentdm/sent-dm-java/commit/f3cfa9b19e7221bbdd4d6bee93545d4e6a555246))
+* initial stlc build ([4928a02](https://github.com/sentdm/sent-dm-java/commit/4928a02f2d91910764c85135c839c6ed6e8a6bc8))
+
+
+### Chores
+
+* add promote, back-sync, and trunk-lock workflows ([1a43fb5](https://github.com/sentdm/sent-dm-java/commit/1a43fb5c306ea1e5e248e9744aa8b351f7cd6dc4))
+* add release back-sync trigger workflow ([9201222](https://github.com/sentdm/sent-dm-java/commit/9201222c885a8495cc13599d7d20b29be15b6d4a))
+
+## 0.29.0 (2026-07-02)
+
+Full Changelog: [v0.28.0...v0.29.0](https://github.com/sentdm/sent-dm-java/compare/v0.28.0...v0.29.0)
+
+### Features
+
+* **api:** api update ([e478ccb](https://github.com/sentdm/sent-dm-java/commit/e478ccb8a3a5512606b829db48c680bf3861ba91))
+
+## 0.28.0 (2026-06-30)
+
+Full Changelog: [v0.27.0...v0.28.0](https://github.com/sentdm/sent-dm-java/compare/v0.27.0...v0.28.0)
+
+### Features
+
+* **api:** api update ([8482ea3](https://github.com/sentdm/sent-dm-java/commit/8482ea352da3a92a90a6d9ac796070f319040d8a))
+* **api:** api update ([f7449ba](https://github.com/sentdm/sent-dm-java/commit/f7449bab72db6cfaf7fbe6281430cb8dca66000e))
+
+## 0.27.0 (2026-05-21)
+
+Full Changelog: [v0.26.0...v0.27.0](https://github.com/sentdm/sent-dm-java/compare/v0.26.0...v0.27.0)
+
+### Features
+
+* **api:** api update ([4e2a7ae](https://github.com/sentdm/sent-dm-java/commit/4e2a7aec5399ffba8eec8d5faa30ab9a18797384))
+* **api:** api update ([c4248c3](https://github.com/sentdm/sent-dm-java/commit/c4248c360c1941d7aa99b74b8fa76acc94b0dfd9))
+
+## 0.26.0 (2026-05-14)
+
+Full Changelog: [v0.25.1...v0.26.0](https://github.com/sentdm/sent-dm-java/compare/v0.25.1...v0.26.0)
+
+### Features
+
+* **api:** manual updates ([0270977](https://github.com/sentdm/sent-dm-java/commit/027097713351e42882df68366a630956aa2fac17))
+
+## 0.25.1 (2026-05-14)
+
+Full Changelog: [v0.25.0...v0.25.1](https://github.com/sentdm/sent-dm-java/compare/v0.25.0...v0.25.1)
+
+## 0.25.0 (2026-05-14)
+
+Full Changelog: [v0.24.0...v0.25.0](https://github.com/sentdm/sent-dm-java/compare/v0.24.0...v0.25.0)
+
+### Features
+
+* **api:** manual updates ([fe27ab7](https://github.com/sentdm/sent-dm-java/commit/fe27ab79c6c13294c74106f13c4e94575d6247f3))
+
+## 0.24.0 (2026-05-14)
+
+Full Changelog: [v0.23.0...v0.24.0](https://github.com/sentdm/sent-dm-java/compare/v0.23.0...v0.24.0)
+
+### Features
+
+* **api:** api update ([1e13253](https://github.com/sentdm/sent-dm-java/commit/1e132533a48fc9543d85822c8850dee0461d9a97))
+
+## 0.23.0 (2026-05-12)
+
+Full Changelog: [v0.22.0...v0.23.0](https://github.com/sentdm/sent-dm-java/compare/v0.22.0...v0.23.0)
+
+### Features
+
+* **client:** improve logging ([fcbd456](https://github.com/sentdm/sent-dm-java/commit/fcbd4563cbfd02d714a9dfe8fdbf991c4f10161b))
+
+
+### Chores
+
+* redact api-key headers in debug logs ([774bb5b](https://github.com/sentdm/sent-dm-java/commit/774bb5bd688635b3c7cfe52d3eba1457f5748405))
+
+## 0.22.0 (2026-05-06)
+
+Full Changelog: [v0.21.0...v0.22.0](https://github.com/sentdm/sent-dm-java/compare/v0.21.0...v0.22.0)
+
+### Features
+
+* **client:** support proxy authentication ([9aa3cbc](https://github.com/sentdm/sent-dm-java/commit/9aa3cbc4241db013098568f6eb16f60937ec7f75))
+
+## 0.21.0 (2026-05-05)
+
+Full Changelog: [v0.20.0...v0.21.0](https://github.com/sentdm/sent-dm-java/compare/v0.20.0...v0.21.0)
+
+### Features
+
+* **client:** more robust error parsing ([1d58773](https://github.com/sentdm/sent-dm-java/commit/1d5877312d94beebe7a889a8f46416c27d365c1d))
+
+
+### Performance Improvements
+
+* **client:** create one json mapper ([8504a49](https://github.com/sentdm/sent-dm-java/commit/8504a490cf78879086fa62316899d496195d0530))
+
+
+### Chores
+
+* remove duplicated dokka setup ([724ab01](https://github.com/sentdm/sent-dm-java/commit/724ab012a886eb1df086f654427eb284836c6053))
+
+
+### Documentation
+
+* clarify forwards compat behavior ([d15dba2](https://github.com/sentdm/sent-dm-java/commit/d15dba28288befeff7fa60e6cb521d9e7f8cf034))
+
+## 0.20.0 (2026-04-29)
+
+Full Changelog: [v0.19.0...v0.20.0](https://github.com/sentdm/sent-dm-java/compare/v0.19.0...v0.20.0)
+
+### Features
+
+* **api:** api update ([f01e189](https://github.com/sentdm/sent-dm-java/commit/f01e18921b51af138f9d693be11556e885c35e21))
+
+## 0.19.0 (2026-04-29)
+
+Full Changelog: [v0.18.0...v0.19.0](https://github.com/sentdm/sent-dm-java/compare/v0.18.0...v0.19.0)
+
+### Features
+
+* **api:** manual updates ([c43aaa5](https://github.com/sentdm/sent-dm-java/commit/c43aaa53067b91944f03cf5b6310e715c9fd0e92))
+
+## 0.18.0 (2026-04-28)
+
+Full Changelog: [v0.17.0...v0.18.0](https://github.com/sentdm/sent-dm-java/compare/v0.17.0...v0.18.0)
+
+### Features
+
+* support setting headers via env ([f8682eb](https://github.com/sentdm/sent-dm-java/commit/f8682ebe6bcdd605eb10699c5290e63c324f56c9))
+
+## 0.17.0 (2026-04-21)
+
+Full Changelog: [v0.16.0...v0.17.0](https://github.com/sentdm/sent-dm-java/compare/v0.16.0...v0.17.0)
+
+### Features
+
+* **api:** api update ([85ad02d](https://github.com/sentdm/sent-dm-java/commit/85ad02d17534074ca346d47b9e8415f428df505b))
+
+## 0.16.0 (2026-04-20)
+
+Full Changelog: [v0.15.0...v0.16.0](https://github.com/sentdm/sent-dm-java/compare/v0.15.0...v0.16.0)
+
+### Features
+
+* **api:** api update ([59c4e45](https://github.com/sentdm/sent-dm-java/commit/59c4e45772d5f667a6cc0fdeccbda9e5c7e168fa))
+
+## 0.15.0 (2026-04-07)
+
+Full Changelog: [v0.14.0...v0.15.0](https://github.com/sentdm/sent-dm-java/compare/v0.14.0...v0.15.0)
+
+### Features
+
+* **api:** api update ([06eaa70](https://github.com/sentdm/sent-dm-java/commit/06eaa708e268bbd60942f1d455d4a6fe049227eb))
+
+## 0.14.0 (2026-03-31)
+
+Full Changelog: [v0.13.0...v0.14.0](https://github.com/sentdm/sent-dm-java/compare/v0.13.0...v0.14.0)
+
+### Features
+
+* **api:** manual updates ([6ca9165](https://github.com/sentdm/sent-dm-java/commit/6ca91651ff5fcd265924c9651e1503fe21ed72d8))
+
+## 0.13.0 (2026-03-25)
+
+Full Changelog: [v0.12.2...v0.13.0](https://github.com/sentdm/sent-dm-java/compare/v0.12.2...v0.13.0)
+
+### Features
+
+* **api:** api update ([e75c446](https://github.com/sentdm/sent-dm-java/commit/e75c4465f63a039270f69eed29460e4deac4b04f))
+* **api:** api update ([607f6fa](https://github.com/sentdm/sent-dm-java/commit/607f6fa8480594351be371ae9aabb2636758112a))
+
+
+### Chores
+
+* **ci:** skip lint on metadata-only changes ([e7b04a6](https://github.com/sentdm/sent-dm-java/commit/e7b04a6eaa33943a1c2c39a6d6c5a4565848a6a5))
+* **internal:** bump ktfmt ([9d557c3](https://github.com/sentdm/sent-dm-java/commit/9d557c3f51e45eccbdb8b00e1c79603db5ae485f))
+* **internal:** update gitignore ([e59e98c](https://github.com/sentdm/sent-dm-java/commit/e59e98cec473bd6f8d525f80416b41d5cbf19ff6))
+
+## 0.12.2 (2026-03-18)
+
+Full Changelog: [v0.12.1...v0.12.2](https://github.com/sentdm/sent-dm-java/compare/v0.12.1...v0.12.2)
+
+### Bug Fixes
+
+* **client:** allow updating header/query affecting fields in `toBuilder()` ([f3afdff](https://github.com/sentdm/sent-dm-java/commit/f3afdffd2d250e961747ed0f802504b3f60184ce))
+
+
+### Chores
+
+* **internal:** update retry delay tests ([6fab665](https://github.com/sentdm/sent-dm-java/commit/6fab66502dab0aec7c4de51797fc3ab777c8ee35))
+
+## 0.12.1 (2026-03-17)
+
+Full Changelog: [v0.12.0...v0.12.1](https://github.com/sentdm/sent-dm-java/compare/v0.12.0...v0.12.1)
+
+### Chores
+
+* **internal:** tweak CI branches ([6016a44](https://github.com/sentdm/sent-dm-java/commit/6016a44a70710cfce159270684fb982c05f44e1e))
+
+## 0.12.0 (2026-03-16)
+
+Full Changelog: [v0.11.0...v0.12.0](https://github.com/sentdm/sent-dm-java/compare/v0.11.0...v0.12.0)
+
+### Features
+
+* **api:** api update ([6d281bc](https://github.com/sentdm/sent-dm-java/commit/6d281bcffd675f26a2e369a725096fbcf8600bd5))
+
+## 0.11.0 (2026-03-12)
+
+Full Changelog: [v0.10.0...v0.11.0](https://github.com/sentdm/sent-dm-java/compare/v0.10.0...v0.11.0)
+
+### Features
+
+* **api:** manual updates ([912031b](https://github.com/sentdm/sent-dm-java/commit/912031b83eb2747be2c9fd167ebf3858e151f47a))
+
+## 0.10.0 (2026-03-12)
+
+Full Changelog: [v0.9.0...v0.10.0](https://github.com/sentdm/sent-dm-java/compare/v0.9.0...v0.10.0)
+
+### Features
+
+* **api:** api update ([f5b9f5a](https://github.com/sentdm/sent-dm-java/commit/f5b9f5ae383d57eeb86010031c4037152cf40966))
+* **api:** manual updates ([3ee7bbe](https://github.com/sentdm/sent-dm-java/commit/3ee7bbe782d6c22dcd1794f60ab8fe76cb869d2b))
+* **api:** manual updates ([50a6405](https://github.com/sentdm/sent-dm-java/commit/50a6405f8cf6e55df150fb097cb45a13853ce595))
+
+## 0.9.0 (2026-03-11)
+
+Full Changelog: [v0.8.0...v0.9.0](https://github.com/sentdm/sent-dm-java/compare/v0.8.0...v0.9.0)
+
+### Features
+
+* **api:** manual updates ([db1b271](https://github.com/sentdm/sent-dm-java/commit/db1b271ca959c2b07fca2167081b0e096716ddbf))
+
+## 0.8.0 (2026-03-11)
+
+Full Changelog: [v0.7.0...v0.8.0](https://github.com/sentdm/sent-dm-java/compare/v0.7.0...v0.8.0)
+
+### Features
+
+* **api:** manual updates ([d808fc0](https://github.com/sentdm/sent-dm-java/commit/d808fc0e00e15f5c49ea4327b23ce1333ff3455f))
+
+## 0.7.0 (2026-03-11)
+
+Full Changelog: [v0.6.1...v0.7.0](https://github.com/sentdm/sent-dm-java/compare/v0.6.1...v0.7.0)
+
+### Features
+
+* **api:** api update ([f38cad9](https://github.com/sentdm/sent-dm-java/commit/f38cad9c87268ca7d85d4e11a59ebb26782f7e7c))
+
+## 0.6.1 (2026-03-11)
+
+Full Changelog: [v0.6.0...v0.6.1](https://github.com/sentdm/sent-dm-java/compare/v0.6.0...v0.6.1)
+
+### Bug Fixes
+
+* **client:** incorrect `Retry-After` parsing ([6d4e87d](https://github.com/sentdm/sent-dm-java/commit/6d4e87dae24fe9c5775022473d10d1bf67feb3fd))
+* **client:** method name conflict ([1a6889d](https://github.com/sentdm/sent-dm-java/commit/1a6889dbe4a2b34055b50cec925f452f2c2695ac))
+
+
+### Chores
+
+* **ci:** skip uploading artifacts on stainless-internal branches ([888ded0](https://github.com/sentdm/sent-dm-java/commit/888ded06e1c2a5ffc7e7dc93055ec0dc92953a07))
+* **internal:** bump palantir-java-format ([cbd4f1b](https://github.com/sentdm/sent-dm-java/commit/cbd4f1bacdc8260d342b842ff18b830dd75d11b8))
+* **internal:** codegen related update ([0076455](https://github.com/sentdm/sent-dm-java/commit/0076455451ea946dfdfb2be1ed3e57275af0d13e))
+* **internal:** codegen related update ([3a09c77](https://github.com/sentdm/sent-dm-java/commit/3a09c773610e5227b9131c2941e049e3832b6d1a))
+* **internal:** expand imports ([47e0e22](https://github.com/sentdm/sent-dm-java/commit/47e0e221dc542bd54edfffdccdec5f55db08f352))
+
+## 0.6.0 (2026-02-18)
+
+Full Changelog: [v0.5.1...v0.6.0](https://github.com/sentdm/sent-dm-java/compare/v0.5.1...v0.6.0)
+
+### Features
+
+* **api:** manual updates ([e138a80](https://github.com/sentdm/sent-dm-java/commit/e138a800a279c1c82a83dfd394484b9ee9926f1f))
+* **api:** manual updates ([48a88d8](https://github.com/sentdm/sent-dm-java/commit/48a88d8032b418a6a4c0ddbf909cb777abc40bdb))
+* **api:** manual updates ([d6654c3](https://github.com/sentdm/sent-dm-java/commit/d6654c39e85f35f2a37a4017141135d6749da835))
+
+## 0.5.1 (2026-02-18)
+
+Full Changelog: [v0.5.0...v0.5.1](https://github.com/sentdm/sent-dm-java/compare/v0.5.0...v0.5.1)
+
+### Chores
+
+* **internal:** update `TestServerExtension` comment ([ebdbdfc](https://github.com/sentdm/sent-dm-java/commit/ebdbdfc15f9900261bec381d1bcd52809e56b686))
+
+## 0.5.0 (2026-02-16)
+
+Full Changelog: [v0.4.0...v0.5.0](https://github.com/sentdm/sent-dm-java/compare/v0.4.0...v0.5.0)
+
+### Features
+
+* **api:** manual updates ([2f67caf](https://github.com/sentdm/sent-dm-java/commit/2f67cafb6c58d04b92da226d5d39e8063c4a14c2))
+
+## 0.4.0 (2026-02-10)
+
+Full Changelog: [v0.3.1...v0.4.0](https://github.com/sentdm/sent-dm-java/compare/v0.3.1...v0.4.0)
+
+### Features
+
+* **api:** api update ([49c75f5](https://github.com/sentdm/sent-dm-java/commit/49c75f5106f5b85cd66a6cf576f25d7460a7afa1))
+
+
+### Chores
+
+* **internal:** upgrade AssertJ ([8b5c109](https://github.com/sentdm/sent-dm-java/commit/8b5c109da6252630a58cb670fa4176d4964b800a))
+
+## 0.3.1 (2026-01-31)
+
+Full Changelog: [v0.3.0...v0.3.1](https://github.com/sentdm/sent-dm-java/compare/v0.3.0...v0.3.1)
+
+### Chores
+
+* **internal:** allow passing args to `./scripts/test` ([fb18602](https://github.com/sentdm/sent-dm-java/commit/fb18602f34404e6daabbaf88b9f26cb07bc476d4))
+
+## 0.3.0 (2026-01-28)
+
+Full Changelog: [v0.2.0...v0.3.0](https://github.com/sentdm/sent-dm-java/compare/v0.2.0...v0.3.0)
+
+### Features
+
+* **api:** manual updates ([c4718eb](https://github.com/sentdm/sent-dm-java/commit/c4718ebb4f201a943880a35411d5290044d36546))
+
+## 0.2.0 (2026-01-28)
+
+Full Changelog: [v0.1.0...v0.2.0](https://github.com/sentdm/sent-dm-java/compare/v0.1.0...v0.2.0)
+
+### Features
+
+* **api:** manual updates ([bd0c8db](https://github.com/sentdm/sent-dm-java/commit/bd0c8db8240674978b8000082f959884a9431dc9))
+
+## 0.1.0 (2026-01-28)
+
+Full Changelog: [v0.0.1...v0.1.0](https://github.com/sentdm/sent-dm-java/compare/v0.0.1...v0.1.0)
+
+### Features
+
+* **api:** manual updates ([92ca46b](https://github.com/sentdm/sent-dm-java/commit/92ca46b03cf102d6d71dd4234bc05655948c6803))
+* **api:** manual updates ([4235b6c](https://github.com/sentdm/sent-dm-java/commit/4235b6c5bdf095b594815a5ac11f20512c771f97))
+
+
+### Chores
+
+* sync repo ([5d4b5c0](https://github.com/sentdm/sent-dm-java/commit/5d4b5c0f58985b60a0d88de74ce7b30faffbf1b2))
+* update SDK settings ([cd207a0](https://github.com/sentdm/sent-dm-java/commit/cd207a00a28906623c0d9be1d48bcb1c4f23d6d1))
