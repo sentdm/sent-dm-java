@@ -22,7 +22,7 @@ internal class CampaignServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val campaignService = client.profiles().campaigns()
 
-        val apiResponseOfTcrCampaignWithUseCases =
+        val campaign =
             campaignService.create(
                 CampaignCreateParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
@@ -68,7 +68,7 @@ internal class CampaignServiceTest {
                     .build()
             )
 
-        apiResponseOfTcrCampaignWithUseCases.validate()
+        campaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -77,7 +77,7 @@ internal class CampaignServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val campaignService = client.profiles().campaigns()
 
-        val apiResponseOfTcrCampaignWithUseCases =
+        val campaign =
             campaignService.update(
                 CampaignUpdateParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
@@ -118,7 +118,7 @@ internal class CampaignServiceTest {
                     .build()
             )
 
-        apiResponseOfTcrCampaignWithUseCases.validate()
+        campaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")
