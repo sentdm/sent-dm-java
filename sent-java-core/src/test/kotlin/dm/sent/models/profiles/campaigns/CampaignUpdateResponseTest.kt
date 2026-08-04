@@ -57,6 +57,7 @@ internal class CampaignUpdateResponseTest {
                                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .build()
                         )
+                        .volume("volume")
                         .build()
                 )
                 .error(
@@ -122,6 +123,7 @@ internal class CampaignUpdateResponseTest {
                             .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .build()
                     )
+                    .volume("volume")
                     .build()
             )
         assertThat(campaignUpdateResponse.error())
@@ -193,6 +195,7 @@ internal class CampaignUpdateResponseTest {
                                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .build()
                         )
+                        .volume("volume")
                         .build()
                 )
                 .error(

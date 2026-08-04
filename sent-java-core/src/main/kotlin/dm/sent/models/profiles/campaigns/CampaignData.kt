@@ -39,6 +39,7 @@ private constructor(
     private val optoutMessage: JsonField<String>,
     private val privacyPolicyLink: JsonField<String>,
     private val termsAndConditionsLink: JsonField<String>,
+    private val volume: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -85,6 +86,7 @@ private constructor(
         @JsonProperty("termsAndConditionsLink")
         @ExcludeMissing
         termsAndConditionsLink: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("volume") @ExcludeMissing volume: JsonField<String> = JsonMissing.of(),
     ) : this(
         description,
         name,
@@ -99,6 +101,7 @@ private constructor(
         optoutMessage,
         privacyPolicyLink,
         termsAndConditionsLink,
+        volume,
         mutableMapOf(),
     )
 
@@ -208,6 +211,15 @@ private constructor(
      */
     fun termsAndConditionsLink(): Optional<String> =
         termsAndConditionsLink.getOptional("termsAndConditionsLink")
+
+    /**
+     * Expected messaging volume for this campaign. Numeric string (e.g. "1999", "5000"); values
+     * below 2000 bill at the low-volume tier.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun volume(): Optional<String> = volume.getOptional("volume")
 
     /**
      * Returns the raw JSON value of [description].
@@ -321,6 +333,13 @@ private constructor(
     @ExcludeMissing
     fun _termsAndConditionsLink(): JsonField<String> = termsAndConditionsLink
 
+    /**
+     * Returns the raw JSON value of [volume].
+     *
+     * Unlike [volume], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("volume") @ExcludeMissing fun _volume(): JsonField<String> = volume
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -371,6 +390,7 @@ private constructor(
         private var optoutMessage: JsonField<String> = JsonMissing.of()
         private var privacyPolicyLink: JsonField<String> = JsonMissing.of()
         private var termsAndConditionsLink: JsonField<String> = JsonMissing.of()
+        private var volume: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -388,6 +408,7 @@ private constructor(
             optoutMessage = campaignData.optoutMessage
             privacyPolicyLink = campaignData.privacyPolicyLink
             termsAndConditionsLink = campaignData.termsAndConditionsLink
+            volume = campaignData.volume
             additionalProperties = campaignData.additionalProperties.toMutableMap()
         }
 
@@ -629,6 +650,23 @@ private constructor(
             this.termsAndConditionsLink = termsAndConditionsLink
         }
 
+        /**
+         * Expected messaging volume for this campaign. Numeric string (e.g. "1999", "5000"); values
+         * below 2000 bill at the low-volume tier.
+         */
+        fun volume(volume: String?) = volume(JsonField.ofNullable(volume))
+
+        /** Alias for calling [Builder.volume] with `volume.orElse(null)`. */
+        fun volume(volume: Optional<String>) = volume(volume.getOrNull())
+
+        /**
+         * Sets [Builder.volume] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.volume] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun volume(volume: JsonField<String>) = apply { this.volume = volume }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -678,6 +716,7 @@ private constructor(
                 optoutMessage,
                 privacyPolicyLink,
                 termsAndConditionsLink,
+                volume,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -710,6 +749,7 @@ private constructor(
         optoutMessage()
         privacyPolicyLink()
         termsAndConditionsLink()
+        volume()
         validated = true
     }
 
@@ -740,7 +780,8 @@ private constructor(
             (if (optoutKeywords.asKnown().isPresent) 1 else 0) +
             (if (optoutMessage.asKnown().isPresent) 1 else 0) +
             (if (privacyPolicyLink.asKnown().isPresent) 1 else 0) +
-            (if (termsAndConditionsLink.asKnown().isPresent) 1 else 0)
+            (if (termsAndConditionsLink.asKnown().isPresent) 1 else 0) +
+            (if (volume.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -761,6 +802,7 @@ private constructor(
             optoutMessage == other.optoutMessage &&
             privacyPolicyLink == other.privacyPolicyLink &&
             termsAndConditionsLink == other.termsAndConditionsLink &&
+            volume == other.volume &&
             additionalProperties == other.additionalProperties
     }
 
@@ -779,6 +821,7 @@ private constructor(
             optoutMessage,
             privacyPolicyLink,
             termsAndConditionsLink,
+            volume,
             additionalProperties,
         )
     }
@@ -786,5 +829,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CampaignData{description=$description, name=$name, type=$type, useCases=$useCases, helpKeywords=$helpKeywords, helpMessage=$helpMessage, messageFlow=$messageFlow, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, termsAndConditionsLink=$termsAndConditionsLink, additionalProperties=$additionalProperties}"
+        "CampaignData{description=$description, name=$name, type=$type, useCases=$useCases, helpKeywords=$helpKeywords, helpMessage=$helpMessage, messageFlow=$messageFlow, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, termsAndConditionsLink=$termsAndConditionsLink, volume=$volume, additionalProperties=$additionalProperties}"
 }

@@ -42,14 +42,7 @@ private constructor(
     ) : this(data, error, meta, success, mutableMapOf())
 
     /**
-     * Customer-facing campaign representation for the public v3 API. Deliberately does not inherit
-     * TcrCampaign. The service-layer type TcrCampaignWithUseCasesResponse extends the database
-     * entity, so returning it directly from a public endpoint serialized every column, including
-     * supplier-specific and internal provisioning identifiers. This DTO is an explicit allowlist: a
-     * new column on the entity is invisible to customers until it is added here on purpose.
-     * Intentionally omitted: telnyxCampaignId (supplier-specific), plus cspId, resellerId,
-     * upstreamCnpId, kycSubmissionFormId and sharingStatus (internal provisioning and CSP-to-DCA
-     * plumbing). All six remain available on the admin API.
+     * A 10DLC campaign registered for a brand.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -144,16 +137,7 @@ private constructor(
             additionalProperties = campaignUpdateResponse.additionalProperties.toMutableMap()
         }
 
-        /**
-         * Customer-facing campaign representation for the public v3 API. Deliberately does not
-         * inherit TcrCampaign. The service-layer type TcrCampaignWithUseCasesResponse extends the
-         * database entity, so returning it directly from a public endpoint serialized every column,
-         * including supplier-specific and internal provisioning identifiers. This DTO is an
-         * explicit allowlist: a new column on the entity is invisible to customers until it is
-         * added here on purpose. Intentionally omitted: telnyxCampaignId (supplier-specific), plus
-         * cspId, resellerId, upstreamCnpId, kycSubmissionFormId and sharingStatus (internal
-         * provisioning and CSP-to-DCA plumbing). All six remain available on the admin API.
-         */
+        /** A 10DLC campaign registered for a brand. */
         fun data(data: Data?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
@@ -274,16 +258,7 @@ private constructor(
             (meta.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
 
-    /**
-     * Customer-facing campaign representation for the public v3 API. Deliberately does not inherit
-     * TcrCampaign. The service-layer type TcrCampaignWithUseCasesResponse extends the database
-     * entity, so returning it directly from a public endpoint serialized every column, including
-     * supplier-specific and internal provisioning identifiers. This DTO is an explicit allowlist: a
-     * new column on the entity is invisible to customers until it is added here on purpose.
-     * Intentionally omitted: telnyxCampaignId (supplier-specific), plus cspId, resellerId,
-     * upstreamCnpId, kycSubmissionFormId and sharingStatus (internal provisioning and CSP-to-DCA
-     * plumbing). All six remain available on the admin API.
-     */
+    /** A 10DLC campaign registered for a brand. */
     class Data
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -315,6 +290,7 @@ private constructor(
         private val type: JsonField<String>,
         private val updatedAt: JsonField<OffsetDateTime>,
         private val useCases: JsonField<List<UseCase>>,
+        private val volume: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -392,6 +368,7 @@ private constructor(
             @JsonProperty("useCases")
             @ExcludeMissing
             useCases: JsonField<List<UseCase>> = JsonMissing.of(),
+            @JsonProperty("volume") @ExcludeMissing volume: JsonField<String> = JsonMissing.of(),
         ) : this(
             id,
             billedDate,
@@ -421,6 +398,7 @@ private constructor(
             type,
             updatedAt,
             useCases,
+            volume,
             mutableMapOf(),
         )
 
@@ -607,6 +585,16 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun useCases(): Optional<List<UseCase>> = useCases.getOptional("useCases")
+
+        /**
+         * Expected messaging volume for this campaign — customer-supplied on create/update, and the
+         * input to both the TCR usecase classification (LOW_VOLUME vs MIXED/specific) and the
+         * campaign fee tier. Surfaced so customers can read back the value they set.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun volume(): Optional<String> = volume.getOptional("volume")
 
         /**
          * Returns the raw JSON value of [id].
@@ -861,6 +849,13 @@ private constructor(
         @ExcludeMissing
         fun _useCases(): JsonField<List<UseCase>> = useCases
 
+        /**
+         * Returns the raw JSON value of [volume].
+         *
+         * Unlike [volume], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("volume") @ExcludeMissing fun _volume(): JsonField<String> = volume
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -910,6 +905,7 @@ private constructor(
             private var type: JsonField<String> = JsonMissing.of()
             private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var useCases: JsonField<MutableList<UseCase>>? = null
+            private var volume: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -942,6 +938,7 @@ private constructor(
                 type = data.type
                 updatedAt = data.updatedAt
                 useCases = data.useCases.map { it.toMutableList() }
+                volume = data.volume
                 additionalProperties = data.additionalProperties.toMutableMap()
             }
 
@@ -1427,6 +1424,25 @@ private constructor(
                     }
             }
 
+            /**
+             * Expected messaging volume for this campaign — customer-supplied on create/update, and
+             * the input to both the TCR usecase classification (LOW_VOLUME vs MIXED/specific) and
+             * the campaign fee tier. Surfaced so customers can read back the value they set.
+             */
+            fun volume(volume: String?) = volume(JsonField.ofNullable(volume))
+
+            /** Alias for calling [Builder.volume] with `volume.orElse(null)`. */
+            fun volume(volume: Optional<String>) = volume(volume.getOrNull())
+
+            /**
+             * Sets [Builder.volume] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.volume] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun volume(volume: JsonField<String>) = apply { this.volume = volume }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -1481,6 +1497,7 @@ private constructor(
                     type,
                     updatedAt,
                     (useCases ?: JsonMissing.of()).map { it.toImmutable() },
+                    volume,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -1529,6 +1546,7 @@ private constructor(
             type()
             updatedAt()
             useCases().ifPresent { it.forEach { it.validate() } }
+            volume()
             validated = true
         }
 
@@ -1575,7 +1593,8 @@ private constructor(
                 (if (termsAndConditionsLink.asKnown().isPresent) 1 else 0) +
                 (if (type.asKnown().isPresent) 1 else 0) +
                 (if (updatedAt.asKnown().isPresent) 1 else 0) +
-                (useCases.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+                (useCases.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                (if (volume.asKnown().isPresent) 1 else 0)
 
         class Status @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -2200,6 +2219,7 @@ private constructor(
                 type == other.type &&
                 updatedAt == other.updatedAt &&
                 useCases == other.useCases &&
+                volume == other.volume &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -2233,6 +2253,7 @@ private constructor(
                 type,
                 updatedAt,
                 useCases,
+                volume,
                 additionalProperties,
             )
         }
@@ -2240,7 +2261,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{id=$id, billedDate=$billedDate, brandId=$brandId, cost=$cost, createdAt=$createdAt, customerId=$customerId, dcaElectionsComplete=$dcaElectionsComplete, dcaElectionsCompletedAt=$dcaElectionsCompletedAt, description=$description, hasSubmissionTransaction=$hasSubmissionTransaction, helpKeywords=$helpKeywords, helpMessage=$helpMessage, messageFlow=$messageFlow, name=$name, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrCampaignId=$tcrCampaignId, tcrSyncError=$tcrSyncError, termsAndConditionsLink=$termsAndConditionsLink, type=$type, updatedAt=$updatedAt, useCases=$useCases, additionalProperties=$additionalProperties}"
+            "Data{id=$id, billedDate=$billedDate, brandId=$brandId, cost=$cost, createdAt=$createdAt, customerId=$customerId, dcaElectionsComplete=$dcaElectionsComplete, dcaElectionsCompletedAt=$dcaElectionsCompletedAt, description=$description, hasSubmissionTransaction=$hasSubmissionTransaction, helpKeywords=$helpKeywords, helpMessage=$helpMessage, messageFlow=$messageFlow, name=$name, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrCampaignId=$tcrCampaignId, tcrSyncError=$tcrSyncError, termsAndConditionsLink=$termsAndConditionsLink, type=$type, updatedAt=$updatedAt, useCases=$useCases, volume=$volume, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
