@@ -22,7 +22,7 @@ internal class CampaignServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.profiles().campaigns()
 
-        val apiResponseOfTcrCampaignWithUseCasesFuture =
+        val campaignFuture =
             campaignServiceAsync.create(
                 CampaignCreateParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
@@ -63,13 +63,14 @@ internal class CampaignServiceAsyncTest {
                             )
                             .privacyPolicyLink("https://acmecorp.com/privacy")
                             .termsAndConditionsLink("https://acmecorp.com/terms")
+                            .volume(null)
                             .build()
                     )
                     .build()
             )
 
-        val apiResponseOfTcrCampaignWithUseCases = apiResponseOfTcrCampaignWithUseCasesFuture.get()
-        apiResponseOfTcrCampaignWithUseCases.validate()
+        val campaign = campaignFuture.get()
+        campaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -78,7 +79,7 @@ internal class CampaignServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.profiles().campaigns()
 
-        val apiResponseOfTcrCampaignWithUseCasesFuture =
+        val campaignFuture =
             campaignServiceAsync.update(
                 CampaignUpdateParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
@@ -114,13 +115,14 @@ internal class CampaignServiceAsyncTest {
                             .optoutMessage(null)
                             .privacyPolicyLink(null)
                             .termsAndConditionsLink(null)
+                            .volume(null)
                             .build()
                     )
                     .build()
             )
 
-        val apiResponseOfTcrCampaignWithUseCases = apiResponseOfTcrCampaignWithUseCasesFuture.get()
-        apiResponseOfTcrCampaignWithUseCases.validate()
+        val campaign = campaignFuture.get()
+        campaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")
