@@ -51,7 +51,6 @@ internal class ProfileDetailTest {
                                 .addDestinationCountry(
                                     DestinationCountry.builder().id("id").isMain(true).build()
                                 )
-                                .expectedMessagingVolume("expected_messaging_volume")
                                 .isTcrApplication(true)
                                 .notes("notes")
                                 .phoneNumberPrefix("phone_number_prefix")
@@ -140,7 +139,6 @@ internal class ProfileDetailTest {
                             .addDestinationCountry(
                                 DestinationCountry.builder().id("id").isMain(true).build()
                             )
-                            .expectedMessagingVolume("expected_messaging_volume")
                             .isTcrApplication(true)
                             .notes("notes")
                             .phoneNumberPrefix("phone_number_prefix")
@@ -236,7 +234,6 @@ internal class ProfileDetailTest {
                                 .addDestinationCountry(
                                     DestinationCountry.builder().id("id").isMain(true).build()
                                 )
-                                .expectedMessagingVolume("expected_messaging_volume")
                                 .isTcrApplication(true)
                                 .notes("notes")
                                 .phoneNumberPrefix("phone_number_prefix")
