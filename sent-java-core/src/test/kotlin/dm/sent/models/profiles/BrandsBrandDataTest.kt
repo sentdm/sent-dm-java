@@ -21,7 +21,6 @@ internal class BrandsBrandDataTest {
                         .addDestinationCountry(
                             DestinationCountry.builder().id("id").isMain(true).build()
                         )
-                        .expectedMessagingVolume("expectedMessagingVolume")
                         .isTcrApplication(true)
                         .notes("notes")
                         .phoneNumberPrefix("phoneNumberPrefix")
@@ -70,7 +69,6 @@ internal class BrandsBrandDataTest {
                     .addDestinationCountry(
                         DestinationCountry.builder().id("id").isMain(true).build()
                     )
-                    .expectedMessagingVolume("expectedMessagingVolume")
                     .isTcrApplication(true)
                     .notes("notes")
                     .phoneNumberPrefix("phoneNumberPrefix")
@@ -125,7 +123,6 @@ internal class BrandsBrandDataTest {
                         .addDestinationCountry(
                             DestinationCountry.builder().id("id").isMain(true).build()
                         )
-                        .expectedMessagingVolume("expectedMessagingVolume")
                         .isTcrApplication(true)
                         .notes("notes")
                         .phoneNumberPrefix("phoneNumberPrefix")

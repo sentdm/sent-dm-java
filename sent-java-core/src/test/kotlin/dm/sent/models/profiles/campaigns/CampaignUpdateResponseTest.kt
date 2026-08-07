@@ -8,18 +8,17 @@ import dm.sent.core.jsonMapper
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
-import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class CampaignListResponseTest {
+internal class CampaignUpdateResponseTest {
 
     @Test
     fun create() {
-        val campaignListResponse =
-            CampaignListResponse.builder()
-                .addData(
-                    CampaignListResponse.Data.builder()
+        val campaignUpdateResponse =
+            CampaignUpdateResponse.builder()
+                .data(
+                    CampaignUpdateResponse.Data.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .billedDate(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .brandId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -39,7 +38,7 @@ internal class CampaignListResponseTest {
                         .optoutKeywords("optoutKeywords")
                         .optoutMessage("optoutMessage")
                         .privacyPolicyLink("privacyPolicyLink")
-                        .status(CampaignListResponse.Data.Status.SENT_CREATED)
+                        .status(CampaignUpdateResponse.Data.Status.SENT_CREATED)
                         .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .submittedToTcr(true)
                         .tcrCampaignId("tcrCampaignId")
@@ -48,7 +47,7 @@ internal class CampaignListResponseTest {
                         .type("type")
                         .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .addUseCase(
-                            CampaignListResponse.Data.UseCase.builder()
+                            CampaignUpdateResponse.Data.UseCase.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -83,9 +82,9 @@ internal class CampaignListResponseTest {
                 .success(true)
                 .build()
 
-        assertThat(campaignListResponse.data().getOrNull())
-            .containsExactly(
-                CampaignListResponse.Data.builder()
+        assertThat(campaignUpdateResponse.data())
+            .contains(
+                CampaignUpdateResponse.Data.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .billedDate(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .brandId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -105,7 +104,7 @@ internal class CampaignListResponseTest {
                     .optoutKeywords("optoutKeywords")
                     .optoutMessage("optoutMessage")
                     .privacyPolicyLink("privacyPolicyLink")
-                    .status(CampaignListResponse.Data.Status.SENT_CREATED)
+                    .status(CampaignUpdateResponse.Data.Status.SENT_CREATED)
                     .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .submittedToTcr(true)
                     .tcrCampaignId("tcrCampaignId")
@@ -114,7 +113,7 @@ internal class CampaignListResponseTest {
                     .type("type")
                     .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .addUseCase(
-                        CampaignListResponse.Data.UseCase.builder()
+                        CampaignUpdateResponse.Data.UseCase.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -127,7 +126,7 @@ internal class CampaignListResponseTest {
                     .volume("volume")
                     .build()
             )
-        assertThat(campaignListResponse.error())
+        assertThat(campaignUpdateResponse.error())
             .contains(
                 ErrorDetail.builder()
                     .code("code")
@@ -140,7 +139,7 @@ internal class CampaignListResponseTest {
                     .message("message")
                     .build()
             )
-        assertThat(campaignListResponse.meta())
+        assertThat(campaignUpdateResponse.meta())
             .contains(
                 ApiMeta.builder()
                     .requestId("request_id")
@@ -148,16 +147,16 @@ internal class CampaignListResponseTest {
                     .version("version")
                     .build()
             )
-        assertThat(campaignListResponse.success()).contains(true)
+        assertThat(campaignUpdateResponse.success()).contains(true)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val campaignListResponse =
-            CampaignListResponse.builder()
-                .addData(
-                    CampaignListResponse.Data.builder()
+        val campaignUpdateResponse =
+            CampaignUpdateResponse.builder()
+                .data(
+                    CampaignUpdateResponse.Data.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .billedDate(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .brandId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -177,7 +176,7 @@ internal class CampaignListResponseTest {
                         .optoutKeywords("optoutKeywords")
                         .optoutMessage("optoutMessage")
                         .privacyPolicyLink("privacyPolicyLink")
-                        .status(CampaignListResponse.Data.Status.SENT_CREATED)
+                        .status(CampaignUpdateResponse.Data.Status.SENT_CREATED)
                         .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .submittedToTcr(true)
                         .tcrCampaignId("tcrCampaignId")
@@ -186,7 +185,7 @@ internal class CampaignListResponseTest {
                         .type("type")
                         .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .addUseCase(
-                            CampaignListResponse.Data.UseCase.builder()
+                            CampaignUpdateResponse.Data.UseCase.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -221,12 +220,12 @@ internal class CampaignListResponseTest {
                 .success(true)
                 .build()
 
-        val roundtrippedCampaignListResponse =
+        val roundtrippedCampaignUpdateResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(campaignListResponse),
-                jacksonTypeRef<CampaignListResponse>(),
+                jsonMapper.writeValueAsString(campaignUpdateResponse),
+                jacksonTypeRef<CampaignUpdateResponse>(),
             )
 
-        assertThat(roundtrippedCampaignListResponse).isEqualTo(campaignListResponse)
+        assertThat(roundtrippedCampaignUpdateResponse).isEqualTo(campaignUpdateResponse)
     }
 }

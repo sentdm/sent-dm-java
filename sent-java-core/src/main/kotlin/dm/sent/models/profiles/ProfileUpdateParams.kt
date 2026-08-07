@@ -193,7 +193,7 @@ private constructor(
     fun sendingPhoneNumber(): Optional<String> = body.sendingPhoneNumber()
 
     /**
-     * Reference to another profile to use for SMS/Telnyx configuration (optional)
+     * Reference to another profile to use for SMS configuration (optional)
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -814,7 +814,7 @@ private constructor(
             body.sendingPhoneNumber(sendingPhoneNumber)
         }
 
-        /** Reference to another profile to use for SMS/Telnyx configuration (optional) */
+        /** Reference to another profile to use for SMS configuration (optional) */
         fun sendingPhoneNumberProfileId(sendingPhoneNumberProfileId: String?) = apply {
             body.sendingPhoneNumberProfileId(sendingPhoneNumberProfileId)
         }
@@ -1310,7 +1310,7 @@ private constructor(
             sendingPhoneNumber.getOptional("sending_phone_number")
 
         /**
-         * Reference to another profile to use for SMS/Telnyx configuration (optional)
+         * Reference to another profile to use for SMS configuration (optional)
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -1975,7 +1975,7 @@ private constructor(
                 this.sendingPhoneNumber = sendingPhoneNumber
             }
 
-            /** Reference to another profile to use for SMS/Telnyx configuration (optional) */
+            /** Reference to another profile to use for SMS configuration (optional) */
             fun sendingPhoneNumberProfileId(sendingPhoneNumberProfileId: String?) =
                 sendingPhoneNumberProfileId(JsonField.ofNullable(sendingPhoneNumberProfileId))
 

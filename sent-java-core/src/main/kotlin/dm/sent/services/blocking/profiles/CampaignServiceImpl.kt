@@ -17,12 +17,13 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
-import dm.sent.models.profiles.campaigns.ApiResponseOfTcrCampaignWithUseCases
 import dm.sent.models.profiles.campaigns.CampaignCreateParams
+import dm.sent.models.profiles.campaigns.CampaignCreateResponse
 import dm.sent.models.profiles.campaigns.CampaignDeleteParams
 import dm.sent.models.profiles.campaigns.CampaignListParams
 import dm.sent.models.profiles.campaigns.CampaignListResponse
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
+import dm.sent.models.profiles.campaigns.CampaignUpdateResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -42,14 +43,14 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
     override fun create(
         params: CampaignCreateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfTcrCampaignWithUseCases =
+    ): CampaignCreateResponse =
         // post /v3/profiles/{profileId}/campaigns
         withRawResponse().create(params, requestOptions).parse()
 
     override fun update(
         params: CampaignUpdateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfTcrCampaignWithUseCases =
+    ): CampaignUpdateResponse =
         // put /v3/profiles/{profileId}/campaigns/{campaignId}
         withRawResponse().update(params, requestOptions).parse()
 
@@ -78,13 +79,13 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<ApiResponseOfTcrCampaignWithUseCases> =
-            jsonHandler<ApiResponseOfTcrCampaignWithUseCases>(clientOptions.jsonMapper)
+        private val createHandler: Handler<CampaignCreateResponse> =
+            jsonHandler<CampaignCreateResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: CampaignCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases> {
+        ): HttpResponseFor<CampaignCreateResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -109,13 +110,13 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             }
         }
 
-        private val updateHandler: Handler<ApiResponseOfTcrCampaignWithUseCases> =
-            jsonHandler<ApiResponseOfTcrCampaignWithUseCases>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<CampaignUpdateResponse> =
+            jsonHandler<CampaignUpdateResponse>(clientOptions.jsonMapper)
 
         override fun update(
             params: CampaignUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfTcrCampaignWithUseCases> {
+        ): HttpResponseFor<CampaignUpdateResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("campaignId", params.campaignId().getOrNull())

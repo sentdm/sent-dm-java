@@ -293,7 +293,7 @@ private constructor(
         sendingPhoneNumber.getOptional("sending_phone_number")
 
     /**
-     * Reference to another profile for SMS/Telnyx configuration
+     * Reference to another profile whose SMS configuration this profile uses
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -937,7 +937,7 @@ private constructor(
             this.sendingPhoneNumber = sendingPhoneNumber
         }
 
-        /** Reference to another profile for SMS/Telnyx configuration */
+        /** Reference to another profile whose SMS configuration this profile uses */
         fun sendingPhoneNumberProfileId(sendingPhoneNumberProfileId: String?) =
             sendingPhoneNumberProfileId(JsonField.ofNullable(sendingPhoneNumberProfileId))
 
@@ -2769,7 +2769,6 @@ private constructor(
         private constructor(
             private val brandRelationship: JsonField<TcrBrandRelationship>,
             private val destinationCountries: JsonField<List<DestinationCountry>>,
-            private val expectedMessagingVolume: JsonField<String>,
             private val isTcrApplication: JsonField<Boolean>,
             private val notes: JsonField<String>,
             private val phoneNumberPrefix: JsonField<String>,
@@ -2786,9 +2785,6 @@ private constructor(
                 @JsonProperty("destination_countries")
                 @ExcludeMissing
                 destinationCountries: JsonField<List<DestinationCountry>> = JsonMissing.of(),
-                @JsonProperty("expected_messaging_volume")
-                @ExcludeMissing
-                expectedMessagingVolume: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("is_tcr_application")
                 @ExcludeMissing
                 isTcrApplication: JsonField<Boolean> = JsonMissing.of(),
@@ -2805,7 +2801,6 @@ private constructor(
             ) : this(
                 brandRelationship,
                 destinationCountries,
-                expectedMessagingVolume,
                 isTcrApplication,
                 notes,
                 phoneNumberPrefix,
@@ -2829,15 +2824,6 @@ private constructor(
              */
             fun destinationCountries(): Optional<List<DestinationCountry>> =
                 destinationCountries.getOptional("destination_countries")
-
-            /**
-             * Expected daily messaging volume
-             *
-             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
-             */
-            fun expectedMessagingVolume(): Optional<String> =
-                expectedMessagingVolume.getOptional("expected_messaging_volume")
 
             /**
              * Whether this is a TCR (Campaign Registry) application
@@ -2898,16 +2884,6 @@ private constructor(
             @JsonProperty("destination_countries")
             @ExcludeMissing
             fun _destinationCountries(): JsonField<List<DestinationCountry>> = destinationCountries
-
-            /**
-             * Returns the raw JSON value of [expectedMessagingVolume].
-             *
-             * Unlike [expectedMessagingVolume], this method doesn't throw if the JSON field has an
-             * unexpected type.
-             */
-            @JsonProperty("expected_messaging_volume")
-            @ExcludeMissing
-            fun _expectedMessagingVolume(): JsonField<String> = expectedMessagingVolume
 
             /**
              * Returns the raw JSON value of [isTcrApplication].
@@ -2979,7 +2955,6 @@ private constructor(
 
                 private var brandRelationship: JsonField<TcrBrandRelationship> = JsonMissing.of()
                 private var destinationCountries: JsonField<MutableList<DestinationCountry>>? = null
-                private var expectedMessagingVolume: JsonField<String> = JsonMissing.of()
                 private var isTcrApplication: JsonField<Boolean> = JsonMissing.of()
                 private var notes: JsonField<String> = JsonMissing.of()
                 private var phoneNumberPrefix: JsonField<String> = JsonMissing.of()
@@ -2992,7 +2967,6 @@ private constructor(
                     brandRelationship = compliance.brandRelationship
                     destinationCountries =
                         compliance.destinationCountries.map { it.toMutableList() }
-                    expectedMessagingVolume = compliance.expectedMessagingVolume
                     isTcrApplication = compliance.isTcrApplication
                     notes = compliance.notes
                     phoneNumberPrefix = compliance.phoneNumberPrefix
@@ -3049,28 +3023,6 @@ private constructor(
                         (destinationCountries ?: JsonField.of(mutableListOf())).also {
                             checkKnown("destinationCountries", it).add(destinationCountry)
                         }
-                }
-
-                /** Expected daily messaging volume */
-                fun expectedMessagingVolume(expectedMessagingVolume: String?) =
-                    expectedMessagingVolume(JsonField.ofNullable(expectedMessagingVolume))
-
-                /**
-                 * Alias for calling [Builder.expectedMessagingVolume] with
-                 * `expectedMessagingVolume.orElse(null)`.
-                 */
-                fun expectedMessagingVolume(expectedMessagingVolume: Optional<String>) =
-                    expectedMessagingVolume(expectedMessagingVolume.getOrNull())
-
-                /**
-                 * Sets [Builder.expectedMessagingVolume] to an arbitrary JSON value.
-                 *
-                 * You should usually call [Builder.expectedMessagingVolume] with a well-typed
-                 * [String] value instead. This method is primarily for setting the field to an
-                 * undocumented or not yet supported value.
-                 */
-                fun expectedMessagingVolume(expectedMessagingVolume: JsonField<String>) = apply {
-                    this.expectedMessagingVolume = expectedMessagingVolume
                 }
 
                 /** Whether this is a TCR (Campaign Registry) application */
@@ -3191,7 +3143,6 @@ private constructor(
                     Compliance(
                         brandRelationship,
                         (destinationCountries ?: JsonMissing.of()).map { it.toImmutable() },
-                        expectedMessagingVolume,
                         isTcrApplication,
                         notes,
                         phoneNumberPrefix,
@@ -3220,7 +3171,6 @@ private constructor(
 
                 brandRelationship().ifPresent { it.validate() }
                 destinationCountries().ifPresent { it.forEach { it.validate() } }
-                expectedMessagingVolume()
                 isTcrApplication()
                 notes()
                 phoneNumberPrefix()
@@ -3248,7 +3198,6 @@ private constructor(
                 (brandRelationship.asKnown().getOrNull()?.validity() ?: 0) +
                     (destinationCountries.asKnown().getOrNull()?.sumOf { it.validity().toInt() }
                         ?: 0) +
-                    (if (expectedMessagingVolume.asKnown().isPresent) 1 else 0) +
                     (if (isTcrApplication.asKnown().isPresent) 1 else 0) +
                     (if (notes.asKnown().isPresent) 1 else 0) +
                     (if (phoneNumberPrefix.asKnown().isPresent) 1 else 0) +
@@ -3263,7 +3212,6 @@ private constructor(
                 return other is Compliance &&
                     brandRelationship == other.brandRelationship &&
                     destinationCountries == other.destinationCountries &&
-                    expectedMessagingVolume == other.expectedMessagingVolume &&
                     isTcrApplication == other.isTcrApplication &&
                     notes == other.notes &&
                     phoneNumberPrefix == other.phoneNumberPrefix &&
@@ -3276,7 +3224,6 @@ private constructor(
                 Objects.hash(
                     brandRelationship,
                     destinationCountries,
-                    expectedMessagingVolume,
                     isTcrApplication,
                     notes,
                     phoneNumberPrefix,
@@ -3289,7 +3236,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Compliance{brandRelationship=$brandRelationship, destinationCountries=$destinationCountries, expectedMessagingVolume=$expectedMessagingVolume, isTcrApplication=$isTcrApplication, notes=$notes, phoneNumberPrefix=$phoneNumberPrefix, primaryUseCase=$primaryUseCase, vertical=$vertical, additionalProperties=$additionalProperties}"
+                "Compliance{brandRelationship=$brandRelationship, destinationCountries=$destinationCountries, isTcrApplication=$isTcrApplication, notes=$notes, phoneNumberPrefix=$phoneNumberPrefix, primaryUseCase=$primaryUseCase, vertical=$vertical, additionalProperties=$additionalProperties}"
         }
 
         /** Contact information for the brand */

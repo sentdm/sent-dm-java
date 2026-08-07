@@ -17,7 +17,6 @@ internal class SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandC
                 .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                 .vertical(TcrVertical.PROFESSIONAL)
                 .addDestinationCountry(DestinationCountry.builder().id("id").isMain(true).build())
-                .expectedMessagingVolume("expectedMessagingVolume")
                 .isTcrApplication(true)
                 .notes("notes")
                 .phoneNumberPrefix("phoneNumberPrefix")
@@ -40,11 +39,6 @@ internal class SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandC
                     .getOrNull()
             )
             .containsExactly(DestinationCountry.builder().id("id").isMain(true).build())
-        assertThat(
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                    .expectedMessagingVolume()
-            )
-            .contains("expectedMessagingVolume")
         assertThat(
                 sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
                     .isTcrApplication()
@@ -75,7 +69,6 @@ internal class SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandC
                 .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                 .vertical(TcrVertical.PROFESSIONAL)
                 .addDestinationCountry(DestinationCountry.builder().id("id").isMain(true).build())
-                .expectedMessagingVolume("expectedMessagingVolume")
                 .isTcrApplication(true)
                 .notes("notes")
                 .phoneNumberPrefix("phoneNumberPrefix")

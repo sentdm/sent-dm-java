@@ -23,10 +23,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Standard API response envelope for all v3 endpoints */
-class CampaignListResponse
+class CampaignCreateResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val data: JsonField<List<Data>>,
+    private val data: JsonField<Data>,
     private val error: JsonField<ErrorDetail>,
     private val meta: JsonField<ApiMeta>,
     private val success: JsonField<Boolean>,
@@ -35,19 +35,19 @@ private constructor(
 
     @JsonCreator
     private constructor(
-        @JsonProperty("data") @ExcludeMissing data: JsonField<List<Data>> = JsonMissing.of(),
+        @JsonProperty("data") @ExcludeMissing data: JsonField<Data> = JsonMissing.of(),
         @JsonProperty("error") @ExcludeMissing error: JsonField<ErrorDetail> = JsonMissing.of(),
         @JsonProperty("meta") @ExcludeMissing meta: JsonField<ApiMeta> = JsonMissing.of(),
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
     /**
-     * The response data (null if error)
+     * A 10DLC campaign registered for a brand.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun data(): Optional<List<Data>> = data.getOptional("data")
+    fun data(): Optional<Data> = data.getOptional("data")
 
     /**
      * Error information
@@ -78,7 +78,7 @@ private constructor(
      *
      * Unlike [data], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<List<Data>> = data
+    @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<Data> = data
 
     /**
      * Returns the raw JSON value of [error].
@@ -115,55 +115,41 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [CampaignListResponse]. */
+        /** Returns a mutable builder for constructing an instance of [CampaignCreateResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [CampaignListResponse]. */
+    /** A builder for [CampaignCreateResponse]. */
     class Builder internal constructor() {
 
-        private var data: JsonField<MutableList<Data>>? = null
+        private var data: JsonField<Data> = JsonMissing.of()
         private var error: JsonField<ErrorDetail> = JsonMissing.of()
         private var meta: JsonField<ApiMeta> = JsonMissing.of()
         private var success: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(campaignListResponse: CampaignListResponse) = apply {
-            data = campaignListResponse.data.map { it.toMutableList() }
-            error = campaignListResponse.error
-            meta = campaignListResponse.meta
-            success = campaignListResponse.success
-            additionalProperties = campaignListResponse.additionalProperties.toMutableMap()
+        internal fun from(campaignCreateResponse: CampaignCreateResponse) = apply {
+            data = campaignCreateResponse.data
+            error = campaignCreateResponse.error
+            meta = campaignCreateResponse.meta
+            success = campaignCreateResponse.success
+            additionalProperties = campaignCreateResponse.additionalProperties.toMutableMap()
         }
 
-        /** The response data (null if error) */
-        fun data(data: List<Data>?) = data(JsonField.ofNullable(data))
+        /** A 10DLC campaign registered for a brand. */
+        fun data(data: Data?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
-        fun data(data: Optional<List<Data>>) = data(data.getOrNull())
+        fun data(data: Optional<Data>) = data(data.getOrNull())
 
         /**
          * Sets [Builder.data] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.data] with a well-typed `List<Data>` value instead. This
+         * You should usually call [Builder.data] with a well-typed [Data] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun data(data: JsonField<List<Data>>) = apply {
-            this.data = data.map { it.toMutableList() }
-        }
-
-        /**
-         * Adds a single [Data] to [Builder.data].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addData(data: Data) = apply {
-            this.data =
-                (this.data ?: JsonField.of(mutableListOf())).also {
-                    checkKnown("data", it).add(data)
-                }
-        }
+        fun data(data: JsonField<Data>) = apply { this.data = data }
 
         /** Error information */
         fun error(error: ErrorDetail?) = error(JsonField.ofNullable(error))
@@ -222,18 +208,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [CampaignListResponse].
+         * Returns an immutable instance of [CampaignCreateResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): CampaignListResponse =
-            CampaignListResponse(
-                (data ?: JsonMissing.of()).map { it.toImmutable() },
-                error,
-                meta,
-                success,
-                additionalProperties.toMutableMap(),
-            )
+        fun build(): CampaignCreateResponse =
+            CampaignCreateResponse(data, error, meta, success, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
@@ -246,12 +226,12 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): CampaignListResponse = apply {
+    fun validate(): CampaignCreateResponse = apply {
         if (validated) {
             return@apply
         }
 
-        data().ifPresent { it.forEach { it.validate() } }
+        data().ifPresent { it.validate() }
         error().ifPresent { it.validate() }
         meta().ifPresent { it.validate() }
         success()
@@ -273,7 +253,7 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (data.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+        (data.asKnown().getOrNull()?.validity() ?: 0) +
             (error.asKnown().getOrNull()?.validity() ?: 0) +
             (meta.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
@@ -2289,7 +2269,7 @@ private constructor(
             return true
         }
 
-        return other is CampaignListResponse &&
+        return other is CampaignCreateResponse &&
             data == other.data &&
             error == other.error &&
             meta == other.meta &&
@@ -2304,5 +2284,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CampaignListResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
+        "CampaignCreateResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
 }

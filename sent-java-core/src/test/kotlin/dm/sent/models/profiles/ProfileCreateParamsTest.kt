@@ -35,7 +35,6 @@ internal class ProfileCreateParamsTest {
                             .addDestinationCountry(
                                 DestinationCountry.builder().id("US").isMain(false).build()
                             )
-                            .expectedMessagingVolume("10000")
                             .isTcrApplication(true)
                             .notes(null)
                             .phoneNumberPrefix("+1")
@@ -129,7 +128,6 @@ internal class ProfileCreateParamsTest {
                                 .addDestinationCountry(
                                     DestinationCountry.builder().id("US").isMain(false).build()
                                 )
-                                .expectedMessagingVolume("10000")
                                 .isTcrApplication(true)
                                 .notes(null)
                                 .phoneNumberPrefix("+1")
@@ -242,7 +240,6 @@ internal class ProfileCreateParamsTest {
                                 .addDestinationCountry(
                                     DestinationCountry.builder().id("US").isMain(false).build()
                                 )
-                                .expectedMessagingVolume("10000")
                                 .isTcrApplication(true)
                                 .notes(null)
                                 .phoneNumberPrefix("+1")
@@ -333,7 +330,6 @@ internal class ProfileCreateParamsTest {
                             .addDestinationCountry(
                                 DestinationCountry.builder().id("US").isMain(false).build()
                             )
-                            .expectedMessagingVolume("10000")
                             .isTcrApplication(true)
                             .notes(null)
                             .phoneNumberPrefix("+1")

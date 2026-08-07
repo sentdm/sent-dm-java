@@ -32,6 +32,7 @@ internal class CampaignDataTest {
                 .optoutMessage("optoutMessage")
                 .privacyPolicyLink("https://example.com")
                 .termsAndConditionsLink("https://example.com")
+                .volume("volume")
                 .build()
 
         assertThat(campaignData.description()).isEqualTo("x")
@@ -54,6 +55,7 @@ internal class CampaignDataTest {
         assertThat(campaignData.optoutMessage()).contains("optoutMessage")
         assertThat(campaignData.privacyPolicyLink()).contains("https://example.com")
         assertThat(campaignData.termsAndConditionsLink()).contains("https://example.com")
+        assertThat(campaignData.volume()).contains("volume")
     }
 
     @Test
@@ -80,6 +82,7 @@ internal class CampaignDataTest {
                 .optoutMessage("optoutMessage")
                 .privacyPolicyLink("https://example.com")
                 .termsAndConditionsLink("https://example.com")
+                .volume("volume")
                 .build()
 
         val roundtrippedCampaignData =
