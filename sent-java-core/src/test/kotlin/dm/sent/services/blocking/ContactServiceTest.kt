@@ -6,6 +6,7 @@ import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
+import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
 import dm.sent.models.webhooks.MutationRequest
@@ -105,5 +106,22 @@ internal class ContactServiceTest {
                 .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
         )
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveMessageSummary() {
+        val client = SentOkHttpClient.builder().apiKey("My API Key").build()
+        val contactService = client.contacts()
+
+        val apiResponseOfContactMessageSummary =
+            contactService.retrieveMessageSummary(
+                ContactRetrieveMessageSummaryParams.builder()
+                    .contactId("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
+
+        apiResponseOfContactMessageSummary.validate()
     }
 }
