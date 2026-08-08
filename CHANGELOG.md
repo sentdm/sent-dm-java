@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.31.1](https://github.com/sentdm/sent-dm-java/compare/v0.31.0...v0.31.1) (2026-08-08)
+
+
+### Chores
+
+* merge production 0.31.0 release commits into staging ([0e0c539](https://github.com/sentdm/sent-dm-java/commit/0e0c539014d4f481b22e576bfe2cb70a9b7b3047))
+* reconcile staging with production 0.31.0 release commits ([3b54a6a](https://github.com/sentdm/sent-dm-java/commit/3b54a6ab8af8b8bb0c14bbbf22282ab4b0b5fd33))
+
 ## [0.31.0](https://github.com/sentdm/sent-dm-java/compare/v0.30.0...v0.31.0) (2026-08-08)
 
 
