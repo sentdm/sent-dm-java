@@ -19,8 +19,8 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Footer section of a message template */
-class SentDmServicesCommonContractsPocOsTemplateFooter
+/** Header section of a message template */
+class TemplateHeader
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val template: JsonField<String>,
@@ -39,7 +39,8 @@ private constructor(
     ) : this(template, type, variables, mutableMapOf())
 
     /**
-     * The footer template text with optional variable placeholders
+     * The header template text with optional variable placeholders (e.g., "Welcome to
+     * {{0:variable}}")
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
      *   missing or null (e.g. if the server responded with an unexpected value).
@@ -47,7 +48,7 @@ private constructor(
     fun template(): String = template.getRequired("template")
 
     /**
-     * The type of footer (typically "text")
+     * The type of header (e.g., "text", "image", "video", "document")
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -55,7 +56,7 @@ private constructor(
     fun type(): Optional<String> = type.getOptional("type")
 
     /**
-     * List of variables used in the footer template
+     * List of variables used in the header template
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -100,8 +101,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of
-         * [SentDmServicesCommonContractsPocOsTemplateFooter].
+         * Returns a mutable builder for constructing an instance of [TemplateHeader].
          *
          * The following fields are required:
          * ```java
@@ -111,7 +111,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [SentDmServicesCommonContractsPocOsTemplateFooter]. */
+    /** A builder for [TemplateHeader]. */
     class Builder internal constructor() {
 
         private var template: JsonField<String>? = null
@@ -120,21 +120,17 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(
-            sentDmServicesCommonContractsPocOsTemplateFooter:
-                SentDmServicesCommonContractsPocOsTemplateFooter
-        ) = apply {
-            template = sentDmServicesCommonContractsPocOsTemplateFooter.template
-            type = sentDmServicesCommonContractsPocOsTemplateFooter.type
-            variables =
-                sentDmServicesCommonContractsPocOsTemplateFooter.variables.map {
-                    it.toMutableList()
-                }
-            additionalProperties =
-                sentDmServicesCommonContractsPocOsTemplateFooter.additionalProperties.toMutableMap()
+        internal fun from(templateHeader: TemplateHeader) = apply {
+            template = templateHeader.template
+            type = templateHeader.type
+            variables = templateHeader.variables.map { it.toMutableList() }
+            additionalProperties = templateHeader.additionalProperties.toMutableMap()
         }
 
-        /** The footer template text with optional variable placeholders */
+        /**
+         * The header template text with optional variable placeholders (e.g., "Welcome to
+         * {{0:variable}}")
+         */
         fun template(template: String) = template(JsonField.of(template))
 
         /**
@@ -145,7 +141,7 @@ private constructor(
          */
         fun template(template: JsonField<String>) = apply { this.template = template }
 
-        /** The type of footer (typically "text") */
+        /** The type of header (e.g., "text", "image", "video", "document") */
         fun type(type: String?) = type(JsonField.ofNullable(type))
 
         /** Alias for calling [Builder.type] with `type.orElse(null)`. */
@@ -159,7 +155,7 @@ private constructor(
          */
         fun type(type: JsonField<String>) = apply { this.type = type }
 
-        /** List of variables used in the footer template */
+        /** List of variables used in the header template */
         fun variables(variables: List<TemplateVariable>?) =
             variables(JsonField.ofNullable(variables))
 
@@ -210,7 +206,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [SentDmServicesCommonContractsPocOsTemplateFooter].
+         * Returns an immutable instance of [TemplateHeader].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -221,8 +217,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): SentDmServicesCommonContractsPocOsTemplateFooter =
-            SentDmServicesCommonContractsPocOsTemplateFooter(
+        fun build(): TemplateHeader =
+            TemplateHeader(
                 checkRequired("template", template),
                 type,
                 (variables ?: JsonMissing.of()).map { it.toImmutable() },
@@ -240,7 +236,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): SentDmServicesCommonContractsPocOsTemplateFooter = apply {
+    fun validate(): TemplateHeader = apply {
         if (validated) {
             return@apply
         }
@@ -275,7 +271,7 @@ private constructor(
             return true
         }
 
-        return other is SentDmServicesCommonContractsPocOsTemplateFooter &&
+        return other is TemplateHeader &&
             template == other.template &&
             type == other.type &&
             variables == other.variables &&
@@ -289,5 +285,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SentDmServicesCommonContractsPocOsTemplateFooter{template=$template, type=$type, variables=$variables, additionalProperties=$additionalProperties}"
+        "TemplateHeader{template=$template, type=$type, variables=$variables, additionalProperties=$additionalProperties}"
 }

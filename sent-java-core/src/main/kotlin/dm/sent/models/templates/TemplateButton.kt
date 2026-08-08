@@ -18,10 +18,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Interactive button in a message template */
-class SentDmServicesCommonContractsPocOsTemplateButton
+class TemplateButton
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val props: JsonField<SentDmServicesCommonContractsPocOsTemplateButtonProps>,
+    private val props: JsonField<TemplateButtonProps>,
     private val type: JsonField<String>,
     private val id: JsonField<Int>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -31,7 +31,7 @@ private constructor(
     private constructor(
         @JsonProperty("props")
         @ExcludeMissing
-        props: JsonField<SentDmServicesCommonContractsPocOsTemplateButtonProps> = JsonMissing.of(),
+        props: JsonField<TemplateButtonProps> = JsonMissing.of(),
         @JsonProperty("type") @ExcludeMissing type: JsonField<String> = JsonMissing.of(),
         @JsonProperty("id") @ExcludeMissing id: JsonField<Int> = JsonMissing.of(),
     ) : this(props, type, id, mutableMapOf())
@@ -42,7 +42,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
      *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun props(): SentDmServicesCommonContractsPocOsTemplateButtonProps = props.getRequired("props")
+    fun props(): TemplateButtonProps = props.getRequired("props")
 
     /**
      * The type of button (e.g., QUICK_REPLY, URL, PHONE_NUMBER, VOICE_CALL, COPY_CODE)
@@ -65,9 +65,7 @@ private constructor(
      *
      * Unlike [props], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("props")
-    @ExcludeMissing
-    fun _props(): JsonField<SentDmServicesCommonContractsPocOsTemplateButtonProps> = props
+    @JsonProperty("props") @ExcludeMissing fun _props(): JsonField<TemplateButtonProps> = props
 
     /**
      * Returns the raw JSON value of [type].
@@ -98,8 +96,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of
-         * [SentDmServicesCommonContractsPocOsTemplateButton].
+         * Returns a mutable builder for constructing an instance of [TemplateButton].
          *
          * The following fields are required:
          * ```java
@@ -110,40 +107,33 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [SentDmServicesCommonContractsPocOsTemplateButton]. */
+    /** A builder for [TemplateButton]. */
     class Builder internal constructor() {
 
-        private var props: JsonField<SentDmServicesCommonContractsPocOsTemplateButtonProps>? = null
+        private var props: JsonField<TemplateButtonProps>? = null
         private var type: JsonField<String>? = null
         private var id: JsonField<Int> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(
-            sentDmServicesCommonContractsPocOsTemplateButton:
-                SentDmServicesCommonContractsPocOsTemplateButton
-        ) = apply {
-            props = sentDmServicesCommonContractsPocOsTemplateButton.props
-            type = sentDmServicesCommonContractsPocOsTemplateButton.type
-            id = sentDmServicesCommonContractsPocOsTemplateButton.id
-            additionalProperties =
-                sentDmServicesCommonContractsPocOsTemplateButton.additionalProperties.toMutableMap()
+        internal fun from(templateButton: TemplateButton) = apply {
+            props = templateButton.props
+            type = templateButton.type
+            id = templateButton.id
+            additionalProperties = templateButton.additionalProperties.toMutableMap()
         }
 
         /** Properties specific to the button type */
-        fun props(props: SentDmServicesCommonContractsPocOsTemplateButtonProps) =
-            props(JsonField.of(props))
+        fun props(props: TemplateButtonProps) = props(JsonField.of(props))
 
         /**
          * Sets [Builder.props] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.props] with a well-typed
-         * [SentDmServicesCommonContractsPocOsTemplateButtonProps] value instead. This method is
-         * primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.props] with a well-typed [TemplateButtonProps] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun props(props: JsonField<SentDmServicesCommonContractsPocOsTemplateButtonProps>) = apply {
-            this.props = props
-        }
+        fun props(props: JsonField<TemplateButtonProps>) = apply { this.props = props }
 
         /** The type of button (e.g., QUICK_REPLY, URL, PHONE_NUMBER, VOICE_CALL, COPY_CODE) */
         fun type(type: String) = type(JsonField.of(type))
@@ -187,7 +177,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [SentDmServicesCommonContractsPocOsTemplateButton].
+         * Returns an immutable instance of [TemplateButton].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -199,8 +189,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): SentDmServicesCommonContractsPocOsTemplateButton =
-            SentDmServicesCommonContractsPocOsTemplateButton(
+        fun build(): TemplateButton =
+            TemplateButton(
                 checkRequired("props", props),
                 checkRequired("type", type),
                 id,
@@ -218,7 +208,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): SentDmServicesCommonContractsPocOsTemplateButton = apply {
+    fun validate(): TemplateButton = apply {
         if (validated) {
             return@apply
         }
@@ -253,7 +243,7 @@ private constructor(
             return true
         }
 
-        return other is SentDmServicesCommonContractsPocOsTemplateButton &&
+        return other is TemplateButton &&
             props == other.props &&
             type == other.type &&
             id == other.id &&
@@ -265,5 +255,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SentDmServicesCommonContractsPocOsTemplateButton{props=$props, type=$type, id=$id, additionalProperties=$additionalProperties}"
+        "TemplateButton{props=$props, type=$type, id=$id, additionalProperties=$additionalProperties}"
 }

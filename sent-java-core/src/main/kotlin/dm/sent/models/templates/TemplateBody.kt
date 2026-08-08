@@ -17,7 +17,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Body section of a message template with channel-specific content */
-class SentDmServicesCommonContractsPocOsTemplateBody
+class TemplateBody
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val multiChannel: JsonField<TemplateBodyContent>,
@@ -118,14 +118,11 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of
-         * [SentDmServicesCommonContractsPocOsTemplateBody].
-         */
+        /** Returns a mutable builder for constructing an instance of [TemplateBody]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [SentDmServicesCommonContractsPocOsTemplateBody]. */
+    /** A builder for [TemplateBody]. */
     class Builder internal constructor() {
 
         private var multiChannel: JsonField<TemplateBodyContent> = JsonMissing.of()
@@ -135,16 +132,12 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(
-            sentDmServicesCommonContractsPocOsTemplateBody:
-                SentDmServicesCommonContractsPocOsTemplateBody
-        ) = apply {
-            multiChannel = sentDmServicesCommonContractsPocOsTemplateBody.multiChannel
-            rcs = sentDmServicesCommonContractsPocOsTemplateBody.rcs
-            sms = sentDmServicesCommonContractsPocOsTemplateBody.sms
-            whatsapp = sentDmServicesCommonContractsPocOsTemplateBody.whatsapp
-            additionalProperties =
-                sentDmServicesCommonContractsPocOsTemplateBody.additionalProperties.toMutableMap()
+        internal fun from(templateBody: TemplateBody) = apply {
+            multiChannel = templateBody.multiChannel
+            rcs = templateBody.rcs
+            sms = templateBody.sms
+            whatsapp = templateBody.whatsapp
+            additionalProperties = templateBody.additionalProperties.toMutableMap()
         }
 
         /**
@@ -234,18 +227,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [SentDmServicesCommonContractsPocOsTemplateBody].
+         * Returns an immutable instance of [TemplateBody].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): SentDmServicesCommonContractsPocOsTemplateBody =
-            SentDmServicesCommonContractsPocOsTemplateBody(
-                multiChannel,
-                rcs,
-                sms,
-                whatsapp,
-                additionalProperties.toMutableMap(),
-            )
+        fun build(): TemplateBody =
+            TemplateBody(multiChannel, rcs, sms, whatsapp, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
@@ -258,7 +245,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): SentDmServicesCommonContractsPocOsTemplateBody = apply {
+    fun validate(): TemplateBody = apply {
         if (validated) {
             return@apply
         }
@@ -295,7 +282,7 @@ private constructor(
             return true
         }
 
-        return other is SentDmServicesCommonContractsPocOsTemplateBody &&
+        return other is TemplateBody &&
             multiChannel == other.multiChannel &&
             rcs == other.rcs &&
             sms == other.sms &&
@@ -310,5 +297,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SentDmServicesCommonContractsPocOsTemplateBody{multiChannel=$multiChannel, rcs=$rcs, sms=$sms, whatsapp=$whatsapp, additionalProperties=$additionalProperties}"
+        "TemplateBody{multiChannel=$multiChannel, rcs=$rcs, sms=$sms, whatsapp=$whatsapp, additionalProperties=$additionalProperties}"
 }

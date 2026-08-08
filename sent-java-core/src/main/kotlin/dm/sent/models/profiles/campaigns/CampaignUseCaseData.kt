@@ -19,7 +19,7 @@ import java.util.Objects
 import kotlin.jvm.optionals.getOrNull
 
 /** Campaign use case with sample messages */
-class SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
+class CampaignUseCaseData
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val messagingUseCaseUs: JsonField<MessagingUseCaseUs>,
@@ -86,8 +86,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData].
+         * Returns a mutable builder for constructing an instance of [CampaignUseCaseData].
          *
          * The following fields are required:
          * ```java
@@ -98,10 +97,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /**
-     * A builder for
-     * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData].
-     */
+    /** A builder for [CampaignUseCaseData]. */
     class Builder internal constructor() {
 
         private var messagingUseCaseUs: JsonField<MessagingUseCaseUs>? = null
@@ -109,21 +105,10 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(
-            sentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData:
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-        ) = apply {
-            messagingUseCaseUs =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                    .messagingUseCaseUs
-            sampleMessages =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                    .sampleMessages
-                    .map { it.toMutableList() }
-            additionalProperties =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                    .additionalProperties
-                    .toMutableMap()
+        internal fun from(campaignUseCaseData: CampaignUseCaseData) = apply {
+            messagingUseCaseUs = campaignUseCaseData.messagingUseCaseUs
+            sampleMessages = campaignUseCaseData.sampleMessages.map { it.toMutableList() }
+            additionalProperties = campaignUseCaseData.additionalProperties.toMutableMap()
         }
 
         fun messagingUseCaseUs(messagingUseCaseUs: MessagingUseCaseUs) =
@@ -187,8 +172,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData].
+         * Returns an immutable instance of [CampaignUseCaseData].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -200,9 +184,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build():
-            SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData =
-            SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData(
+        fun build(): CampaignUseCaseData =
+            CampaignUseCaseData(
                 checkRequired("messagingUseCaseUs", messagingUseCaseUs),
                 checkRequired("sampleMessages", sampleMessages).map { it.toImmutable() },
                 additionalProperties.toMutableMap(),
@@ -219,8 +202,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate():
-        SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData = apply {
+    fun validate(): CampaignUseCaseData = apply {
         if (validated) {
             return@apply
         }
@@ -253,8 +235,7 @@ private constructor(
             return true
         }
 
-        return other is
-            SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData &&
+        return other is CampaignUseCaseData &&
             messagingUseCaseUs == other.messagingUseCaseUs &&
             sampleMessages == other.sampleMessages &&
             additionalProperties == other.additionalProperties
@@ -267,5 +248,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData{messagingUseCaseUs=$messagingUseCaseUs, sampleMessages=$sampleMessages, additionalProperties=$additionalProperties}"
+        "CampaignUseCaseData{messagingUseCaseUs=$messagingUseCaseUs, sampleMessages=$sampleMessages, additionalProperties=$additionalProperties}"
 }
