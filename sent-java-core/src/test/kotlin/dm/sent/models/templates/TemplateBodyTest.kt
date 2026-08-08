@@ -7,12 +7,12 @@ import dm.sent.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class SentDmServicesCommonContractsPocOsTemplateBodyTest {
+internal class TemplateBodyTest {
 
     @Test
     fun create() {
-        val sentDmServicesCommonContractsPocOsTemplateBody =
-            SentDmServicesCommonContractsPocOsTemplateBody.builder()
+        val templateBody =
+            TemplateBody.builder()
                 .multiChannel(
                     TemplateBodyContent.builder()
                         .template("template")
@@ -111,7 +111,7 @@ internal class SentDmServicesCommonContractsPocOsTemplateBodyTest {
                 )
                 .build()
 
-        assertThat(sentDmServicesCommonContractsPocOsTemplateBody.multiChannel())
+        assertThat(templateBody.multiChannel())
             .contains(
                 TemplateBodyContent.builder()
                     .template("template")
@@ -136,7 +136,7 @@ internal class SentDmServicesCommonContractsPocOsTemplateBodyTest {
                     )
                     .build()
             )
-        assertThat(sentDmServicesCommonContractsPocOsTemplateBody.rcs())
+        assertThat(templateBody.rcs())
             .contains(
                 TemplateBodyContent.builder()
                     .template("template")
@@ -161,7 +161,7 @@ internal class SentDmServicesCommonContractsPocOsTemplateBodyTest {
                     )
                     .build()
             )
-        assertThat(sentDmServicesCommonContractsPocOsTemplateBody.sms())
+        assertThat(templateBody.sms())
             .contains(
                 TemplateBodyContent.builder()
                     .template("template")
@@ -186,7 +186,7 @@ internal class SentDmServicesCommonContractsPocOsTemplateBodyTest {
                     )
                     .build()
             )
-        assertThat(sentDmServicesCommonContractsPocOsTemplateBody.whatsapp())
+        assertThat(templateBody.whatsapp())
             .contains(
                 TemplateBodyContent.builder()
                     .template("template")
@@ -216,8 +216,8 @@ internal class SentDmServicesCommonContractsPocOsTemplateBodyTest {
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val sentDmServicesCommonContractsPocOsTemplateBody =
-            SentDmServicesCommonContractsPocOsTemplateBody.builder()
+        val templateBody =
+            TemplateBody.builder()
                 .multiChannel(
                     TemplateBodyContent.builder()
                         .template("template")
@@ -316,13 +316,12 @@ internal class SentDmServicesCommonContractsPocOsTemplateBodyTest {
                 )
                 .build()
 
-        val roundtrippedSentDmServicesCommonContractsPocOsTemplateBody =
+        val roundtrippedTemplateBody =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(sentDmServicesCommonContractsPocOsTemplateBody),
-                jacksonTypeRef<SentDmServicesCommonContractsPocOsTemplateBody>(),
+                jsonMapper.writeValueAsString(templateBody),
+                jacksonTypeRef<TemplateBody>(),
             )
 
-        assertThat(roundtrippedSentDmServicesCommonContractsPocOsTemplateBody)
-            .isEqualTo(sentDmServicesCommonContractsPocOsTemplateBody)
+        assertThat(roundtrippedTemplateBody).isEqualTo(templateBody)
     }
 }

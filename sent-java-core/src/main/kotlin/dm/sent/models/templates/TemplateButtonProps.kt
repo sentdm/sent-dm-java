@@ -19,7 +19,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-class SentDmServicesCommonContractsPocOsTemplateButtonProps
+class TemplateButtonProps
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val activeFor: JsonField<Int>,
@@ -280,8 +280,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of
-         * [SentDmServicesCommonContractsPocOsTemplateButtonProps].
+         * Returns a mutable builder for constructing an instance of [TemplateButtonProps].
          *
          * The following fields are required:
          * ```java
@@ -299,7 +298,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [SentDmServicesCommonContractsPocOsTemplateButtonProps]. */
+    /** A builder for [TemplateButtonProps]. */
     class Builder internal constructor() {
 
         private var activeFor: JsonField<Int>? = null
@@ -318,29 +317,21 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(
-            sentDmServicesCommonContractsPocOsTemplateButtonProps:
-                SentDmServicesCommonContractsPocOsTemplateButtonProps
-        ) = apply {
-            activeFor = sentDmServicesCommonContractsPocOsTemplateButtonProps.activeFor
-            countryCode = sentDmServicesCommonContractsPocOsTemplateButtonProps.countryCode
-            offerCode = sentDmServicesCommonContractsPocOsTemplateButtonProps.offerCode
-            phoneNumber = sentDmServicesCommonContractsPocOsTemplateButtonProps.phoneNumber
-            quickReplyType = sentDmServicesCommonContractsPocOsTemplateButtonProps.quickReplyType
-            text = sentDmServicesCommonContractsPocOsTemplateButtonProps.text
-            url = sentDmServicesCommonContractsPocOsTemplateButtonProps.url
-            urlType = sentDmServicesCommonContractsPocOsTemplateButtonProps.urlType
-            variables =
-                sentDmServicesCommonContractsPocOsTemplateButtonProps.variables.map {
-                    it.toMutableList()
-                }
-            autofillText = sentDmServicesCommonContractsPocOsTemplateButtonProps.autofillText
-            otpType = sentDmServicesCommonContractsPocOsTemplateButtonProps.otpType
-            packageName = sentDmServicesCommonContractsPocOsTemplateButtonProps.packageName
-            signatureHash = sentDmServicesCommonContractsPocOsTemplateButtonProps.signatureHash
-            additionalProperties =
-                sentDmServicesCommonContractsPocOsTemplateButtonProps.additionalProperties
-                    .toMutableMap()
+        internal fun from(templateButtonProps: TemplateButtonProps) = apply {
+            activeFor = templateButtonProps.activeFor
+            countryCode = templateButtonProps.countryCode
+            offerCode = templateButtonProps.offerCode
+            phoneNumber = templateButtonProps.phoneNumber
+            quickReplyType = templateButtonProps.quickReplyType
+            text = templateButtonProps.text
+            url = templateButtonProps.url
+            urlType = templateButtonProps.urlType
+            variables = templateButtonProps.variables.map { it.toMutableList() }
+            autofillText = templateButtonProps.autofillText
+            otpType = templateButtonProps.otpType
+            packageName = templateButtonProps.packageName
+            signatureHash = templateButtonProps.signatureHash
+            additionalProperties = templateButtonProps.additionalProperties.toMutableMap()
         }
 
         fun activeFor(activeFor: Int) = activeFor(JsonField.of(activeFor))
@@ -540,7 +531,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [SentDmServicesCommonContractsPocOsTemplateButtonProps].
+         * Returns an immutable instance of [TemplateButtonProps].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -559,8 +550,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): SentDmServicesCommonContractsPocOsTemplateButtonProps =
-            SentDmServicesCommonContractsPocOsTemplateButtonProps(
+        fun build(): TemplateButtonProps =
+            TemplateButtonProps(
                 checkRequired("activeFor", activeFor),
                 checkRequired("countryCode", countryCode),
                 checkRequired("offerCode", offerCode),
@@ -588,7 +579,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): SentDmServicesCommonContractsPocOsTemplateButtonProps = apply {
+    fun validate(): TemplateButtonProps = apply {
         if (validated) {
             return@apply
         }
@@ -643,7 +634,7 @@ private constructor(
             return true
         }
 
-        return other is SentDmServicesCommonContractsPocOsTemplateButtonProps &&
+        return other is TemplateButtonProps &&
             activeFor == other.activeFor &&
             countryCode == other.countryCode &&
             offerCode == other.offerCode &&
@@ -682,5 +673,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SentDmServicesCommonContractsPocOsTemplateButtonProps{activeFor=$activeFor, countryCode=$countryCode, offerCode=$offerCode, phoneNumber=$phoneNumber, quickReplyType=$quickReplyType, text=$text, url=$url, urlType=$urlType, variables=$variables, autofillText=$autofillText, otpType=$otpType, packageName=$packageName, signatureHash=$signatureHash, additionalProperties=$additionalProperties}"
+        "TemplateButtonProps{activeFor=$activeFor, countryCode=$countryCode, offerCode=$offerCode, phoneNumber=$phoneNumber, quickReplyType=$quickReplyType, text=$text, url=$url, urlType=$urlType, variables=$variables, autofillText=$autofillText, otpType=$otpType, packageName=$packageName, signatureHash=$signatureHash, additionalProperties=$additionalProperties}"
 }

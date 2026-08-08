@@ -22,8 +22,7 @@ internal class CampaignUpdateParamsTest {
                     .name("Customer Notifications Updated")
                     .type("App")
                     .addUseCase(
-                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                            .builder()
+                        CampaignUseCaseData.builder()
                             .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                             .addSampleMessage(
                                 "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -62,8 +61,7 @@ internal class CampaignUpdateParamsTest {
                         .name("Customer Notifications Updated")
                         .type("App")
                         .addUseCase(
-                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                                .builder()
+                            CampaignUseCaseData.builder()
                                 .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                 .addSampleMessage(
                                     "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -98,8 +96,7 @@ internal class CampaignUpdateParamsTest {
                         .name("Customer Notifications Updated")
                         .type("App")
                         .addUseCase(
-                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                                .builder()
+                            CampaignUseCaseData.builder()
                                 .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                 .addSampleMessage(
                                     "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -148,8 +145,7 @@ internal class CampaignUpdateParamsTest {
                         .name("Customer Notifications Updated")
                         .type("App")
                         .addUseCase(
-                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                                .builder()
+                            CampaignUseCaseData.builder()
                                 .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                 .addSampleMessage(
                                     "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -183,8 +179,7 @@ internal class CampaignUpdateParamsTest {
                         .name("Customer Notifications Updated")
                         .type("App")
                         .addUseCase(
-                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                                .builder()
+                            CampaignUseCaseData.builder()
                                 .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                 .addSampleMessage(
                                     "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -220,8 +215,7 @@ internal class CampaignUpdateParamsTest {
                     .name("Customer Notifications Updated")
                     .type("App")
                     .addUseCase(
-                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                            .builder()
+                        CampaignUseCaseData.builder()
                             .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                             .addSampleMessage(
                                 "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -259,8 +253,7 @@ internal class CampaignUpdateParamsTest {
                         .name("Customer Notifications Updated")
                         .type("App")
                         .addUseCase(
-                            SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                                .builder()
+                            CampaignUseCaseData.builder()
                                 .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                 .addSampleMessage(
                                     "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -283,8 +276,7 @@ internal class CampaignUpdateParamsTest {
                     .name("Customer Notifications Updated")
                     .type("App")
                     .addUseCase(
-                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                            .builder()
+                        CampaignUseCaseData.builder()
                             .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                             .addSampleMessage(
                                 "Hi {name}, your appointment is confirmed for {date} at {time}."

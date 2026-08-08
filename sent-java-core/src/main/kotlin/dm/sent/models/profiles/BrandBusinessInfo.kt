@@ -18,7 +18,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Business details and address for brand KYC */
-class SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
+class BrandBusinessInfo
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val city: JsonField<String>,
@@ -252,16 +252,11 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo].
-         */
+        /** Returns a mutable builder for constructing an instance of [BrandBusinessInfo]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /**
-     * A builder for [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo].
-     */
+    /** A builder for [BrandBusinessInfo]. */
     class Builder internal constructor() {
 
         private var city: JsonField<String> = JsonMissing.of()
@@ -278,39 +273,19 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(
-            sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo:
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-        ) = apply {
-            city = sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo.city
-            country =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo.country
-            countryOfRegistration =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                    .countryOfRegistration
-            entityType =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                    .entityType
-            legalName =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                    .legalName
-            postalCode =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                    .postalCode
-            state =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo.state
-            street =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo.street
-            taxId =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo.taxId
-            taxIdType =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                    .taxIdType
-            url = sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo.url
-            additionalProperties =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                    .additionalProperties
-                    .toMutableMap()
+        internal fun from(brandBusinessInfo: BrandBusinessInfo) = apply {
+            city = brandBusinessInfo.city
+            country = brandBusinessInfo.country
+            countryOfRegistration = brandBusinessInfo.countryOfRegistration
+            entityType = brandBusinessInfo.entityType
+            legalName = brandBusinessInfo.legalName
+            postalCode = brandBusinessInfo.postalCode
+            state = brandBusinessInfo.state
+            street = brandBusinessInfo.street
+            taxId = brandBusinessInfo.taxId
+            taxIdType = brandBusinessInfo.taxIdType
+            url = brandBusinessInfo.url
+            additionalProperties = brandBusinessInfo.additionalProperties.toMutableMap()
         }
 
         /** City */
@@ -498,13 +473,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo].
+         * Returns an immutable instance of [BrandBusinessInfo].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo =
-            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo(
+        fun build(): BrandBusinessInfo =
+            BrandBusinessInfo(
                 city,
                 country,
                 countryOfRegistration,
@@ -530,25 +504,24 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo =
-        apply {
-            if (validated) {
-                return@apply
-            }
-
-            city()
-            country()
-            countryOfRegistration()
-            entityType().ifPresent { it.validate() }
-            legalName()
-            postalCode()
-            state()
-            street()
-            taxId()
-            taxIdType()
-            url()
-            validated = true
+    fun validate(): BrandBusinessInfo = apply {
+        if (validated) {
+            return@apply
         }
+
+        city()
+        country()
+        countryOfRegistration()
+        entityType().ifPresent { it.validate() }
+        legalName()
+        postalCode()
+        state()
+        street()
+        taxId()
+        taxIdType()
+        url()
+        validated = true
+    }
 
     fun isValid(): Boolean =
         try {
@@ -735,8 +708,7 @@ private constructor(
             return true
         }
 
-        return other is
-            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo &&
+        return other is BrandBusinessInfo &&
             city == other.city &&
             country == other.country &&
             countryOfRegistration == other.countryOfRegistration &&
@@ -771,5 +743,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo{city=$city, country=$country, countryOfRegistration=$countryOfRegistration, entityType=$entityType, legalName=$legalName, postalCode=$postalCode, state=$state, street=$street, taxId=$taxId, taxIdType=$taxIdType, url=$url, additionalProperties=$additionalProperties}"
+        "BrandBusinessInfo{city=$city, country=$country, countryOfRegistration=$countryOfRegistration, entityType=$entityType, legalName=$legalName, postalCode=$postalCode, state=$state, street=$street, taxId=$taxId, taxIdType=$taxIdType, url=$url, additionalProperties=$additionalProperties}"
 }

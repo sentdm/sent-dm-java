@@ -18,7 +18,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Contact information for brand KYC */
-class SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
+class BrandContactInfo
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val name: JsonField<String>,
@@ -154,8 +154,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo].
+         * Returns a mutable builder for constructing an instance of [BrandContactInfo].
          *
          * The following fields are required:
          * ```java
@@ -165,9 +164,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /**
-     * A builder for [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo].
-     */
+    /** A builder for [BrandContactInfo]. */
     class Builder internal constructor() {
 
         private var name: JsonField<String>? = null
@@ -179,26 +176,14 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(
-            sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo:
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-        ) = apply {
-            name = sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo.name
-            businessName =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-                    .businessName
-            email =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo.email
-            phone =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo.phone
-            phoneCountryCode =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-                    .phoneCountryCode
-            role = sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo.role
-            additionalProperties =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-                    .additionalProperties
-                    .toMutableMap()
+        internal fun from(brandContactInfo: BrandContactInfo) = apply {
+            name = brandContactInfo.name
+            businessName = brandContactInfo.businessName
+            email = brandContactInfo.email
+            phone = brandContactInfo.phone
+            phoneCountryCode = brandContactInfo.phoneCountryCode
+            role = brandContactInfo.role
+            additionalProperties = brandContactInfo.additionalProperties.toMutableMap()
         }
 
         /** Primary contact name (required) */
@@ -310,8 +295,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo].
+         * Returns an immutable instance of [BrandContactInfo].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -322,8 +306,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo =
-            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo(
+        fun build(): BrandContactInfo =
+            BrandContactInfo(
                 checkRequired("name", name),
                 businessName,
                 email,
@@ -344,20 +328,19 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo =
-        apply {
-            if (validated) {
-                return@apply
-            }
-
-            name()
-            businessName()
-            email()
-            phone()
-            phoneCountryCode()
-            role()
-            validated = true
+    fun validate(): BrandContactInfo = apply {
+        if (validated) {
+            return@apply
         }
+
+        name()
+        businessName()
+        email()
+        phone()
+        phoneCountryCode()
+        role()
+        validated = true
+    }
 
     fun isValid(): Boolean =
         try {
@@ -386,8 +369,7 @@ private constructor(
             return true
         }
 
-        return other is
-            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo &&
+        return other is BrandContactInfo &&
             name == other.name &&
             businessName == other.businessName &&
             email == other.email &&
@@ -404,5 +386,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo{name=$name, businessName=$businessName, email=$email, phone=$phone, phoneCountryCode=$phoneCountryCode, role=$role, additionalProperties=$additionalProperties}"
+        "BrandContactInfo{name=$name, businessName=$businessName, email=$email, phone=$phone, phoneCountryCode=$phoneCountryCode, role=$role, additionalProperties=$additionalProperties}"
 }

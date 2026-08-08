@@ -7,14 +7,14 @@ import dm.sent.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class SentDmServicesCommonContractsPocOsTemplateButtonTest {
+internal class TemplateButtonTest {
 
     @Test
     fun create() {
-        val sentDmServicesCommonContractsPocOsTemplateButton =
-            SentDmServicesCommonContractsPocOsTemplateButton.builder()
+        val templateButton =
+            TemplateButton.builder()
                 .props(
-                    SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                    TemplateButtonProps.builder()
                         .activeFor(1)
                         .countryCode("x")
                         .offerCode("x")
@@ -51,9 +51,9 @@ internal class SentDmServicesCommonContractsPocOsTemplateButtonTest {
                 .id(0)
                 .build()
 
-        assertThat(sentDmServicesCommonContractsPocOsTemplateButton.props())
+        assertThat(templateButton.props())
             .isEqualTo(
-                SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                TemplateButtonProps.builder()
                     .activeFor(1)
                     .countryCode("x")
                     .offerCode("x")
@@ -86,17 +86,17 @@ internal class SentDmServicesCommonContractsPocOsTemplateButtonTest {
                     .signatureHash("signatureHash")
                     .build()
             )
-        assertThat(sentDmServicesCommonContractsPocOsTemplateButton.type()).isEqualTo("x")
-        assertThat(sentDmServicesCommonContractsPocOsTemplateButton.id()).contains(0)
+        assertThat(templateButton.type()).isEqualTo("x")
+        assertThat(templateButton.id()).contains(0)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val sentDmServicesCommonContractsPocOsTemplateButton =
-            SentDmServicesCommonContractsPocOsTemplateButton.builder()
+        val templateButton =
+            TemplateButton.builder()
                 .props(
-                    SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                    TemplateButtonProps.builder()
                         .activeFor(1)
                         .countryCode("x")
                         .offerCode("x")
@@ -133,13 +133,12 @@ internal class SentDmServicesCommonContractsPocOsTemplateButtonTest {
                 .id(0)
                 .build()
 
-        val roundtrippedSentDmServicesCommonContractsPocOsTemplateButton =
+        val roundtrippedTemplateButton =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(sentDmServicesCommonContractsPocOsTemplateButton),
-                jacksonTypeRef<SentDmServicesCommonContractsPocOsTemplateButton>(),
+                jsonMapper.writeValueAsString(templateButton),
+                jacksonTypeRef<TemplateButton>(),
             )
 
-        assertThat(roundtrippedSentDmServicesCommonContractsPocOsTemplateButton)
-            .isEqualTo(sentDmServicesCommonContractsPocOsTemplateButton)
+        assertThat(roundtrippedTemplateButton).isEqualTo(templateButton)
     }
 }

@@ -20,7 +20,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Compliance and TCR information for brand registration */
-class SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
+class BrandComplianceInfo
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val brandRelationship: JsonField<TcrBrandRelationship>,
@@ -197,8 +197,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo].
+         * Returns a mutable builder for constructing an instance of [BrandComplianceInfo].
          *
          * The following fields are required:
          * ```java
@@ -209,10 +208,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /**
-     * A builder for
-     * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo].
-     */
+    /** A builder for [BrandComplianceInfo]. */
     class Builder internal constructor() {
 
         private var brandRelationship: JsonField<TcrBrandRelationship>? = null
@@ -225,35 +221,16 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(
-            sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo:
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-        ) = apply {
-            brandRelationship =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                    .brandRelationship
-            vertical =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                    .vertical
+        internal fun from(brandComplianceInfo: BrandComplianceInfo) = apply {
+            brandRelationship = brandComplianceInfo.brandRelationship
+            vertical = brandComplianceInfo.vertical
             destinationCountries =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                    .destinationCountries
-                    .map { it.toMutableList() }
-            isTcrApplication =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                    .isTcrApplication
-            notes =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo.notes
-            phoneNumberPrefix =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                    .phoneNumberPrefix
-            primaryUseCase =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                    .primaryUseCase
-            additionalProperties =
-                sentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                    .additionalProperties
-                    .toMutableMap()
+                brandComplianceInfo.destinationCountries.map { it.toMutableList() }
+            isTcrApplication = brandComplianceInfo.isTcrApplication
+            notes = brandComplianceInfo.notes
+            phoneNumberPrefix = brandComplianceInfo.phoneNumberPrefix
+            primaryUseCase = brandComplianceInfo.primaryUseCase
+            additionalProperties = brandComplianceInfo.additionalProperties.toMutableMap()
         }
 
         fun brandRelationship(brandRelationship: TcrBrandRelationship) =
@@ -415,8 +392,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo].
+         * Returns an immutable instance of [BrandComplianceInfo].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -428,9 +404,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build():
-            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo =
-            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo(
+        fun build(): BrandComplianceInfo =
+            BrandComplianceInfo(
                 checkRequired("brandRelationship", brandRelationship),
                 checkRequired("vertical", vertical),
                 (destinationCountries ?: JsonMissing.of()).map { it.toImmutable() },
@@ -452,21 +427,20 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo =
-        apply {
-            if (validated) {
-                return@apply
-            }
-
-            brandRelationship().validate()
-            vertical().validate()
-            destinationCountries().ifPresent { it.forEach { it.validate() } }
-            isTcrApplication()
-            notes()
-            phoneNumberPrefix()
-            primaryUseCase()
-            validated = true
+    fun validate(): BrandComplianceInfo = apply {
+        if (validated) {
+            return@apply
         }
+
+        brandRelationship().validate()
+        vertical().validate()
+        destinationCountries().ifPresent { it.forEach { it.validate() } }
+        isTcrApplication()
+        notes()
+        phoneNumberPrefix()
+        primaryUseCase()
+        validated = true
+    }
 
     fun isValid(): Boolean =
         try {
@@ -496,8 +470,7 @@ private constructor(
             return true
         }
 
-        return other is
-            SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo &&
+        return other is BrandComplianceInfo &&
             brandRelationship == other.brandRelationship &&
             vertical == other.vertical &&
             destinationCountries == other.destinationCountries &&
@@ -524,5 +497,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo{brandRelationship=$brandRelationship, vertical=$vertical, destinationCountries=$destinationCountries, isTcrApplication=$isTcrApplication, notes=$notes, phoneNumberPrefix=$phoneNumberPrefix, primaryUseCase=$primaryUseCase, additionalProperties=$additionalProperties}"
+        "BrandComplianceInfo{brandRelationship=$brandRelationship, vertical=$vertical, destinationCountries=$destinationCountries, isTcrApplication=$isTcrApplication, notes=$notes, phoneNumberPrefix=$phoneNumberPrefix, primaryUseCase=$primaryUseCase, additionalProperties=$additionalProperties}"
 }

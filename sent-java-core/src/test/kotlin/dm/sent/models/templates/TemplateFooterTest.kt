@@ -8,12 +8,12 @@ import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class SentDmServicesCommonContractsPocOsTemplateFooterTest {
+internal class TemplateFooterTest {
 
     @Test
     fun create() {
-        val sentDmServicesCommonContractsPocOsTemplateFooter =
-            SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+        val templateFooter =
+            TemplateFooter.builder()
                 .template("template")
                 .type("type")
                 .addVariable(
@@ -36,10 +36,9 @@ internal class SentDmServicesCommonContractsPocOsTemplateFooterTest {
                 )
                 .build()
 
-        assertThat(sentDmServicesCommonContractsPocOsTemplateFooter.template())
-            .isEqualTo("template")
-        assertThat(sentDmServicesCommonContractsPocOsTemplateFooter.type()).contains("type")
-        assertThat(sentDmServicesCommonContractsPocOsTemplateFooter.variables().getOrNull())
+        assertThat(templateFooter.template()).isEqualTo("template")
+        assertThat(templateFooter.type()).contains("type")
+        assertThat(templateFooter.variables().getOrNull())
             .containsExactly(
                 TemplateVariable.builder()
                     .name("x")
@@ -63,8 +62,8 @@ internal class SentDmServicesCommonContractsPocOsTemplateFooterTest {
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val sentDmServicesCommonContractsPocOsTemplateFooter =
-            SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+        val templateFooter =
+            TemplateFooter.builder()
                 .template("template")
                 .type("type")
                 .addVariable(
@@ -87,13 +86,12 @@ internal class SentDmServicesCommonContractsPocOsTemplateFooterTest {
                 )
                 .build()
 
-        val roundtrippedSentDmServicesCommonContractsPocOsTemplateFooter =
+        val roundtrippedTemplateFooter =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(sentDmServicesCommonContractsPocOsTemplateFooter),
-                jacksonTypeRef<SentDmServicesCommonContractsPocOsTemplateFooter>(),
+                jsonMapper.writeValueAsString(templateFooter),
+                jacksonTypeRef<TemplateFooter>(),
             )
 
-        assertThat(roundtrippedSentDmServicesCommonContractsPocOsTemplateFooter)
-            .isEqualTo(sentDmServicesCommonContractsPocOsTemplateFooter)
+        assertThat(roundtrippedTemplateFooter).isEqualTo(templateFooter)
     }
 }

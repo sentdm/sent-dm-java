@@ -19,7 +19,7 @@ internal class TemplateUpdateParamsTest {
             .definition(
                 TemplateDefinition.builder()
                     .body(
-                        SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                        TemplateBody.builder()
                             .multiChannel(
                                 TemplateBodyContent.builder()
                                     .template("template")
@@ -119,15 +119,15 @@ internal class TemplateUpdateParamsTest {
                             .build()
                     )
                     .authenticationConfig(
-                        SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                        AuthenticationConfig.builder()
                             .addSecurityRecommendation(true)
                             .codeExpirationMinutes(0)
                             .build()
                     )
                     .addButton(
-                        SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                        TemplateButton.builder()
                             .props(
-                                SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                                TemplateButtonProps.builder()
                                     .activeFor(1)
                                     .countryCode("x")
                                     .offerCode("x")
@@ -166,7 +166,7 @@ internal class TemplateUpdateParamsTest {
                     )
                     .definitionVersion("definitionVersion")
                     .footer(
-                        SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                        TemplateFooter.builder()
                             .template("template")
                             .type("type")
                             .addVariable(
@@ -190,7 +190,7 @@ internal class TemplateUpdateParamsTest {
                             .build()
                     )
                     .header(
-                        SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                        TemplateHeader.builder()
                             .template("template")
                             .type("type")
                             .addVariable(
@@ -243,7 +243,7 @@ internal class TemplateUpdateParamsTest {
                 .definition(
                     TemplateDefinition.builder()
                         .body(
-                            SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                            TemplateBody.builder()
                                 .multiChannel(
                                     TemplateBodyContent.builder()
                                         .template("template")
@@ -343,15 +343,15 @@ internal class TemplateUpdateParamsTest {
                                 .build()
                         )
                         .authenticationConfig(
-                            SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                            AuthenticationConfig.builder()
                                 .addSecurityRecommendation(true)
                                 .codeExpirationMinutes(0)
                                 .build()
                         )
                         .addButton(
-                            SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                            TemplateButton.builder()
                                 .props(
-                                    SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                                    TemplateButtonProps.builder()
                                         .activeFor(1)
                                         .countryCode("x")
                                         .offerCode("x")
@@ -390,7 +390,7 @@ internal class TemplateUpdateParamsTest {
                         )
                         .definitionVersion("definitionVersion")
                         .footer(
-                            SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                            TemplateFooter.builder()
                                 .template("template")
                                 .type("type")
                                 .addVariable(
@@ -414,7 +414,7 @@ internal class TemplateUpdateParamsTest {
                                 .build()
                         )
                         .header(
-                            SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                            TemplateHeader.builder()
                                 .template("template")
                                 .type("type")
                                 .addVariable(
@@ -477,7 +477,7 @@ internal class TemplateUpdateParamsTest {
                 .definition(
                     TemplateDefinition.builder()
                         .body(
-                            SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                            TemplateBody.builder()
                                 .multiChannel(
                                     TemplateBodyContent.builder()
                                         .template("template")
@@ -577,15 +577,15 @@ internal class TemplateUpdateParamsTest {
                                 .build()
                         )
                         .authenticationConfig(
-                            SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                            AuthenticationConfig.builder()
                                 .addSecurityRecommendation(true)
                                 .codeExpirationMinutes(0)
                                 .build()
                         )
                         .addButton(
-                            SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                            TemplateButton.builder()
                                 .props(
-                                    SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                                    TemplateButtonProps.builder()
                                         .activeFor(1)
                                         .countryCode("x")
                                         .offerCode("x")
@@ -624,7 +624,7 @@ internal class TemplateUpdateParamsTest {
                         )
                         .definitionVersion("definitionVersion")
                         .footer(
-                            SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                            TemplateFooter.builder()
                                 .template("template")
                                 .type("type")
                                 .addVariable(
@@ -648,7 +648,7 @@ internal class TemplateUpdateParamsTest {
                                 .build()
                         )
                         .header(
-                            SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                            TemplateHeader.builder()
                                 .template("template")
                                 .type("type")
                                 .addVariable(
@@ -686,7 +686,7 @@ internal class TemplateUpdateParamsTest {
             .contains(
                 TemplateDefinition.builder()
                     .body(
-                        SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                        TemplateBody.builder()
                             .multiChannel(
                                 TemplateBodyContent.builder()
                                     .template("template")
@@ -786,15 +786,15 @@ internal class TemplateUpdateParamsTest {
                             .build()
                     )
                     .authenticationConfig(
-                        SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                        AuthenticationConfig.builder()
                             .addSecurityRecommendation(true)
                             .codeExpirationMinutes(0)
                             .build()
                     )
                     .addButton(
-                        SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                        TemplateButton.builder()
                             .props(
-                                SentDmServicesCommonContractsPocOsTemplateButtonProps.builder()
+                                TemplateButtonProps.builder()
                                     .activeFor(1)
                                     .countryCode("x")
                                     .offerCode("x")
@@ -833,7 +833,7 @@ internal class TemplateUpdateParamsTest {
                     )
                     .definitionVersion("definitionVersion")
                     .footer(
-                        SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                        TemplateFooter.builder()
                             .template("template")
                             .type("type")
                             .addVariable(
@@ -857,7 +857,7 @@ internal class TemplateUpdateParamsTest {
                             .build()
                     )
                     .header(
-                        SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                        TemplateHeader.builder()
                             .template("template")
                             .type("type")
                             .addVariable(

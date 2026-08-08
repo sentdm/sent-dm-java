@@ -17,7 +17,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Configuration for AUTHENTICATION category templates */
-class SentDmServicesCommonContractsPocOsAuthenticationConfig
+class AuthenticationConfig
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val addSecurityRecommendation: JsonField<Boolean>,
@@ -88,14 +88,11 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of
-         * [SentDmServicesCommonContractsPocOsAuthenticationConfig].
-         */
+        /** Returns a mutable builder for constructing an instance of [AuthenticationConfig]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [SentDmServicesCommonContractsPocOsAuthenticationConfig]. */
+    /** A builder for [AuthenticationConfig]. */
     class Builder internal constructor() {
 
         private var addSecurityRecommendation: JsonField<Boolean> = JsonMissing.of()
@@ -103,17 +100,10 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(
-            sentDmServicesCommonContractsPocOsAuthenticationConfig:
-                SentDmServicesCommonContractsPocOsAuthenticationConfig
-        ) = apply {
-            addSecurityRecommendation =
-                sentDmServicesCommonContractsPocOsAuthenticationConfig.addSecurityRecommendation
-            codeExpirationMinutes =
-                sentDmServicesCommonContractsPocOsAuthenticationConfig.codeExpirationMinutes
-            additionalProperties =
-                sentDmServicesCommonContractsPocOsAuthenticationConfig.additionalProperties
-                    .toMutableMap()
+        internal fun from(authenticationConfig: AuthenticationConfig) = apply {
+            addSecurityRecommendation = authenticationConfig.addSecurityRecommendation
+            codeExpirationMinutes = authenticationConfig.codeExpirationMinutes
+            additionalProperties = authenticationConfig.additionalProperties.toMutableMap()
         }
 
         /**
@@ -187,13 +177,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of
-         * [SentDmServicesCommonContractsPocOsAuthenticationConfig].
+         * Returns an immutable instance of [AuthenticationConfig].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): SentDmServicesCommonContractsPocOsAuthenticationConfig =
-            SentDmServicesCommonContractsPocOsAuthenticationConfig(
+        fun build(): AuthenticationConfig =
+            AuthenticationConfig(
                 addSecurityRecommendation,
                 codeExpirationMinutes,
                 additionalProperties.toMutableMap(),
@@ -210,7 +199,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): SentDmServicesCommonContractsPocOsAuthenticationConfig = apply {
+    fun validate(): AuthenticationConfig = apply {
         if (validated) {
             return@apply
         }
@@ -243,7 +232,7 @@ private constructor(
             return true
         }
 
-        return other is SentDmServicesCommonContractsPocOsAuthenticationConfig &&
+        return other is AuthenticationConfig &&
             addSecurityRecommendation == other.addSecurityRecommendation &&
             codeExpirationMinutes == other.codeExpirationMinutes &&
             additionalProperties == other.additionalProperties
@@ -256,5 +245,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SentDmServicesCommonContractsPocOsAuthenticationConfig{addSecurityRecommendation=$addSecurityRecommendation, codeExpirationMinutes=$codeExpirationMinutes, additionalProperties=$additionalProperties}"
+        "AuthenticationConfig{addSecurityRecommendation=$addSecurityRecommendation, codeExpirationMinutes=$codeExpirationMinutes, additionalProperties=$additionalProperties}"
 }
