@@ -4,6 +4,7 @@ package dm.sent.client
 
 import dm.sent.core.ClientOptions
 import dm.sent.services.blocking.ContactService
+import dm.sent.services.blocking.ConversationService
 import dm.sent.services.blocking.MeService
 import dm.sent.services.blocking.MessageService
 import dm.sent.services.blocking.NumberService
@@ -70,6 +71,8 @@ interface SentClient {
     /** Create, update, and manage customer contact lists */
     fun contacts(): ContactService
 
+    fun conversations(): ConversationService
+
     /** Retrieve account details */
     fun me(): MeService
 
@@ -116,6 +119,8 @@ interface SentClient {
 
         /** Create, update, and manage customer contact lists */
         fun contacts(): ContactService.WithRawResponse
+
+        fun conversations(): ConversationService.WithRawResponse
 
         /** Retrieve account details */
         fun me(): MeService.WithRawResponse

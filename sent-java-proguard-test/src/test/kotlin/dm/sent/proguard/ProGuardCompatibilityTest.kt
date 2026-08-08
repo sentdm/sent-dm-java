@@ -59,6 +59,7 @@ internal class ProGuardCompatibilityTest {
         assertThat(client.numbers()).isNotNull()
         assertThat(client.messages()).isNotNull()
         assertThat(client.contacts()).isNotNull()
+        assertThat(client.conversations()).isNotNull()
         assertThat(client.me()).isNotNull()
     }
 

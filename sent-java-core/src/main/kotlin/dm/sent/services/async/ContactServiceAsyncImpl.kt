@@ -18,10 +18,12 @@ import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
 import dm.sent.models.contacts.ApiResponseOfContact
+import dm.sent.models.contacts.ApiResponseOfContactMessageSummary
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactListResponse
+import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
 import java.util.concurrent.CompletableFuture
@@ -75,6 +77,13 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
     ): CompletableFuture<Void?> =
         // delete /v3/contacts/{id}
         withRawResponse().delete(params, requestOptions).thenAccept {}
+
+    override fun retrieveMessageSummary(
+        params: ContactRetrieveMessageSummaryParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ApiResponseOfContactMessageSummary> =
+        // get /v3/contacts/{contactId}/message-summary
+        withRawResponse().retrieveMessageSummary(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ContactServiceAsync.WithRawResponse {
@@ -240,6 +249,39 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response.use { deleteHandler.handle(it) }
+                    }
+                }
+        }
+
+        private val retrieveMessageSummaryHandler: Handler<ApiResponseOfContactMessageSummary> =
+            jsonHandler<ApiResponseOfContactMessageSummary>(clientOptions.jsonMapper)
+
+        override fun retrieveMessageSummary(
+            params: ContactRetrieveMessageSummaryParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfContactMessageSummary>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("contactId", params.contactId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v3", "contacts", params._pathParam(0), "message-summary")
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { retrieveMessageSummaryHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
                     }
                 }
         }

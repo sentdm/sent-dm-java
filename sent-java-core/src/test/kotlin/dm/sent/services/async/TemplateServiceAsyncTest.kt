@@ -3,16 +3,16 @@
 package dm.sent.services.async
 
 import dm.sent.client.okhttp.SentOkHttpClientAsync
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsAuthenticationConfig
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateBody
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateButton
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateButtonProps
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateFooter
-import dm.sent.models.templates.SentDmServicesCommonContractsPocOsTemplateHeader
+import dm.sent.models.templates.AuthenticationConfig
+import dm.sent.models.templates.TemplateBody
 import dm.sent.models.templates.TemplateBodyContent
+import dm.sent.models.templates.TemplateButton
+import dm.sent.models.templates.TemplateButtonProps
 import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDefinition
 import dm.sent.models.templates.TemplateDeleteParams
+import dm.sent.models.templates.TemplateFooter
+import dm.sent.models.templates.TemplateHeader
 import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
@@ -39,7 +39,7 @@ internal class TemplateServiceAsyncTest {
                     .definition(
                         TemplateDefinition.builder()
                             .body(
-                                SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                                TemplateBody.builder()
                                     .multiChannel(
                                         TemplateBodyContent.builder()
                                             .template(
@@ -159,16 +159,15 @@ internal class TemplateServiceAsyncTest {
                                     .build()
                             )
                             .authenticationConfig(
-                                SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                                AuthenticationConfig.builder()
                                     .addSecurityRecommendation(true)
                                     .codeExpirationMinutes(0)
                                     .build()
                             )
                             .addButton(
-                                SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                                TemplateButton.builder()
                                     .props(
-                                        SentDmServicesCommonContractsPocOsTemplateButtonProps
-                                            .builder()
+                                        TemplateButtonProps.builder()
                                             .activeFor(1)
                                             .countryCode("x")
                                             .offerCode("x")
@@ -207,7 +206,7 @@ internal class TemplateServiceAsyncTest {
                             )
                             .definitionVersion("1.0")
                             .footer(
-                                SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                                TemplateFooter.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
@@ -231,7 +230,7 @@ internal class TemplateServiceAsyncTest {
                                     .build()
                             )
                             .header(
-                                SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                                TemplateHeader.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
@@ -300,7 +299,7 @@ internal class TemplateServiceAsyncTest {
                     .definition(
                         TemplateDefinition.builder()
                             .body(
-                                SentDmServicesCommonContractsPocOsTemplateBody.builder()
+                                TemplateBody.builder()
                                     .multiChannel(
                                         TemplateBodyContent.builder()
                                             .template("template")
@@ -400,16 +399,15 @@ internal class TemplateServiceAsyncTest {
                                     .build()
                             )
                             .authenticationConfig(
-                                SentDmServicesCommonContractsPocOsAuthenticationConfig.builder()
+                                AuthenticationConfig.builder()
                                     .addSecurityRecommendation(true)
                                     .codeExpirationMinutes(0)
                                     .build()
                             )
                             .addButton(
-                                SentDmServicesCommonContractsPocOsTemplateButton.builder()
+                                TemplateButton.builder()
                                     .props(
-                                        SentDmServicesCommonContractsPocOsTemplateButtonProps
-                                            .builder()
+                                        TemplateButtonProps.builder()
                                             .activeFor(1)
                                             .countryCode("x")
                                             .offerCode("x")
@@ -448,7 +446,7 @@ internal class TemplateServiceAsyncTest {
                             )
                             .definitionVersion("definitionVersion")
                             .footer(
-                                SentDmServicesCommonContractsPocOsTemplateFooter.builder()
+                                TemplateFooter.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
@@ -472,7 +470,7 @@ internal class TemplateServiceAsyncTest {
                                     .build()
                             )
                             .header(
-                                SentDmServicesCommonContractsPocOsTemplateHeader.builder()
+                                TemplateHeader.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(

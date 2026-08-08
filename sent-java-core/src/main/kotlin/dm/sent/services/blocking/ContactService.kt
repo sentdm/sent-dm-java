@@ -8,10 +8,12 @@ import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.models.contacts.ApiResponseOfContact
+import dm.sent.models.contacts.ApiResponseOfContactMessageSummary
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactListResponse
+import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
 import java.util.function.Consumer
@@ -136,6 +138,52 @@ interface ContactService {
 
     /** @see delete */
     fun delete(params: ContactDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
+
+    /**
+     * Returns aggregate message counts, time bounds, channels used, and per-channel success/fail
+     * scores (each as a percentage 0-100 of messages on that channel) for one of your contacts.
+     * Successful terminal states: SENT/DELIVERED/READ for outbound, RECEIVED for inbound. Fail:
+     * FAILED.
+     */
+    fun retrieveMessageSummary(contactId: String): ApiResponseOfContactMessageSummary =
+        retrieveMessageSummary(contactId, ContactRetrieveMessageSummaryParams.none())
+
+    /** @see retrieveMessageSummary */
+    fun retrieveMessageSummary(
+        contactId: String,
+        params: ContactRetrieveMessageSummaryParams = ContactRetrieveMessageSummaryParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ApiResponseOfContactMessageSummary =
+        retrieveMessageSummary(params.toBuilder().contactId(contactId).build(), requestOptions)
+
+    /** @see retrieveMessageSummary */
+    fun retrieveMessageSummary(
+        contactId: String,
+        params: ContactRetrieveMessageSummaryParams = ContactRetrieveMessageSummaryParams.none(),
+    ): ApiResponseOfContactMessageSummary =
+        retrieveMessageSummary(contactId, params, RequestOptions.none())
+
+    /** @see retrieveMessageSummary */
+    fun retrieveMessageSummary(
+        params: ContactRetrieveMessageSummaryParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ApiResponseOfContactMessageSummary
+
+    /** @see retrieveMessageSummary */
+    fun retrieveMessageSummary(
+        params: ContactRetrieveMessageSummaryParams
+    ): ApiResponseOfContactMessageSummary = retrieveMessageSummary(params, RequestOptions.none())
+
+    /** @see retrieveMessageSummary */
+    fun retrieveMessageSummary(
+        contactId: String,
+        requestOptions: RequestOptions,
+    ): ApiResponseOfContactMessageSummary =
+        retrieveMessageSummary(
+            contactId,
+            ContactRetrieveMessageSummaryParams.none(),
+            requestOptions,
+        )
 
     /** A view of [ContactService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -292,5 +340,59 @@ interface ContactService {
             params: ContactDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponse
+
+        /**
+         * Returns a raw HTTP response for `get /v3/contacts/{contactId}/message-summary`, but is
+         * otherwise the same as [ContactService.retrieveMessageSummary].
+         */
+        @MustBeClosed
+        fun retrieveMessageSummary(
+            contactId: String
+        ): HttpResponseFor<ApiResponseOfContactMessageSummary> =
+            retrieveMessageSummary(contactId, ContactRetrieveMessageSummaryParams.none())
+
+        /** @see retrieveMessageSummary */
+        @MustBeClosed
+        fun retrieveMessageSummary(
+            contactId: String,
+            params: ContactRetrieveMessageSummaryParams =
+                ContactRetrieveMessageSummaryParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ApiResponseOfContactMessageSummary> =
+            retrieveMessageSummary(params.toBuilder().contactId(contactId).build(), requestOptions)
+
+        /** @see retrieveMessageSummary */
+        @MustBeClosed
+        fun retrieveMessageSummary(
+            contactId: String,
+            params: ContactRetrieveMessageSummaryParams = ContactRetrieveMessageSummaryParams.none(),
+        ): HttpResponseFor<ApiResponseOfContactMessageSummary> =
+            retrieveMessageSummary(contactId, params, RequestOptions.none())
+
+        /** @see retrieveMessageSummary */
+        @MustBeClosed
+        fun retrieveMessageSummary(
+            params: ContactRetrieveMessageSummaryParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ApiResponseOfContactMessageSummary>
+
+        /** @see retrieveMessageSummary */
+        @MustBeClosed
+        fun retrieveMessageSummary(
+            params: ContactRetrieveMessageSummaryParams
+        ): HttpResponseFor<ApiResponseOfContactMessageSummary> =
+            retrieveMessageSummary(params, RequestOptions.none())
+
+        /** @see retrieveMessageSummary */
+        @MustBeClosed
+        fun retrieveMessageSummary(
+            contactId: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ApiResponseOfContactMessageSummary> =
+            retrieveMessageSummary(
+                contactId,
+                ContactRetrieveMessageSummaryParams.none(),
+                requestOptions,
+            )
     }
 }

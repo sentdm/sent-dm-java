@@ -21,12 +21,9 @@ import kotlin.jvm.optionals.getOrNull
 class BrandsBrandData
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val compliance:
-        JsonField<SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo>,
-    private val contact:
-        JsonField<SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo>,
-    private val business:
-        JsonField<SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo>,
+    private val compliance: JsonField<BrandComplianceInfo>,
+    private val contact: JsonField<BrandContactInfo>,
+    private val business: JsonField<BrandBusinessInfo>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -34,23 +31,13 @@ private constructor(
     private constructor(
         @JsonProperty("compliance")
         @ExcludeMissing
-        compliance:
-            JsonField<
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-            > =
-            JsonMissing.of(),
+        compliance: JsonField<BrandComplianceInfo> = JsonMissing.of(),
         @JsonProperty("contact")
         @ExcludeMissing
-        contact:
-            JsonField<SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo> =
-            JsonMissing.of(),
+        contact: JsonField<BrandContactInfo> = JsonMissing.of(),
         @JsonProperty("business")
         @ExcludeMissing
-        business:
-            JsonField<
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-            > =
-            JsonMissing.of(),
+        business: JsonField<BrandBusinessInfo> = JsonMissing.of(),
     ) : this(compliance, contact, business, mutableMapOf())
 
     /**
@@ -59,9 +46,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
      *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun compliance():
-        SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo =
-        compliance.getRequired("compliance")
+    fun compliance(): BrandComplianceInfo = compliance.getRequired("compliance")
 
     /**
      * Contact information for brand KYC
@@ -69,8 +54,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
      *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun contact(): SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo =
-        contact.getRequired("contact")
+    fun contact(): BrandContactInfo = contact.getRequired("contact")
 
     /**
      * Business details and address for brand KYC
@@ -78,9 +62,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun business():
-        Optional<SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo> =
-        business.getOptional("business")
+    fun business(): Optional<BrandBusinessInfo> = business.getOptional("business")
 
     /**
      * Returns the raw JSON value of [compliance].
@@ -89,20 +71,14 @@ private constructor(
      */
     @JsonProperty("compliance")
     @ExcludeMissing
-    fun _compliance():
-        JsonField<SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo> =
-        compliance
+    fun _compliance(): JsonField<BrandComplianceInfo> = compliance
 
     /**
      * Returns the raw JSON value of [contact].
      *
      * Unlike [contact], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("contact")
-    @ExcludeMissing
-    fun _contact():
-        JsonField<SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo> =
-        contact
+    @JsonProperty("contact") @ExcludeMissing fun _contact(): JsonField<BrandContactInfo> = contact
 
     /**
      * Returns the raw JSON value of [business].
@@ -111,9 +87,7 @@ private constructor(
      */
     @JsonProperty("business")
     @ExcludeMissing
-    fun _business():
-        JsonField<SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo> =
-        business
+    fun _business(): JsonField<BrandBusinessInfo> = business
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -144,21 +118,9 @@ private constructor(
     /** A builder for [BrandsBrandData]. */
     class Builder internal constructor() {
 
-        private var compliance:
-            JsonField<
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-            >? =
-            null
-        private var contact:
-            JsonField<
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-            >? =
-            null
-        private var business:
-            JsonField<
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-            > =
-            JsonMissing.of()
+        private var compliance: JsonField<BrandComplianceInfo>? = null
+        private var contact: JsonField<BrandContactInfo>? = null
+        private var business: JsonField<BrandBusinessInfo> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -170,73 +132,45 @@ private constructor(
         }
 
         /** Compliance and TCR information for brand registration */
-        fun compliance(
-            compliance:
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-        ) = compliance(JsonField.of(compliance))
+        fun compliance(compliance: BrandComplianceInfo) = compliance(JsonField.of(compliance))
 
         /**
          * Sets [Builder.compliance] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.compliance] with a well-typed
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.compliance] with a well-typed [BrandComplianceInfo]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
          */
-        fun compliance(
-            compliance:
-                JsonField<
-                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandComplianceInfo
-                >
-        ) = apply { this.compliance = compliance }
+        fun compliance(compliance: JsonField<BrandComplianceInfo>) = apply {
+            this.compliance = compliance
+        }
 
         /** Contact information for brand KYC */
-        fun contact(
-            contact: SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-        ) = contact(JsonField.of(contact))
+        fun contact(contact: BrandContactInfo) = contact(JsonField.of(contact))
 
         /**
          * Sets [Builder.contact] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.contact] with a well-typed
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo] value
+         * You should usually call [Builder.contact] with a well-typed [BrandContactInfo] value
          * instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun contact(
-            contact:
-                JsonField<
-                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandContactInfo
-                >
-        ) = apply { this.contact = contact }
+        fun contact(contact: JsonField<BrandContactInfo>) = apply { this.contact = contact }
 
         /** Business details and address for brand KYC */
-        fun business(
-            business: SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo?
-        ) = business(JsonField.ofNullable(business))
+        fun business(business: BrandBusinessInfo?) = business(JsonField.ofNullable(business))
 
         /** Alias for calling [Builder.business] with `business.orElse(null)`. */
-        fun business(
-            business:
-                Optional<
-                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                >
-        ) = business(business.getOrNull())
+        fun business(business: Optional<BrandBusinessInfo>) = business(business.getOrNull())
 
         /**
          * Sets [Builder.business] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.business] with a well-typed
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo] value
+         * You should usually call [Builder.business] with a well-typed [BrandBusinessInfo] value
          * instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun business(
-            business:
-                JsonField<
-                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsBrandsBrandBusinessInfo
-                >
-        ) = apply { this.business = business }
+        fun business(business: JsonField<BrandBusinessInfo>) = apply { this.business = business }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()

@@ -6,6 +6,8 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.getPackageVersion
 import dm.sent.services.blocking.ContactService
 import dm.sent.services.blocking.ContactServiceImpl
+import dm.sent.services.blocking.ConversationService
+import dm.sent.services.blocking.ConversationServiceImpl
 import dm.sent.services.blocking.MeService
 import dm.sent.services.blocking.MeServiceImpl
 import dm.sent.services.blocking.MessageService
@@ -55,6 +57,10 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
 
     private val contacts: ContactService by lazy { ContactServiceImpl(clientOptionsWithUserAgent) }
 
+    private val conversations: ConversationService by lazy {
+        ConversationServiceImpl(clientOptionsWithUserAgent)
+    }
+
     private val me: MeService by lazy { MeServiceImpl(clientOptionsWithUserAgent) }
 
     override fun async(): SentClientAsync = async
@@ -84,6 +90,8 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
 
     /** Create, update, and manage customer contact lists */
     override fun contacts(): ContactService = contacts
+
+    override fun conversations(): ConversationService = conversations
 
     /** Retrieve account details */
     override fun me(): MeService = me
@@ -121,6 +129,10 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
             ContactServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val conversations: ConversationService.WithRawResponse by lazy {
+            ConversationServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val me: MeService.WithRawResponse by lazy {
             MeServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -152,6 +164,8 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
 
         /** Create, update, and manage customer contact lists */
         override fun contacts(): ContactService.WithRawResponse = contacts
+
+        override fun conversations(): ConversationService.WithRawResponse = conversations
 
         /** Retrieve account details */
         override fun me(): MeService.WithRawResponse = me

@@ -23,38 +23,31 @@ import kotlin.jvm.optionals.getOrNull
 class TemplateDefinition
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val body: JsonField<SentDmServicesCommonContractsPocOsTemplateBody>,
-    private val authenticationConfig:
-        JsonField<SentDmServicesCommonContractsPocOsAuthenticationConfig>,
-    private val buttons: JsonField<List<SentDmServicesCommonContractsPocOsTemplateButton>>,
+    private val body: JsonField<TemplateBody>,
+    private val authenticationConfig: JsonField<AuthenticationConfig>,
+    private val buttons: JsonField<List<TemplateButton>>,
     private val definitionVersion: JsonField<String>,
-    private val footer: JsonField<SentDmServicesCommonContractsPocOsTemplateFooter>,
-    private val header: JsonField<SentDmServicesCommonContractsPocOsTemplateHeader>,
+    private val footer: JsonField<TemplateFooter>,
+    private val header: JsonField<TemplateHeader>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
-        @JsonProperty("body")
-        @ExcludeMissing
-        body: JsonField<SentDmServicesCommonContractsPocOsTemplateBody> = JsonMissing.of(),
+        @JsonProperty("body") @ExcludeMissing body: JsonField<TemplateBody> = JsonMissing.of(),
         @JsonProperty("authenticationConfig")
         @ExcludeMissing
-        authenticationConfig: JsonField<SentDmServicesCommonContractsPocOsAuthenticationConfig> =
-            JsonMissing.of(),
+        authenticationConfig: JsonField<AuthenticationConfig> = JsonMissing.of(),
         @JsonProperty("buttons")
         @ExcludeMissing
-        buttons: JsonField<List<SentDmServicesCommonContractsPocOsTemplateButton>> =
-            JsonMissing.of(),
+        buttons: JsonField<List<TemplateButton>> = JsonMissing.of(),
         @JsonProperty("definitionVersion")
         @ExcludeMissing
         definitionVersion: JsonField<String> = JsonMissing.of(),
         @JsonProperty("footer")
         @ExcludeMissing
-        footer: JsonField<SentDmServicesCommonContractsPocOsTemplateFooter> = JsonMissing.of(),
-        @JsonProperty("header")
-        @ExcludeMissing
-        header: JsonField<SentDmServicesCommonContractsPocOsTemplateHeader> = JsonMissing.of(),
+        footer: JsonField<TemplateFooter> = JsonMissing.of(),
+        @JsonProperty("header") @ExcludeMissing header: JsonField<TemplateHeader> = JsonMissing.of(),
     ) : this(body, authenticationConfig, buttons, definitionVersion, footer, header, mutableMapOf())
 
     /**
@@ -63,7 +56,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
      *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun body(): SentDmServicesCommonContractsPocOsTemplateBody = body.getRequired("body")
+    fun body(): TemplateBody = body.getRequired("body")
 
     /**
      * Configuration for AUTHENTICATION category templates
@@ -71,7 +64,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun authenticationConfig(): Optional<SentDmServicesCommonContractsPocOsAuthenticationConfig> =
+    fun authenticationConfig(): Optional<AuthenticationConfig> =
         authenticationConfig.getOptional("authenticationConfig")
 
     /**
@@ -80,8 +73,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun buttons(): Optional<List<SentDmServicesCommonContractsPocOsTemplateButton>> =
-        buttons.getOptional("buttons")
+    fun buttons(): Optional<List<TemplateButton>> = buttons.getOptional("buttons")
 
     /**
      * The version of the template definition format
@@ -97,8 +89,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun footer(): Optional<SentDmServicesCommonContractsPocOsTemplateFooter> =
-        footer.getOptional("footer")
+    fun footer(): Optional<TemplateFooter> = footer.getOptional("footer")
 
     /**
      * Header section of a message template
@@ -106,17 +97,14 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun header(): Optional<SentDmServicesCommonContractsPocOsTemplateHeader> =
-        header.getOptional("header")
+    fun header(): Optional<TemplateHeader> = header.getOptional("header")
 
     /**
      * Returns the raw JSON value of [body].
      *
      * Unlike [body], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("body")
-    @ExcludeMissing
-    fun _body(): JsonField<SentDmServicesCommonContractsPocOsTemplateBody> = body
+    @JsonProperty("body") @ExcludeMissing fun _body(): JsonField<TemplateBody> = body
 
     /**
      * Returns the raw JSON value of [authenticationConfig].
@@ -126,8 +114,7 @@ private constructor(
      */
     @JsonProperty("authenticationConfig")
     @ExcludeMissing
-    fun _authenticationConfig(): JsonField<SentDmServicesCommonContractsPocOsAuthenticationConfig> =
-        authenticationConfig
+    fun _authenticationConfig(): JsonField<AuthenticationConfig> = authenticationConfig
 
     /**
      * Returns the raw JSON value of [buttons].
@@ -136,7 +123,7 @@ private constructor(
      */
     @JsonProperty("buttons")
     @ExcludeMissing
-    fun _buttons(): JsonField<List<SentDmServicesCommonContractsPocOsTemplateButton>> = buttons
+    fun _buttons(): JsonField<List<TemplateButton>> = buttons
 
     /**
      * Returns the raw JSON value of [definitionVersion].
@@ -153,18 +140,14 @@ private constructor(
      *
      * Unlike [footer], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("footer")
-    @ExcludeMissing
-    fun _footer(): JsonField<SentDmServicesCommonContractsPocOsTemplateFooter> = footer
+    @JsonProperty("footer") @ExcludeMissing fun _footer(): JsonField<TemplateFooter> = footer
 
     /**
      * Returns the raw JSON value of [header].
      *
      * Unlike [header], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("header")
-    @ExcludeMissing
-    fun _header(): JsonField<SentDmServicesCommonContractsPocOsTemplateHeader> = header
+    @JsonProperty("header") @ExcludeMissing fun _header(): JsonField<TemplateHeader> = header
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -194,18 +177,12 @@ private constructor(
     /** A builder for [TemplateDefinition]. */
     class Builder internal constructor() {
 
-        private var body: JsonField<SentDmServicesCommonContractsPocOsTemplateBody>? = null
-        private var authenticationConfig:
-            JsonField<SentDmServicesCommonContractsPocOsAuthenticationConfig> =
-            JsonMissing.of()
-        private var buttons:
-            JsonField<MutableList<SentDmServicesCommonContractsPocOsTemplateButton>>? =
-            null
+        private var body: JsonField<TemplateBody>? = null
+        private var authenticationConfig: JsonField<AuthenticationConfig> = JsonMissing.of()
+        private var buttons: JsonField<MutableList<TemplateButton>>? = null
         private var definitionVersion: JsonField<String> = JsonMissing.of()
-        private var footer: JsonField<SentDmServicesCommonContractsPocOsTemplateFooter> =
-            JsonMissing.of()
-        private var header: JsonField<SentDmServicesCommonContractsPocOsTemplateHeader> =
-            JsonMissing.of()
+        private var footer: JsonField<TemplateFooter> = JsonMissing.of()
+        private var header: JsonField<TemplateHeader> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -220,69 +197,62 @@ private constructor(
         }
 
         /** Body section of a message template with channel-specific content */
-        fun body(body: SentDmServicesCommonContractsPocOsTemplateBody) = body(JsonField.of(body))
+        fun body(body: TemplateBody) = body(JsonField.of(body))
 
         /**
          * Sets [Builder.body] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.body] with a well-typed
-         * [SentDmServicesCommonContractsPocOsTemplateBody] value instead. This method is primarily
-         * for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.body] with a well-typed [TemplateBody] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun body(body: JsonField<SentDmServicesCommonContractsPocOsTemplateBody>) = apply {
-            this.body = body
-        }
+        fun body(body: JsonField<TemplateBody>) = apply { this.body = body }
 
         /** Configuration for AUTHENTICATION category templates */
-        fun authenticationConfig(
-            authenticationConfig: SentDmServicesCommonContractsPocOsAuthenticationConfig?
-        ) = authenticationConfig(JsonField.ofNullable(authenticationConfig))
+        fun authenticationConfig(authenticationConfig: AuthenticationConfig?) =
+            authenticationConfig(JsonField.ofNullable(authenticationConfig))
 
         /**
          * Alias for calling [Builder.authenticationConfig] with
          * `authenticationConfig.orElse(null)`.
          */
-        fun authenticationConfig(
-            authenticationConfig: Optional<SentDmServicesCommonContractsPocOsAuthenticationConfig>
-        ) = authenticationConfig(authenticationConfig.getOrNull())
+        fun authenticationConfig(authenticationConfig: Optional<AuthenticationConfig>) =
+            authenticationConfig(authenticationConfig.getOrNull())
 
         /**
          * Sets [Builder.authenticationConfig] to an arbitrary JSON value.
          *
          * You should usually call [Builder.authenticationConfig] with a well-typed
-         * [SentDmServicesCommonContractsPocOsAuthenticationConfig] value instead. This method is
-         * primarily for setting the field to an undocumented or not yet supported value.
+         * [AuthenticationConfig] value instead. This method is primarily for setting the field to
+         * an undocumented or not yet supported value.
          */
-        fun authenticationConfig(
-            authenticationConfig: JsonField<SentDmServicesCommonContractsPocOsAuthenticationConfig>
-        ) = apply { this.authenticationConfig = authenticationConfig }
+        fun authenticationConfig(authenticationConfig: JsonField<AuthenticationConfig>) = apply {
+            this.authenticationConfig = authenticationConfig
+        }
 
         /** Optional list of interactive buttons (e.g., quick replies, URLs, phone numbers) */
-        fun buttons(buttons: List<SentDmServicesCommonContractsPocOsTemplateButton>?) =
-            buttons(JsonField.ofNullable(buttons))
+        fun buttons(buttons: List<TemplateButton>?) = buttons(JsonField.ofNullable(buttons))
 
         /** Alias for calling [Builder.buttons] with `buttons.orElse(null)`. */
-        fun buttons(buttons: Optional<List<SentDmServicesCommonContractsPocOsTemplateButton>>) =
-            buttons(buttons.getOrNull())
+        fun buttons(buttons: Optional<List<TemplateButton>>) = buttons(buttons.getOrNull())
 
         /**
          * Sets [Builder.buttons] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.buttons] with a well-typed
-         * `List<SentDmServicesCommonContractsPocOsTemplateButton>` value instead. This method is
-         * primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.buttons] with a well-typed `List<TemplateButton>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun buttons(buttons: JsonField<List<SentDmServicesCommonContractsPocOsTemplateButton>>) =
-            apply {
-                this.buttons = buttons.map { it.toMutableList() }
-            }
+        fun buttons(buttons: JsonField<List<TemplateButton>>) = apply {
+            this.buttons = buttons.map { it.toMutableList() }
+        }
 
         /**
-         * Adds a single [SentDmServicesCommonContractsPocOsTemplateButton] to [buttons].
+         * Adds a single [TemplateButton] to [buttons].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addButton(button: SentDmServicesCommonContractsPocOsTemplateButton) = apply {
+        fun addButton(button: TemplateButton) = apply {
             buttons =
                 (buttons ?: JsonField.of(mutableListOf())).also {
                     checkKnown("buttons", it).add(button)
@@ -309,42 +279,34 @@ private constructor(
         }
 
         /** Footer section of a message template */
-        fun footer(footer: SentDmServicesCommonContractsPocOsTemplateFooter?) =
-            footer(JsonField.ofNullable(footer))
+        fun footer(footer: TemplateFooter?) = footer(JsonField.ofNullable(footer))
 
         /** Alias for calling [Builder.footer] with `footer.orElse(null)`. */
-        fun footer(footer: Optional<SentDmServicesCommonContractsPocOsTemplateFooter>) =
-            footer(footer.getOrNull())
+        fun footer(footer: Optional<TemplateFooter>) = footer(footer.getOrNull())
 
         /**
          * Sets [Builder.footer] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.footer] with a well-typed
-         * [SentDmServicesCommonContractsPocOsTemplateFooter] value instead. This method is
-         * primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.footer] with a well-typed [TemplateFooter] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun footer(footer: JsonField<SentDmServicesCommonContractsPocOsTemplateFooter>) = apply {
-            this.footer = footer
-        }
+        fun footer(footer: JsonField<TemplateFooter>) = apply { this.footer = footer }
 
         /** Header section of a message template */
-        fun header(header: SentDmServicesCommonContractsPocOsTemplateHeader?) =
-            header(JsonField.ofNullable(header))
+        fun header(header: TemplateHeader?) = header(JsonField.ofNullable(header))
 
         /** Alias for calling [Builder.header] with `header.orElse(null)`. */
-        fun header(header: Optional<SentDmServicesCommonContractsPocOsTemplateHeader>) =
-            header(header.getOrNull())
+        fun header(header: Optional<TemplateHeader>) = header(header.getOrNull())
 
         /**
          * Sets [Builder.header] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.header] with a well-typed
-         * [SentDmServicesCommonContractsPocOsTemplateHeader] value instead. This method is
-         * primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.header] with a well-typed [TemplateHeader] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun header(header: JsonField<SentDmServicesCommonContractsPocOsTemplateHeader>) = apply {
-            this.header = header
-        }
+        fun header(header: JsonField<TemplateHeader>) = apply { this.header = header }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()

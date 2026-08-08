@@ -8,8 +8,8 @@ import dm.sent.models.profiles.campaigns.CampaignData
 import dm.sent.models.profiles.campaigns.CampaignDeleteParams
 import dm.sent.models.profiles.campaigns.CampaignListParams
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
+import dm.sent.models.profiles.campaigns.CampaignUseCaseData
 import dm.sent.models.profiles.campaigns.MessagingUseCaseUs
-import dm.sent.models.profiles.campaigns.SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
 import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -22,7 +22,7 @@ internal class CampaignServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.profiles().campaigns()
 
-        val campaignFuture =
+        val apiResponseOfBrandCampaignFuture =
             campaignServiceAsync.create(
                 CampaignCreateParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
@@ -35,8 +35,7 @@ internal class CampaignServiceAsyncTest {
                             .name("Customer Notifications")
                             .type("App")
                             .addUseCase(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                                    .builder()
+                                CampaignUseCaseData.builder()
                                     .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                     .addSampleMessage(
                                         "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -69,8 +68,8 @@ internal class CampaignServiceAsyncTest {
                     .build()
             )
 
-        val campaign = campaignFuture.get()
-        campaign.validate()
+        val apiResponseOfBrandCampaign = apiResponseOfBrandCampaignFuture.get()
+        apiResponseOfBrandCampaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -79,7 +78,7 @@ internal class CampaignServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.profiles().campaigns()
 
-        val campaignFuture =
+        val apiResponseOfBrandCampaignFuture =
             campaignServiceAsync.update(
                 CampaignUpdateParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
@@ -93,8 +92,7 @@ internal class CampaignServiceAsyncTest {
                             .name("Customer Notifications Updated")
                             .type("App")
                             .addUseCase(
-                                SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                                    .builder()
+                                CampaignUseCaseData.builder()
                                     .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                     .addSampleMessage(
                                         "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -121,8 +119,8 @@ internal class CampaignServiceAsyncTest {
                     .build()
             )
 
-        val campaign = campaignFuture.get()
-        campaign.validate()
+        val apiResponseOfBrandCampaign = apiResponseOfBrandCampaignFuture.get()
+        apiResponseOfBrandCampaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -131,7 +129,7 @@ internal class CampaignServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.profiles().campaigns()
 
-        val campaignsFuture =
+        val apiResponseOfListOfBrandCampaignFuture =
             campaignServiceAsync.list(
                 CampaignListParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
@@ -139,8 +137,8 @@ internal class CampaignServiceAsyncTest {
                     .build()
             )
 
-        val campaigns = campaignsFuture.get()
-        campaigns.validate()
+        val apiResponseOfListOfBrandCampaign = apiResponseOfListOfBrandCampaignFuture.get()
+        apiResponseOfListOfBrandCampaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")
