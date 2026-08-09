@@ -4,6 +4,7 @@ package dm.sent.client
 
 import dm.sent.core.ClientOptions
 import dm.sent.services.async.ContactServiceAsync
+import dm.sent.services.async.ConversationServiceAsync
 import dm.sent.services.async.MeServiceAsync
 import dm.sent.services.async.MessageServiceAsync
 import dm.sent.services.async.NumberServiceAsync
@@ -70,6 +71,8 @@ interface SentClientAsync {
     /** Create, update, and manage customer contact lists */
     fun contacts(): ContactServiceAsync
 
+    fun conversations(): ConversationServiceAsync
+
     /** Retrieve account details */
     fun me(): MeServiceAsync
 
@@ -116,6 +119,8 @@ interface SentClientAsync {
 
         /** Create, update, and manage customer contact lists */
         fun contacts(): ContactServiceAsync.WithRawResponse
+
+        fun conversations(): ConversationServiceAsync.WithRawResponse
 
         /** Retrieve account details */
         fun me(): MeServiceAsync.WithRawResponse

@@ -18,10 +18,12 @@ import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
 import dm.sent.models.contacts.ApiResponseOfContact
+import dm.sent.models.contacts.ApiResponseOfContactMessageSummary
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactListResponse
+import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
 import java.util.function.Consumer
@@ -72,6 +74,13 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
         // delete /v3/contacts/{id}
         withRawResponse().delete(params, requestOptions)
     }
+
+    override fun retrieveMessageSummary(
+        params: ContactRetrieveMessageSummaryParams,
+        requestOptions: RequestOptions,
+    ): ApiResponseOfContactMessageSummary =
+        // get /v3/contacts/{contactId}/message-summary
+        withRawResponse().retrieveMessageSummary(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ContactService.WithRawResponse {
@@ -223,6 +232,36 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response.use { deleteHandler.handle(it) }
+            }
+        }
+
+        private val retrieveMessageSummaryHandler: Handler<ApiResponseOfContactMessageSummary> =
+            jsonHandler<ApiResponseOfContactMessageSummary>(clientOptions.jsonMapper)
+
+        override fun retrieveMessageSummary(
+            params: ContactRetrieveMessageSummaryParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ApiResponseOfContactMessageSummary> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("contactId", params.contactId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v3", "contacts", params._pathParam(0), "message-summary")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { retrieveMessageSummaryHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
             }
         }
     }

@@ -26,10 +26,7 @@ private constructor(
     private val description: JsonField<String>,
     private val name: JsonField<String>,
     private val type: JsonField<String>,
-    private val useCases:
-        JsonField<
-            List<SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData>
-        >,
+    private val useCases: JsonField<List<CampaignUseCaseData>>,
     private val helpKeywords: JsonField<String>,
     private val helpMessage: JsonField<String>,
     private val messageFlow: JsonField<String>,
@@ -52,13 +49,7 @@ private constructor(
         @JsonProperty("type") @ExcludeMissing type: JsonField<String> = JsonMissing.of(),
         @JsonProperty("useCases")
         @ExcludeMissing
-        useCases:
-            JsonField<
-                List<
-                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                >
-            > =
-            JsonMissing.of(),
+        useCases: JsonField<List<CampaignUseCaseData>> = JsonMissing.of(),
         @JsonProperty("helpKeywords")
         @ExcludeMissing
         helpKeywords: JsonField<String> = JsonMissing.of(),
@@ -135,9 +126,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
      *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun useCases():
-        List<SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData> =
-        useCases.getRequired("useCases")
+    fun useCases(): List<CampaignUseCaseData> = useCases.getRequired("useCases")
 
     /**
      * Comma-separated keywords that trigger help message (e.g., "HELP, INFO, SUPPORT")
@@ -249,10 +238,7 @@ private constructor(
      */
     @JsonProperty("useCases")
     @ExcludeMissing
-    fun _useCases():
-        JsonField<
-            List<SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData>
-        > = useCases
+    fun _useCases(): JsonField<List<CampaignUseCaseData>> = useCases
 
     /**
      * Returns the raw JSON value of [helpKeywords].
@@ -374,13 +360,7 @@ private constructor(
         private var description: JsonField<String>? = null
         private var name: JsonField<String>? = null
         private var type: JsonField<String>? = null
-        private var useCases:
-            JsonField<
-                MutableList<
-                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                >
-            >? =
-            null
+        private var useCases: JsonField<MutableList<CampaignUseCaseData>>? = null
         private var helpKeywords: JsonField<String> = JsonMissing.of()
         private var helpMessage: JsonField<String> = JsonMissing.of()
         private var messageFlow: JsonField<String> = JsonMissing.of()
@@ -447,41 +427,25 @@ private constructor(
         fun type(type: JsonField<String>) = apply { this.type = type }
 
         /** List of use cases with sample messages */
-        fun useCases(
-            useCases:
-                List<
-                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                >
-        ) = useCases(JsonField.of(useCases))
+        fun useCases(useCases: List<CampaignUseCaseData>) = useCases(JsonField.of(useCases))
 
         /**
          * Sets [Builder.useCases] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.useCases] with a well-typed
-         * `List<SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData>`
+         * You should usually call [Builder.useCases] with a well-typed `List<CampaignUseCaseData>`
          * value instead. This method is primarily for setting the field to an undocumented or not
          * yet supported value.
          */
-        fun useCases(
-            useCases:
-                JsonField<
-                    List<
-                        SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                    >
-                >
-        ) = apply { this.useCases = useCases.map { it.toMutableList() } }
+        fun useCases(useCases: JsonField<List<CampaignUseCaseData>>) = apply {
+            this.useCases = useCases.map { it.toMutableList() }
+        }
 
         /**
-         * Adds a single
-         * [SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData] to
-         * [useCases].
+         * Adds a single [CampaignUseCaseData] to [useCases].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addUseCase(
-            useCase:
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-        ) = apply {
+        fun addUseCase(useCase: CampaignUseCaseData) = apply {
             useCases =
                 (useCases ?: JsonField.of(mutableListOf())).also {
                     checkKnown("useCases", it).add(useCase)

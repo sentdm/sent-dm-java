@@ -17,8 +17,7 @@ internal class CampaignDataTest {
                 .name("x")
                 .type("x")
                 .addUseCase(
-                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                        .builder()
+                    CampaignUseCaseData.builder()
                         .messagingUseCaseUs(MessagingUseCaseUs.MARKETING)
                         .addSampleMessage("string")
                         .build()
@@ -40,8 +39,7 @@ internal class CampaignDataTest {
         assertThat(campaignData.type()).isEqualTo("x")
         assertThat(campaignData.useCases())
             .containsExactly(
-                SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                    .builder()
+                CampaignUseCaseData.builder()
                     .messagingUseCaseUs(MessagingUseCaseUs.MARKETING)
                     .addSampleMessage("string")
                     .build()
@@ -67,8 +65,7 @@ internal class CampaignDataTest {
                 .name("x")
                 .type("x")
                 .addUseCase(
-                    SentDmServicesEndpointsCustomerApIv3ContractsRequestsCampaignsCampaignUseCaseData
-                        .builder()
+                    CampaignUseCaseData.builder()
                         .messagingUseCaseUs(MessagingUseCaseUs.MARKETING)
                         .addSampleMessage("string")
                         .build()

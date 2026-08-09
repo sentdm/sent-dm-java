@@ -45,6 +45,14 @@ tasks.withType<Test>().configureEach {
 val ktfmt by configurations.creating
 dependencies {
     ktfmt("com.facebook:ktfmt:0.61")
+
+    // WireMock pulls in slf4j-api with no binding on the test runtime classpath. The first
+    // LoggerFactory call then prints a 3-line "Failed to load class StaticLoggerBinder" warning
+    // to stderr. Tests run concurrently, so that warning can land inside the stderr that
+    // LoggingHttpClientTest has redirected for assertion, failing whichever of its cases happens to
+    // be running. Bind SLF4J to the no-op logger so the warning is never emitted. SLF4J already
+    // falls back to NOP, so this changes no behaviour. Test-only: not published.
+    testRuntimeOnly("org.slf4j:slf4j-nop:1.7.36")
 }
 
 fun registerKtfmt(
