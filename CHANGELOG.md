@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.32.0](https://github.com/sentdm/sent-dm-java/compare/v0.31.1...v0.32.0) (2026-08-10)
+
+
+### Features
+
+* **api:** sync OpenAPI spec from production ([11eb334](https://github.com/sentdm/sent-dm-java/commit/11eb3347e98f8a4b0b43acebc0f7e651781c863a))
+
+
+### Chores
+
+* add eager seal-dispatch workflow ([feb8317](https://github.com/sentdm/sent-dm-java/commit/feb831739120c4201a2726f435645c3a6d786ec9))
+
 ## [0.31.1](https://github.com/sentdm/sent-dm-java/compare/v0.31.0...v0.31.1) (2026-08-08)
 
 
