@@ -11,16 +11,19 @@ internal class ProfileRetrieveParamsTest {
     @Test
     fun create() {
         ProfileRetrieveParams.builder()
-            .profileId("profileId")
+            .profileId("770e8400-e29b-41d4-a716-446655440002")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
     }
 
     @Test
     fun pathParams() {
-        val params = ProfileRetrieveParams.builder().profileId("profileId").build()
+        val params =
+            ProfileRetrieveParams.builder()
+                .profileId("770e8400-e29b-41d4-a716-446655440002")
+                .build()
 
-        assertThat(params._pathParam(0)).isEqualTo("profileId")
+        assertThat(params._pathParam(0)).isEqualTo("770e8400-e29b-41d4-a716-446655440002")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
@@ -29,7 +32,7 @@ internal class ProfileRetrieveParamsTest {
     fun headers() {
         val params =
             ProfileRetrieveParams.builder()
-                .profileId("profileId")
+                .profileId("770e8400-e29b-41d4-a716-446655440002")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
@@ -45,7 +48,10 @@ internal class ProfileRetrieveParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = ProfileRetrieveParams.builder().profileId("profileId").build()
+        val params =
+            ProfileRetrieveParams.builder()
+                .profileId("770e8400-e29b-41d4-a716-446655440002")
+                .build()
 
         val headers = params._headers()
 

@@ -11,16 +11,17 @@ internal class UserRetrieveParamsTest {
     @Test
     fun create() {
         UserRetrieveParams.builder()
-            .userId("userId")
+            .userId("880e8400-e29b-41d4-a716-446655440003")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
     }
 
     @Test
     fun pathParams() {
-        val params = UserRetrieveParams.builder().userId("userId").build()
+        val params =
+            UserRetrieveParams.builder().userId("880e8400-e29b-41d4-a716-446655440003").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("userId")
+        assertThat(params._pathParam(0)).isEqualTo("880e8400-e29b-41d4-a716-446655440003")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
@@ -29,7 +30,7 @@ internal class UserRetrieveParamsTest {
     fun headers() {
         val params =
             UserRetrieveParams.builder()
-                .userId("userId")
+                .userId("880e8400-e29b-41d4-a716-446655440003")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
@@ -45,7 +46,8 @@ internal class UserRetrieveParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = UserRetrieveParams.builder().userId("userId").build()
+        val params =
+            UserRetrieveParams.builder().userId("880e8400-e29b-41d4-a716-446655440003").build()
 
         val headers = params._headers()
 
