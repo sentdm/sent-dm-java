@@ -12,7 +12,7 @@ internal class UserRemoveParamsTest {
     @Test
     fun create() {
         UserRemoveParams.builder()
-            .userId("userId")
+            .userId("aa0e8400-e29b-41d4-a716-446655440005")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .mutationRequest(MutationRequest.builder().sandbox(false).build())
             .build()
@@ -22,11 +22,11 @@ internal class UserRemoveParamsTest {
     fun pathParams() {
         val params =
             UserRemoveParams.builder()
-                .userId("userId")
+                .userId("aa0e8400-e29b-41d4-a716-446655440005")
                 .mutationRequest(MutationRequest.builder().build())
                 .build()
 
-        assertThat(params._pathParam(0)).isEqualTo("userId")
+        assertThat(params._pathParam(0)).isEqualTo("aa0e8400-e29b-41d4-a716-446655440005")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
@@ -35,7 +35,7 @@ internal class UserRemoveParamsTest {
     fun headers() {
         val params =
             UserRemoveParams.builder()
-                .userId("userId")
+                .userId("aa0e8400-e29b-41d4-a716-446655440005")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
@@ -54,7 +54,7 @@ internal class UserRemoveParamsTest {
     fun headersWithoutOptionalFields() {
         val params =
             UserRemoveParams.builder()
-                .userId("userId")
+                .userId("aa0e8400-e29b-41d4-a716-446655440005")
                 .mutationRequest(MutationRequest.builder().build())
                 .build()
 
@@ -67,7 +67,7 @@ internal class UserRemoveParamsTest {
     fun body() {
         val params =
             UserRemoveParams.builder()
-                .userId("userId")
+                .userId("aa0e8400-e29b-41d4-a716-446655440005")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
@@ -81,7 +81,7 @@ internal class UserRemoveParamsTest {
     fun bodyWithoutOptionalFields() {
         val params =
             UserRemoveParams.builder()
-                .userId("userId")
+                .userId("aa0e8400-e29b-41d4-a716-446655440005")
                 .mutationRequest(MutationRequest.builder().build())
                 .build()
 

@@ -11,7 +11,7 @@ internal class ProfileUpdateParamsTest {
     @Test
     fun create() {
         ProfileUpdateParams.builder()
-            .profileId("profileId")
+            .profileId("770e8400-e29b-41d4-a716-446655440002")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .sandbox(false)
@@ -94,9 +94,10 @@ internal class ProfileUpdateParamsTest {
 
     @Test
     fun pathParams() {
-        val params = ProfileUpdateParams.builder().profileId("profileId").build()
+        val params =
+            ProfileUpdateParams.builder().profileId("770e8400-e29b-41d4-a716-446655440002").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("profileId")
+        assertThat(params._pathParam(0)).isEqualTo("770e8400-e29b-41d4-a716-446655440002")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
@@ -105,7 +106,7 @@ internal class ProfileUpdateParamsTest {
     fun headers() {
         val params =
             ProfileUpdateParams.builder()
-                .profileId("profileId")
+                .profileId("770e8400-e29b-41d4-a716-446655440002")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sandbox(false)
@@ -198,7 +199,8 @@ internal class ProfileUpdateParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = ProfileUpdateParams.builder().profileId("profileId").build()
+        val params =
+            ProfileUpdateParams.builder().profileId("770e8400-e29b-41d4-a716-446655440002").build()
 
         val headers = params._headers()
 
@@ -209,7 +211,7 @@ internal class ProfileUpdateParamsTest {
     fun body() {
         val params =
             ProfileUpdateParams.builder()
-                .profileId("profileId")
+                .profileId("770e8400-e29b-41d4-a716-446655440002")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sandbox(false)
@@ -373,7 +375,8 @@ internal class ProfileUpdateParamsTest {
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = ProfileUpdateParams.builder().profileId("profileId").build()
+        val params =
+            ProfileUpdateParams.builder().profileId("770e8400-e29b-41d4-a716-446655440002").build()
 
         val body = params._body()
     }
