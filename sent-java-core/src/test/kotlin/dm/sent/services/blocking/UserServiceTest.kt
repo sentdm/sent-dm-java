@@ -23,7 +23,7 @@ internal class UserServiceTest {
         val apiResponseOfUser =
             userService.retrieve(
                 UserRetrieveParams.builder()
-                    .userId("userId")
+                    .userId("880e8400-e29b-41d4-a716-446655440003")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
@@ -74,7 +74,7 @@ internal class UserServiceTest {
 
         userService.remove(
             UserRemoveParams.builder()
-                .userId("userId")
+                .userId("aa0e8400-e29b-41d4-a716-446655440005")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
@@ -90,7 +90,7 @@ internal class UserServiceTest {
         val apiResponseOfUser =
             userService.updateRole(
                 UserUpdateRoleParams.builder()
-                    .userId("userId")
+                    .userId("aa0e8400-e29b-41d4-a716-446655440005")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .sandbox(false)
