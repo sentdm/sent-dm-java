@@ -130,7 +130,7 @@ internal class ProfileServiceAsyncTest {
         val apiResponseOfProfileDetailFuture =
             profileServiceAsync.retrieve(
                 ProfileRetrieveParams.builder()
-                    .profileId("profileId")
+                    .profileId("770e8400-e29b-41d4-a716-446655440002")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
@@ -148,7 +148,7 @@ internal class ProfileServiceAsyncTest {
         val apiResponseOfProfileDetailFuture =
             profileServiceAsync.update(
                 ProfileUpdateParams.builder()
-                    .profileId("profileId")
+                    .profileId("770e8400-e29b-41d4-a716-446655440002")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .sandbox(false)
@@ -261,7 +261,7 @@ internal class ProfileServiceAsyncTest {
         val future =
             profileServiceAsync.delete(
                 ProfileDeleteParams.builder()
-                    .profileId("profileId")
+                    .profileId("770e8400-e29b-41d4-a716-446655440002")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .mutationRequest(MutationRequest.builder().sandbox(false).build())
                     .build()
