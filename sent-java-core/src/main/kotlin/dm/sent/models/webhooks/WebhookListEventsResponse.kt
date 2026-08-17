@@ -6,11 +6,22 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.ObjectCodec
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import dm.sent.core.BaseDeserializer
+import dm.sent.core.BaseSerializer
 import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
+import dm.sent.core.allMaxBy
 import dm.sent.core.checkKnown
+import dm.sent.core.getOrThrow
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import java.time.OffsetDateTime
@@ -463,7 +474,7 @@ private constructor(
             private val deliveryAttempts: JsonField<Int>,
             private val deliveryStatus: JsonField<String>,
             private val errorMessage: JsonField<String>,
-            private val eventData: JsonValue,
+            private val eventData: JsonField<EventData>,
             private val eventType: JsonField<String>,
             private val httpStatusCode: JsonField<Int>,
             private val processingCompletedAt: JsonField<OffsetDateTime>,
@@ -487,7 +498,9 @@ private constructor(
                 @JsonProperty("error_message")
                 @ExcludeMissing
                 errorMessage: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("event_data") @ExcludeMissing eventData: JsonValue = JsonMissing.of(),
+                @JsonProperty("event_data")
+                @ExcludeMissing
+                eventData: JsonField<EventData> = JsonMissing.of(),
                 @JsonProperty("event_type")
                 @ExcludeMissing
                 eventType: JsonField<String> = JsonMissing.of(),
@@ -550,13 +563,14 @@ private constructor(
             fun errorMessage(): Optional<String> = errorMessage.getOptional("error_message")
 
             /**
-             * This arbitrary value can be deserialized into a custom type using the `convert`
-             * method:
-             * ```java
-             * MyClass myObject = event.eventData().convert(MyClass.class);
-             * ```
+             * The exact event body that was delivered, or attempted, for this record. One of the
+             * three webhook envelopes: a message status change, an inbound message, or a template
+             * status change. Read field and event to tell which, the same way your endpoint does.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
              */
-            @JsonProperty("event_data") @ExcludeMissing fun _eventData(): JsonValue = eventData
+            fun eventData(): Optional<EventData> = eventData.getOptional("event_data")
 
             /**
              * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -638,6 +652,16 @@ private constructor(
             fun _errorMessage(): JsonField<String> = errorMessage
 
             /**
+             * Returns the raw JSON value of [eventData].
+             *
+             * Unlike [eventData], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("event_data")
+            @ExcludeMissing
+            fun _eventData(): JsonField<EventData> = eventData
+
+            /**
              * Returns the raw JSON value of [eventType].
              *
              * Unlike [eventType], this method doesn't throw if the JSON field has an unexpected
@@ -713,7 +737,7 @@ private constructor(
                 private var deliveryAttempts: JsonField<Int> = JsonMissing.of()
                 private var deliveryStatus: JsonField<String> = JsonMissing.of()
                 private var errorMessage: JsonField<String> = JsonMissing.of()
-                private var eventData: JsonValue = JsonMissing.of()
+                private var eventData: JsonField<EventData> = JsonMissing.of()
                 private var eventType: JsonField<String> = JsonMissing.of()
                 private var httpStatusCode: JsonField<Int> = JsonMissing.of()
                 private var processingCompletedAt: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -807,7 +831,41 @@ private constructor(
                     this.errorMessage = errorMessage
                 }
 
-                fun eventData(eventData: JsonValue) = apply { this.eventData = eventData }
+                /**
+                 * The exact event body that was delivered, or attempted, for this record. One of
+                 * the three webhook envelopes: a message status change, an inbound message, or a
+                 * template status change. Read field and event to tell which, the same way your
+                 * endpoint does.
+                 */
+                fun eventData(eventData: EventData) = eventData(JsonField.of(eventData))
+
+                /**
+                 * Sets [Builder.eventData] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.eventData] with a well-typed [EventData] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun eventData(eventData: JsonField<EventData>) = apply {
+                    this.eventData = eventData
+                }
+
+                /** Alias for calling [eventData] with `EventData.ofMessageEvent(messageEvent)`. */
+                fun eventData(messageEvent: MessageEvent) =
+                    eventData(EventData.ofMessageEvent(messageEvent))
+
+                /**
+                 * Alias for calling [eventData] with
+                 * `EventData.ofInboundMessageEvent(inboundMessageEvent)`.
+                 */
+                fun eventData(inboundMessageEvent: InboundMessageEvent) =
+                    eventData(EventData.ofInboundMessageEvent(inboundMessageEvent))
+
+                /**
+                 * Alias for calling [eventData] with `EventData.ofTemplateEvent(templateEvent)`.
+                 */
+                fun eventData(templateEvent: TemplateEvent) =
+                    eventData(EventData.ofTemplateEvent(templateEvent))
 
                 fun eventType(eventType: String) = eventType(JsonField.of(eventType))
 
@@ -974,6 +1032,7 @@ private constructor(
                 deliveryAttempts()
                 deliveryStatus()
                 errorMessage()
+                eventData().ifPresent { it.validate() }
                 eventType()
                 httpStatusCode()
                 processingCompletedAt()
@@ -1003,11 +1062,324 @@ private constructor(
                     (if (deliveryAttempts.asKnown().isPresent) 1 else 0) +
                     (if (deliveryStatus.asKnown().isPresent) 1 else 0) +
                     (if (errorMessage.asKnown().isPresent) 1 else 0) +
+                    (eventData.asKnown().getOrNull()?.validity() ?: 0) +
                     (if (eventType.asKnown().isPresent) 1 else 0) +
                     (if (httpStatusCode.asKnown().isPresent) 1 else 0) +
                     (if (processingCompletedAt.asKnown().isPresent) 1 else 0) +
                     (if (processingStartedAt.asKnown().isPresent) 1 else 0) +
                     (if (responseBody.asKnown().isPresent) 1 else 0)
+
+            /**
+             * The exact event body that was delivered, or attempted, for this record. One of the
+             * three webhook envelopes: a message status change, an inbound message, or a template
+             * status change. Read field and event to tell which, the same way your endpoint does.
+             */
+            @JsonDeserialize(using = EventData.Deserializer::class)
+            @JsonSerialize(using = EventData.Serializer::class)
+            class EventData
+            private constructor(
+                private val messageEvent: MessageEvent? = null,
+                private val inboundMessageEvent: InboundMessageEvent? = null,
+                private val templateEvent: TemplateEvent? = null,
+                private val _json: JsonValue? = null,
+            ) {
+
+                /**
+                 * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+                 * shape and varies only in Payload.
+                 */
+                fun messageEvent(): Optional<MessageEvent> = Optional.ofNullable(messageEvent)
+
+                /**
+                 * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+                 * shape and varies only in Payload.
+                 */
+                fun inboundMessageEvent(): Optional<InboundMessageEvent> =
+                    Optional.ofNullable(inboundMessageEvent)
+
+                /**
+                 * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+                 * shape and varies only in Payload.
+                 */
+                fun templateEvent(): Optional<TemplateEvent> = Optional.ofNullable(templateEvent)
+
+                fun isMessageEvent(): Boolean = messageEvent != null
+
+                fun isInboundMessageEvent(): Boolean = inboundMessageEvent != null
+
+                fun isTemplateEvent(): Boolean = templateEvent != null
+
+                /**
+                 * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+                 * shape and varies only in Payload.
+                 */
+                fun asMessageEvent(): MessageEvent = messageEvent.getOrThrow("messageEvent")
+
+                /**
+                 * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+                 * shape and varies only in Payload.
+                 */
+                fun asInboundMessageEvent(): InboundMessageEvent =
+                    inboundMessageEvent.getOrThrow("inboundMessageEvent")
+
+                /**
+                 * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+                 * shape and varies only in Payload.
+                 */
+                fun asTemplateEvent(): TemplateEvent = templateEvent.getOrThrow("templateEvent")
+
+                fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+                /**
+                 * Maps this instance's current variant to a value of type [T] using the given
+                 * [visitor].
+                 *
+                 * Note that this method is _not_ forwards compatible with new variants from the
+                 * API, unless [visitor] overrides [Visitor.unknown]. To handle variants not known
+                 * to this version of the SDK gracefully, consider overriding [Visitor.unknown]:
+                 * ```java
+                 * import dm.sent.core.JsonValue;
+                 * import java.util.Optional;
+                 *
+                 * Optional<String> result = eventData.accept(new EventData.Visitor<Optional<String>>() {
+                 *     @Override
+                 *     public Optional<String> visitMessageEvent(MessageEvent messageEvent) {
+                 *         return Optional.of(messageEvent.toString());
+                 *     }
+                 *
+                 *     // ...
+                 *
+                 *     @Override
+                 *     public Optional<String> unknown(JsonValue json) {
+                 *         // Or inspect the `json`.
+                 *         return Optional.empty();
+                 *     }
+                 * });
+                 * ```
+                 *
+                 * @throws SentInvalidDataException if [Visitor.unknown] is not overridden in
+                 *   [visitor] and the current variant is unknown.
+                 */
+                fun <T> accept(visitor: Visitor<T>): T =
+                    when {
+                        messageEvent != null -> visitor.visitMessageEvent(messageEvent)
+                        inboundMessageEvent != null ->
+                            visitor.visitInboundMessageEvent(inboundMessageEvent)
+                        templateEvent != null -> visitor.visitTemplateEvent(templateEvent)
+                        else -> visitor.unknown(_json)
+                    }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws SentInvalidDataException if any value type in this object doesn't match
+                 *   its expected type.
+                 */
+                fun validate(): EventData = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    accept(
+                        object : Visitor<Unit> {
+                            override fun visitMessageEvent(messageEvent: MessageEvent) {
+                                messageEvent.validate()
+                            }
+
+                            override fun visitInboundMessageEvent(
+                                inboundMessageEvent: InboundMessageEvent
+                            ) {
+                                inboundMessageEvent.validate()
+                            }
+
+                            override fun visitTemplateEvent(templateEvent: TemplateEvent) {
+                                templateEvent.validate()
+                            }
+                        }
+                    )
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: SentInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    accept(
+                        object : Visitor<Int> {
+                            override fun visitMessageEvent(messageEvent: MessageEvent) =
+                                messageEvent.validity()
+
+                            override fun visitInboundMessageEvent(
+                                inboundMessageEvent: InboundMessageEvent
+                            ) = inboundMessageEvent.validity()
+
+                            override fun visitTemplateEvent(templateEvent: TemplateEvent) =
+                                templateEvent.validity()
+
+                            override fun unknown(json: JsonValue?) = 0
+                        }
+                    )
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is EventData &&
+                        messageEvent == other.messageEvent &&
+                        inboundMessageEvent == other.inboundMessageEvent &&
+                        templateEvent == other.templateEvent
+                }
+
+                override fun hashCode(): Int =
+                    Objects.hash(messageEvent, inboundMessageEvent, templateEvent)
+
+                override fun toString(): String =
+                    when {
+                        messageEvent != null -> "EventData{messageEvent=$messageEvent}"
+                        inboundMessageEvent != null ->
+                            "EventData{inboundMessageEvent=$inboundMessageEvent}"
+                        templateEvent != null -> "EventData{templateEvent=$templateEvent}"
+                        _json != null -> "EventData{_unknown=$_json}"
+                        else -> throw IllegalStateException("Invalid EventData")
+                    }
+
+                companion object {
+
+                    /**
+                     * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares
+                     * this shape and varies only in Payload.
+                     */
+                    @JvmStatic
+                    fun ofMessageEvent(messageEvent: MessageEvent) =
+                        EventData(messageEvent = messageEvent)
+
+                    /**
+                     * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares
+                     * this shape and varies only in Payload.
+                     */
+                    @JvmStatic
+                    fun ofInboundMessageEvent(inboundMessageEvent: InboundMessageEvent) =
+                        EventData(inboundMessageEvent = inboundMessageEvent)
+
+                    /**
+                     * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares
+                     * this shape and varies only in Payload.
+                     */
+                    @JvmStatic
+                    fun ofTemplateEvent(templateEvent: TemplateEvent) =
+                        EventData(templateEvent = templateEvent)
+                }
+
+                /**
+                 * An interface that defines how to map each variant of [EventData] to a value of
+                 * type [T].
+                 */
+                interface Visitor<out T> {
+
+                    /**
+                     * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares
+                     * this shape and varies only in Payload.
+                     */
+                    fun visitMessageEvent(messageEvent: MessageEvent): T
+
+                    /**
+                     * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares
+                     * this shape and varies only in Payload.
+                     */
+                    fun visitInboundMessageEvent(inboundMessageEvent: InboundMessageEvent): T
+
+                    /**
+                     * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares
+                     * this shape and varies only in Payload.
+                     */
+                    fun visitTemplateEvent(templateEvent: TemplateEvent): T
+
+                    /**
+                     * Maps an unknown variant of [EventData] to a value of type [T].
+                     *
+                     * An instance of [EventData] can contain an unknown variant if it was
+                     * deserialized from data that doesn't match any known variant. For example, if
+                     * the SDK is on an older version than the API, then the API may respond with
+                     * new variants that the SDK is unaware of.
+                     *
+                     * @throws SentInvalidDataException in the default implementation.
+                     */
+                    fun unknown(json: JsonValue?): T {
+                        throw SentInvalidDataException("Unknown EventData: $json")
+                    }
+                }
+
+                internal class Deserializer : BaseDeserializer<EventData>(EventData::class) {
+
+                    override fun ObjectCodec.deserialize(node: JsonNode): EventData {
+                        val json = JsonValue.fromJsonNode(node)
+
+                        val bestMatches =
+                            sequenceOf(
+                                    tryDeserialize(node, jacksonTypeRef<MessageEvent>())?.let {
+                                        EventData(messageEvent = it, _json = json)
+                                    },
+                                    tryDeserialize(node, jacksonTypeRef<InboundMessageEvent>())
+                                        ?.let { EventData(inboundMessageEvent = it, _json = json) },
+                                    tryDeserialize(node, jacksonTypeRef<TemplateEvent>())?.let {
+                                        EventData(templateEvent = it, _json = json)
+                                    },
+                                )
+                                .filterNotNull()
+                                .allMaxBy { it.validity() }
+                                .toList()
+                        return when (bestMatches.size) {
+                            // This can happen if what we're deserializing is completely
+                            // incompatible with all the possible variants (e.g. deserializing from
+                            // boolean).
+                            0 -> EventData(_json = json)
+                            1 -> bestMatches.single()
+                            // If there's more than one match with the highest validity, then use
+                            // the first completely valid match, or simply the first match if none
+                            // are completely valid.
+                            else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                        }
+                    }
+                }
+
+                internal class Serializer : BaseSerializer<EventData>(EventData::class) {
+
+                    override fun serialize(
+                        value: EventData,
+                        generator: JsonGenerator,
+                        provider: SerializerProvider,
+                    ) {
+                        when {
+                            value.messageEvent != null -> generator.writeObject(value.messageEvent)
+                            value.inboundMessageEvent != null ->
+                                generator.writeObject(value.inboundMessageEvent)
+                            value.templateEvent != null ->
+                                generator.writeObject(value.templateEvent)
+                            value._json != null -> generator.writeObject(value._json)
+                            else -> throw IllegalStateException("Invalid EventData")
+                        }
+                    }
+                }
+            }
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) {
