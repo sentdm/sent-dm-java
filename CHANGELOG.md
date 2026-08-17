@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.33.0](https://github.com/sentdm/sent-dm-java/compare/v0.32.0...v0.33.0) (2026-08-17)
+
+
+### Features
+
+* **api:** sync OpenAPI spec from production ([0daa560](https://github.com/sentdm/sent-dm-java/commit/0daa560441f5d996de60f953e85f1f27907de9a7))
+* **api:** sync OpenAPI spec from production ([5d539c3](https://github.com/sentdm/sent-dm-java/commit/5d539c3652729f841a8944d9c9224b7a5a5e7b92))
+* **api:** sync OpenAPI spec from production ([477de0f](https://github.com/sentdm/sent-dm-java/commit/477de0f757f14d112c95837c3615d33ccbce7437))
+* **sdk:** expose the delivered webhook payloads as models ([c82cae5](https://github.com/sentdm/sent-dm-java/commit/c82cae59470a7acc0e0d9080e0554b55525446af))
+
+
+### Bug Fixes
+
+* **java:** point the javadoc badge link at the released version ([a57db09](https://github.com/sentdm/sent-dm-java/commit/a57db098a6343f82bbef5532fae666edaaac05c5))
+
+
+### Chores
+
+* **ci:** bump the pinned generator to pick up the javadoc badge fix ([5c25406](https://github.com/sentdm/sent-dm-java/commit/5c2540683fb7a88b9b0f0c017519802c912d7795))
+
 ## [0.32.0](https://github.com/sentdm/sent-dm-java/compare/v0.31.1...v0.32.0) (2026-08-10)
 
 
