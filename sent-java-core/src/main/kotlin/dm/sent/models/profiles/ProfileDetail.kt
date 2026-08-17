@@ -1580,12 +1580,14 @@ private constructor(
         fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
 
         /**
-         * CSP (Campaign Service Provider) ID
+         * Deprecated and scheduled for removal. Identifies the Campaign Service Provider that
+         * registered the brand, which is Sent, so the value is the same for every brand and every
+         * account. Nothing on your side can act on it and there is no replacement. Stop reading it.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun cspId(): Optional<String> = cspId.getOptional("csp_id")
+        @Deprecated("deprecated") fun cspId(): Optional<String> = cspId.getOptional("csp_id")
 
         /**
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -1692,7 +1694,10 @@ private constructor(
          *
          * Unlike [cspId], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("csp_id") @ExcludeMissing fun _cspId(): JsonField<String> = cspId
+        @Deprecated("deprecated")
+        @JsonProperty("csp_id")
+        @ExcludeMissing
+        fun _cspId(): JsonField<String> = cspId
 
         /**
          * Returns the raw JSON value of [identityStatus].
@@ -1896,11 +1901,16 @@ private constructor(
                 this.createdAt = createdAt
             }
 
-            /** CSP (Campaign Service Provider) ID */
-            fun cspId(cspId: String?) = cspId(JsonField.ofNullable(cspId))
+            /**
+             * Deprecated and scheduled for removal. Identifies the Campaign Service Provider that
+             * registered the brand, which is Sent, so the value is the same for every brand and
+             * every account. Nothing on your side can act on it and there is no replacement. Stop
+             * reading it.
+             */
+            @Deprecated("deprecated") fun cspId(cspId: String?) = cspId(JsonField.ofNullable(cspId))
 
             /** Alias for calling [Builder.cspId] with `cspId.orElse(null)`. */
-            fun cspId(cspId: Optional<String>) = cspId(cspId.getOrNull())
+            @Deprecated("deprecated") fun cspId(cspId: Optional<String>) = cspId(cspId.getOrNull())
 
             /**
              * Sets [Builder.cspId] to an arbitrary JSON value.
@@ -1909,6 +1919,7 @@ private constructor(
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
+            @Deprecated("deprecated")
             fun cspId(cspId: JsonField<String>) = apply { this.cspId = cspId }
 
             fun identityStatus(identityStatus: IdentityStatus?) =
