@@ -202,7 +202,7 @@ private constructor(
         termsAndConditionsLink.getOptional("termsAndConditionsLink")
 
     /**
-     * Expected messaging volume for this campaign. Numeric string (e.g. "1999", "5000"); values
+     * Expected messaging volume for this campaign. Numeric string (e.g. "1999", "5000"). Values
      * below 2000 bill at the low-volume tier.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -615,7 +615,7 @@ private constructor(
         }
 
         /**
-         * Expected messaging volume for this campaign. Numeric string (e.g. "1999", "5000"); values
+         * Expected messaging volume for this campaign. Numeric string (e.g. "1999", "5000"). Values
          * below 2000 bill at the low-volume tier.
          */
         fun volume(volume: String?) = volume(JsonField.ofNullable(volume))
