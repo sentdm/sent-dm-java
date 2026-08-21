@@ -236,6 +236,9 @@ interface ProfileServiceAsync {
      * and does nothing. Otherwise it returns 202 and calls the provided webhook URL when background
      * processing finishes.
      *
+     * Callable with the organization's API key or the profile's own key. The key's user must be an
+     * admin or owner of the profile, or of the organization it belongs to.
+     *
      * Prerequisites:
      * - Profile must have a name, short name, and description (short name max 50 characters,
      *   description max 5000)
@@ -246,7 +249,10 @@ interface ProfileServiceAsync {
      * - Destination countries marked as main must have their required compliance documents uploaded
      *
      * Resulting status:
-     * - If either the SMS or WhatsApp channel is unconfigured, the profile is SUBMITTED
+     * - If the WhatsApp channel is unconfigured, the profile is SUBMITTED. An SMS channel is
+     *   required only for TCR applications
+     * - A WhatsApp Business Account counts as configured before a phone number is registered
+     *   against it, so a missing WhatsApp phone number never holds the profile in SUBMITTED
      * - For a TCR application that inherits both its brand and its campaigns, the profile is
      *   COMPLETED
      * - For a TCR application that owns either its brand or its campaigns, the profile is COMPLETED
