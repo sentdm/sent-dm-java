@@ -14,8 +14,8 @@ internal class ProfileCompleteParamsTest {
             .profileId("660e8400-e29b-41d4-a716-446655440000")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .sandbox(false)
             .webHookUrl("https://your-app.com/webhook/profile-complete")
+            .sandbox(false)
             .build()
     }
 
@@ -39,8 +39,8 @@ internal class ProfileCompleteParamsTest {
                 .profileId("660e8400-e29b-41d4-a716-446655440000")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .webHookUrl("https://your-app.com/webhook/profile-complete")
+                .sandbox(false)
                 .build()
 
         val headers = params._headers()
@@ -74,14 +74,14 @@ internal class ProfileCompleteParamsTest {
                 .profileId("660e8400-e29b-41d4-a716-446655440000")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .webHookUrl("https://your-app.com/webhook/profile-complete")
+                .sandbox(false)
                 .build()
 
         val body = params._body()
 
-        assertThat(body.sandbox()).contains(false)
         assertThat(body.webHookUrl()).isEqualTo("https://your-app.com/webhook/profile-complete")
+        assertThat(body.sandbox()).contains(false)
     }
 
     @Test

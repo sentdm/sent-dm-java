@@ -18,7 +18,7 @@ internal class WebhookListEventTypesResponseTest {
                 .data(
                     WebhookListEventTypesResponse.Data.builder()
                         .addEventType(
-                            WebhookEventType.builder()
+                            WebhookListEventTypesResponse.Data.EventType.builder()
                                 .description("description")
                                 .displayName("display_name")
                                 .eventType("event_type")
@@ -27,13 +27,28 @@ internal class WebhookListEventTypesResponseTest {
                                 .subTypes(listOf())
                                 .build()
                         )
+                        .pagination(
+                            WebhookListEventTypesResponse.Data.Pagination.builder()
+                                .cursors(
+                                    WebhookListEventTypesResponse.Data.Pagination.Cursors.builder()
+                                        .after("after")
+                                        .before("before")
+                                        .build()
+                                )
+                                .hasMore(true)
+                                .page(0)
+                                .pageSize(0)
+                                .totalCount(0)
+                                .totalPages(0)
+                                .build()
+                        )
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    WebhookListEventTypesResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            WebhookListEventTypesResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -42,7 +57,7 @@ internal class WebhookListEventTypesResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    WebhookListEventTypesResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -55,7 +70,7 @@ internal class WebhookListEventTypesResponseTest {
             .contains(
                 WebhookListEventTypesResponse.Data.builder()
                     .addEventType(
-                        WebhookEventType.builder()
+                        WebhookListEventTypesResponse.Data.EventType.builder()
                             .description("description")
                             .displayName("display_name")
                             .eventType("event_type")
@@ -64,14 +79,29 @@ internal class WebhookListEventTypesResponseTest {
                             .subTypes(listOf())
                             .build()
                     )
+                    .pagination(
+                        WebhookListEventTypesResponse.Data.Pagination.builder()
+                            .cursors(
+                                WebhookListEventTypesResponse.Data.Pagination.Cursors.builder()
+                                    .after("after")
+                                    .before("before")
+                                    .build()
+                            )
+                            .hasMore(true)
+                            .page(0)
+                            .pageSize(0)
+                            .totalCount(0)
+                            .totalPages(0)
+                            .build()
+                    )
                     .build()
             )
         assertThat(webhookListEventTypesResponse.error())
             .contains(
-                ErrorDetail.builder()
+                WebhookListEventTypesResponse.Error.builder()
                     .code("code")
                     .details(
-                        ErrorDetail.Details.builder()
+                        WebhookListEventTypesResponse.Error.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -81,7 +111,7 @@ internal class WebhookListEventTypesResponseTest {
             )
         assertThat(webhookListEventTypesResponse.meta())
             .contains(
-                ApiMeta.builder()
+                WebhookListEventTypesResponse.Meta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -98,7 +128,7 @@ internal class WebhookListEventTypesResponseTest {
                 .data(
                     WebhookListEventTypesResponse.Data.builder()
                         .addEventType(
-                            WebhookEventType.builder()
+                            WebhookListEventTypesResponse.Data.EventType.builder()
                                 .description("description")
                                 .displayName("display_name")
                                 .eventType("event_type")
@@ -107,13 +137,28 @@ internal class WebhookListEventTypesResponseTest {
                                 .subTypes(listOf())
                                 .build()
                         )
+                        .pagination(
+                            WebhookListEventTypesResponse.Data.Pagination.builder()
+                                .cursors(
+                                    WebhookListEventTypesResponse.Data.Pagination.Cursors.builder()
+                                        .after("after")
+                                        .before("before")
+                                        .build()
+                                )
+                                .hasMore(true)
+                                .page(0)
+                                .pageSize(0)
+                                .totalCount(0)
+                                .totalPages(0)
+                                .build()
+                        )
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    WebhookListEventTypesResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            WebhookListEventTypesResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -122,7 +167,7 @@ internal class WebhookListEventTypesResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    WebhookListEventTypesResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
