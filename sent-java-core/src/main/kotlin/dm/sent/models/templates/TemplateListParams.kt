@@ -36,7 +36,12 @@ private constructor(
     /** Optional category filter: MARKETING, UTILITY, AUTHENTICATION */
     fun category(): Optional<String> = Optional.ofNullable(category)
 
-    /** Optional filter by welcome playground flag */
+    /**
+     * Accepted and ignored. It used to filter on the welcome-playground marker inside a template's
+     * LOB details; that filter is gone and nothing reads this value, so sending it neither narrows
+     * nor widens the result. Retained only so a client still passing is_welcome_playground keeps
+     * binding instead of the request shape changing under it.
+     */
     fun isWelcomePlayground(): Optional<Boolean> = Optional.ofNullable(isWelcomePlayground)
 
     /** Optional search term for filtering templates */
@@ -107,7 +112,12 @@ private constructor(
         /** Alias for calling [Builder.category] with `category.orElse(null)`. */
         fun category(category: Optional<String>) = category(category.getOrNull())
 
-        /** Optional filter by welcome playground flag */
+        /**
+         * Accepted and ignored. It used to filter on the welcome-playground marker inside a
+         * template's LOB details; that filter is gone and nothing reads this value, so sending it
+         * neither narrows nor widens the result. Retained only so a client still passing
+         * is_welcome_playground keeps binding instead of the request shape changing under it.
+         */
         fun isWelcomePlayground(isWelcomePlayground: Boolean?) = apply {
             this.isWelcomePlayground = isWelcomePlayground
         }
