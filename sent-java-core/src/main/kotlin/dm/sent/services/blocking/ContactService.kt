@@ -7,18 +7,29 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.contacts.ApiResponseOfContact
-import dm.sent.models.contacts.ApiResponseOfContactMessageSummary
 import dm.sent.models.contacts.ContactCreateParams
+import dm.sent.models.contacts.ContactCreateResponse
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactListResponse
 import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
+import dm.sent.models.contacts.ContactRetrieveMessageSummaryResponse
 import dm.sent.models.contacts.ContactRetrieveParams
+import dm.sent.models.contacts.ContactRetrieveResponse
 import dm.sent.models.contacts.ContactUpdateParams
+import dm.sent.models.contacts.ContactUpdateResponse
 import java.util.function.Consumer
 
-/** Create, update, and manage customer contact lists */
+/**
+ * The people you message, and their channel identities.
+ *
+ * A contact holds one identity per channel — a phone number, a WhatsApp number — so routing can
+ * choose between them for the same person. Opt-out is recorded against the contact and honoured on
+ * every send, whichever channel it came through.
+ *
+ * `GET /v3/contacts/{id}/message-summary` is the per-contact view of what you have sent and what
+ * happened to it.
+ */
 interface ContactService {
 
     /**
@@ -34,79 +45,76 @@ interface ContactService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ContactService
 
     /** Creates a new contact by phone number and associates it with the authenticated customer. */
-    fun create(params: ContactCreateParams): ApiResponseOfContact =
+    fun create(params: ContactCreateParams): ContactCreateResponse =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: ContactCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfContact
+    ): ContactCreateResponse
 
     /**
      * Retrieves a specific contact by their unique identifier. Returns detailed contact information
      * including phone formats, available channels, and opt-out status.
      */
-    fun retrieve(id: String): ApiResponseOfContact = retrieve(id, ContactRetrieveParams.none())
+    fun retrieve(id: String): ContactRetrieveResponse = retrieve(id, ContactRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: ContactRetrieveParams = ContactRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfContact = retrieve(params.toBuilder().id(id).build(), requestOptions)
+    ): ContactRetrieveResponse = retrieve(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         id: String,
         params: ContactRetrieveParams = ContactRetrieveParams.none(),
-    ): ApiResponseOfContact = retrieve(id, params, RequestOptions.none())
+    ): ContactRetrieveResponse = retrieve(id, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: ContactRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfContact
+    ): ContactRetrieveResponse
 
     /** @see retrieve */
-    fun retrieve(params: ContactRetrieveParams): ApiResponseOfContact =
+    fun retrieve(params: ContactRetrieveParams): ContactRetrieveResponse =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(id: String, requestOptions: RequestOptions): ApiResponseOfContact =
+    fun retrieve(id: String, requestOptions: RequestOptions): ContactRetrieveResponse =
         retrieve(id, ContactRetrieveParams.none(), requestOptions)
 
-    /**
-     * Updates a contact's default channel and/or opt-out status. Inherited contacts cannot be
-     * updated.
-     */
-    fun update(id: String): ApiResponseOfContact = update(id, ContactUpdateParams.none())
+    /** Updates a contact's default channel and/or opt-out status. */
+    fun update(id: String): ContactUpdateResponse = update(id, ContactUpdateParams.none())
 
     /** @see update */
     fun update(
         id: String,
         params: ContactUpdateParams = ContactUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfContact = update(params.toBuilder().id(id).build(), requestOptions)
+    ): ContactUpdateResponse = update(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see update */
     fun update(
         id: String,
         params: ContactUpdateParams = ContactUpdateParams.none(),
-    ): ApiResponseOfContact = update(id, params, RequestOptions.none())
+    ): ContactUpdateResponse = update(id, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: ContactUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfContact
+    ): ContactUpdateResponse
 
     /** @see update */
-    fun update(params: ContactUpdateParams): ApiResponseOfContact =
+    fun update(params: ContactUpdateParams): ContactUpdateResponse =
         update(params, RequestOptions.none())
 
     /** @see update */
-    fun update(id: String, requestOptions: RequestOptions): ApiResponseOfContact =
+    fun update(id: String, requestOptions: RequestOptions): ContactUpdateResponse =
         update(id, ContactUpdateParams.none(), requestOptions)
 
     /**
@@ -122,22 +130,44 @@ interface ContactService {
     ): ContactListResponse
 
     /**
-     * Dissociates a contact from the authenticated customer. Inherited contacts cannot be deleted.
+     * **Deprecated.** Use `PATCH /v3/contacts/{id}` with `{"opt_out": true}` instead, and expect
+     * this to be removed in a future release. It still behaves exactly as before, so nothing needs
+     * to change today.
+     *
+     * Opting a contact out stops every send to them, which is what deleting one was mostly used for
+     * — and it keeps the record of who they were and that they asked. A delete discards the consent
+     * history along with the contact, which is the part you need if anyone ever asks why you
+     * stopped, or why you started again.
+     *
+     * Dissociates a contact from the authenticated customer.
      */
-    fun delete(id: String, params: ContactDeleteParams) = delete(id, params, RequestOptions.none())
+    @Deprecated("deprecated") fun delete(id: String) = delete(id, ContactDeleteParams.none())
 
     /** @see delete */
+    @Deprecated("deprecated")
     fun delete(
         id: String,
-        params: ContactDeleteParams,
+        params: ContactDeleteParams = ContactDeleteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ) = delete(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see delete */
+    @Deprecated("deprecated")
+    fun delete(id: String, params: ContactDeleteParams = ContactDeleteParams.none()) =
+        delete(id, params, RequestOptions.none())
+
+    /** @see delete */
+    @Deprecated("deprecated")
+    fun delete(params: ContactDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
+
+    /** @see delete */
+    @Deprecated("deprecated")
     fun delete(params: ContactDeleteParams) = delete(params, RequestOptions.none())
 
     /** @see delete */
-    fun delete(params: ContactDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
+    @Deprecated("deprecated")
+    fun delete(id: String, requestOptions: RequestOptions) =
+        delete(id, ContactDeleteParams.none(), requestOptions)
 
     /**
      * Returns aggregate message counts, time bounds, channels used, and per-channel success/fail
@@ -145,7 +175,7 @@ interface ContactService {
      * Successful terminal states: SENT/DELIVERED/READ for outbound, RECEIVED for inbound. Fail:
      * FAILED.
      */
-    fun retrieveMessageSummary(contactId: String): ApiResponseOfContactMessageSummary =
+    fun retrieveMessageSummary(contactId: String): ContactRetrieveMessageSummaryResponse =
         retrieveMessageSummary(contactId, ContactRetrieveMessageSummaryParams.none())
 
     /** @see retrieveMessageSummary */
@@ -153,32 +183,32 @@ interface ContactService {
         contactId: String,
         params: ContactRetrieveMessageSummaryParams = ContactRetrieveMessageSummaryParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfContactMessageSummary =
+    ): ContactRetrieveMessageSummaryResponse =
         retrieveMessageSummary(params.toBuilder().contactId(contactId).build(), requestOptions)
 
     /** @see retrieveMessageSummary */
     fun retrieveMessageSummary(
         contactId: String,
         params: ContactRetrieveMessageSummaryParams = ContactRetrieveMessageSummaryParams.none(),
-    ): ApiResponseOfContactMessageSummary =
+    ): ContactRetrieveMessageSummaryResponse =
         retrieveMessageSummary(contactId, params, RequestOptions.none())
 
     /** @see retrieveMessageSummary */
     fun retrieveMessageSummary(
         params: ContactRetrieveMessageSummaryParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfContactMessageSummary
+    ): ContactRetrieveMessageSummaryResponse
 
     /** @see retrieveMessageSummary */
     fun retrieveMessageSummary(
         params: ContactRetrieveMessageSummaryParams
-    ): ApiResponseOfContactMessageSummary = retrieveMessageSummary(params, RequestOptions.none())
+    ): ContactRetrieveMessageSummaryResponse = retrieveMessageSummary(params, RequestOptions.none())
 
     /** @see retrieveMessageSummary */
     fun retrieveMessageSummary(
         contactId: String,
         requestOptions: RequestOptions,
-    ): ApiResponseOfContactMessageSummary =
+    ): ContactRetrieveMessageSummaryResponse =
         retrieveMessageSummary(
             contactId,
             ContactRetrieveMessageSummaryParams.none(),
@@ -200,7 +230,7 @@ interface ContactService {
          * [ContactService.create].
          */
         @MustBeClosed
-        fun create(params: ContactCreateParams): HttpResponseFor<ApiResponseOfContact> =
+        fun create(params: ContactCreateParams): HttpResponseFor<ContactCreateResponse> =
             create(params, RequestOptions.none())
 
         /** @see create */
@@ -208,14 +238,14 @@ interface ContactService {
         fun create(
             params: ContactCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfContact>
+        ): HttpResponseFor<ContactCreateResponse>
 
         /**
          * Returns a raw HTTP response for `get /v3/contacts/{id}`, but is otherwise the same as
          * [ContactService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(id: String): HttpResponseFor<ApiResponseOfContact> =
+        fun retrieve(id: String): HttpResponseFor<ContactRetrieveResponse> =
             retrieve(id, ContactRetrieveParams.none())
 
         /** @see retrieve */
@@ -224,7 +254,7 @@ interface ContactService {
             id: String,
             params: ContactRetrieveParams = ContactRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfContact> =
+        ): HttpResponseFor<ContactRetrieveResponse> =
             retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieve */
@@ -232,18 +262,18 @@ interface ContactService {
         fun retrieve(
             id: String,
             params: ContactRetrieveParams = ContactRetrieveParams.none(),
-        ): HttpResponseFor<ApiResponseOfContact> = retrieve(id, params, RequestOptions.none())
+        ): HttpResponseFor<ContactRetrieveResponse> = retrieve(id, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: ContactRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfContact>
+        ): HttpResponseFor<ContactRetrieveResponse>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(params: ContactRetrieveParams): HttpResponseFor<ApiResponseOfContact> =
+        fun retrieve(params: ContactRetrieveParams): HttpResponseFor<ContactRetrieveResponse> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
@@ -251,7 +281,7 @@ interface ContactService {
         fun retrieve(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfContact> =
+        ): HttpResponseFor<ContactRetrieveResponse> =
             retrieve(id, ContactRetrieveParams.none(), requestOptions)
 
         /**
@@ -259,7 +289,7 @@ interface ContactService {
          * [ContactService.update].
          */
         @MustBeClosed
-        fun update(id: String): HttpResponseFor<ApiResponseOfContact> =
+        fun update(id: String): HttpResponseFor<ContactUpdateResponse> =
             update(id, ContactUpdateParams.none())
 
         /** @see update */
@@ -268,7 +298,7 @@ interface ContactService {
             id: String,
             params: ContactUpdateParams = ContactUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfContact> =
+        ): HttpResponseFor<ContactUpdateResponse> =
             update(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see update */
@@ -276,18 +306,18 @@ interface ContactService {
         fun update(
             id: String,
             params: ContactUpdateParams = ContactUpdateParams.none(),
-        ): HttpResponseFor<ApiResponseOfContact> = update(id, params, RequestOptions.none())
+        ): HttpResponseFor<ContactUpdateResponse> = update(id, params, RequestOptions.none())
 
         /** @see update */
         @MustBeClosed
         fun update(
             params: ContactUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfContact>
+        ): HttpResponseFor<ContactUpdateResponse>
 
         /** @see update */
         @MustBeClosed
-        fun update(params: ContactUpdateParams): HttpResponseFor<ApiResponseOfContact> =
+        fun update(params: ContactUpdateParams): HttpResponseFor<ContactUpdateResponse> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -295,7 +325,7 @@ interface ContactService {
         fun update(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfContact> =
+        ): HttpResponseFor<ContactUpdateResponse> =
             update(id, ContactUpdateParams.none(), requestOptions)
 
         /**
@@ -317,29 +347,46 @@ interface ContactService {
          * Returns a raw HTTP response for `delete /v3/contacts/{id}`, but is otherwise the same as
          * [ContactService.delete].
          */
+        @Deprecated("deprecated")
         @MustBeClosed
-        fun delete(id: String, params: ContactDeleteParams): HttpResponse =
-            delete(id, params, RequestOptions.none())
+        fun delete(id: String): HttpResponse = delete(id, ContactDeleteParams.none())
 
         /** @see delete */
+        @Deprecated("deprecated")
         @MustBeClosed
         fun delete(
             id: String,
-            params: ContactDeleteParams,
+            params: ContactDeleteParams = ContactDeleteParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponse = delete(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see delete */
+        @Deprecated("deprecated")
         @MustBeClosed
-        fun delete(params: ContactDeleteParams): HttpResponse =
-            delete(params, RequestOptions.none())
+        fun delete(
+            id: String,
+            params: ContactDeleteParams = ContactDeleteParams.none(),
+        ): HttpResponse = delete(id, params, RequestOptions.none())
 
         /** @see delete */
+        @Deprecated("deprecated")
         @MustBeClosed
         fun delete(
             params: ContactDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponse
+
+        /** @see delete */
+        @Deprecated("deprecated")
+        @MustBeClosed
+        fun delete(params: ContactDeleteParams): HttpResponse =
+            delete(params, RequestOptions.none())
+
+        /** @see delete */
+        @Deprecated("deprecated")
+        @MustBeClosed
+        fun delete(id: String, requestOptions: RequestOptions): HttpResponse =
+            delete(id, ContactDeleteParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /v3/contacts/{contactId}/message-summary`, but is
@@ -348,7 +395,7 @@ interface ContactService {
         @MustBeClosed
         fun retrieveMessageSummary(
             contactId: String
-        ): HttpResponseFor<ApiResponseOfContactMessageSummary> =
+        ): HttpResponseFor<ContactRetrieveMessageSummaryResponse> =
             retrieveMessageSummary(contactId, ContactRetrieveMessageSummaryParams.none())
 
         /** @see retrieveMessageSummary */
@@ -358,7 +405,7 @@ interface ContactService {
             params: ContactRetrieveMessageSummaryParams =
                 ContactRetrieveMessageSummaryParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfContactMessageSummary> =
+        ): HttpResponseFor<ContactRetrieveMessageSummaryResponse> =
             retrieveMessageSummary(params.toBuilder().contactId(contactId).build(), requestOptions)
 
         /** @see retrieveMessageSummary */
@@ -366,7 +413,7 @@ interface ContactService {
         fun retrieveMessageSummary(
             contactId: String,
             params: ContactRetrieveMessageSummaryParams = ContactRetrieveMessageSummaryParams.none(),
-        ): HttpResponseFor<ApiResponseOfContactMessageSummary> =
+        ): HttpResponseFor<ContactRetrieveMessageSummaryResponse> =
             retrieveMessageSummary(contactId, params, RequestOptions.none())
 
         /** @see retrieveMessageSummary */
@@ -374,13 +421,13 @@ interface ContactService {
         fun retrieveMessageSummary(
             params: ContactRetrieveMessageSummaryParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfContactMessageSummary>
+        ): HttpResponseFor<ContactRetrieveMessageSummaryResponse>
 
         /** @see retrieveMessageSummary */
         @MustBeClosed
         fun retrieveMessageSummary(
             params: ContactRetrieveMessageSummaryParams
-        ): HttpResponseFor<ApiResponseOfContactMessageSummary> =
+        ): HttpResponseFor<ContactRetrieveMessageSummaryResponse> =
             retrieveMessageSummary(params, RequestOptions.none())
 
         /** @see retrieveMessageSummary */
@@ -388,7 +435,7 @@ interface ContactService {
         fun retrieveMessageSummary(
             contactId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfContactMessageSummary> =
+        ): HttpResponseFor<ContactRetrieveMessageSummaryResponse> =
             retrieveMessageSummary(
                 contactId,
                 ContactRetrieveMessageSummaryParams.none(),

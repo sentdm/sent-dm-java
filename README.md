@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.32.0)
-[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.32.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java)
+[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.33.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.33.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java)
 
 <!-- x-release-please-end -->
 
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-java/0.32.0).
+The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-java/0.33.0).
 
 <!-- x-release-please-end -->
 
@@ -24,7 +24,7 @@ The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm).
 ### Gradle
 
 ```kotlin
-implementation("dm.sent:sent-java:0.32.0")
+implementation("dm.sent:sent-java:0.33.0")
 ```
 
 ### Maven
@@ -33,7 +33,7 @@ implementation("dm.sent:sent-java:0.32.0")
 <dependency>
   <groupId>dm.sent</groupId>
   <artifactId>sent-java</artifactId>
-  <version>0.32.0</version>
+  <version>0.33.0</version>
 </dependency>
 ```
 
@@ -641,19 +641,19 @@ To access a property's raw JSON value, which may be undocumented, call its `_` p
 import dm.sent.core.JsonField;
 import java.util.Optional;
 
-JsonField<Boolean> sandbox = client.messages().send(params)._sandbox();
+JsonField<List<String>> channel = client.messages().send(params)._channel();
 
-if (sandbox.isMissing()) {
+if (channel.isMissing()) {
   // The property is absent from the JSON response
-} else if (sandbox.isNull()) {
+} else if (channel.isNull()) {
   // The property was set to literal null
 } else {
   // Check if value was provided as a string
   // Other methods include `asNumber()`, `asBoolean()`, etc.
-  Optional<String> jsonString = sandbox.asString();
+  Optional<String> jsonString = channel.asString();
 
   // Try to deserialize into a custom type
-  MyClass myObject = sandbox.asUnknown().orElseThrow().convert(MyClass.class);
+  MyClass myObject = channel.asUnknown().orElseThrow().convert(MyClass.class);
 }
 ```
 
