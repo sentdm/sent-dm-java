@@ -8,7 +8,6 @@ import dm.sent.models.users.UserListParams
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserRetrieveParams
 import dm.sent.models.users.UserUpdateRoleParams
-import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -20,7 +19,7 @@ internal class UserServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
-        val apiResponseOfUser =
+        val user =
             userService.retrieve(
                 UserRetrieveParams.builder()
                     .userId("880e8400-e29b-41d4-a716-446655440003")
@@ -28,7 +27,7 @@ internal class UserServiceTest {
                     .build()
             )
 
-        apiResponseOfUser.validate()
+        user.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -51,19 +50,19 @@ internal class UserServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
-        val apiResponseOfUser =
+        val response =
             userService.invite(
                 UserInviteParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .email("newuser@example.com")
                     .name("New User")
                     .role("developer")
+                    .sandbox(false)
                     .build()
             )
 
-        apiResponseOfUser.validate()
+        response.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -76,7 +75,7 @@ internal class UserServiceTest {
             UserRemoveParams.builder()
                 .userId("aa0e8400-e29b-41d4-a716-446655440005")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                .sandbox(false)
                 .build()
         )
     }
@@ -87,17 +86,17 @@ internal class UserServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
-        val apiResponseOfUser =
+        val response =
             userService.updateRole(
                 UserUpdateRoleParams.builder()
                     .userId("aa0e8400-e29b-41d4-a716-446655440005")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .role("billing")
+                    .sandbox(false)
                     .build()
             )
 
-        apiResponseOfUser.validate()
+        response.validate()
     }
 }

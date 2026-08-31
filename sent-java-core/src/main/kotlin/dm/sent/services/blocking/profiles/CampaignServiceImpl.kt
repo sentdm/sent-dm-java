@@ -17,16 +17,25 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
-import dm.sent.models.profiles.campaigns.ApiResponseOfBrandCampaign
-import dm.sent.models.profiles.campaigns.ApiResponseOfListOfBrandCampaign
 import dm.sent.models.profiles.campaigns.CampaignCreateParams
+import dm.sent.models.profiles.campaigns.CampaignCreateResponse
 import dm.sent.models.profiles.campaigns.CampaignDeleteParams
 import dm.sent.models.profiles.campaigns.CampaignListParams
+import dm.sent.models.profiles.campaigns.CampaignListResponse
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
+import dm.sent.models.profiles.campaigns.CampaignUpdateResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
-/** Manage organization profiles */
+/**
+ * **Deprecated — use Sender Profiles.**
+ *
+ * The original profile resource, kept because it has live callers. It still works, and its
+ * replacement is `/v3/sender-profiles`, which takes the identity and the campaign in one call
+ * instead of across three.
+ *
+ * New integrations should not start here.
+ */
 class CampaignServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     CampaignService {
 
@@ -39,27 +48,31 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): CampaignService =
         CampaignServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    @Deprecated("deprecated")
     override fun create(
         params: CampaignCreateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfBrandCampaign =
+    ): CampaignCreateResponse =
         // post /v3/profiles/{profileId}/campaigns
         withRawResponse().create(params, requestOptions).parse()
 
+    @Deprecated("deprecated")
     override fun update(
         params: CampaignUpdateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfBrandCampaign =
+    ): CampaignUpdateResponse =
         // put /v3/profiles/{profileId}/campaigns/{campaignId}
         withRawResponse().update(params, requestOptions).parse()
 
+    @Deprecated("deprecated")
     override fun list(
         params: CampaignListParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfListOfBrandCampaign =
+    ): CampaignListResponse =
         // get /v3/profiles/{profileId}/campaigns
         withRawResponse().list(params, requestOptions).parse()
 
+    @Deprecated("deprecated")
     override fun delete(params: CampaignDeleteParams, requestOptions: RequestOptions) {
         // delete /v3/profiles/{profileId}/campaigns/{campaignId}
         withRawResponse().delete(params, requestOptions)
@@ -78,13 +91,14 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<ApiResponseOfBrandCampaign> =
-            jsonHandler<ApiResponseOfBrandCampaign>(clientOptions.jsonMapper)
+        private val createHandler: Handler<CampaignCreateResponse> =
+            jsonHandler<CampaignCreateResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun create(
             params: CampaignCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfBrandCampaign> {
+        ): HttpResponseFor<CampaignCreateResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -109,13 +123,14 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             }
         }
 
-        private val updateHandler: Handler<ApiResponseOfBrandCampaign> =
-            jsonHandler<ApiResponseOfBrandCampaign>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<CampaignUpdateResponse> =
+            jsonHandler<CampaignUpdateResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun update(
             params: CampaignUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfBrandCampaign> {
+        ): HttpResponseFor<CampaignUpdateResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("campaignId", params.campaignId().getOrNull())
@@ -146,13 +161,14 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             }
         }
 
-        private val listHandler: Handler<ApiResponseOfListOfBrandCampaign> =
-            jsonHandler<ApiResponseOfListOfBrandCampaign>(clientOptions.jsonMapper)
+        private val listHandler: Handler<CampaignListResponse> =
+            jsonHandler<CampaignListResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun list(
             params: CampaignListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfListOfBrandCampaign> {
+        ): HttpResponseFor<CampaignListResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -178,6 +194,7 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
         private val deleteHandler: Handler<Void?> = emptyHandler()
 
+        @Deprecated("deprecated")
         override fun delete(
             params: CampaignDeleteParams,
             requestOptions: RequestOptions,

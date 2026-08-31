@@ -17,21 +17,31 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
-import dm.sent.models.profiles.ApiResponseOfProfileDetail
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
+import dm.sent.models.profiles.ProfileCreateResponse
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
+import dm.sent.models.profiles.ProfileRetrieveResponse
 import dm.sent.models.profiles.ProfileUpdateParams
+import dm.sent.models.profiles.ProfileUpdateResponse
 import dm.sent.services.blocking.profiles.CampaignService
 import dm.sent.services.blocking.profiles.CampaignServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
-/** Manage organization profiles */
+/**
+ * **Deprecated — use Sender Profiles.**
+ *
+ * The original profile resource, kept because it has live callers. It still works, and its
+ * replacement is `/v3/sender-profiles`, which takes the identity and the campaign in one call
+ * instead of across three.
+ *
+ * New integrations should not start here.
+ */
 class ProfileServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     ProfileService {
 
@@ -46,30 +56,42 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ProfileService =
         ProfileServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    /** Manage organization profiles */
+    /**
+     * **Deprecated — use Sender Profiles.**
+     *
+     * The original profile resource, kept because it has live callers. It still works, and its
+     * replacement is `/v3/sender-profiles`, which takes the identity and the campaign in one call
+     * instead of across three.
+     *
+     * New integrations should not start here.
+     */
     override fun campaigns(): CampaignService = campaigns
 
+    @Deprecated("deprecated")
     override fun create(
         params: ProfileCreateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfProfileDetail =
+    ): ProfileCreateResponse =
         // post /v3/profiles
         withRawResponse().create(params, requestOptions).parse()
 
+    @Deprecated("deprecated")
     override fun retrieve(
         params: ProfileRetrieveParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfProfileDetail =
+    ): ProfileRetrieveResponse =
         // get /v3/profiles/{profileId}
         withRawResponse().retrieve(params, requestOptions).parse()
 
+    @Deprecated("deprecated")
     override fun update(
         params: ProfileUpdateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfProfileDetail =
+    ): ProfileUpdateResponse =
         // patch /v3/profiles/{profileId}
         withRawResponse().update(params, requestOptions).parse()
 
+    @Deprecated("deprecated")
     override fun list(
         params: ProfileListParams,
         requestOptions: RequestOptions,
@@ -77,11 +99,13 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
         // get /v3/profiles
         withRawResponse().list(params, requestOptions).parse()
 
+    @Deprecated("deprecated")
     override fun delete(params: ProfileDeleteParams, requestOptions: RequestOptions) {
         // delete /v3/profiles/{profileId}
         withRawResponse().delete(params, requestOptions)
     }
 
+    @Deprecated("deprecated")
     override fun complete(
         params: ProfileCompleteParams,
         requestOptions: RequestOptions,
@@ -106,16 +130,25 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        /** Manage organization profiles */
+        /**
+         * **Deprecated — use Sender Profiles.**
+         *
+         * The original profile resource, kept because it has live callers. It still works, and its
+         * replacement is `/v3/sender-profiles`, which takes the identity and the campaign in one
+         * call instead of across three.
+         *
+         * New integrations should not start here.
+         */
         override fun campaigns(): CampaignService.WithRawResponse = campaigns
 
-        private val createHandler: Handler<ApiResponseOfProfileDetail> =
-            jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
+        private val createHandler: Handler<ProfileCreateResponse> =
+            jsonHandler<ProfileCreateResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun create(
             params: ProfileCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfProfileDetail> {
+        ): HttpResponseFor<ProfileCreateResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -137,13 +170,14 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val retrieveHandler: Handler<ApiResponseOfProfileDetail> =
-            jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<ProfileRetrieveResponse> =
+            jsonHandler<ProfileRetrieveResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun retrieve(
             params: ProfileRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfProfileDetail> {
+        ): HttpResponseFor<ProfileRetrieveResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -167,13 +201,14 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val updateHandler: Handler<ApiResponseOfProfileDetail> =
-            jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<ProfileUpdateResponse> =
+            jsonHandler<ProfileUpdateResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun update(
             params: ProfileUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfProfileDetail> {
+        ): HttpResponseFor<ProfileUpdateResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -201,6 +236,7 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
         private val listHandler: Handler<ProfileListResponse> =
             jsonHandler<ProfileListResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun list(
             params: ProfileListParams,
             requestOptions: RequestOptions,
@@ -227,6 +263,7 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
 
         private val deleteHandler: Handler<Void?> = emptyHandler()
 
+        @Deprecated("deprecated")
         override fun delete(
             params: ProfileDeleteParams,
             requestOptions: RequestOptions,
@@ -252,6 +289,7 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
         private val completeHandler: Handler<ProfileCompleteResponse> =
             jsonHandler<ProfileCompleteResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun complete(
             params: ProfileCompleteParams,
             requestOptions: RequestOptions,

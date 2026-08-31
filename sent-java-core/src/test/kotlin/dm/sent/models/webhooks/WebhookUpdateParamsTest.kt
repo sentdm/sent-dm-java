@@ -16,7 +16,6 @@ internal class WebhookUpdateParamsTest {
             .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .sandbox(false)
             .displayName("Updated Order Notifications")
             .endpointUrl("https://example.com/webhooks/orders-v2")
             .eventFilters(
@@ -27,6 +26,7 @@ internal class WebhookUpdateParamsTest {
             .addEventType("message")
             .addEventType("templates")
             .retryCount(5)
+            .sandbox(false)
             .timeoutSeconds(60)
             .build()
     }
@@ -48,7 +48,6 @@ internal class WebhookUpdateParamsTest {
                 .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .displayName("Updated Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders-v2")
                 .eventFilters(
@@ -62,6 +61,7 @@ internal class WebhookUpdateParamsTest {
                 .addEventType("message")
                 .addEventType("templates")
                 .retryCount(5)
+                .sandbox(false)
                 .timeoutSeconds(60)
                 .build()
 
@@ -93,7 +93,6 @@ internal class WebhookUpdateParamsTest {
                 .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .displayName("Updated Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders-v2")
                 .eventFilters(
@@ -107,12 +106,12 @@ internal class WebhookUpdateParamsTest {
                 .addEventType("message")
                 .addEventType("templates")
                 .retryCount(5)
+                .sandbox(false)
                 .timeoutSeconds(60)
                 .build()
 
         val body = params._body()
 
-        assertThat(body.sandbox()).contains(false)
         assertThat(body.displayName()).contains("Updated Order Notifications")
         assertThat(body.endpointUrl()).contains("https://example.com/webhooks/orders-v2")
         assertThat(body.eventFilters())
@@ -123,6 +122,7 @@ internal class WebhookUpdateParamsTest {
             )
         assertThat(body.eventTypes().getOrNull()).containsExactly("message", "templates")
         assertThat(body.retryCount()).contains(5)
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.timeoutSeconds()).contains(60)
     }
 

@@ -13,7 +13,6 @@ internal class TemplateCreateParamsTest {
         TemplateCreateParams.builder()
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .sandbox(false)
             .category("MARKETING")
             .creationSource(null)
             .definition(
@@ -234,6 +233,7 @@ internal class TemplateCreateParamsTest {
                     .build()
             )
             .language("en_US")
+            .sandbox(false)
             .submitForReview(false)
             .build()
     }
@@ -244,7 +244,6 @@ internal class TemplateCreateParamsTest {
             TemplateCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .category("MARKETING")
                 .creationSource(null)
                 .definition(
@@ -467,6 +466,7 @@ internal class TemplateCreateParamsTest {
                         .build()
                 )
                 .language("en_US")
+                .sandbox(false)
                 .submitForReview(false)
                 .build()
 
@@ -496,7 +496,6 @@ internal class TemplateCreateParamsTest {
             TemplateCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .category("MARKETING")
                 .creationSource(null)
                 .definition(
@@ -719,12 +718,12 @@ internal class TemplateCreateParamsTest {
                         .build()
                 )
                 .language("en_US")
+                .sandbox(false)
                 .submitForReview(false)
                 .build()
 
         val body = params._body()
 
-        assertThat(body.sandbox()).contains(false)
         assertThat(body.category()).contains("MARKETING")
         assertThat(body.creationSource()).isEmpty
         assertThat(body.definition())
@@ -946,6 +945,7 @@ internal class TemplateCreateParamsTest {
                     .build()
             )
         assertThat(body.language()).contains("en_US")
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.submitForReview()).contains(false)
     }
 

@@ -6,11 +6,20 @@ import com.google.errorprone.annotations.MustBeClosed
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.conversations.ApiResponseOfConversationMessagesList
 import dm.sent.models.conversations.ConversationListMessagesParams
+import dm.sent.models.conversations.ConversationListMessagesResponse
 import dm.sent.models.conversations.ConversationListParams
+import dm.sent.models.conversations.ConversationListResponse
 import java.util.function.Consumer
 
+/**
+ * Inbound and outbound messages, grouped by the person they are with.
+ *
+ * A conversation is the thread for one contact across every channel — a reply by SMS and one by
+ * WhatsApp belong to the same conversation, because they are the same person talking to you.
+ *
+ * Read-only. Sending is **Messages**; a reply arrives here and through your webhooks.
+ */
 interface ConversationService {
 
     /**
@@ -29,14 +38,14 @@ interface ConversationService {
      * Retrieves a paginated list of the authenticated customer's messages across all conversations,
      * ordered by created date (most recent first).
      */
-    fun list(params: ConversationListParams): ApiResponseOfConversationMessagesList =
+    fun list(params: ConversationListParams): ConversationListResponse =
         list(params, RequestOptions.none())
 
     /** @see list */
     fun list(
         params: ConversationListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfConversationMessagesList
+    ): ConversationListResponse
 
     /**
      * Retrieves a paginated list of the messages in a single conversation (scoped to the
@@ -45,26 +54,25 @@ interface ConversationService {
     fun listMessages(
         id: String,
         params: ConversationListMessagesParams,
-    ): ApiResponseOfConversationMessagesList = listMessages(id, params, RequestOptions.none())
+    ): ConversationListMessagesResponse = listMessages(id, params, RequestOptions.none())
 
     /** @see listMessages */
     fun listMessages(
         id: String,
         params: ConversationListMessagesParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfConversationMessagesList =
+    ): ConversationListMessagesResponse =
         listMessages(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see listMessages */
-    fun listMessages(
-        params: ConversationListMessagesParams
-    ): ApiResponseOfConversationMessagesList = listMessages(params, RequestOptions.none())
+    fun listMessages(params: ConversationListMessagesParams): ConversationListMessagesResponse =
+        listMessages(params, RequestOptions.none())
 
     /** @see listMessages */
     fun listMessages(
         params: ConversationListMessagesParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ApiResponseOfConversationMessagesList
+    ): ConversationListMessagesResponse
 
     /**
      * A view of [ConversationService] that provides access to raw HTTP responses for each method.
@@ -85,9 +93,7 @@ interface ConversationService {
          * [ConversationService.list].
          */
         @MustBeClosed
-        fun list(
-            params: ConversationListParams
-        ): HttpResponseFor<ApiResponseOfConversationMessagesList> =
+        fun list(params: ConversationListParams): HttpResponseFor<ConversationListResponse> =
             list(params, RequestOptions.none())
 
         /** @see list */
@@ -95,7 +101,7 @@ interface ConversationService {
         fun list(
             params: ConversationListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfConversationMessagesList>
+        ): HttpResponseFor<ConversationListResponse>
 
         /**
          * Returns a raw HTTP response for `get /v3/conversations/{id}`, but is otherwise the same
@@ -105,7 +111,7 @@ interface ConversationService {
         fun listMessages(
             id: String,
             params: ConversationListMessagesParams,
-        ): HttpResponseFor<ApiResponseOfConversationMessagesList> =
+        ): HttpResponseFor<ConversationListMessagesResponse> =
             listMessages(id, params, RequestOptions.none())
 
         /** @see listMessages */
@@ -114,14 +120,14 @@ interface ConversationService {
             id: String,
             params: ConversationListMessagesParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfConversationMessagesList> =
+        ): HttpResponseFor<ConversationListMessagesResponse> =
             listMessages(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see listMessages */
         @MustBeClosed
         fun listMessages(
             params: ConversationListMessagesParams
-        ): HttpResponseFor<ApiResponseOfConversationMessagesList> =
+        ): HttpResponseFor<ConversationListMessagesResponse> =
             listMessages(params, RequestOptions.none())
 
         /** @see listMessages */
@@ -129,6 +135,6 @@ interface ConversationService {
         fun listMessages(
             params: ConversationListMessagesParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ApiResponseOfConversationMessagesList>
+        ): HttpResponseFor<ConversationListMessagesResponse>
     }
 }
