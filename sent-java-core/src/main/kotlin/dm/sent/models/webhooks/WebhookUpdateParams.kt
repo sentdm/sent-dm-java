@@ -39,15 +39,6 @@ private constructor(
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /**
-     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
-     * integrations without actual execution
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun sandbox(): Optional<Boolean> = body.sandbox()
-
-    /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
@@ -78,17 +69,19 @@ private constructor(
     fun retryCount(): Optional<Int> = body.retryCount()
 
     /**
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun sandbox(): Optional<Boolean> = body.sandbox()
+
+    /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
     fun timeoutSeconds(): Optional<Int> = body.timeoutSeconds()
-
-    /**
-     * Returns the raw JSON value of [sandbox].
-     *
-     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
      * Returns the raw JSON value of [displayName].
@@ -124,6 +117,13 @@ private constructor(
      * Unlike [retryCount], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _retryCount(): JsonField<Int> = body._retryCount()
+
+    /**
+     * Returns the raw JSON value of [sandbox].
+     *
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
      * Returns the raw JSON value of [timeoutSeconds].
@@ -191,28 +191,14 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [sandbox]
          * - [displayName]
          * - [endpointUrl]
          * - [eventFilters]
          * - [eventTypes]
+         * - [retryCount]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         */
-        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
-
-        /**
-         * Sets [Builder.sandbox] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         fun displayName(displayName: String) = apply { body.displayName(displayName) }
 
@@ -280,6 +266,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun retryCount(retryCount: JsonField<Int>) = apply { body.retryCount(retryCount) }
+
+        /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         */
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
+
+        /**
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         fun timeoutSeconds(timeoutSeconds: Int) = apply { body.timeoutSeconds(timeoutSeconds) }
 
@@ -449,19 +449,18 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val sandbox: JsonField<Boolean>,
         private val displayName: JsonField<String>,
         private val endpointUrl: JsonField<String>,
         private val eventFilters: JsonField<EventFilters>,
         private val eventTypes: JsonField<List<String>>,
         private val retryCount: JsonField<Int>,
+        private val sandbox: JsonField<Boolean>,
         private val timeoutSeconds: JsonField<Int>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("display_name")
             @ExcludeMissing
             displayName: JsonField<String> = JsonMissing.of(),
@@ -477,31 +476,20 @@ private constructor(
             @JsonProperty("retry_count")
             @ExcludeMissing
             retryCount: JsonField<Int> = JsonMissing.of(),
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("timeout_seconds")
             @ExcludeMissing
             timeoutSeconds: JsonField<Int> = JsonMissing.of(),
         ) : this(
-            sandbox,
             displayName,
             endpointUrl,
             eventFilters,
             eventTypes,
             retryCount,
+            sandbox,
             timeoutSeconds,
             mutableMapOf(),
         )
-
-        fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -534,17 +522,19 @@ private constructor(
         fun retryCount(): Optional<Int> = retryCount.getOptional("retry_count")
 
         /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
+
+        /**
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
         fun timeoutSeconds(): Optional<Int> = timeoutSeconds.getOptional("timeout_seconds")
-
-        /**
-         * Returns the raw JSON value of [sandbox].
-         *
-         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
          * Returns the raw JSON value of [displayName].
@@ -591,6 +581,13 @@ private constructor(
         @JsonProperty("retry_count") @ExcludeMissing fun _retryCount(): JsonField<Int> = retryCount
 
         /**
+         * Returns the raw JSON value of [sandbox].
+         *
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
+        /**
          * Returns the raw JSON value of [timeoutSeconds].
          *
          * Unlike [timeoutSeconds], this method doesn't throw if the JSON field has an unexpected
@@ -621,41 +618,26 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var displayName: JsonField<String> = JsonMissing.of()
             private var endpointUrl: JsonField<String> = JsonMissing.of()
             private var eventFilters: JsonField<EventFilters> = JsonMissing.of()
             private var eventTypes: JsonField<MutableList<String>>? = null
             private var retryCount: JsonField<Int> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var timeoutSeconds: JsonField<Int> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                sandbox = body.sandbox
                 displayName = body.displayName
                 endpointUrl = body.endpointUrl
                 eventFilters = body.eventFilters
                 eventTypes = body.eventTypes.map { it.toMutableList() }
                 retryCount = body.retryCount
+                sandbox = body.sandbox
                 timeoutSeconds = body.timeoutSeconds
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
-
-            /**
-             * Sandbox flag - when true, the operation is simulated without side effects Useful for
-             * testing integrations without actual execution
-             */
-            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
-
-            /**
-             * Sets [Builder.sandbox] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             fun displayName(displayName: String) = displayName(JsonField.of(displayName))
 
@@ -737,6 +719,21 @@ private constructor(
              */
             fun retryCount(retryCount: JsonField<Int>) = apply { this.retryCount = retryCount }
 
+            /**
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
+             */
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
+
+            /**
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
             fun timeoutSeconds(timeoutSeconds: Int) = timeoutSeconds(JsonField.of(timeoutSeconds))
 
             /**
@@ -776,12 +773,12 @@ private constructor(
              */
             fun build(): Body =
                 Body(
-                    sandbox,
                     displayName,
                     endpointUrl,
                     eventFilters,
                     (eventTypes ?: JsonMissing.of()).map { it.toImmutable() },
                     retryCount,
+                    sandbox,
                     timeoutSeconds,
                     additionalProperties.toMutableMap(),
                 )
@@ -803,12 +800,12 @@ private constructor(
                 return@apply
             }
 
-            sandbox()
             displayName()
             endpointUrl()
             eventFilters().ifPresent { it.validate() }
             eventTypes()
             retryCount()
+            sandbox()
             timeoutSeconds()
             validated = true
         }
@@ -829,12 +826,12 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (sandbox.asKnown().isPresent) 1 else 0) +
-                (if (displayName.asKnown().isPresent) 1 else 0) +
+            (if (displayName.asKnown().isPresent) 1 else 0) +
                 (if (endpointUrl.asKnown().isPresent) 1 else 0) +
                 (eventFilters.asKnown().getOrNull()?.validity() ?: 0) +
                 (eventTypes.asKnown().getOrNull()?.size ?: 0) +
                 (if (retryCount.asKnown().isPresent) 1 else 0) +
+                (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (if (timeoutSeconds.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -843,24 +840,24 @@ private constructor(
             }
 
             return other is Body &&
-                sandbox == other.sandbox &&
                 displayName == other.displayName &&
                 endpointUrl == other.endpointUrl &&
                 eventFilters == other.eventFilters &&
                 eventTypes == other.eventTypes &&
                 retryCount == other.retryCount &&
+                sandbox == other.sandbox &&
                 timeoutSeconds == other.timeoutSeconds &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
             Objects.hash(
-                sandbox,
                 displayName,
                 endpointUrl,
                 eventFilters,
                 eventTypes,
                 retryCount,
+                sandbox,
                 timeoutSeconds,
                 additionalProperties,
             )
@@ -869,7 +866,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, displayName=$displayName, endpointUrl=$endpointUrl, eventFilters=$eventFilters, eventTypes=$eventTypes, retryCount=$retryCount, timeoutSeconds=$timeoutSeconds, additionalProperties=$additionalProperties}"
+            "Body{displayName=$displayName, endpointUrl=$endpointUrl, eventFilters=$eventFilters, eventTypes=$eventTypes, retryCount=$retryCount, sandbox=$sandbox, timeoutSeconds=$timeoutSeconds, additionalProperties=$additionalProperties}"
     }
 
     class EventFilters
