@@ -5,8 +5,6 @@ package dm.sent.models.numbers
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -31,10 +29,10 @@ internal class NumberLookupResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    NumberLookupResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            NumberLookupResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -43,7 +41,7 @@ internal class NumberLookupResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    NumberLookupResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -68,10 +66,10 @@ internal class NumberLookupResponseTest {
             )
         assertThat(numberLookupResponse.error())
             .contains(
-                ErrorDetail.builder()
+                NumberLookupResponse.Error.builder()
                     .code("code")
                     .details(
-                        ErrorDetail.Details.builder()
+                        NumberLookupResponse.Error.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -81,7 +79,7 @@ internal class NumberLookupResponseTest {
             )
         assertThat(numberLookupResponse.meta())
             .contains(
-                ApiMeta.builder()
+                NumberLookupResponse.Meta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -109,10 +107,10 @@ internal class NumberLookupResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    NumberLookupResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            NumberLookupResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -121,7 +119,7 @@ internal class NumberLookupResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    NumberLookupResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

@@ -17,8 +17,8 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
-import dm.sent.models.webhooks.ApiResponseWebhook
 import dm.sent.models.webhooks.WebhookCreateParams
+import dm.sent.models.webhooks.WebhookCreateResponse
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
 import dm.sent.models.webhooks.WebhookListEventTypesResponse
@@ -27,16 +27,30 @@ import dm.sent.models.webhooks.WebhookListEventsResponse
 import dm.sent.models.webhooks.WebhookListParams
 import dm.sent.models.webhooks.WebhookListResponse
 import dm.sent.models.webhooks.WebhookRetrieveParams
+import dm.sent.models.webhooks.WebhookRetrieveResponse
 import dm.sent.models.webhooks.WebhookRotateSecretParams
 import dm.sent.models.webhooks.WebhookRotateSecretResponse
 import dm.sent.models.webhooks.WebhookTestParams
 import dm.sent.models.webhooks.WebhookTestResponse
 import dm.sent.models.webhooks.WebhookToggleStatusParams
+import dm.sent.models.webhooks.WebhookToggleStatusResponse
 import dm.sent.models.webhooks.WebhookUpdateParams
+import dm.sent.models.webhooks.WebhookUpdateResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
-/** Configure webhook endpoints for real-time event delivery */
+/**
+ * Delivery reports and inbound messages, pushed to you.
+ *
+ * Subscribe an endpoint to the event types you care about — `GET /v3/webhooks/event-types` lists
+ * them — and we POST each one as it happens, retrying on failure. Polling `GET /v3/messages/{id}`
+ * works and does not scale.
+ *
+ * **Verify the signature.** Every delivery is signed with your endpoint's secret; an unverified
+ * endpoint is one anybody can post to. `rotate-secret` replaces it, `test` sends a specimen event,
+ * and `GET /v3/webhooks/{id}/events` shows what we tried to deliver and what your endpoint answered
+ * — which is the first place to look when something appears to be missing.
+ */
 class WebhookServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     WebhookService {
 
@@ -52,21 +66,21 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
     override fun create(
         params: WebhookCreateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseWebhook =
+    ): WebhookCreateResponse =
         // post /v3/webhooks
         withRawResponse().create(params, requestOptions).parse()
 
     override fun retrieve(
         params: WebhookRetrieveParams,
         requestOptions: RequestOptions,
-    ): ApiResponseWebhook =
+    ): WebhookRetrieveResponse =
         // get /v3/webhooks/{id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun update(
         params: WebhookUpdateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseWebhook =
+    ): WebhookUpdateResponse =
         // put /v3/webhooks/{id}
         withRawResponse().update(params, requestOptions).parse()
 
@@ -113,7 +127,7 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
     override fun toggleStatus(
         params: WebhookToggleStatusParams,
         requestOptions: RequestOptions,
-    ): ApiResponseWebhook =
+    ): WebhookToggleStatusResponse =
         // patch /v3/webhooks/{id}/toggle-status
         withRawResponse().toggleStatus(params, requestOptions).parse()
 
@@ -130,13 +144,13 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<ApiResponseWebhook> =
-            jsonHandler<ApiResponseWebhook>(clientOptions.jsonMapper)
+        private val createHandler: Handler<WebhookCreateResponse> =
+            jsonHandler<WebhookCreateResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: WebhookCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseWebhook> {
+        ): HttpResponseFor<WebhookCreateResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -158,13 +172,13 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val retrieveHandler: Handler<ApiResponseWebhook> =
-            jsonHandler<ApiResponseWebhook>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<WebhookRetrieveResponse> =
+            jsonHandler<WebhookRetrieveResponse>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: WebhookRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseWebhook> {
+        ): HttpResponseFor<WebhookRetrieveResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -188,13 +202,13 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val updateHandler: Handler<ApiResponseWebhook> =
-            jsonHandler<ApiResponseWebhook>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<WebhookUpdateResponse> =
+            jsonHandler<WebhookUpdateResponse>(clientOptions.jsonMapper)
 
         override fun update(
             params: WebhookUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseWebhook> {
+        ): HttpResponseFor<WebhookUpdateResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -389,13 +403,13 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val toggleStatusHandler: Handler<ApiResponseWebhook> =
-            jsonHandler<ApiResponseWebhook>(clientOptions.jsonMapper)
+        private val toggleStatusHandler: Handler<WebhookToggleStatusResponse> =
+            jsonHandler<WebhookToggleStatusResponse>(clientOptions.jsonMapper)
 
         override fun toggleStatus(
             params: WebhookToggleStatusParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseWebhook> {
+        ): HttpResponseFor<WebhookToggleStatusResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

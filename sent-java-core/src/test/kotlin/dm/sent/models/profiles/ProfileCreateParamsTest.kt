@@ -13,11 +13,10 @@ internal class ProfileCreateParamsTest {
         ProfileCreateParams.builder()
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .sandbox(false)
-            .allowContactSharing(true)
-            .allowTemplateSharing(false)
+            .allowContactSharing(null)
+            .allowTemplateSharing(null)
             .billingContact(
-                BillingContactInfo.builder()
+                ProfileCreateParams.BillingContact.builder()
                     .email("billing@acmecorp.com")
                     .name("Acme Corp")
                     .address("123 Main Street, New York, NY 10001, US")
@@ -26,9 +25,9 @@ internal class ProfileCreateParamsTest {
             )
             .billingModel("profile")
             .brand(
-                BrandsBrandData.builder()
+                ProfileCreateParams.Brand.builder()
                     .compliance(
-                        BrandComplianceInfo.builder()
+                        ProfileCreateParams.Brand.Compliance.builder()
                             .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                             .vertical(TcrVertical.PROFESSIONAL)
                             .addDestinationCountry(
@@ -37,11 +36,10 @@ internal class ProfileCreateParamsTest {
                             .isTcrApplication(true)
                             .notes(null)
                             .phoneNumberPrefix("+1")
-                            .primaryUseCase("Customer notifications and appointment reminders")
                             .build()
                     )
                     .contact(
-                        BrandContactInfo.builder()
+                        ProfileCreateParams.Brand.Contact.builder()
                             .name("John Smith")
                             .businessName("Acme Corp")
                             .email("john@acmecorp.com")
@@ -51,11 +49,13 @@ internal class ProfileCreateParamsTest {
                             .build()
                     )
                     .business(
-                        BrandBusinessInfo.builder()
+                        ProfileCreateParams.Brand.Business.builder()
                             .city("New York")
                             .country("US")
                             .countryOfRegistration("US")
-                            .entityType(BrandBusinessInfo.EntityType.PRIVATE_PROFIT)
+                            .entityType(
+                                ProfileCreateParams.Brand.Business.EntityType.PRIVATE_PROFIT
+                            )
                             .legalName("Acme Corporation LLC")
                             .postalCode("10001")
                             .state("NY")
@@ -69,19 +69,20 @@ internal class ProfileCreateParamsTest {
             )
             .description("Sales department sender profile")
             .icon("https://example.com/sales-icon.png")
-            .inheritContacts(true)
+            .inheritContacts(null)
             .inheritTcrBrand(false)
             .inheritTcrCampaign(false)
-            .inheritTemplates(true)
+            .inheritTemplates(null)
             .name("Sales Team")
             .paymentDetails(
-                PaymentDetails.builder()
+                ProfileCreateParams.PaymentDetails.builder()
                     .cardNumber("4111111111111111")
                     .cvc("123")
                     .expiry("09/27")
                     .zipCode("10001")
                     .build()
             )
+            .sandbox(false)
             .shortName("SALES")
             .whatsappBusinessAccount(
                 ProfileCreateParams.WhatsappBusinessAccount.builder()
@@ -99,11 +100,10 @@ internal class ProfileCreateParamsTest {
             ProfileCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
-                .allowContactSharing(true)
-                .allowTemplateSharing(false)
+                .allowContactSharing(null)
+                .allowTemplateSharing(null)
                 .billingContact(
-                    BillingContactInfo.builder()
+                    ProfileCreateParams.BillingContact.builder()
                         .email("billing@acmecorp.com")
                         .name("Acme Corp")
                         .address("123 Main Street, New York, NY 10001, US")
@@ -112,9 +112,9 @@ internal class ProfileCreateParamsTest {
                 )
                 .billingModel("profile")
                 .brand(
-                    BrandsBrandData.builder()
+                    ProfileCreateParams.Brand.builder()
                         .compliance(
-                            BrandComplianceInfo.builder()
+                            ProfileCreateParams.Brand.Compliance.builder()
                                 .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                 .vertical(TcrVertical.PROFESSIONAL)
                                 .addDestinationCountry(
@@ -123,11 +123,10 @@ internal class ProfileCreateParamsTest {
                                 .isTcrApplication(true)
                                 .notes(null)
                                 .phoneNumberPrefix("+1")
-                                .primaryUseCase("Customer notifications and appointment reminders")
                                 .build()
                         )
                         .contact(
-                            BrandContactInfo.builder()
+                            ProfileCreateParams.Brand.Contact.builder()
                                 .name("John Smith")
                                 .businessName("Acme Corp")
                                 .email("john@acmecorp.com")
@@ -137,11 +136,13 @@ internal class ProfileCreateParamsTest {
                                 .build()
                         )
                         .business(
-                            BrandBusinessInfo.builder()
+                            ProfileCreateParams.Brand.Business.builder()
                                 .city("New York")
                                 .country("US")
                                 .countryOfRegistration("US")
-                                .entityType(BrandBusinessInfo.EntityType.PRIVATE_PROFIT)
+                                .entityType(
+                                    ProfileCreateParams.Brand.Business.EntityType.PRIVATE_PROFIT
+                                )
                                 .legalName("Acme Corporation LLC")
                                 .postalCode("10001")
                                 .state("NY")
@@ -155,19 +156,20 @@ internal class ProfileCreateParamsTest {
                 )
                 .description("Sales department sender profile")
                 .icon("https://example.com/sales-icon.png")
-                .inheritContacts(true)
+                .inheritContacts(null)
                 .inheritTcrBrand(false)
                 .inheritTcrCampaign(false)
-                .inheritTemplates(true)
+                .inheritTemplates(null)
                 .name("Sales Team")
                 .paymentDetails(
-                    PaymentDetails.builder()
+                    ProfileCreateParams.PaymentDetails.builder()
                         .cardNumber("4111111111111111")
                         .cvc("123")
                         .expiry("09/27")
                         .zipCode("10001")
                         .build()
                 )
+                .sandbox(false)
                 .shortName("SALES")
                 .whatsappBusinessAccount(
                     ProfileCreateParams.WhatsappBusinessAccount.builder()
@@ -204,11 +206,10 @@ internal class ProfileCreateParamsTest {
             ProfileCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
-                .allowContactSharing(true)
-                .allowTemplateSharing(false)
+                .allowContactSharing(null)
+                .allowTemplateSharing(null)
                 .billingContact(
-                    BillingContactInfo.builder()
+                    ProfileCreateParams.BillingContact.builder()
                         .email("billing@acmecorp.com")
                         .name("Acme Corp")
                         .address("123 Main Street, New York, NY 10001, US")
@@ -217,9 +218,9 @@ internal class ProfileCreateParamsTest {
                 )
                 .billingModel("profile")
                 .brand(
-                    BrandsBrandData.builder()
+                    ProfileCreateParams.Brand.builder()
                         .compliance(
-                            BrandComplianceInfo.builder()
+                            ProfileCreateParams.Brand.Compliance.builder()
                                 .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                                 .vertical(TcrVertical.PROFESSIONAL)
                                 .addDestinationCountry(
@@ -228,11 +229,10 @@ internal class ProfileCreateParamsTest {
                                 .isTcrApplication(true)
                                 .notes(null)
                                 .phoneNumberPrefix("+1")
-                                .primaryUseCase("Customer notifications and appointment reminders")
                                 .build()
                         )
                         .contact(
-                            BrandContactInfo.builder()
+                            ProfileCreateParams.Brand.Contact.builder()
                                 .name("John Smith")
                                 .businessName("Acme Corp")
                                 .email("john@acmecorp.com")
@@ -242,11 +242,13 @@ internal class ProfileCreateParamsTest {
                                 .build()
                         )
                         .business(
-                            BrandBusinessInfo.builder()
+                            ProfileCreateParams.Brand.Business.builder()
                                 .city("New York")
                                 .country("US")
                                 .countryOfRegistration("US")
-                                .entityType(BrandBusinessInfo.EntityType.PRIVATE_PROFIT)
+                                .entityType(
+                                    ProfileCreateParams.Brand.Business.EntityType.PRIVATE_PROFIT
+                                )
                                 .legalName("Acme Corporation LLC")
                                 .postalCode("10001")
                                 .state("NY")
@@ -260,19 +262,20 @@ internal class ProfileCreateParamsTest {
                 )
                 .description("Sales department sender profile")
                 .icon("https://example.com/sales-icon.png")
-                .inheritContacts(true)
+                .inheritContacts(null)
                 .inheritTcrBrand(false)
                 .inheritTcrCampaign(false)
-                .inheritTemplates(true)
+                .inheritTemplates(null)
                 .name("Sales Team")
                 .paymentDetails(
-                    PaymentDetails.builder()
+                    ProfileCreateParams.PaymentDetails.builder()
                         .cardNumber("4111111111111111")
                         .cvc("123")
                         .expiry("09/27")
                         .zipCode("10001")
                         .build()
                 )
+                .sandbox(false)
                 .shortName("SALES")
                 .whatsappBusinessAccount(
                     ProfileCreateParams.WhatsappBusinessAccount.builder()
@@ -285,12 +288,11 @@ internal class ProfileCreateParamsTest {
 
         val body = params._body()
 
-        assertThat(body.sandbox()).contains(false)
-        assertThat(body.allowContactSharing()).contains(true)
-        assertThat(body.allowTemplateSharing()).contains(false)
+        assertThat(body.allowContactSharing()).isEmpty
+        assertThat(body.allowTemplateSharing()).isEmpty
         assertThat(body.billingContact())
             .contains(
-                BillingContactInfo.builder()
+                ProfileCreateParams.BillingContact.builder()
                     .email("billing@acmecorp.com")
                     .name("Acme Corp")
                     .address("123 Main Street, New York, NY 10001, US")
@@ -300,9 +302,9 @@ internal class ProfileCreateParamsTest {
         assertThat(body.billingModel()).contains("profile")
         assertThat(body.brand())
             .contains(
-                BrandsBrandData.builder()
+                ProfileCreateParams.Brand.builder()
                     .compliance(
-                        BrandComplianceInfo.builder()
+                        ProfileCreateParams.Brand.Compliance.builder()
                             .brandRelationship(TcrBrandRelationship.SMALL_ACCOUNT)
                             .vertical(TcrVertical.PROFESSIONAL)
                             .addDestinationCountry(
@@ -311,11 +313,10 @@ internal class ProfileCreateParamsTest {
                             .isTcrApplication(true)
                             .notes(null)
                             .phoneNumberPrefix("+1")
-                            .primaryUseCase("Customer notifications and appointment reminders")
                             .build()
                     )
                     .contact(
-                        BrandContactInfo.builder()
+                        ProfileCreateParams.Brand.Contact.builder()
                             .name("John Smith")
                             .businessName("Acme Corp")
                             .email("john@acmecorp.com")
@@ -325,11 +326,13 @@ internal class ProfileCreateParamsTest {
                             .build()
                     )
                     .business(
-                        BrandBusinessInfo.builder()
+                        ProfileCreateParams.Brand.Business.builder()
                             .city("New York")
                             .country("US")
                             .countryOfRegistration("US")
-                            .entityType(BrandBusinessInfo.EntityType.PRIVATE_PROFIT)
+                            .entityType(
+                                ProfileCreateParams.Brand.Business.EntityType.PRIVATE_PROFIT
+                            )
                             .legalName("Acme Corporation LLC")
                             .postalCode("10001")
                             .state("NY")
@@ -343,20 +346,21 @@ internal class ProfileCreateParamsTest {
             )
         assertThat(body.description()).contains("Sales department sender profile")
         assertThat(body.icon()).contains("https://example.com/sales-icon.png")
-        assertThat(body.inheritContacts()).contains(true)
+        assertThat(body.inheritContacts()).isEmpty
         assertThat(body.inheritTcrBrand()).contains(false)
         assertThat(body.inheritTcrCampaign()).contains(false)
-        assertThat(body.inheritTemplates()).contains(true)
+        assertThat(body.inheritTemplates()).isEmpty
         assertThat(body.name()).contains("Sales Team")
         assertThat(body.paymentDetails())
             .contains(
-                PaymentDetails.builder()
+                ProfileCreateParams.PaymentDetails.builder()
                     .cardNumber("4111111111111111")
                     .cvc("123")
                     .expiry("09/27")
                     .zipCode("10001")
                     .build()
             )
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.shortName()).contains("SALES")
         assertThat(body.whatsappBusinessAccount())
             .contains(

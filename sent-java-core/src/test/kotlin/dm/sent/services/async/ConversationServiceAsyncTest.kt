@@ -16,7 +16,7 @@ internal class ConversationServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val conversationServiceAsync = client.conversations()
 
-        val apiResponseOfConversationMessagesListFuture =
+        val conversationsFuture =
             conversationServiceAsync.list(
                 ConversationListParams.builder()
                     .page(0)
@@ -25,9 +25,8 @@ internal class ConversationServiceAsyncTest {
                     .build()
             )
 
-        val apiResponseOfConversationMessagesList =
-            apiResponseOfConversationMessagesListFuture.get()
-        apiResponseOfConversationMessagesList.validate()
+        val conversations = conversationsFuture.get()
+        conversations.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -36,7 +35,7 @@ internal class ConversationServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val conversationServiceAsync = client.conversations()
 
-        val apiResponseOfConversationMessagesListFuture =
+        val responseFuture =
             conversationServiceAsync.listMessages(
                 ConversationListMessagesParams.builder()
                     .id("08fab313-c9e2-502c-975e-08b0356c432e")
@@ -46,8 +45,7 @@ internal class ConversationServiceAsyncTest {
                     .build()
             )
 
-        val apiResponseOfConversationMessagesList =
-            apiResponseOfConversationMessagesListFuture.get()
-        apiResponseOfConversationMessagesList.validate()
+        val response = responseFuture.get()
+        response.validate()
     }
 }
