@@ -17,17 +17,26 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
-import dm.sent.models.profiles.campaigns.ApiResponseOfBrandCampaign
-import dm.sent.models.profiles.campaigns.ApiResponseOfListOfBrandCampaign
 import dm.sent.models.profiles.campaigns.CampaignCreateParams
+import dm.sent.models.profiles.campaigns.CampaignCreateResponse
 import dm.sent.models.profiles.campaigns.CampaignDeleteParams
 import dm.sent.models.profiles.campaigns.CampaignListParams
+import dm.sent.models.profiles.campaigns.CampaignListResponse
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
+import dm.sent.models.profiles.campaigns.CampaignUpdateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
-/** Manage organization profiles */
+/**
+ * **Deprecated — use Sender Profiles.**
+ *
+ * The original profile resource, kept because it has live callers. It still works, and its
+ * replacement is `/v3/sender-profiles`, which takes the identity and the campaign in one call
+ * instead of across three.
+ *
+ * New integrations should not start here.
+ */
 class CampaignServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     CampaignServiceAsync {
 
@@ -40,27 +49,31 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): CampaignServiceAsync =
         CampaignServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    @Deprecated("deprecated")
     override fun create(
         params: CampaignCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfBrandCampaign> =
+    ): CompletableFuture<CampaignCreateResponse> =
         // post /v3/profiles/{profileId}/campaigns
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated("deprecated")
     override fun update(
         params: CampaignUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfBrandCampaign> =
+    ): CompletableFuture<CampaignUpdateResponse> =
         // put /v3/profiles/{profileId}/campaigns/{campaignId}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated("deprecated")
     override fun list(
         params: CampaignListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfListOfBrandCampaign> =
+    ): CompletableFuture<CampaignListResponse> =
         // get /v3/profiles/{profileId}/campaigns
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated("deprecated")
     override fun delete(
         params: CampaignDeleteParams,
         requestOptions: RequestOptions,
@@ -81,13 +94,14 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<ApiResponseOfBrandCampaign> =
-            jsonHandler<ApiResponseOfBrandCampaign>(clientOptions.jsonMapper)
+        private val createHandler: Handler<CampaignCreateResponse> =
+            jsonHandler<CampaignCreateResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun create(
             params: CampaignCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>> {
+        ): CompletableFuture<HttpResponseFor<CampaignCreateResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -115,13 +129,14 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
                 }
         }
 
-        private val updateHandler: Handler<ApiResponseOfBrandCampaign> =
-            jsonHandler<ApiResponseOfBrandCampaign>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<CampaignUpdateResponse> =
+            jsonHandler<CampaignUpdateResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun update(
             params: CampaignUpdateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>> {
+        ): CompletableFuture<HttpResponseFor<CampaignUpdateResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("campaignId", params.campaignId().getOrNull())
@@ -155,13 +170,14 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
                 }
         }
 
-        private val listHandler: Handler<ApiResponseOfListOfBrandCampaign> =
-            jsonHandler<ApiResponseOfListOfBrandCampaign>(clientOptions.jsonMapper)
+        private val listHandler: Handler<CampaignListResponse> =
+            jsonHandler<CampaignListResponse>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun list(
             params: CampaignListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfListOfBrandCampaign>> {
+        ): CompletableFuture<HttpResponseFor<CampaignListResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -190,6 +206,7 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
         private val deleteHandler: Handler<Void?> = emptyHandler()
 
+        @Deprecated("deprecated")
         override fun delete(
             params: CampaignDeleteParams,
             requestOptions: RequestOptions,

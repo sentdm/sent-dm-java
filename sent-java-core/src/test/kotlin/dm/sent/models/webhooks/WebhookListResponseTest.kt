@@ -18,9 +18,9 @@ internal class WebhookListResponseTest {
                 .data(
                     WebhookListResponse.Data.builder()
                         .pagination(
-                            PaginationMeta.builder()
+                            WebhookListResponse.Data.Pagination.builder()
                                 .cursors(
-                                    PaginationMeta.Cursors.builder()
+                                    WebhookListResponse.Data.Pagination.Cursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -33,14 +33,15 @@ internal class WebhookListResponseTest {
                                 .build()
                         )
                         .addWebhook(
-                            WebhookResponse.builder()
+                            WebhookListResponse.Data.Webhook.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .consecutiveFailures(0)
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .displayName("display_name")
                                 .endpointUrl("endpoint_url")
                                 .eventFilters(
-                                    WebhookResponse.EventFilters.builder()
+                                    WebhookListResponse.Data.Webhook.EventFilters.builder()
                                         .putAdditionalProperty(
                                             "foo",
                                             JsonValue.from(listOf("string")),
@@ -64,10 +65,10 @@ internal class WebhookListResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    WebhookListResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            WebhookListResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -76,7 +77,7 @@ internal class WebhookListResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    WebhookListResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -89,9 +90,9 @@ internal class WebhookListResponseTest {
             .contains(
                 WebhookListResponse.Data.builder()
                     .pagination(
-                        PaginationMeta.builder()
+                        WebhookListResponse.Data.Pagination.builder()
                             .cursors(
-                                PaginationMeta.Cursors.builder()
+                                WebhookListResponse.Data.Pagination.Cursors.builder()
                                     .after("after")
                                     .before("before")
                                     .build()
@@ -104,14 +105,15 @@ internal class WebhookListResponseTest {
                             .build()
                     )
                     .addWebhook(
-                        WebhookResponse.builder()
+                        WebhookListResponse.Data.Webhook.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .consecutiveFailures(0)
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .displayName("display_name")
                             .endpointUrl("endpoint_url")
                             .eventFilters(
-                                WebhookResponse.EventFilters.builder()
+                                WebhookListResponse.Data.Webhook.EventFilters.builder()
                                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                     .build()
                             )
@@ -131,10 +133,10 @@ internal class WebhookListResponseTest {
             )
         assertThat(webhookListResponse.error())
             .contains(
-                ErrorDetail.builder()
+                WebhookListResponse.Error.builder()
                     .code("code")
                     .details(
-                        ErrorDetail.Details.builder()
+                        WebhookListResponse.Error.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -144,7 +146,7 @@ internal class WebhookListResponseTest {
             )
         assertThat(webhookListResponse.meta())
             .contains(
-                ApiMeta.builder()
+                WebhookListResponse.Meta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -161,9 +163,9 @@ internal class WebhookListResponseTest {
                 .data(
                     WebhookListResponse.Data.builder()
                         .pagination(
-                            PaginationMeta.builder()
+                            WebhookListResponse.Data.Pagination.builder()
                                 .cursors(
-                                    PaginationMeta.Cursors.builder()
+                                    WebhookListResponse.Data.Pagination.Cursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -176,14 +178,15 @@ internal class WebhookListResponseTest {
                                 .build()
                         )
                         .addWebhook(
-                            WebhookResponse.builder()
+                            WebhookListResponse.Data.Webhook.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .consecutiveFailures(0)
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .displayName("display_name")
                                 .endpointUrl("endpoint_url")
                                 .eventFilters(
-                                    WebhookResponse.EventFilters.builder()
+                                    WebhookListResponse.Data.Webhook.EventFilters.builder()
                                         .putAdditionalProperty(
                                             "foo",
                                             JsonValue.from(listOf("string")),
@@ -207,10 +210,10 @@ internal class WebhookListResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    WebhookListResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            WebhookListResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -219,7 +222,7 @@ internal class WebhookListResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    WebhookListResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

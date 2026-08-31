@@ -14,15 +14,12 @@ import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentInvalidDataException
-import dm.sent.models.webhooks.MutationRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/**
- * Updates a contact's default channel and/or opt-out status. Inherited contacts cannot be updated.
- */
+/** Updates a contact's default channel and/or opt-out status. */
 class ContactUpdateParams
 private constructor(
     private val id: String?,
@@ -38,15 +35,6 @@ private constructor(
     fun idempotencyKey(): Optional<String> = Optional.ofNullable(idempotencyKey)
 
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
-
-    /**
-     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
-     * integrations without actual execution
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * Default messaging channel: "sms" or "whatsapp"
@@ -66,11 +54,13 @@ private constructor(
     fun optOut(): Optional<Boolean> = body.optOut()
 
     /**
-     * Returns the raw JSON value of [sandbox].
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
      *
-     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
      */
-    fun _sandbox(): JsonField<Boolean> = body._sandbox()
+    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * Returns the raw JSON value of [defaultChannel].
@@ -85,6 +75,13 @@ private constructor(
      * Unlike [optOut], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _optOut(): JsonField<Boolean> = body._optOut()
+
+    /**
+     * Returns the raw JSON value of [sandbox].
+     *
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -145,25 +142,11 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [sandbox]
          * - [defaultChannel]
          * - [optOut]
+         * - [sandbox]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         */
-        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
-
-        /**
-         * Sets [Builder.sandbox] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /** Default messaging channel: "sms" or "whatsapp" */
         fun defaultChannel(defaultChannel: String?) = apply { body.defaultChannel(defaultChannel) }
@@ -206,6 +189,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun optOut(optOut: JsonField<Boolean>) = apply { body.optOut(optOut) }
+
+        /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         */
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
+
+        /**
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -359,36 +356,23 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** Request to update a contact */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val sandbox: JsonField<Boolean>,
         private val defaultChannel: JsonField<String>,
         private val optOut: JsonField<Boolean>,
+        private val sandbox: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("default_channel")
             @ExcludeMissing
             defaultChannel: JsonField<String> = JsonMissing.of(),
             @JsonProperty("opt_out") @ExcludeMissing optOut: JsonField<Boolean> = JsonMissing.of(),
-        ) : this(sandbox, defaultChannel, optOut, mutableMapOf())
-
-        fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(defaultChannel, optOut, sandbox, mutableMapOf())
 
         /**
          * Default messaging channel: "sms" or "whatsapp"
@@ -408,11 +392,13 @@ private constructor(
         fun optOut(): Optional<Boolean> = optOut.getOptional("opt_out")
 
         /**
-         * Returns the raw JSON value of [sandbox].
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
          *
-         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
          */
-        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * Returns the raw JSON value of [defaultChannel].
@@ -430,6 +416,13 @@ private constructor(
          * Unlike [optOut], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("opt_out") @ExcludeMissing fun _optOut(): JsonField<Boolean> = optOut
+
+        /**
+         * Returns the raw JSON value of [sandbox].
+         *
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -452,33 +445,18 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var defaultChannel: JsonField<String> = JsonMissing.of()
             private var optOut: JsonField<Boolean> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                sandbox = body.sandbox
                 defaultChannel = body.defaultChannel
                 optOut = body.optOut
+                sandbox = body.sandbox
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
-
-            /**
-             * Sandbox flag - when true, the operation is simulated without side effects Useful for
-             * testing integrations without actual execution
-             */
-            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
-
-            /**
-             * Sets [Builder.sandbox] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /** Default messaging channel: "sms" or "whatsapp" */
             fun defaultChannel(defaultChannel: String?) =
@@ -524,6 +502,21 @@ private constructor(
              */
             fun optOut(optOut: JsonField<Boolean>) = apply { this.optOut = optOut }
 
+            /**
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
+             */
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
+
+            /**
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -549,7 +542,7 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              */
             fun build(): Body =
-                Body(sandbox, defaultChannel, optOut, additionalProperties.toMutableMap())
+                Body(defaultChannel, optOut, sandbox, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -568,9 +561,9 @@ private constructor(
                 return@apply
             }
 
-            sandbox()
             defaultChannel()
             optOut()
+            sandbox()
             validated = true
         }
 
@@ -590,9 +583,9 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (sandbox.asKnown().isPresent) 1 else 0) +
-                (if (defaultChannel.asKnown().isPresent) 1 else 0) +
-                (if (optOut.asKnown().isPresent) 1 else 0)
+            (if (defaultChannel.asKnown().isPresent) 1 else 0) +
+                (if (optOut.asKnown().isPresent) 1 else 0) +
+                (if (sandbox.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -600,20 +593,20 @@ private constructor(
             }
 
             return other is Body &&
-                sandbox == other.sandbox &&
                 defaultChannel == other.defaultChannel &&
                 optOut == other.optOut &&
+                sandbox == other.sandbox &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(sandbox, defaultChannel, optOut, additionalProperties)
+            Objects.hash(defaultChannel, optOut, sandbox, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, defaultChannel=$defaultChannel, optOut=$optOut, additionalProperties=$additionalProperties}"
+            "Body{defaultChannel=$defaultChannel, optOut=$optOut, sandbox=$sandbox, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

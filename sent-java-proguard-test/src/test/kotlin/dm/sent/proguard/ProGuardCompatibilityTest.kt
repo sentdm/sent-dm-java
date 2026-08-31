@@ -8,8 +8,6 @@ import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.profiles.TcrBrandRelationship
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
@@ -81,13 +79,29 @@ internal class ProGuardCompatibilityTest {
                                 .build()
                         )
                         .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .pagination(
+                            MessageRetrieveActivitiesResponse.Data.Pagination.builder()
+                                .cursors(
+                                    MessageRetrieveActivitiesResponse.Data.Pagination.Cursors
+                                        .builder()
+                                        .after("after")
+                                        .before("before")
+                                        .build()
+                                )
+                                .hasMore(true)
+                                .page(0)
+                                .pageSize(0)
+                                .totalCount(0)
+                                .totalPages(0)
+                                .build()
+                        )
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    MessageRetrieveActivitiesResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            MessageRetrieveActivitiesResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -96,7 +110,7 @@ internal class ProGuardCompatibilityTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    MessageRetrieveActivitiesResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

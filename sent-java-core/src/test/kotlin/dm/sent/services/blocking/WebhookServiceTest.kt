@@ -4,7 +4,6 @@ package dm.sent.services.blocking
 
 import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.core.JsonValue
-import dm.sent.models.webhooks.MutationRequest
 import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
@@ -26,12 +25,11 @@ internal class WebhookServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val webhookService = client.webhooks()
 
-        val apiResponseWebhook =
+        val webhook =
             webhookService.create(
                 WebhookCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .displayName("Order Notifications")
                     .endpointUrl("https://example.com/webhooks/orders")
                     .eventFilters(
@@ -45,11 +43,12 @@ internal class WebhookServiceTest {
                     .addEventType("message")
                     .addEventType("templates")
                     .retryCount(3)
+                    .sandbox(false)
                     .timeoutSeconds(30)
                     .build()
             )
 
-        apiResponseWebhook.validate()
+        webhook.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -58,7 +57,7 @@ internal class WebhookServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val webhookService = client.webhooks()
 
-        val apiResponseWebhook =
+        val webhook =
             webhookService.retrieve(
                 WebhookRetrieveParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
@@ -66,7 +65,7 @@ internal class WebhookServiceTest {
                     .build()
             )
 
-        apiResponseWebhook.validate()
+        webhook.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -75,13 +74,12 @@ internal class WebhookServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val webhookService = client.webhooks()
 
-        val apiResponseWebhook =
+        val webhook =
             webhookService.update(
                 WebhookUpdateParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .displayName("Updated Order Notifications")
                     .endpointUrl("https://example.com/webhooks/orders-v2")
                     .eventFilters(
@@ -95,11 +93,12 @@ internal class WebhookServiceTest {
                     .addEventType("message")
                     .addEventType("templates")
                     .retryCount(5)
+                    .sandbox(false)
                     .timeoutSeconds(60)
                     .build()
             )
 
-        apiResponseWebhook.validate()
+        webhook.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -184,7 +183,7 @@ internal class WebhookServiceTest {
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                    .sandbox(false)
                     .build()
             )
 
@@ -203,8 +202,8 @@ internal class WebhookServiceTest {
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .eventType("message.sent")
+                    .sandbox(false)
                     .build()
             )
 
@@ -217,17 +216,17 @@ internal class WebhookServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val webhookService = client.webhooks()
 
-        val apiResponseWebhook =
+        val response =
             webhookService.toggleStatus(
                 WebhookToggleStatusParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
                     .isActive(false)
+                    .sandbox(false)
                     .build()
             )
 
-        apiResponseWebhook.validate()
+        response.validate()
     }
 }

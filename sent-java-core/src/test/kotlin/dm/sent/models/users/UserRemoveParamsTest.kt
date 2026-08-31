@@ -3,7 +3,6 @@
 package dm.sent.models.users
 
 import dm.sent.core.http.Headers
-import dm.sent.models.webhooks.MutationRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,17 +13,14 @@ internal class UserRemoveParamsTest {
         UserRemoveParams.builder()
             .userId("aa0e8400-e29b-41d4-a716-446655440005")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .mutationRequest(MutationRequest.builder().sandbox(false).build())
+            .sandbox(false)
             .build()
     }
 
     @Test
     fun pathParams() {
         val params =
-            UserRemoveParams.builder()
-                .userId("aa0e8400-e29b-41d4-a716-446655440005")
-                .mutationRequest(MutationRequest.builder().build())
-                .build()
+            UserRemoveParams.builder().userId("aa0e8400-e29b-41d4-a716-446655440005").build()
 
         assertThat(params._pathParam(0)).isEqualTo("aa0e8400-e29b-41d4-a716-446655440005")
         // out-of-bound path param
@@ -37,7 +33,7 @@ internal class UserRemoveParamsTest {
             UserRemoveParams.builder()
                 .userId("aa0e8400-e29b-41d4-a716-446655440005")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                .sandbox(false)
                 .build()
 
         val headers = params._headers()
@@ -53,10 +49,7 @@ internal class UserRemoveParamsTest {
     @Test
     fun headersWithoutOptionalFields() {
         val params =
-            UserRemoveParams.builder()
-                .userId("aa0e8400-e29b-41d4-a716-446655440005")
-                .mutationRequest(MutationRequest.builder().build())
-                .build()
+            UserRemoveParams.builder().userId("aa0e8400-e29b-41d4-a716-446655440005").build()
 
         val headers = params._headers()
 
@@ -69,24 +62,19 @@ internal class UserRemoveParamsTest {
             UserRemoveParams.builder()
                 .userId("aa0e8400-e29b-41d4-a716-446655440005")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                .sandbox(false)
                 .build()
 
         val body = params._body()
 
-        assertThat(body).isEqualTo(MutationRequest.builder().sandbox(false).build())
+        assertThat(body.sandbox()).contains(false)
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
         val params =
-            UserRemoveParams.builder()
-                .userId("aa0e8400-e29b-41d4-a716-446655440005")
-                .mutationRequest(MutationRequest.builder().build())
-                .build()
+            UserRemoveParams.builder().userId("aa0e8400-e29b-41d4-a716-446655440005").build()
 
         val body = params._body()
-
-        assertThat(body).isEqualTo(MutationRequest.builder().build())
     }
 }

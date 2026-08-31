@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import dm.sent.core.Enum
 import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
@@ -13,8 +14,7 @@ import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
+import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -25,8 +25,8 @@ class ProfileListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val data: JsonField<Data>,
-    private val error: JsonField<ErrorDetail>,
-    private val meta: JsonField<ApiMeta>,
+    private val error: JsonField<Error>,
+    private val meta: JsonField<Meta>,
     private val success: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -34,13 +34,13 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("data") @ExcludeMissing data: JsonField<Data> = JsonMissing.of(),
-        @JsonProperty("error") @ExcludeMissing error: JsonField<ErrorDetail> = JsonMissing.of(),
-        @JsonProperty("meta") @ExcludeMissing meta: JsonField<ApiMeta> = JsonMissing.of(),
+        @JsonProperty("error") @ExcludeMissing error: JsonField<Error> = JsonMissing.of(),
+        @JsonProperty("meta") @ExcludeMissing meta: JsonField<Meta> = JsonMissing.of(),
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
     /**
-     * List of profiles response
+     * The profiles in the organization.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -53,7 +53,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun error(): Optional<ErrorDetail> = error.getOptional("error")
+    fun error(): Optional<Error> = error.getOptional("error")
 
     /**
      * Request and response metadata
@@ -61,7 +61,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun meta(): Optional<ApiMeta> = meta.getOptional("meta")
+    fun meta(): Optional<Meta> = meta.getOptional("meta")
 
     /**
      * Indicates whether the request was successful
@@ -83,14 +83,14 @@ private constructor(
      *
      * Unlike [error], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<ErrorDetail> = error
+    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<Error> = error
 
     /**
      * Returns the raw JSON value of [meta].
      *
      * Unlike [meta], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("meta") @ExcludeMissing fun _meta(): JsonField<ApiMeta> = meta
+    @JsonProperty("meta") @ExcludeMissing fun _meta(): JsonField<Meta> = meta
 
     /**
      * Returns the raw JSON value of [success].
@@ -121,8 +121,8 @@ private constructor(
     class Builder internal constructor() {
 
         private var data: JsonField<Data> = JsonMissing.of()
-        private var error: JsonField<ErrorDetail> = JsonMissing.of()
-        private var meta: JsonField<ApiMeta> = JsonMissing.of()
+        private var error: JsonField<Error> = JsonMissing.of()
+        private var meta: JsonField<Meta> = JsonMissing.of()
         private var success: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -135,7 +135,7 @@ private constructor(
             additionalProperties = profileListResponse.additionalProperties.toMutableMap()
         }
 
-        /** List of profiles response */
+        /** The profiles in the organization. */
         fun data(data: Data?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
@@ -150,30 +150,29 @@ private constructor(
         fun data(data: JsonField<Data>) = apply { this.data = data }
 
         /** Error information */
-        fun error(error: ErrorDetail?) = error(JsonField.ofNullable(error))
+        fun error(error: Error?) = error(JsonField.ofNullable(error))
 
         /** Alias for calling [Builder.error] with `error.orElse(null)`. */
-        fun error(error: Optional<ErrorDetail>) = error(error.getOrNull())
+        fun error(error: Optional<Error>) = error(error.getOrNull())
 
         /**
          * Sets [Builder.error] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.error] with a well-typed [ErrorDetail] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.error] with a well-typed [Error] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun error(error: JsonField<ErrorDetail>) = apply { this.error = error }
+        fun error(error: JsonField<Error>) = apply { this.error = error }
 
         /** Request and response metadata */
-        fun meta(meta: ApiMeta) = meta(JsonField.of(meta))
+        fun meta(meta: Meta) = meta(JsonField.of(meta))
 
         /**
          * Sets [Builder.meta] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.meta] with a well-typed [ApiMeta] value instead. This
+         * You should usually call [Builder.meta] with a well-typed [Meta] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun meta(meta: JsonField<ApiMeta>) = apply { this.meta = meta }
+        fun meta(meta: JsonField<Meta>) = apply { this.meta = meta }
 
         /** Indicates whether the request was successful */
         fun success(success: Boolean) = success(JsonField.of(success))
@@ -256,28 +255,49 @@ private constructor(
             (meta.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
 
-    /** List of profiles response */
+    /** The profiles in the organization. */
     class Data
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val profiles: JsonField<List<ProfileDetail>>,
+        private val pagination: JsonField<Pagination>,
+        private val profiles: JsonField<List<Profile>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
+            @JsonProperty("pagination")
+            @ExcludeMissing
+            pagination: JsonField<Pagination> = JsonMissing.of(),
             @JsonProperty("profiles")
             @ExcludeMissing
-            profiles: JsonField<List<ProfileDetail>> = JsonMissing.of()
-        ) : this(profiles, mutableMapOf())
+            profiles: JsonField<List<Profile>> = JsonMissing.of(),
+        ) : this(pagination, profiles, mutableMapOf())
 
         /**
-         * List of profiles in the organization
+         * Pagination metadata for list responses
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun profiles(): Optional<List<ProfileDetail>> = profiles.getOptional("profiles")
+        fun pagination(): Optional<Pagination> = pagination.getOptional("pagination")
+
+        /**
+         * The profiles on this page.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun profiles(): Optional<List<Profile>> = profiles.getOptional("profiles")
+
+        /**
+         * Returns the raw JSON value of [pagination].
+         *
+         * Unlike [pagination], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("pagination")
+        @ExcludeMissing
+        fun _pagination(): JsonField<Pagination> = pagination
 
         /**
          * Returns the raw JSON value of [profiles].
@@ -286,7 +306,7 @@ private constructor(
          */
         @JsonProperty("profiles")
         @ExcludeMissing
-        fun _profiles(): JsonField<List<ProfileDetail>> = profiles
+        fun _profiles(): JsonField<List<Profile>> = profiles
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -309,35 +329,51 @@ private constructor(
         /** A builder for [Data]. */
         class Builder internal constructor() {
 
-            private var profiles: JsonField<MutableList<ProfileDetail>>? = null
+            private var pagination: JsonField<Pagination> = JsonMissing.of()
+            private var profiles: JsonField<MutableList<Profile>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(data: Data) = apply {
+                pagination = data.pagination
                 profiles = data.profiles.map { it.toMutableList() }
                 additionalProperties = data.additionalProperties.toMutableMap()
             }
 
-            /** List of profiles in the organization */
-            fun profiles(profiles: List<ProfileDetail>) = profiles(JsonField.of(profiles))
+            /** Pagination metadata for list responses */
+            fun pagination(pagination: Pagination) = pagination(JsonField.of(pagination))
+
+            /**
+             * Sets [Builder.pagination] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.pagination] with a well-typed [Pagination] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun pagination(pagination: JsonField<Pagination>) = apply {
+                this.pagination = pagination
+            }
+
+            /** The profiles on this page. */
+            fun profiles(profiles: List<Profile>) = profiles(JsonField.of(profiles))
 
             /**
              * Sets [Builder.profiles] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.profiles] with a well-typed `List<ProfileDetail>`
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
+             * You should usually call [Builder.profiles] with a well-typed `List<Profile>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun profiles(profiles: JsonField<List<ProfileDetail>>) = apply {
+            fun profiles(profiles: JsonField<List<Profile>>) = apply {
                 this.profiles = profiles.map { it.toMutableList() }
             }
 
             /**
-             * Adds a single [ProfileDetail] to [profiles].
+             * Adds a single [Profile] to [profiles].
              *
              * @throws IllegalStateException if the field was previously set to a non-list.
              */
-            fun addProfile(profile: ProfileDetail) = apply {
+            fun addProfile(profile: Profile) = apply {
                 profiles =
                     (profiles ?: JsonField.of(mutableListOf())).also {
                         checkKnown("profiles", it).add(profile)
@@ -370,6 +406,7 @@ private constructor(
              */
             fun build(): Data =
                 Data(
+                    pagination,
                     (profiles ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
@@ -391,6 +428,7 @@ private constructor(
                 return@apply
             }
 
+            pagination().ifPresent { it.validate() }
             profiles().ifPresent { it.forEach { it.validate() } }
             validated = true
         }
@@ -411,7 +449,5003 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (profiles.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+            (pagination.asKnown().getOrNull()?.validity() ?: 0) +
+                (profiles.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+
+        /** Pagination metadata for list responses */
+        class Pagination
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val cursors: JsonField<Cursors>,
+            private val hasMore: JsonField<Boolean>,
+            private val page: JsonField<Int>,
+            private val pageSize: JsonField<Int>,
+            private val totalCount: JsonField<Int>,
+            private val totalPages: JsonField<Int>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("cursors")
+                @ExcludeMissing
+                cursors: JsonField<Cursors> = JsonMissing.of(),
+                @JsonProperty("has_more")
+                @ExcludeMissing
+                hasMore: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("page") @ExcludeMissing page: JsonField<Int> = JsonMissing.of(),
+                @JsonProperty("page_size")
+                @ExcludeMissing
+                pageSize: JsonField<Int> = JsonMissing.of(),
+                @JsonProperty("total_count")
+                @ExcludeMissing
+                totalCount: JsonField<Int> = JsonMissing.of(),
+                @JsonProperty("total_pages")
+                @ExcludeMissing
+                totalPages: JsonField<Int> = JsonMissing.of(),
+            ) : this(cursors, hasMore, page, pageSize, totalCount, totalPages, mutableMapOf())
+
+            /**
+             * Cursor-based pagination. Never populated — see Cursors.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            @Deprecated("deprecated")
+            fun cursors(): Optional<Cursors> = cursors.getOptional("cursors")
+
+            /**
+             * Whether there are more pages after this one
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun hasMore(): Optional<Boolean> = hasMore.getOptional("has_more")
+
+            /**
+             * Current page number (1-indexed)
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun page(): Optional<Int> = page.getOptional("page")
+
+            /**
+             * Number of items per page
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun pageSize(): Optional<Int> = pageSize.getOptional("page_size")
+
+            /**
+             * Total number of items across all pages
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun totalCount(): Optional<Int> = totalCount.getOptional("total_count")
+
+            /**
+             * Total number of pages
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun totalPages(): Optional<Int> = totalPages.getOptional("total_pages")
+
+            /**
+             * Returns the raw JSON value of [cursors].
+             *
+             * Unlike [cursors], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @Deprecated("deprecated")
+            @JsonProperty("cursors")
+            @ExcludeMissing
+            fun _cursors(): JsonField<Cursors> = cursors
+
+            /**
+             * Returns the raw JSON value of [hasMore].
+             *
+             * Unlike [hasMore], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("has_more") @ExcludeMissing fun _hasMore(): JsonField<Boolean> = hasMore
+
+            /**
+             * Returns the raw JSON value of [page].
+             *
+             * Unlike [page], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("page") @ExcludeMissing fun _page(): JsonField<Int> = page
+
+            /**
+             * Returns the raw JSON value of [pageSize].
+             *
+             * Unlike [pageSize], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("page_size") @ExcludeMissing fun _pageSize(): JsonField<Int> = pageSize
+
+            /**
+             * Returns the raw JSON value of [totalCount].
+             *
+             * Unlike [totalCount], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("total_count")
+            @ExcludeMissing
+            fun _totalCount(): JsonField<Int> = totalCount
+
+            /**
+             * Returns the raw JSON value of [totalPages].
+             *
+             * Unlike [totalPages], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("total_pages")
+            @ExcludeMissing
+            fun _totalPages(): JsonField<Int> = totalPages
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Pagination]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Pagination]. */
+            class Builder internal constructor() {
+
+                private var cursors: JsonField<Cursors> = JsonMissing.of()
+                private var hasMore: JsonField<Boolean> = JsonMissing.of()
+                private var page: JsonField<Int> = JsonMissing.of()
+                private var pageSize: JsonField<Int> = JsonMissing.of()
+                private var totalCount: JsonField<Int> = JsonMissing.of()
+                private var totalPages: JsonField<Int> = JsonMissing.of()
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(pagination: Pagination) = apply {
+                    cursors = pagination.cursors
+                    hasMore = pagination.hasMore
+                    page = pagination.page
+                    pageSize = pagination.pageSize
+                    totalCount = pagination.totalCount
+                    totalPages = pagination.totalPages
+                    additionalProperties = pagination.additionalProperties.toMutableMap()
+                }
+
+                /** Cursor-based pagination. Never populated — see Cursors. */
+                @Deprecated("deprecated")
+                fun cursors(cursors: Cursors?) = cursors(JsonField.ofNullable(cursors))
+
+                /** Alias for calling [Builder.cursors] with `cursors.orElse(null)`. */
+                @Deprecated("deprecated")
+                fun cursors(cursors: Optional<Cursors>) = cursors(cursors.getOrNull())
+
+                /**
+                 * Sets [Builder.cursors] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.cursors] with a well-typed [Cursors] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                @Deprecated("deprecated")
+                fun cursors(cursors: JsonField<Cursors>) = apply { this.cursors = cursors }
+
+                /** Whether there are more pages after this one */
+                fun hasMore(hasMore: Boolean) = hasMore(JsonField.of(hasMore))
+
+                /**
+                 * Sets [Builder.hasMore] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.hasMore] with a well-typed [Boolean] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun hasMore(hasMore: JsonField<Boolean>) = apply { this.hasMore = hasMore }
+
+                /** Current page number (1-indexed) */
+                fun page(page: Int) = page(JsonField.of(page))
+
+                /**
+                 * Sets [Builder.page] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.page] with a well-typed [Int] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun page(page: JsonField<Int>) = apply { this.page = page }
+
+                /** Number of items per page */
+                fun pageSize(pageSize: Int) = pageSize(JsonField.of(pageSize))
+
+                /**
+                 * Sets [Builder.pageSize] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.pageSize] with a well-typed [Int] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun pageSize(pageSize: JsonField<Int>) = apply { this.pageSize = pageSize }
+
+                /** Total number of items across all pages */
+                fun totalCount(totalCount: Int) = totalCount(JsonField.of(totalCount))
+
+                /**
+                 * Sets [Builder.totalCount] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.totalCount] with a well-typed [Int] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun totalCount(totalCount: JsonField<Int>) = apply { this.totalCount = totalCount }
+
+                /** Total number of pages */
+                fun totalPages(totalPages: Int) = totalPages(JsonField.of(totalPages))
+
+                /**
+                 * Sets [Builder.totalPages] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.totalPages] with a well-typed [Int] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun totalPages(totalPages: JsonField<Int>) = apply { this.totalPages = totalPages }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Pagination].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Pagination =
+                    Pagination(
+                        cursors,
+                        hasMore,
+                        page,
+                        pageSize,
+                        totalCount,
+                        totalPages,
+                        additionalProperties.toMutableMap(),
+                    )
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws SentInvalidDataException if any value type in this object doesn't match its
+             *   expected type.
+             */
+            fun validate(): Pagination = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                cursors().ifPresent { it.validate() }
+                hasMore()
+                page()
+                pageSize()
+                totalCount()
+                totalPages()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: SentInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (cursors.asKnown().getOrNull()?.validity() ?: 0) +
+                    (if (hasMore.asKnown().isPresent) 1 else 0) +
+                    (if (page.asKnown().isPresent) 1 else 0) +
+                    (if (pageSize.asKnown().isPresent) 1 else 0) +
+                    (if (totalCount.asKnown().isPresent) 1 else 0) +
+                    (if (totalPages.asKnown().isPresent) 1 else 0)
+
+            /** Cursor-based pagination. Never populated — see Cursors. */
+            @Deprecated("deprecated")
+            class Cursors
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val after: JsonField<String>,
+                private val before: JsonField<String>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("after")
+                    @ExcludeMissing
+                    after: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("before")
+                    @ExcludeMissing
+                    before: JsonField<String> = JsonMissing.of(),
+                ) : this(after, before, mutableMapOf())
+
+                /**
+                 * Cursor to fetch the next page.
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun after(): Optional<String> = after.getOptional("after")
+
+                /**
+                 * Cursor to fetch the previous page.
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun before(): Optional<String> = before.getOptional("before")
+
+                /**
+                 * Returns the raw JSON value of [after].
+                 *
+                 * Unlike [after], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("after") @ExcludeMissing fun _after(): JsonField<String> = after
+
+                /**
+                 * Returns the raw JSON value of [before].
+                 *
+                 * Unlike [before], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("before") @ExcludeMissing fun _before(): JsonField<String> = before
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /** Returns a mutable builder for constructing an instance of [Cursors]. */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [Cursors]. */
+                class Builder internal constructor() {
+
+                    private var after: JsonField<String> = JsonMissing.of()
+                    private var before: JsonField<String> = JsonMissing.of()
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(cursors: Cursors) = apply {
+                        after = cursors.after
+                        before = cursors.before
+                        additionalProperties = cursors.additionalProperties.toMutableMap()
+                    }
+
+                    /** Cursor to fetch the next page. */
+                    fun after(after: String?) = after(JsonField.ofNullable(after))
+
+                    /** Alias for calling [Builder.after] with `after.orElse(null)`. */
+                    fun after(after: Optional<String>) = after(after.getOrNull())
+
+                    /**
+                     * Sets [Builder.after] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.after] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun after(after: JsonField<String>) = apply { this.after = after }
+
+                    /** Cursor to fetch the previous page. */
+                    fun before(before: String?) = before(JsonField.ofNullable(before))
+
+                    /** Alias for calling [Builder.before] with `before.orElse(null)`. */
+                    fun before(before: Optional<String>) = before(before.getOrNull())
+
+                    /**
+                     * Sets [Builder.before] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.before] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun before(before: JsonField<String>) = apply { this.before = before }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [Cursors].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     */
+                    fun build(): Cursors =
+                        Cursors(after, before, additionalProperties.toMutableMap())
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws SentInvalidDataException if any value type in this object doesn't match
+                 *   its expected type.
+                 */
+                fun validate(): Cursors = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    after()
+                    before()
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: SentInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (if (after.asKnown().isPresent) 1 else 0) +
+                        (if (before.asKnown().isPresent) 1 else 0)
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Cursors &&
+                        after == other.after &&
+                        before == other.before &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy {
+                    Objects.hash(after, before, additionalProperties)
+                }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "Cursors{after=$after, before=$before, additionalProperties=$additionalProperties}"
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Pagination &&
+                    cursors == other.cursors &&
+                    hasMore == other.hasMore &&
+                    page == other.page &&
+                    pageSize == other.pageSize &&
+                    totalCount == other.totalCount &&
+                    totalPages == other.totalPages &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy {
+                Objects.hash(
+                    cursors,
+                    hasMore,
+                    page,
+                    pageSize,
+                    totalCount,
+                    totalPages,
+                    additionalProperties,
+                )
+            }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "Pagination{cursors=$cursors, hasMore=$hasMore, page=$page, pageSize=$pageSize, totalCount=$totalCount, totalPages=$totalPages, additionalProperties=$additionalProperties}"
+        }
+
+        /** Detailed profile response for v3 API */
+        class Profile
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val id: JsonField<String>,
+            private val allowContactSharing: JsonField<Boolean>,
+            private val allowNumberChangeDuringOnboarding: JsonField<Boolean>,
+            private val allowTemplateSharing: JsonField<Boolean>,
+            private val billingContact: JsonField<BillingContact>,
+            private val billingModel: JsonField<String>,
+            private val brand: JsonField<Brand>,
+            private val createdAt: JsonField<OffsetDateTime>,
+            private val description: JsonField<String>,
+            private val email: JsonField<String>,
+            private val icon: JsonField<String>,
+            private val inheritContacts: JsonField<Boolean>,
+            private val inheritTcrBrand: JsonField<Boolean>,
+            private val inheritTcrCampaign: JsonField<Boolean>,
+            private val inheritTemplates: JsonField<Boolean>,
+            private val name: JsonField<String>,
+            private val organizationId: JsonField<String>,
+            private val sendingPhoneNumber: JsonField<String>,
+            private val sendingPhoneNumberProfileId: JsonField<String>,
+            private val sendingWhatsappNumberProfileId: JsonField<String>,
+            private val shortName: JsonField<String>,
+            private val status: JsonField<String>,
+            private val updatedAt: JsonField<OffsetDateTime>,
+            private val wabaId: JsonField<String>,
+            private val whatsappPhoneNumber: JsonField<String>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("allow_contact_sharing")
+                @ExcludeMissing
+                allowContactSharing: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("allow_number_change_during_onboarding")
+                @ExcludeMissing
+                allowNumberChangeDuringOnboarding: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("allow_template_sharing")
+                @ExcludeMissing
+                allowTemplateSharing: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("billing_contact")
+                @ExcludeMissing
+                billingContact: JsonField<BillingContact> = JsonMissing.of(),
+                @JsonProperty("billing_model")
+                @ExcludeMissing
+                billingModel: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("brand") @ExcludeMissing brand: JsonField<Brand> = JsonMissing.of(),
+                @JsonProperty("created_at")
+                @ExcludeMissing
+                createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+                @JsonProperty("description")
+                @ExcludeMissing
+                description: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("icon") @ExcludeMissing icon: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("inherit_contacts")
+                @ExcludeMissing
+                inheritContacts: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("inherit_tcr_brand")
+                @ExcludeMissing
+                inheritTcrBrand: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("inherit_tcr_campaign")
+                @ExcludeMissing
+                inheritTcrCampaign: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("inherit_templates")
+                @ExcludeMissing
+                inheritTemplates: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("organization_id")
+                @ExcludeMissing
+                organizationId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("sending_phone_number")
+                @ExcludeMissing
+                sendingPhoneNumber: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("sending_phone_number_profile_id")
+                @ExcludeMissing
+                sendingPhoneNumberProfileId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("sending_whatsapp_number_profile_id")
+                @ExcludeMissing
+                sendingWhatsappNumberProfileId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("short_name")
+                @ExcludeMissing
+                shortName: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("status")
+                @ExcludeMissing
+                status: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("updated_at")
+                @ExcludeMissing
+                updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+                @JsonProperty("waba_id")
+                @ExcludeMissing
+                wabaId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("whatsapp_phone_number")
+                @ExcludeMissing
+                whatsappPhoneNumber: JsonField<String> = JsonMissing.of(),
+            ) : this(
+                id,
+                allowContactSharing,
+                allowNumberChangeDuringOnboarding,
+                allowTemplateSharing,
+                billingContact,
+                billingModel,
+                brand,
+                createdAt,
+                description,
+                email,
+                icon,
+                inheritContacts,
+                inheritTcrBrand,
+                inheritTcrCampaign,
+                inheritTemplates,
+                name,
+                organizationId,
+                sendingPhoneNumber,
+                sendingPhoneNumberProfileId,
+                sendingWhatsappNumberProfileId,
+                shortName,
+                status,
+                updatedAt,
+                wabaId,
+                whatsappPhoneNumber,
+                mutableMapOf(),
+            )
+
+            /**
+             * Profile unique identifier
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun id(): Optional<String> = id.getOptional("id")
+
+            /**
+             * Always false. A profile no longer shares contacts with sibling profiles — it sees
+             * only what it owns. Retained so existing v3 clients reading allow_contact_sharing keep
+             * deserializing; it carries no information.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            @Deprecated("deprecated")
+            fun allowContactSharing(): Optional<Boolean> =
+                allowContactSharing.getOptional("allow_contact_sharing")
+
+            /**
+             * Whether number changes are allowed during onboarding
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun allowNumberChangeDuringOnboarding(): Optional<Boolean> =
+                allowNumberChangeDuringOnboarding.getOptional(
+                    "allow_number_change_during_onboarding"
+                )
+
+            /**
+             * Always false. A profile no longer shares templates with sibling profiles. Retained so
+             * existing v3 clients reading allow_template_sharing keep deserializing; it carries no
+             * information.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            @Deprecated("deprecated")
+            fun allowTemplateSharing(): Optional<Boolean> =
+                allowTemplateSharing.getOptional("allow_template_sharing")
+
+            /**
+             * Billing contact info returned in profile responses
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun billingContact(): Optional<BillingContact> =
+                billingContact.getOptional("billing_contact")
+
+            /**
+             * Billing model: profile, organization, or profile_and_organization
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun billingModel(): Optional<String> = billingModel.getOptional("billing_model")
+
+            /**
+             * Brand response with nested contact, business, and compliance sections — mirrors the
+             * request structure.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun brand(): Optional<Brand> = brand.getOptional("brand")
+
+            /**
+             * When the profile was created
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
+
+            /**
+             * Profile description
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun description(): Optional<String> = description.getOptional("description")
+
+            /**
+             * Profile email (inherited from organization)
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun email(): Optional<String> = email.getOptional("email")
+
+            /**
+             * Profile icon URL
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun icon(): Optional<String> = icon.getOptional("icon")
+
+            /**
+             * Always false. A profile no longer inherits its organization's contacts. Retained so
+             * existing v3 clients reading inherit_contacts keep deserializing; it carries no
+             * information.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            @Deprecated("deprecated")
+            fun inheritContacts(): Optional<Boolean> =
+                inheritContacts.getOptional("inherit_contacts")
+
+            /**
+             * Whether this profile inherits TCR brand from the organization
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun inheritTcrBrand(): Optional<Boolean> =
+                inheritTcrBrand.getOptional("inherit_tcr_brand")
+
+            /**
+             * Whether this profile inherits TCR campaign from the organization
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun inheritTcrCampaign(): Optional<Boolean> =
+                inheritTcrCampaign.getOptional("inherit_tcr_campaign")
+
+            /**
+             * Always false. A profile no longer inherits its organization's templates. Retained so
+             * existing v3 clients reading inherit_templates keep deserializing; it carries no
+             * information.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            @Deprecated("deprecated")
+            fun inheritTemplates(): Optional<Boolean> =
+                inheritTemplates.getOptional("inherit_templates")
+
+            /**
+             * Profile name
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun name(): Optional<String> = name.getOptional("name")
+
+            /**
+             * Parent organization ID
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun organizationId(): Optional<String> = organizationId.getOptional("organization_id")
+
+            /**
+             * Direct SMS phone number
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun sendingPhoneNumber(): Optional<String> =
+                sendingPhoneNumber.getOptional("sending_phone_number")
+
+            /**
+             * Deprecated. Always null. Sender borrowing is gone: a profile no longer points at
+             * another profile for its SMS sender, and every profile owns the sender it sends from.
+             *
+             * Kept on the wire, and never populated, because those are two different promises.
+             * Removing the key changes the response's shape — a generated client loses the property
+             * and stops compiling on the next regenerate, for a value that is now null for every
+             * profile in existence. Keeping it null costs a key and breaks nobody, and null is the
+             * honest answer rather than a placeholder: there is no borrowing left to report.
+             *
+             * Nothing could populate it. Migration 260813161500 dropped the column and copied each
+             * borrower its own channel-provider row; its Down() says outright that the
+             * borrower-to-lender pairing is not recoverable. The only surviving trace is a notes
+             * string on the copied row.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            @Deprecated("deprecated")
+            fun sendingPhoneNumberProfileId(): Optional<String> =
+                sendingPhoneNumberProfileId.getOptional("sending_phone_number_profile_id")
+
+            /**
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            @Deprecated("deprecated")
+            fun sendingWhatsappNumberProfileId(): Optional<String> =
+                sendingWhatsappNumberProfileId.getOptional("sending_whatsapp_number_profile_id")
+
+            /**
+             * Profile short name/abbreviation. 3–11 characters: letters, numbers, and spaces only,
+             * with at least one letter.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun shortName(): Optional<String> = shortName.getOptional("short_name")
+
+            /**
+             * Profile setup status: incomplete, pending_review, approved, rejected
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun status(): Optional<String> = status.getOptional("status")
+
+            /**
+             * When the profile was last updated
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun updatedAt(): Optional<OffsetDateTime> = updatedAt.getOptional("updated_at")
+
+            /**
+             * WhatsApp Business Account ID associated with this profile. Present whether the WABA
+             * is inherited from the organization or configured directly.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun wabaId(): Optional<String> = wabaId.getOptional("waba_id")
+
+            /**
+             * Direct WhatsApp phone number
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun whatsappPhoneNumber(): Optional<String> =
+                whatsappPhoneNumber.getOptional("whatsapp_phone_number")
+
+            /**
+             * Returns the raw JSON value of [id].
+             *
+             * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+            /**
+             * Returns the raw JSON value of [allowContactSharing].
+             *
+             * Unlike [allowContactSharing], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @Deprecated("deprecated")
+            @JsonProperty("allow_contact_sharing")
+            @ExcludeMissing
+            fun _allowContactSharing(): JsonField<Boolean> = allowContactSharing
+
+            /**
+             * Returns the raw JSON value of [allowNumberChangeDuringOnboarding].
+             *
+             * Unlike [allowNumberChangeDuringOnboarding], this method doesn't throw if the JSON
+             * field has an unexpected type.
+             */
+            @JsonProperty("allow_number_change_during_onboarding")
+            @ExcludeMissing
+            fun _allowNumberChangeDuringOnboarding(): JsonField<Boolean> =
+                allowNumberChangeDuringOnboarding
+
+            /**
+             * Returns the raw JSON value of [allowTemplateSharing].
+             *
+             * Unlike [allowTemplateSharing], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @Deprecated("deprecated")
+            @JsonProperty("allow_template_sharing")
+            @ExcludeMissing
+            fun _allowTemplateSharing(): JsonField<Boolean> = allowTemplateSharing
+
+            /**
+             * Returns the raw JSON value of [billingContact].
+             *
+             * Unlike [billingContact], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("billing_contact")
+            @ExcludeMissing
+            fun _billingContact(): JsonField<BillingContact> = billingContact
+
+            /**
+             * Returns the raw JSON value of [billingModel].
+             *
+             * Unlike [billingModel], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("billing_model")
+            @ExcludeMissing
+            fun _billingModel(): JsonField<String> = billingModel
+
+            /**
+             * Returns the raw JSON value of [brand].
+             *
+             * Unlike [brand], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("brand") @ExcludeMissing fun _brand(): JsonField<Brand> = brand
+
+            /**
+             * Returns the raw JSON value of [createdAt].
+             *
+             * Unlike [createdAt], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("created_at")
+            @ExcludeMissing
+            fun _createdAt(): JsonField<OffsetDateTime> = createdAt
+
+            /**
+             * Returns the raw JSON value of [description].
+             *
+             * Unlike [description], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("description")
+            @ExcludeMissing
+            fun _description(): JsonField<String> = description
+
+            /**
+             * Returns the raw JSON value of [email].
+             *
+             * Unlike [email], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<String> = email
+
+            /**
+             * Returns the raw JSON value of [icon].
+             *
+             * Unlike [icon], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("icon") @ExcludeMissing fun _icon(): JsonField<String> = icon
+
+            /**
+             * Returns the raw JSON value of [inheritContacts].
+             *
+             * Unlike [inheritContacts], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @Deprecated("deprecated")
+            @JsonProperty("inherit_contacts")
+            @ExcludeMissing
+            fun _inheritContacts(): JsonField<Boolean> = inheritContacts
+
+            /**
+             * Returns the raw JSON value of [inheritTcrBrand].
+             *
+             * Unlike [inheritTcrBrand], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("inherit_tcr_brand")
+            @ExcludeMissing
+            fun _inheritTcrBrand(): JsonField<Boolean> = inheritTcrBrand
+
+            /**
+             * Returns the raw JSON value of [inheritTcrCampaign].
+             *
+             * Unlike [inheritTcrCampaign], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("inherit_tcr_campaign")
+            @ExcludeMissing
+            fun _inheritTcrCampaign(): JsonField<Boolean> = inheritTcrCampaign
+
+            /**
+             * Returns the raw JSON value of [inheritTemplates].
+             *
+             * Unlike [inheritTemplates], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @Deprecated("deprecated")
+            @JsonProperty("inherit_templates")
+            @ExcludeMissing
+            fun _inheritTemplates(): JsonField<Boolean> = inheritTemplates
+
+            /**
+             * Returns the raw JSON value of [name].
+             *
+             * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+            /**
+             * Returns the raw JSON value of [organizationId].
+             *
+             * Unlike [organizationId], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("organization_id")
+            @ExcludeMissing
+            fun _organizationId(): JsonField<String> = organizationId
+
+            /**
+             * Returns the raw JSON value of [sendingPhoneNumber].
+             *
+             * Unlike [sendingPhoneNumber], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("sending_phone_number")
+            @ExcludeMissing
+            fun _sendingPhoneNumber(): JsonField<String> = sendingPhoneNumber
+
+            /**
+             * Returns the raw JSON value of [sendingPhoneNumberProfileId].
+             *
+             * Unlike [sendingPhoneNumberProfileId], this method doesn't throw if the JSON field has
+             * an unexpected type.
+             */
+            @Deprecated("deprecated")
+            @JsonProperty("sending_phone_number_profile_id")
+            @ExcludeMissing
+            fun _sendingPhoneNumberProfileId(): JsonField<String> = sendingPhoneNumberProfileId
+
+            /**
+             * Returns the raw JSON value of [sendingWhatsappNumberProfileId].
+             *
+             * Unlike [sendingWhatsappNumberProfileId], this method doesn't throw if the JSON field
+             * has an unexpected type.
+             */
+            @Deprecated("deprecated")
+            @JsonProperty("sending_whatsapp_number_profile_id")
+            @ExcludeMissing
+            fun _sendingWhatsappNumberProfileId(): JsonField<String> =
+                sendingWhatsappNumberProfileId
+
+            /**
+             * Returns the raw JSON value of [shortName].
+             *
+             * Unlike [shortName], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("short_name")
+            @ExcludeMissing
+            fun _shortName(): JsonField<String> = shortName
+
+            /**
+             * Returns the raw JSON value of [status].
+             *
+             * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<String> = status
+
+            /**
+             * Returns the raw JSON value of [updatedAt].
+             *
+             * Unlike [updatedAt], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("updated_at")
+            @ExcludeMissing
+            fun _updatedAt(): JsonField<OffsetDateTime> = updatedAt
+
+            /**
+             * Returns the raw JSON value of [wabaId].
+             *
+             * Unlike [wabaId], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("waba_id") @ExcludeMissing fun _wabaId(): JsonField<String> = wabaId
+
+            /**
+             * Returns the raw JSON value of [whatsappPhoneNumber].
+             *
+             * Unlike [whatsappPhoneNumber], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("whatsapp_phone_number")
+            @ExcludeMissing
+            fun _whatsappPhoneNumber(): JsonField<String> = whatsappPhoneNumber
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Profile]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Profile]. */
+            class Builder internal constructor() {
+
+                private var id: JsonField<String> = JsonMissing.of()
+                private var allowContactSharing: JsonField<Boolean> = JsonMissing.of()
+                private var allowNumberChangeDuringOnboarding: JsonField<Boolean> = JsonMissing.of()
+                private var allowTemplateSharing: JsonField<Boolean> = JsonMissing.of()
+                private var billingContact: JsonField<BillingContact> = JsonMissing.of()
+                private var billingModel: JsonField<String> = JsonMissing.of()
+                private var brand: JsonField<Brand> = JsonMissing.of()
+                private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
+                private var description: JsonField<String> = JsonMissing.of()
+                private var email: JsonField<String> = JsonMissing.of()
+                private var icon: JsonField<String> = JsonMissing.of()
+                private var inheritContacts: JsonField<Boolean> = JsonMissing.of()
+                private var inheritTcrBrand: JsonField<Boolean> = JsonMissing.of()
+                private var inheritTcrCampaign: JsonField<Boolean> = JsonMissing.of()
+                private var inheritTemplates: JsonField<Boolean> = JsonMissing.of()
+                private var name: JsonField<String> = JsonMissing.of()
+                private var organizationId: JsonField<String> = JsonMissing.of()
+                private var sendingPhoneNumber: JsonField<String> = JsonMissing.of()
+                private var sendingPhoneNumberProfileId: JsonField<String> = JsonMissing.of()
+                private var sendingWhatsappNumberProfileId: JsonField<String> = JsonMissing.of()
+                private var shortName: JsonField<String> = JsonMissing.of()
+                private var status: JsonField<String> = JsonMissing.of()
+                private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+                private var wabaId: JsonField<String> = JsonMissing.of()
+                private var whatsappPhoneNumber: JsonField<String> = JsonMissing.of()
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(profile: Profile) = apply {
+                    id = profile.id
+                    allowContactSharing = profile.allowContactSharing
+                    allowNumberChangeDuringOnboarding = profile.allowNumberChangeDuringOnboarding
+                    allowTemplateSharing = profile.allowTemplateSharing
+                    billingContact = profile.billingContact
+                    billingModel = profile.billingModel
+                    brand = profile.brand
+                    createdAt = profile.createdAt
+                    description = profile.description
+                    email = profile.email
+                    icon = profile.icon
+                    inheritContacts = profile.inheritContacts
+                    inheritTcrBrand = profile.inheritTcrBrand
+                    inheritTcrCampaign = profile.inheritTcrCampaign
+                    inheritTemplates = profile.inheritTemplates
+                    name = profile.name
+                    organizationId = profile.organizationId
+                    sendingPhoneNumber = profile.sendingPhoneNumber
+                    sendingPhoneNumberProfileId = profile.sendingPhoneNumberProfileId
+                    sendingWhatsappNumberProfileId = profile.sendingWhatsappNumberProfileId
+                    shortName = profile.shortName
+                    status = profile.status
+                    updatedAt = profile.updatedAt
+                    wabaId = profile.wabaId
+                    whatsappPhoneNumber = profile.whatsappPhoneNumber
+                    additionalProperties = profile.additionalProperties.toMutableMap()
+                }
+
+                /** Profile unique identifier */
+                fun id(id: String) = id(JsonField.of(id))
+
+                /**
+                 * Sets [Builder.id] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.id] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun id(id: JsonField<String>) = apply { this.id = id }
+
+                /**
+                 * Always false. A profile no longer shares contacts with sibling profiles — it sees
+                 * only what it owns. Retained so existing v3 clients reading allow_contact_sharing
+                 * keep deserializing; it carries no information.
+                 */
+                @Deprecated("deprecated")
+                fun allowContactSharing(allowContactSharing: Boolean?) =
+                    allowContactSharing(JsonField.ofNullable(allowContactSharing))
+
+                /**
+                 * Alias for [Builder.allowContactSharing].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                @Deprecated("deprecated")
+                fun allowContactSharing(allowContactSharing: Boolean) =
+                    allowContactSharing(allowContactSharing as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.allowContactSharing] with
+                 * `allowContactSharing.orElse(null)`.
+                 */
+                @Deprecated("deprecated")
+                fun allowContactSharing(allowContactSharing: Optional<Boolean>) =
+                    allowContactSharing(allowContactSharing.getOrNull())
+
+                /**
+                 * Sets [Builder.allowContactSharing] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.allowContactSharing] with a well-typed [Boolean]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                @Deprecated("deprecated")
+                fun allowContactSharing(allowContactSharing: JsonField<Boolean>) = apply {
+                    this.allowContactSharing = allowContactSharing
+                }
+
+                /** Whether number changes are allowed during onboarding */
+                fun allowNumberChangeDuringOnboarding(allowNumberChangeDuringOnboarding: Boolean?) =
+                    allowNumberChangeDuringOnboarding(
+                        JsonField.ofNullable(allowNumberChangeDuringOnboarding)
+                    )
+
+                /**
+                 * Alias for [Builder.allowNumberChangeDuringOnboarding].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                fun allowNumberChangeDuringOnboarding(allowNumberChangeDuringOnboarding: Boolean) =
+                    allowNumberChangeDuringOnboarding(allowNumberChangeDuringOnboarding as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.allowNumberChangeDuringOnboarding] with
+                 * `allowNumberChangeDuringOnboarding.orElse(null)`.
+                 */
+                fun allowNumberChangeDuringOnboarding(
+                    allowNumberChangeDuringOnboarding: Optional<Boolean>
+                ) = allowNumberChangeDuringOnboarding(allowNumberChangeDuringOnboarding.getOrNull())
+
+                /**
+                 * Sets [Builder.allowNumberChangeDuringOnboarding] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.allowNumberChangeDuringOnboarding] with a
+                 * well-typed [Boolean] value instead. This method is primarily for setting the
+                 * field to an undocumented or not yet supported value.
+                 */
+                fun allowNumberChangeDuringOnboarding(
+                    allowNumberChangeDuringOnboarding: JsonField<Boolean>
+                ) = apply {
+                    this.allowNumberChangeDuringOnboarding = allowNumberChangeDuringOnboarding
+                }
+
+                /**
+                 * Always false. A profile no longer shares templates with sibling profiles.
+                 * Retained so existing v3 clients reading allow_template_sharing keep
+                 * deserializing; it carries no information.
+                 */
+                @Deprecated("deprecated")
+                fun allowTemplateSharing(allowTemplateSharing: Boolean?) =
+                    allowTemplateSharing(JsonField.ofNullable(allowTemplateSharing))
+
+                /**
+                 * Alias for [Builder.allowTemplateSharing].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                @Deprecated("deprecated")
+                fun allowTemplateSharing(allowTemplateSharing: Boolean) =
+                    allowTemplateSharing(allowTemplateSharing as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.allowTemplateSharing] with
+                 * `allowTemplateSharing.orElse(null)`.
+                 */
+                @Deprecated("deprecated")
+                fun allowTemplateSharing(allowTemplateSharing: Optional<Boolean>) =
+                    allowTemplateSharing(allowTemplateSharing.getOrNull())
+
+                /**
+                 * Sets [Builder.allowTemplateSharing] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.allowTemplateSharing] with a well-typed
+                 * [Boolean] value instead. This method is primarily for setting the field to an
+                 * undocumented or not yet supported value.
+                 */
+                @Deprecated("deprecated")
+                fun allowTemplateSharing(allowTemplateSharing: JsonField<Boolean>) = apply {
+                    this.allowTemplateSharing = allowTemplateSharing
+                }
+
+                /** Billing contact info returned in profile responses */
+                fun billingContact(billingContact: BillingContact?) =
+                    billingContact(JsonField.ofNullable(billingContact))
+
+                /**
+                 * Alias for calling [Builder.billingContact] with `billingContact.orElse(null)`.
+                 */
+                fun billingContact(billingContact: Optional<BillingContact>) =
+                    billingContact(billingContact.getOrNull())
+
+                /**
+                 * Sets [Builder.billingContact] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.billingContact] with a well-typed
+                 * [BillingContact] value instead. This method is primarily for setting the field to
+                 * an undocumented or not yet supported value.
+                 */
+                fun billingContact(billingContact: JsonField<BillingContact>) = apply {
+                    this.billingContact = billingContact
+                }
+
+                /** Billing model: profile, organization, or profile_and_organization */
+                fun billingModel(billingModel: String) = billingModel(JsonField.of(billingModel))
+
+                /**
+                 * Sets [Builder.billingModel] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.billingModel] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun billingModel(billingModel: JsonField<String>) = apply {
+                    this.billingModel = billingModel
+                }
+
+                /**
+                 * Brand response with nested contact, business, and compliance sections — mirrors
+                 * the request structure.
+                 */
+                fun brand(brand: Brand?) = brand(JsonField.ofNullable(brand))
+
+                /** Alias for calling [Builder.brand] with `brand.orElse(null)`. */
+                fun brand(brand: Optional<Brand>) = brand(brand.getOrNull())
+
+                /**
+                 * Sets [Builder.brand] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.brand] with a well-typed [Brand] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun brand(brand: JsonField<Brand>) = apply { this.brand = brand }
+
+                /** When the profile was created */
+                fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
+
+                /**
+                 * Sets [Builder.createdAt] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.createdAt] with a well-typed [OffsetDateTime]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply {
+                    this.createdAt = createdAt
+                }
+
+                /** Profile description */
+                fun description(description: String?) =
+                    description(JsonField.ofNullable(description))
+
+                /** Alias for calling [Builder.description] with `description.orElse(null)`. */
+                fun description(description: Optional<String>) =
+                    description(description.getOrNull())
+
+                /**
+                 * Sets [Builder.description] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.description] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun description(description: JsonField<String>) = apply {
+                    this.description = description
+                }
+
+                /** Profile email (inherited from organization) */
+                fun email(email: String?) = email(JsonField.ofNullable(email))
+
+                /** Alias for calling [Builder.email] with `email.orElse(null)`. */
+                fun email(email: Optional<String>) = email(email.getOrNull())
+
+                /**
+                 * Sets [Builder.email] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.email] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun email(email: JsonField<String>) = apply { this.email = email }
+
+                /** Profile icon URL */
+                fun icon(icon: String?) = icon(JsonField.ofNullable(icon))
+
+                /** Alias for calling [Builder.icon] with `icon.orElse(null)`. */
+                fun icon(icon: Optional<String>) = icon(icon.getOrNull())
+
+                /**
+                 * Sets [Builder.icon] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.icon] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun icon(icon: JsonField<String>) = apply { this.icon = icon }
+
+                /**
+                 * Always false. A profile no longer inherits its organization's contacts. Retained
+                 * so existing v3 clients reading inherit_contacts keep deserializing; it carries no
+                 * information.
+                 */
+                @Deprecated("deprecated")
+                fun inheritContacts(inheritContacts: Boolean?) =
+                    inheritContacts(JsonField.ofNullable(inheritContacts))
+
+                /**
+                 * Alias for [Builder.inheritContacts].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                @Deprecated("deprecated")
+                fun inheritContacts(inheritContacts: Boolean) =
+                    inheritContacts(inheritContacts as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.inheritContacts] with `inheritContacts.orElse(null)`.
+                 */
+                @Deprecated("deprecated")
+                fun inheritContacts(inheritContacts: Optional<Boolean>) =
+                    inheritContacts(inheritContacts.getOrNull())
+
+                /**
+                 * Sets [Builder.inheritContacts] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.inheritContacts] with a well-typed [Boolean]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                @Deprecated("deprecated")
+                fun inheritContacts(inheritContacts: JsonField<Boolean>) = apply {
+                    this.inheritContacts = inheritContacts
+                }
+
+                /** Whether this profile inherits TCR brand from the organization */
+                fun inheritTcrBrand(inheritTcrBrand: Boolean) =
+                    inheritTcrBrand(JsonField.of(inheritTcrBrand))
+
+                /**
+                 * Sets [Builder.inheritTcrBrand] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.inheritTcrBrand] with a well-typed [Boolean]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun inheritTcrBrand(inheritTcrBrand: JsonField<Boolean>) = apply {
+                    this.inheritTcrBrand = inheritTcrBrand
+                }
+
+                /** Whether this profile inherits TCR campaign from the organization */
+                fun inheritTcrCampaign(inheritTcrCampaign: Boolean) =
+                    inheritTcrCampaign(JsonField.of(inheritTcrCampaign))
+
+                /**
+                 * Sets [Builder.inheritTcrCampaign] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.inheritTcrCampaign] with a well-typed [Boolean]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun inheritTcrCampaign(inheritTcrCampaign: JsonField<Boolean>) = apply {
+                    this.inheritTcrCampaign = inheritTcrCampaign
+                }
+
+                /**
+                 * Always false. A profile no longer inherits its organization's templates. Retained
+                 * so existing v3 clients reading inherit_templates keep deserializing; it carries
+                 * no information.
+                 */
+                @Deprecated("deprecated")
+                fun inheritTemplates(inheritTemplates: Boolean?) =
+                    inheritTemplates(JsonField.ofNullable(inheritTemplates))
+
+                /**
+                 * Alias for [Builder.inheritTemplates].
+                 *
+                 * This unboxed primitive overload exists for backwards compatibility.
+                 */
+                @Deprecated("deprecated")
+                fun inheritTemplates(inheritTemplates: Boolean) =
+                    inheritTemplates(inheritTemplates as Boolean?)
+
+                /**
+                 * Alias for calling [Builder.inheritTemplates] with
+                 * `inheritTemplates.orElse(null)`.
+                 */
+                @Deprecated("deprecated")
+                fun inheritTemplates(inheritTemplates: Optional<Boolean>) =
+                    inheritTemplates(inheritTemplates.getOrNull())
+
+                /**
+                 * Sets [Builder.inheritTemplates] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.inheritTemplates] with a well-typed [Boolean]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                @Deprecated("deprecated")
+                fun inheritTemplates(inheritTemplates: JsonField<Boolean>) = apply {
+                    this.inheritTemplates = inheritTemplates
+                }
+
+                /** Profile name */
+                fun name(name: String) = name(JsonField.of(name))
+
+                /**
+                 * Sets [Builder.name] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.name] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun name(name: JsonField<String>) = apply { this.name = name }
+
+                /** Parent organization ID */
+                fun organizationId(organizationId: String?) =
+                    organizationId(JsonField.ofNullable(organizationId))
+
+                /**
+                 * Alias for calling [Builder.organizationId] with `organizationId.orElse(null)`.
+                 */
+                fun organizationId(organizationId: Optional<String>) =
+                    organizationId(organizationId.getOrNull())
+
+                /**
+                 * Sets [Builder.organizationId] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.organizationId] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun organizationId(organizationId: JsonField<String>) = apply {
+                    this.organizationId = organizationId
+                }
+
+                /** Direct SMS phone number */
+                fun sendingPhoneNumber(sendingPhoneNumber: String?) =
+                    sendingPhoneNumber(JsonField.ofNullable(sendingPhoneNumber))
+
+                /**
+                 * Alias for calling [Builder.sendingPhoneNumber] with
+                 * `sendingPhoneNumber.orElse(null)`.
+                 */
+                fun sendingPhoneNumber(sendingPhoneNumber: Optional<String>) =
+                    sendingPhoneNumber(sendingPhoneNumber.getOrNull())
+
+                /**
+                 * Sets [Builder.sendingPhoneNumber] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.sendingPhoneNumber] with a well-typed [String]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun sendingPhoneNumber(sendingPhoneNumber: JsonField<String>) = apply {
+                    this.sendingPhoneNumber = sendingPhoneNumber
+                }
+
+                /**
+                 * Deprecated. Always null. Sender borrowing is gone: a profile no longer points at
+                 * another profile for its SMS sender, and every profile owns the sender it sends
+                 * from.
+                 *
+                 * Kept on the wire, and never populated, because those are two different promises.
+                 * Removing the key changes the response's shape — a generated client loses the
+                 * property and stops compiling on the next regenerate, for a value that is now null
+                 * for every profile in existence. Keeping it null costs a key and breaks nobody,
+                 * and null is the honest answer rather than a placeholder: there is no borrowing
+                 * left to report.
+                 *
+                 * Nothing could populate it. Migration 260813161500 dropped the column and copied
+                 * each borrower its own channel-provider row; its Down() says outright that the
+                 * borrower-to-lender pairing is not recoverable. The only surviving trace is a
+                 * notes string on the copied row.
+                 */
+                @Deprecated("deprecated")
+                fun sendingPhoneNumberProfileId(sendingPhoneNumberProfileId: String?) =
+                    sendingPhoneNumberProfileId(JsonField.ofNullable(sendingPhoneNumberProfileId))
+
+                /**
+                 * Alias for calling [Builder.sendingPhoneNumberProfileId] with
+                 * `sendingPhoneNumberProfileId.orElse(null)`.
+                 */
+                @Deprecated("deprecated")
+                fun sendingPhoneNumberProfileId(sendingPhoneNumberProfileId: Optional<String>) =
+                    sendingPhoneNumberProfileId(sendingPhoneNumberProfileId.getOrNull())
+
+                /**
+                 * Sets [Builder.sendingPhoneNumberProfileId] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.sendingPhoneNumberProfileId] with a well-typed
+                 * [String] value instead. This method is primarily for setting the field to an
+                 * undocumented or not yet supported value.
+                 */
+                @Deprecated("deprecated")
+                fun sendingPhoneNumberProfileId(sendingPhoneNumberProfileId: JsonField<String>) =
+                    apply {
+                        this.sendingPhoneNumberProfileId = sendingPhoneNumberProfileId
+                    }
+
+                @Deprecated("deprecated")
+                fun sendingWhatsappNumberProfileId(sendingWhatsappNumberProfileId: String?) =
+                    sendingWhatsappNumberProfileId(
+                        JsonField.ofNullable(sendingWhatsappNumberProfileId)
+                    )
+
+                /**
+                 * Alias for calling [Builder.sendingWhatsappNumberProfileId] with
+                 * `sendingWhatsappNumberProfileId.orElse(null)`.
+                 */
+                @Deprecated("deprecated")
+                fun sendingWhatsappNumberProfileId(
+                    sendingWhatsappNumberProfileId: Optional<String>
+                ) = sendingWhatsappNumberProfileId(sendingWhatsappNumberProfileId.getOrNull())
+
+                /**
+                 * Sets [Builder.sendingWhatsappNumberProfileId] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.sendingWhatsappNumberProfileId] with a
+                 * well-typed [String] value instead. This method is primarily for setting the field
+                 * to an undocumented or not yet supported value.
+                 */
+                @Deprecated("deprecated")
+                fun sendingWhatsappNumberProfileId(
+                    sendingWhatsappNumberProfileId: JsonField<String>
+                ) = apply { this.sendingWhatsappNumberProfileId = sendingWhatsappNumberProfileId }
+
+                /**
+                 * Profile short name/abbreviation. 3–11 characters: letters, numbers, and spaces
+                 * only, with at least one letter.
+                 */
+                fun shortName(shortName: String?) = shortName(JsonField.ofNullable(shortName))
+
+                /** Alias for calling [Builder.shortName] with `shortName.orElse(null)`. */
+                fun shortName(shortName: Optional<String>) = shortName(shortName.getOrNull())
+
+                /**
+                 * Sets [Builder.shortName] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.shortName] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun shortName(shortName: JsonField<String>) = apply { this.shortName = shortName }
+
+                /** Profile setup status: incomplete, pending_review, approved, rejected */
+                fun status(status: String) = status(JsonField.of(status))
+
+                /**
+                 * Sets [Builder.status] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.status] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun status(status: JsonField<String>) = apply { this.status = status }
+
+                /** When the profile was last updated */
+                fun updatedAt(updatedAt: OffsetDateTime?) =
+                    updatedAt(JsonField.ofNullable(updatedAt))
+
+                /** Alias for calling [Builder.updatedAt] with `updatedAt.orElse(null)`. */
+                fun updatedAt(updatedAt: Optional<OffsetDateTime>) =
+                    updatedAt(updatedAt.getOrNull())
+
+                /**
+                 * Sets [Builder.updatedAt] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.updatedAt] with a well-typed [OffsetDateTime]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun updatedAt(updatedAt: JsonField<OffsetDateTime>) = apply {
+                    this.updatedAt = updatedAt
+                }
+
+                /**
+                 * WhatsApp Business Account ID associated with this profile. Present whether the
+                 * WABA is inherited from the organization or configured directly.
+                 */
+                fun wabaId(wabaId: String?) = wabaId(JsonField.ofNullable(wabaId))
+
+                /** Alias for calling [Builder.wabaId] with `wabaId.orElse(null)`. */
+                fun wabaId(wabaId: Optional<String>) = wabaId(wabaId.getOrNull())
+
+                /**
+                 * Sets [Builder.wabaId] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.wabaId] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun wabaId(wabaId: JsonField<String>) = apply { this.wabaId = wabaId }
+
+                /** Direct WhatsApp phone number */
+                fun whatsappPhoneNumber(whatsappPhoneNumber: String?) =
+                    whatsappPhoneNumber(JsonField.ofNullable(whatsappPhoneNumber))
+
+                /**
+                 * Alias for calling [Builder.whatsappPhoneNumber] with
+                 * `whatsappPhoneNumber.orElse(null)`.
+                 */
+                fun whatsappPhoneNumber(whatsappPhoneNumber: Optional<String>) =
+                    whatsappPhoneNumber(whatsappPhoneNumber.getOrNull())
+
+                /**
+                 * Sets [Builder.whatsappPhoneNumber] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.whatsappPhoneNumber] with a well-typed [String]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun whatsappPhoneNumber(whatsappPhoneNumber: JsonField<String>) = apply {
+                    this.whatsappPhoneNumber = whatsappPhoneNumber
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Profile].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Profile =
+                    Profile(
+                        id,
+                        allowContactSharing,
+                        allowNumberChangeDuringOnboarding,
+                        allowTemplateSharing,
+                        billingContact,
+                        billingModel,
+                        brand,
+                        createdAt,
+                        description,
+                        email,
+                        icon,
+                        inheritContacts,
+                        inheritTcrBrand,
+                        inheritTcrCampaign,
+                        inheritTemplates,
+                        name,
+                        organizationId,
+                        sendingPhoneNumber,
+                        sendingPhoneNumberProfileId,
+                        sendingWhatsappNumberProfileId,
+                        shortName,
+                        status,
+                        updatedAt,
+                        wabaId,
+                        whatsappPhoneNumber,
+                        additionalProperties.toMutableMap(),
+                    )
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws SentInvalidDataException if any value type in this object doesn't match its
+             *   expected type.
+             */
+            fun validate(): Profile = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                id()
+                allowContactSharing()
+                allowNumberChangeDuringOnboarding()
+                allowTemplateSharing()
+                billingContact().ifPresent { it.validate() }
+                billingModel()
+                brand().ifPresent { it.validate() }
+                createdAt()
+                description()
+                email()
+                icon()
+                inheritContacts()
+                inheritTcrBrand()
+                inheritTcrCampaign()
+                inheritTemplates()
+                name()
+                organizationId()
+                sendingPhoneNumber()
+                sendingPhoneNumberProfileId()
+                sendingWhatsappNumberProfileId()
+                shortName()
+                status()
+                updatedAt()
+                wabaId()
+                whatsappPhoneNumber()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: SentInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (if (id.asKnown().isPresent) 1 else 0) +
+                    (if (allowContactSharing.asKnown().isPresent) 1 else 0) +
+                    (if (allowNumberChangeDuringOnboarding.asKnown().isPresent) 1 else 0) +
+                    (if (allowTemplateSharing.asKnown().isPresent) 1 else 0) +
+                    (billingContact.asKnown().getOrNull()?.validity() ?: 0) +
+                    (if (billingModel.asKnown().isPresent) 1 else 0) +
+                    (brand.asKnown().getOrNull()?.validity() ?: 0) +
+                    (if (createdAt.asKnown().isPresent) 1 else 0) +
+                    (if (description.asKnown().isPresent) 1 else 0) +
+                    (if (email.asKnown().isPresent) 1 else 0) +
+                    (if (icon.asKnown().isPresent) 1 else 0) +
+                    (if (inheritContacts.asKnown().isPresent) 1 else 0) +
+                    (if (inheritTcrBrand.asKnown().isPresent) 1 else 0) +
+                    (if (inheritTcrCampaign.asKnown().isPresent) 1 else 0) +
+                    (if (inheritTemplates.asKnown().isPresent) 1 else 0) +
+                    (if (name.asKnown().isPresent) 1 else 0) +
+                    (if (organizationId.asKnown().isPresent) 1 else 0) +
+                    (if (sendingPhoneNumber.asKnown().isPresent) 1 else 0) +
+                    (if (sendingPhoneNumberProfileId.asKnown().isPresent) 1 else 0) +
+                    (if (sendingWhatsappNumberProfileId.asKnown().isPresent) 1 else 0) +
+                    (if (shortName.asKnown().isPresent) 1 else 0) +
+                    (if (status.asKnown().isPresent) 1 else 0) +
+                    (if (updatedAt.asKnown().isPresent) 1 else 0) +
+                    (if (wabaId.asKnown().isPresent) 1 else 0) +
+                    (if (whatsappPhoneNumber.asKnown().isPresent) 1 else 0)
+
+            /** Billing contact info returned in profile responses */
+            class BillingContact
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val address: JsonField<String>,
+                private val email: JsonField<String>,
+                private val name: JsonField<String>,
+                private val phone: JsonField<String>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("address")
+                    @ExcludeMissing
+                    address: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("email")
+                    @ExcludeMissing
+                    email: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("name")
+                    @ExcludeMissing
+                    name: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("phone")
+                    @ExcludeMissing
+                    phone: JsonField<String> = JsonMissing.of(),
+                ) : this(address, email, name, phone, mutableMapOf())
+
+                /**
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun address(): Optional<String> = address.getOptional("address")
+
+                /**
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun email(): Optional<String> = email.getOptional("email")
+
+                /**
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun name(): Optional<String> = name.getOptional("name")
+
+                /**
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun phone(): Optional<String> = phone.getOptional("phone")
+
+                /**
+                 * Returns the raw JSON value of [address].
+                 *
+                 * Unlike [address], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("address") @ExcludeMissing fun _address(): JsonField<String> = address
+
+                /**
+                 * Returns the raw JSON value of [email].
+                 *
+                 * Unlike [email], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<String> = email
+
+                /**
+                 * Returns the raw JSON value of [name].
+                 *
+                 * Unlike [name], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+                /**
+                 * Returns the raw JSON value of [phone].
+                 *
+                 * Unlike [phone], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("phone") @ExcludeMissing fun _phone(): JsonField<String> = phone
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /**
+                     * Returns a mutable builder for constructing an instance of [BillingContact].
+                     */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [BillingContact]. */
+                class Builder internal constructor() {
+
+                    private var address: JsonField<String> = JsonMissing.of()
+                    private var email: JsonField<String> = JsonMissing.of()
+                    private var name: JsonField<String> = JsonMissing.of()
+                    private var phone: JsonField<String> = JsonMissing.of()
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(billingContact: BillingContact) = apply {
+                        address = billingContact.address
+                        email = billingContact.email
+                        name = billingContact.name
+                        phone = billingContact.phone
+                        additionalProperties = billingContact.additionalProperties.toMutableMap()
+                    }
+
+                    fun address(address: String?) = address(JsonField.ofNullable(address))
+
+                    /** Alias for calling [Builder.address] with `address.orElse(null)`. */
+                    fun address(address: Optional<String>) = address(address.getOrNull())
+
+                    /**
+                     * Sets [Builder.address] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.address] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun address(address: JsonField<String>) = apply { this.address = address }
+
+                    fun email(email: String?) = email(JsonField.ofNullable(email))
+
+                    /** Alias for calling [Builder.email] with `email.orElse(null)`. */
+                    fun email(email: Optional<String>) = email(email.getOrNull())
+
+                    /**
+                     * Sets [Builder.email] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.email] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun email(email: JsonField<String>) = apply { this.email = email }
+
+                    fun name(name: String?) = name(JsonField.ofNullable(name))
+
+                    /** Alias for calling [Builder.name] with `name.orElse(null)`. */
+                    fun name(name: Optional<String>) = name(name.getOrNull())
+
+                    /**
+                     * Sets [Builder.name] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.name] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun name(name: JsonField<String>) = apply { this.name = name }
+
+                    fun phone(phone: String?) = phone(JsonField.ofNullable(phone))
+
+                    /** Alias for calling [Builder.phone] with `phone.orElse(null)`. */
+                    fun phone(phone: Optional<String>) = phone(phone.getOrNull())
+
+                    /**
+                     * Sets [Builder.phone] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.phone] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun phone(phone: JsonField<String>) = apply { this.phone = phone }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [BillingContact].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     */
+                    fun build(): BillingContact =
+                        BillingContact(
+                            address,
+                            email,
+                            name,
+                            phone,
+                            additionalProperties.toMutableMap(),
+                        )
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws SentInvalidDataException if any value type in this object doesn't match
+                 *   its expected type.
+                 */
+                fun validate(): BillingContact = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    address()
+                    email()
+                    name()
+                    phone()
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: SentInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (if (address.asKnown().isPresent) 1 else 0) +
+                        (if (email.asKnown().isPresent) 1 else 0) +
+                        (if (name.asKnown().isPresent) 1 else 0) +
+                        (if (phone.asKnown().isPresent) 1 else 0)
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is BillingContact &&
+                        address == other.address &&
+                        email == other.email &&
+                        name == other.name &&
+                        phone == other.phone &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy {
+                    Objects.hash(address, email, name, phone, additionalProperties)
+                }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "BillingContact{address=$address, email=$email, name=$name, phone=$phone, additionalProperties=$additionalProperties}"
+            }
+
+            /**
+             * Brand response with nested contact, business, and compliance sections — mirrors the
+             * request structure.
+             */
+            class Brand
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val id: JsonField<String>,
+                private val business: JsonField<Business>,
+                private val compliance: JsonField<Compliance>,
+                private val contact: JsonField<Contact>,
+                private val createdAt: JsonField<OffsetDateTime>,
+                private val cspId: JsonField<String>,
+                private val identityStatus: JsonField<IdentityStatus>,
+                private val isInherited: JsonField<Boolean>,
+                private val status: JsonField<Status>,
+                private val submittedAt: JsonField<OffsetDateTime>,
+                private val submittedToTcr: JsonField<Boolean>,
+                private val tcrBrandId: JsonField<String>,
+                private val universalEin: JsonField<String>,
+                private val updatedAt: JsonField<OffsetDateTime>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("business")
+                    @ExcludeMissing
+                    business: JsonField<Business> = JsonMissing.of(),
+                    @JsonProperty("compliance")
+                    @ExcludeMissing
+                    compliance: JsonField<Compliance> = JsonMissing.of(),
+                    @JsonProperty("contact")
+                    @ExcludeMissing
+                    contact: JsonField<Contact> = JsonMissing.of(),
+                    @JsonProperty("created_at")
+                    @ExcludeMissing
+                    createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+                    @JsonProperty("csp_id")
+                    @ExcludeMissing
+                    cspId: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("identity_status")
+                    @ExcludeMissing
+                    identityStatus: JsonField<IdentityStatus> = JsonMissing.of(),
+                    @JsonProperty("is_inherited")
+                    @ExcludeMissing
+                    isInherited: JsonField<Boolean> = JsonMissing.of(),
+                    @JsonProperty("status")
+                    @ExcludeMissing
+                    status: JsonField<Status> = JsonMissing.of(),
+                    @JsonProperty("submitted_at")
+                    @ExcludeMissing
+                    submittedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+                    @JsonProperty("submitted_to_tcr")
+                    @ExcludeMissing
+                    submittedToTcr: JsonField<Boolean> = JsonMissing.of(),
+                    @JsonProperty("tcr_brand_id")
+                    @ExcludeMissing
+                    tcrBrandId: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("universal_ein")
+                    @ExcludeMissing
+                    universalEin: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("updated_at")
+                    @ExcludeMissing
+                    updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+                ) : this(
+                    id,
+                    business,
+                    compliance,
+                    contact,
+                    createdAt,
+                    cspId,
+                    identityStatus,
+                    isInherited,
+                    status,
+                    submittedAt,
+                    submittedToTcr,
+                    tcrBrandId,
+                    universalEin,
+                    updatedAt,
+                    mutableMapOf(),
+                )
+
+                /**
+                 * Unique identifier for the brand
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun id(): Optional<String> = id.getOptional("id")
+
+                /**
+                 * Business details and address information
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun business(): Optional<Business> = business.getOptional("business")
+
+                /**
+                 * Compliance and TCR-related information
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun compliance(): Optional<Compliance> = compliance.getOptional("compliance")
+
+                /**
+                 * Contact information for the brand
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun contact(): Optional<Contact> = contact.getOptional("contact")
+
+                /**
+                 * When the brand was created
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
+
+                /**
+                 * Deprecated and scheduled for removal. Identifies the Campaign Service Provider
+                 * that registered the brand, which is Sent, so the value is the same for every
+                 * brand and every account. Nothing on your side can act on it and there is no
+                 * replacement. Stop reading it.
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                @Deprecated("deprecated")
+                fun cspId(): Optional<String> = cspId.getOptional("csp_id")
+
+                /**
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun identityStatus(): Optional<IdentityStatus> =
+                    identityStatus.getOptional("identity_status")
+
+                /**
+                 * Whether this brand is inherited from the parent organization
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun isInherited(): Optional<Boolean> = isInherited.getOptional("is_inherited")
+
+                /**
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun status(): Optional<Status> = status.getOptional("status")
+
+                /**
+                 * When the brand was submitted to TCR
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun submittedAt(): Optional<OffsetDateTime> =
+                    submittedAt.getOptional("submitted_at")
+
+                /**
+                 * Whether this brand has been submitted to TCR
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun submittedToTcr(): Optional<Boolean> =
+                    submittedToTcr.getOptional("submitted_to_tcr")
+
+                /**
+                 * TCR brand ID (populated after TCR submission)
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun tcrBrandId(): Optional<String> = tcrBrandId.getOptional("tcr_brand_id")
+
+                /**
+                 * Universal EIN from TCR
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun universalEin(): Optional<String> = universalEin.getOptional("universal_ein")
+
+                /**
+                 * When the brand was last updated
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun updatedAt(): Optional<OffsetDateTime> = updatedAt.getOptional("updated_at")
+
+                /**
+                 * Returns the raw JSON value of [id].
+                 *
+                 * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+                 */
+                @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+                /**
+                 * Returns the raw JSON value of [business].
+                 *
+                 * Unlike [business], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("business")
+                @ExcludeMissing
+                fun _business(): JsonField<Business> = business
+
+                /**
+                 * Returns the raw JSON value of [compliance].
+                 *
+                 * Unlike [compliance], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("compliance")
+                @ExcludeMissing
+                fun _compliance(): JsonField<Compliance> = compliance
+
+                /**
+                 * Returns the raw JSON value of [contact].
+                 *
+                 * Unlike [contact], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("contact")
+                @ExcludeMissing
+                fun _contact(): JsonField<Contact> = contact
+
+                /**
+                 * Returns the raw JSON value of [createdAt].
+                 *
+                 * Unlike [createdAt], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("created_at")
+                @ExcludeMissing
+                fun _createdAt(): JsonField<OffsetDateTime> = createdAt
+
+                /**
+                 * Returns the raw JSON value of [cspId].
+                 *
+                 * Unlike [cspId], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @Deprecated("deprecated")
+                @JsonProperty("csp_id")
+                @ExcludeMissing
+                fun _cspId(): JsonField<String> = cspId
+
+                /**
+                 * Returns the raw JSON value of [identityStatus].
+                 *
+                 * Unlike [identityStatus], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("identity_status")
+                @ExcludeMissing
+                fun _identityStatus(): JsonField<IdentityStatus> = identityStatus
+
+                /**
+                 * Returns the raw JSON value of [isInherited].
+                 *
+                 * Unlike [isInherited], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("is_inherited")
+                @ExcludeMissing
+                fun _isInherited(): JsonField<Boolean> = isInherited
+
+                /**
+                 * Returns the raw JSON value of [status].
+                 *
+                 * Unlike [status], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<Status> = status
+
+                /**
+                 * Returns the raw JSON value of [submittedAt].
+                 *
+                 * Unlike [submittedAt], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("submitted_at")
+                @ExcludeMissing
+                fun _submittedAt(): JsonField<OffsetDateTime> = submittedAt
+
+                /**
+                 * Returns the raw JSON value of [submittedToTcr].
+                 *
+                 * Unlike [submittedToTcr], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("submitted_to_tcr")
+                @ExcludeMissing
+                fun _submittedToTcr(): JsonField<Boolean> = submittedToTcr
+
+                /**
+                 * Returns the raw JSON value of [tcrBrandId].
+                 *
+                 * Unlike [tcrBrandId], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("tcr_brand_id")
+                @ExcludeMissing
+                fun _tcrBrandId(): JsonField<String> = tcrBrandId
+
+                /**
+                 * Returns the raw JSON value of [universalEin].
+                 *
+                 * Unlike [universalEin], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("universal_ein")
+                @ExcludeMissing
+                fun _universalEin(): JsonField<String> = universalEin
+
+                /**
+                 * Returns the raw JSON value of [updatedAt].
+                 *
+                 * Unlike [updatedAt], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("updated_at")
+                @ExcludeMissing
+                fun _updatedAt(): JsonField<OffsetDateTime> = updatedAt
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /** Returns a mutable builder for constructing an instance of [Brand]. */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [Brand]. */
+                class Builder internal constructor() {
+
+                    private var id: JsonField<String> = JsonMissing.of()
+                    private var business: JsonField<Business> = JsonMissing.of()
+                    private var compliance: JsonField<Compliance> = JsonMissing.of()
+                    private var contact: JsonField<Contact> = JsonMissing.of()
+                    private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
+                    private var cspId: JsonField<String> = JsonMissing.of()
+                    private var identityStatus: JsonField<IdentityStatus> = JsonMissing.of()
+                    private var isInherited: JsonField<Boolean> = JsonMissing.of()
+                    private var status: JsonField<Status> = JsonMissing.of()
+                    private var submittedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+                    private var submittedToTcr: JsonField<Boolean> = JsonMissing.of()
+                    private var tcrBrandId: JsonField<String> = JsonMissing.of()
+                    private var universalEin: JsonField<String> = JsonMissing.of()
+                    private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(brand: Brand) = apply {
+                        id = brand.id
+                        business = brand.business
+                        compliance = brand.compliance
+                        contact = brand.contact
+                        createdAt = brand.createdAt
+                        cspId = brand.cspId
+                        identityStatus = brand.identityStatus
+                        isInherited = brand.isInherited
+                        status = brand.status
+                        submittedAt = brand.submittedAt
+                        submittedToTcr = brand.submittedToTcr
+                        tcrBrandId = brand.tcrBrandId
+                        universalEin = brand.universalEin
+                        updatedAt = brand.updatedAt
+                        additionalProperties = brand.additionalProperties.toMutableMap()
+                    }
+
+                    /** Unique identifier for the brand */
+                    fun id(id: String) = id(JsonField.of(id))
+
+                    /**
+                     * Sets [Builder.id] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.id] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun id(id: JsonField<String>) = apply { this.id = id }
+
+                    /** Business details and address information */
+                    fun business(business: Business?) = business(JsonField.ofNullable(business))
+
+                    /** Alias for calling [Builder.business] with `business.orElse(null)`. */
+                    fun business(business: Optional<Business>) = business(business.getOrNull())
+
+                    /**
+                     * Sets [Builder.business] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.business] with a well-typed [Business] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun business(business: JsonField<Business>) = apply { this.business = business }
+
+                    /** Compliance and TCR-related information */
+                    fun compliance(compliance: Compliance?) =
+                        compliance(JsonField.ofNullable(compliance))
+
+                    /** Alias for calling [Builder.compliance] with `compliance.orElse(null)`. */
+                    fun compliance(compliance: Optional<Compliance>) =
+                        compliance(compliance.getOrNull())
+
+                    /**
+                     * Sets [Builder.compliance] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.compliance] with a well-typed [Compliance]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun compliance(compliance: JsonField<Compliance>) = apply {
+                        this.compliance = compliance
+                    }
+
+                    /** Contact information for the brand */
+                    fun contact(contact: Contact?) = contact(JsonField.ofNullable(contact))
+
+                    /** Alias for calling [Builder.contact] with `contact.orElse(null)`. */
+                    fun contact(contact: Optional<Contact>) = contact(contact.getOrNull())
+
+                    /**
+                     * Sets [Builder.contact] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.contact] with a well-typed [Contact] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun contact(contact: JsonField<Contact>) = apply { this.contact = contact }
+
+                    /** When the brand was created */
+                    fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
+
+                    /**
+                     * Sets [Builder.createdAt] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.createdAt] with a well-typed
+                     * [OffsetDateTime] value instead. This method is primarily for setting the
+                     * field to an undocumented or not yet supported value.
+                     */
+                    fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply {
+                        this.createdAt = createdAt
+                    }
+
+                    /**
+                     * Deprecated and scheduled for removal. Identifies the Campaign Service
+                     * Provider that registered the brand, which is Sent, so the value is the same
+                     * for every brand and every account. Nothing on your side can act on it and
+                     * there is no replacement. Stop reading it.
+                     */
+                    @Deprecated("deprecated")
+                    fun cspId(cspId: String?) = cspId(JsonField.ofNullable(cspId))
+
+                    /** Alias for calling [Builder.cspId] with `cspId.orElse(null)`. */
+                    @Deprecated("deprecated")
+                    fun cspId(cspId: Optional<String>) = cspId(cspId.getOrNull())
+
+                    /**
+                     * Sets [Builder.cspId] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.cspId] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    @Deprecated("deprecated")
+                    fun cspId(cspId: JsonField<String>) = apply { this.cspId = cspId }
+
+                    fun identityStatus(identityStatus: IdentityStatus?) =
+                        identityStatus(JsonField.ofNullable(identityStatus))
+
+                    /**
+                     * Alias for calling [Builder.identityStatus] with
+                     * `identityStatus.orElse(null)`.
+                     */
+                    fun identityStatus(identityStatus: Optional<IdentityStatus>) =
+                        identityStatus(identityStatus.getOrNull())
+
+                    /**
+                     * Sets [Builder.identityStatus] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.identityStatus] with a well-typed
+                     * [IdentityStatus] value instead. This method is primarily for setting the
+                     * field to an undocumented or not yet supported value.
+                     */
+                    fun identityStatus(identityStatus: JsonField<IdentityStatus>) = apply {
+                        this.identityStatus = identityStatus
+                    }
+
+                    /** Whether this brand is inherited from the parent organization */
+                    fun isInherited(isInherited: Boolean) = isInherited(JsonField.of(isInherited))
+
+                    /**
+                     * Sets [Builder.isInherited] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.isInherited] with a well-typed [Boolean]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun isInherited(isInherited: JsonField<Boolean>) = apply {
+                        this.isInherited = isInherited
+                    }
+
+                    fun status(status: Status?) = status(JsonField.ofNullable(status))
+
+                    /** Alias for calling [Builder.status] with `status.orElse(null)`. */
+                    fun status(status: Optional<Status>) = status(status.getOrNull())
+
+                    /**
+                     * Sets [Builder.status] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.status] with a well-typed [Status] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun status(status: JsonField<Status>) = apply { this.status = status }
+
+                    /** When the brand was submitted to TCR */
+                    fun submittedAt(submittedAt: OffsetDateTime?) =
+                        submittedAt(JsonField.ofNullable(submittedAt))
+
+                    /** Alias for calling [Builder.submittedAt] with `submittedAt.orElse(null)`. */
+                    fun submittedAt(submittedAt: Optional<OffsetDateTime>) =
+                        submittedAt(submittedAt.getOrNull())
+
+                    /**
+                     * Sets [Builder.submittedAt] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.submittedAt] with a well-typed
+                     * [OffsetDateTime] value instead. This method is primarily for setting the
+                     * field to an undocumented or not yet supported value.
+                     */
+                    fun submittedAt(submittedAt: JsonField<OffsetDateTime>) = apply {
+                        this.submittedAt = submittedAt
+                    }
+
+                    /** Whether this brand has been submitted to TCR */
+                    fun submittedToTcr(submittedToTcr: Boolean) =
+                        submittedToTcr(JsonField.of(submittedToTcr))
+
+                    /**
+                     * Sets [Builder.submittedToTcr] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.submittedToTcr] with a well-typed [Boolean]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun submittedToTcr(submittedToTcr: JsonField<Boolean>) = apply {
+                        this.submittedToTcr = submittedToTcr
+                    }
+
+                    /** TCR brand ID (populated after TCR submission) */
+                    fun tcrBrandId(tcrBrandId: String?) =
+                        tcrBrandId(JsonField.ofNullable(tcrBrandId))
+
+                    /** Alias for calling [Builder.tcrBrandId] with `tcrBrandId.orElse(null)`. */
+                    fun tcrBrandId(tcrBrandId: Optional<String>) =
+                        tcrBrandId(tcrBrandId.getOrNull())
+
+                    /**
+                     * Sets [Builder.tcrBrandId] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.tcrBrandId] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun tcrBrandId(tcrBrandId: JsonField<String>) = apply {
+                        this.tcrBrandId = tcrBrandId
+                    }
+
+                    /** Universal EIN from TCR */
+                    fun universalEin(universalEin: String?) =
+                        universalEin(JsonField.ofNullable(universalEin))
+
+                    /**
+                     * Alias for calling [Builder.universalEin] with `universalEin.orElse(null)`.
+                     */
+                    fun universalEin(universalEin: Optional<String>) =
+                        universalEin(universalEin.getOrNull())
+
+                    /**
+                     * Sets [Builder.universalEin] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.universalEin] with a well-typed [String]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun universalEin(universalEin: JsonField<String>) = apply {
+                        this.universalEin = universalEin
+                    }
+
+                    /** When the brand was last updated */
+                    fun updatedAt(updatedAt: OffsetDateTime?) =
+                        updatedAt(JsonField.ofNullable(updatedAt))
+
+                    /** Alias for calling [Builder.updatedAt] with `updatedAt.orElse(null)`. */
+                    fun updatedAt(updatedAt: Optional<OffsetDateTime>) =
+                        updatedAt(updatedAt.getOrNull())
+
+                    /**
+                     * Sets [Builder.updatedAt] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.updatedAt] with a well-typed
+                     * [OffsetDateTime] value instead. This method is primarily for setting the
+                     * field to an undocumented or not yet supported value.
+                     */
+                    fun updatedAt(updatedAt: JsonField<OffsetDateTime>) = apply {
+                        this.updatedAt = updatedAt
+                    }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [Brand].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     */
+                    fun build(): Brand =
+                        Brand(
+                            id,
+                            business,
+                            compliance,
+                            contact,
+                            createdAt,
+                            cspId,
+                            identityStatus,
+                            isInherited,
+                            status,
+                            submittedAt,
+                            submittedToTcr,
+                            tcrBrandId,
+                            universalEin,
+                            updatedAt,
+                            additionalProperties.toMutableMap(),
+                        )
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws SentInvalidDataException if any value type in this object doesn't match
+                 *   its expected type.
+                 */
+                fun validate(): Brand = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    id()
+                    business().ifPresent { it.validate() }
+                    compliance().ifPresent { it.validate() }
+                    contact().ifPresent { it.validate() }
+                    createdAt()
+                    cspId()
+                    identityStatus().ifPresent { it.validate() }
+                    isInherited()
+                    status().ifPresent { it.validate() }
+                    submittedAt()
+                    submittedToTcr()
+                    tcrBrandId()
+                    universalEin()
+                    updatedAt()
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: SentInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (if (id.asKnown().isPresent) 1 else 0) +
+                        (business.asKnown().getOrNull()?.validity() ?: 0) +
+                        (compliance.asKnown().getOrNull()?.validity() ?: 0) +
+                        (contact.asKnown().getOrNull()?.validity() ?: 0) +
+                        (if (createdAt.asKnown().isPresent) 1 else 0) +
+                        (if (cspId.asKnown().isPresent) 1 else 0) +
+                        (identityStatus.asKnown().getOrNull()?.validity() ?: 0) +
+                        (if (isInherited.asKnown().isPresent) 1 else 0) +
+                        (status.asKnown().getOrNull()?.validity() ?: 0) +
+                        (if (submittedAt.asKnown().isPresent) 1 else 0) +
+                        (if (submittedToTcr.asKnown().isPresent) 1 else 0) +
+                        (if (tcrBrandId.asKnown().isPresent) 1 else 0) +
+                        (if (universalEin.asKnown().isPresent) 1 else 0) +
+                        (if (updatedAt.asKnown().isPresent) 1 else 0)
+
+                /** Business details and address information */
+                class Business
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val city: JsonField<String>,
+                    private val country: JsonField<String>,
+                    private val countryOfRegistration: JsonField<String>,
+                    private val entityType: JsonField<String>,
+                    private val legalName: JsonField<String>,
+                    private val postalCode: JsonField<String>,
+                    private val state: JsonField<String>,
+                    private val street: JsonField<String>,
+                    private val taxId: JsonField<String>,
+                    private val taxIdType: JsonField<String>,
+                    private val url: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("city")
+                        @ExcludeMissing
+                        city: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("country")
+                        @ExcludeMissing
+                        country: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("country_of_registration")
+                        @ExcludeMissing
+                        countryOfRegistration: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("entity_type")
+                        @ExcludeMissing
+                        entityType: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("legal_name")
+                        @ExcludeMissing
+                        legalName: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("postal_code")
+                        @ExcludeMissing
+                        postalCode: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("state")
+                        @ExcludeMissing
+                        state: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("street")
+                        @ExcludeMissing
+                        street: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("tax_id")
+                        @ExcludeMissing
+                        taxId: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("tax_id_type")
+                        @ExcludeMissing
+                        taxIdType: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("url")
+                        @ExcludeMissing
+                        url: JsonField<String> = JsonMissing.of(),
+                    ) : this(
+                        city,
+                        country,
+                        countryOfRegistration,
+                        entityType,
+                        legalName,
+                        postalCode,
+                        state,
+                        street,
+                        taxId,
+                        taxIdType,
+                        url,
+                        mutableMapOf(),
+                    )
+
+                    /**
+                     * City
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun city(): Optional<String> = city.getOptional("city")
+
+                    /**
+                     * Country code (e.g., US, CA)
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun country(): Optional<String> = country.getOptional("country")
+
+                    /**
+                     * Country where the business is registered
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun countryOfRegistration(): Optional<String> =
+                        countryOfRegistration.getOptional("country_of_registration")
+
+                    /**
+                     * Business entity type
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun entityType(): Optional<String> = entityType.getOptional("entity_type")
+
+                    /**
+                     * Legal business name
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun legalName(): Optional<String> = legalName.getOptional("legal_name")
+
+                    /**
+                     * Postal/ZIP code
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun postalCode(): Optional<String> = postalCode.getOptional("postal_code")
+
+                    /**
+                     * State/province code
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun state(): Optional<String> = state.getOptional("state")
+
+                    /**
+                     * Street address
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun street(): Optional<String> = street.getOptional("street")
+
+                    /**
+                     * Tax ID/EIN number
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun taxId(): Optional<String> = taxId.getOptional("tax_id")
+
+                    /**
+                     * Type of tax ID (e.g., us_ein, ca_bn)
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun taxIdType(): Optional<String> = taxIdType.getOptional("tax_id_type")
+
+                    /**
+                     * Business website URL
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun url(): Optional<String> = url.getOptional("url")
+
+                    /**
+                     * Returns the raw JSON value of [city].
+                     *
+                     * Unlike [city], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("city") @ExcludeMissing fun _city(): JsonField<String> = city
+
+                    /**
+                     * Returns the raw JSON value of [country].
+                     *
+                     * Unlike [country], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("country")
+                    @ExcludeMissing
+                    fun _country(): JsonField<String> = country
+
+                    /**
+                     * Returns the raw JSON value of [countryOfRegistration].
+                     *
+                     * Unlike [countryOfRegistration], this method doesn't throw if the JSON field
+                     * has an unexpected type.
+                     */
+                    @JsonProperty("country_of_registration")
+                    @ExcludeMissing
+                    fun _countryOfRegistration(): JsonField<String> = countryOfRegistration
+
+                    /**
+                     * Returns the raw JSON value of [entityType].
+                     *
+                     * Unlike [entityType], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("entity_type")
+                    @ExcludeMissing
+                    fun _entityType(): JsonField<String> = entityType
+
+                    /**
+                     * Returns the raw JSON value of [legalName].
+                     *
+                     * Unlike [legalName], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("legal_name")
+                    @ExcludeMissing
+                    fun _legalName(): JsonField<String> = legalName
+
+                    /**
+                     * Returns the raw JSON value of [postalCode].
+                     *
+                     * Unlike [postalCode], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("postal_code")
+                    @ExcludeMissing
+                    fun _postalCode(): JsonField<String> = postalCode
+
+                    /**
+                     * Returns the raw JSON value of [state].
+                     *
+                     * Unlike [state], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("state") @ExcludeMissing fun _state(): JsonField<String> = state
+
+                    /**
+                     * Returns the raw JSON value of [street].
+                     *
+                     * Unlike [street], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("street")
+                    @ExcludeMissing
+                    fun _street(): JsonField<String> = street
+
+                    /**
+                     * Returns the raw JSON value of [taxId].
+                     *
+                     * Unlike [taxId], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("tax_id") @ExcludeMissing fun _taxId(): JsonField<String> = taxId
+
+                    /**
+                     * Returns the raw JSON value of [taxIdType].
+                     *
+                     * Unlike [taxIdType], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("tax_id_type")
+                    @ExcludeMissing
+                    fun _taxIdType(): JsonField<String> = taxIdType
+
+                    /**
+                     * Returns the raw JSON value of [url].
+                     *
+                     * Unlike [url], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("url") @ExcludeMissing fun _url(): JsonField<String> = url
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /** Returns a mutable builder for constructing an instance of [Business]. */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Business]. */
+                    class Builder internal constructor() {
+
+                        private var city: JsonField<String> = JsonMissing.of()
+                        private var country: JsonField<String> = JsonMissing.of()
+                        private var countryOfRegistration: JsonField<String> = JsonMissing.of()
+                        private var entityType: JsonField<String> = JsonMissing.of()
+                        private var legalName: JsonField<String> = JsonMissing.of()
+                        private var postalCode: JsonField<String> = JsonMissing.of()
+                        private var state: JsonField<String> = JsonMissing.of()
+                        private var street: JsonField<String> = JsonMissing.of()
+                        private var taxId: JsonField<String> = JsonMissing.of()
+                        private var taxIdType: JsonField<String> = JsonMissing.of()
+                        private var url: JsonField<String> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(business: Business) = apply {
+                            city = business.city
+                            country = business.country
+                            countryOfRegistration = business.countryOfRegistration
+                            entityType = business.entityType
+                            legalName = business.legalName
+                            postalCode = business.postalCode
+                            state = business.state
+                            street = business.street
+                            taxId = business.taxId
+                            taxIdType = business.taxIdType
+                            url = business.url
+                            additionalProperties = business.additionalProperties.toMutableMap()
+                        }
+
+                        /** City */
+                        fun city(city: String?) = city(JsonField.ofNullable(city))
+
+                        /** Alias for calling [Builder.city] with `city.orElse(null)`. */
+                        fun city(city: Optional<String>) = city(city.getOrNull())
+
+                        /**
+                         * Sets [Builder.city] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.city] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun city(city: JsonField<String>) = apply { this.city = city }
+
+                        /** Country code (e.g., US, CA) */
+                        fun country(country: String?) = country(JsonField.ofNullable(country))
+
+                        /** Alias for calling [Builder.country] with `country.orElse(null)`. */
+                        fun country(country: Optional<String>) = country(country.getOrNull())
+
+                        /**
+                         * Sets [Builder.country] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.country] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun country(country: JsonField<String>) = apply { this.country = country }
+
+                        /** Country where the business is registered */
+                        fun countryOfRegistration(countryOfRegistration: String?) =
+                            countryOfRegistration(JsonField.ofNullable(countryOfRegistration))
+
+                        /**
+                         * Alias for calling [Builder.countryOfRegistration] with
+                         * `countryOfRegistration.orElse(null)`.
+                         */
+                        fun countryOfRegistration(countryOfRegistration: Optional<String>) =
+                            countryOfRegistration(countryOfRegistration.getOrNull())
+
+                        /**
+                         * Sets [Builder.countryOfRegistration] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.countryOfRegistration] with a well-typed
+                         * [String] value instead. This method is primarily for setting the field to
+                         * an undocumented or not yet supported value.
+                         */
+                        fun countryOfRegistration(countryOfRegistration: JsonField<String>) =
+                            apply {
+                                this.countryOfRegistration = countryOfRegistration
+                            }
+
+                        /** Business entity type */
+                        fun entityType(entityType: String?) =
+                            entityType(JsonField.ofNullable(entityType))
+
+                        /**
+                         * Alias for calling [Builder.entityType] with `entityType.orElse(null)`.
+                         */
+                        fun entityType(entityType: Optional<String>) =
+                            entityType(entityType.getOrNull())
+
+                        /**
+                         * Sets [Builder.entityType] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.entityType] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun entityType(entityType: JsonField<String>) = apply {
+                            this.entityType = entityType
+                        }
+
+                        /** Legal business name */
+                        fun legalName(legalName: String?) =
+                            legalName(JsonField.ofNullable(legalName))
+
+                        /** Alias for calling [Builder.legalName] with `legalName.orElse(null)`. */
+                        fun legalName(legalName: Optional<String>) =
+                            legalName(legalName.getOrNull())
+
+                        /**
+                         * Sets [Builder.legalName] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.legalName] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun legalName(legalName: JsonField<String>) = apply {
+                            this.legalName = legalName
+                        }
+
+                        /** Postal/ZIP code */
+                        fun postalCode(postalCode: String?) =
+                            postalCode(JsonField.ofNullable(postalCode))
+
+                        /**
+                         * Alias for calling [Builder.postalCode] with `postalCode.orElse(null)`.
+                         */
+                        fun postalCode(postalCode: Optional<String>) =
+                            postalCode(postalCode.getOrNull())
+
+                        /**
+                         * Sets [Builder.postalCode] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.postalCode] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun postalCode(postalCode: JsonField<String>) = apply {
+                            this.postalCode = postalCode
+                        }
+
+                        /** State/province code */
+                        fun state(state: String?) = state(JsonField.ofNullable(state))
+
+                        /** Alias for calling [Builder.state] with `state.orElse(null)`. */
+                        fun state(state: Optional<String>) = state(state.getOrNull())
+
+                        /**
+                         * Sets [Builder.state] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.state] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun state(state: JsonField<String>) = apply { this.state = state }
+
+                        /** Street address */
+                        fun street(street: String?) = street(JsonField.ofNullable(street))
+
+                        /** Alias for calling [Builder.street] with `street.orElse(null)`. */
+                        fun street(street: Optional<String>) = street(street.getOrNull())
+
+                        /**
+                         * Sets [Builder.street] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.street] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun street(street: JsonField<String>) = apply { this.street = street }
+
+                        /** Tax ID/EIN number */
+                        fun taxId(taxId: String?) = taxId(JsonField.ofNullable(taxId))
+
+                        /** Alias for calling [Builder.taxId] with `taxId.orElse(null)`. */
+                        fun taxId(taxId: Optional<String>) = taxId(taxId.getOrNull())
+
+                        /**
+                         * Sets [Builder.taxId] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.taxId] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun taxId(taxId: JsonField<String>) = apply { this.taxId = taxId }
+
+                        /** Type of tax ID (e.g., us_ein, ca_bn) */
+                        fun taxIdType(taxIdType: String?) =
+                            taxIdType(JsonField.ofNullable(taxIdType))
+
+                        /** Alias for calling [Builder.taxIdType] with `taxIdType.orElse(null)`. */
+                        fun taxIdType(taxIdType: Optional<String>) =
+                            taxIdType(taxIdType.getOrNull())
+
+                        /**
+                         * Sets [Builder.taxIdType] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.taxIdType] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun taxIdType(taxIdType: JsonField<String>) = apply {
+                            this.taxIdType = taxIdType
+                        }
+
+                        /** Business website URL */
+                        fun url(url: String?) = url(JsonField.ofNullable(url))
+
+                        /** Alias for calling [Builder.url] with `url.orElse(null)`. */
+                        fun url(url: Optional<String>) = url(url.getOrNull())
+
+                        /**
+                         * Sets [Builder.url] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.url] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun url(url: JsonField<String>) = apply { this.url = url }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Business].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         */
+                        fun build(): Business =
+                            Business(
+                                city,
+                                country,
+                                countryOfRegistration,
+                                entityType,
+                                legalName,
+                                postalCode,
+                                state,
+                                street,
+                                taxId,
+                                taxIdType,
+                                url,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws SentInvalidDataException if any value type in this object doesn't
+                     *   match its expected type.
+                     */
+                    fun validate(): Business = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        city()
+                        country()
+                        countryOfRegistration()
+                        entityType()
+                        legalName()
+                        postalCode()
+                        state()
+                        street()
+                        taxId()
+                        taxIdType()
+                        url()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: SentInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (city.asKnown().isPresent) 1 else 0) +
+                            (if (country.asKnown().isPresent) 1 else 0) +
+                            (if (countryOfRegistration.asKnown().isPresent) 1 else 0) +
+                            (if (entityType.asKnown().isPresent) 1 else 0) +
+                            (if (legalName.asKnown().isPresent) 1 else 0) +
+                            (if (postalCode.asKnown().isPresent) 1 else 0) +
+                            (if (state.asKnown().isPresent) 1 else 0) +
+                            (if (street.asKnown().isPresent) 1 else 0) +
+                            (if (taxId.asKnown().isPresent) 1 else 0) +
+                            (if (taxIdType.asKnown().isPresent) 1 else 0) +
+                            (if (url.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Business &&
+                            city == other.city &&
+                            country == other.country &&
+                            countryOfRegistration == other.countryOfRegistration &&
+                            entityType == other.entityType &&
+                            legalName == other.legalName &&
+                            postalCode == other.postalCode &&
+                            state == other.state &&
+                            street == other.street &&
+                            taxId == other.taxId &&
+                            taxIdType == other.taxIdType &&
+                            url == other.url &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(
+                            city,
+                            country,
+                            countryOfRegistration,
+                            entityType,
+                            legalName,
+                            postalCode,
+                            state,
+                            street,
+                            taxId,
+                            taxIdType,
+                            url,
+                            additionalProperties,
+                        )
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Business{city=$city, country=$country, countryOfRegistration=$countryOfRegistration, entityType=$entityType, legalName=$legalName, postalCode=$postalCode, state=$state, street=$street, taxId=$taxId, taxIdType=$taxIdType, url=$url, additionalProperties=$additionalProperties}"
+                }
+
+                /** Compliance and TCR-related information */
+                class Compliance
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val brandRelationship: JsonField<TcrBrandRelationship>,
+                    private val destinationCountries: JsonField<List<DestinationCountry>>,
+                    private val isTcrApplication: JsonField<Boolean>,
+                    private val notes: JsonField<String>,
+                    private val phoneNumberPrefix: JsonField<String>,
+                    private val primaryUseCase: JsonField<String>,
+                    private val vertical: JsonField<TcrVertical>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("brand_relationship")
+                        @ExcludeMissing
+                        brandRelationship: JsonField<TcrBrandRelationship> = JsonMissing.of(),
+                        @JsonProperty("destination_countries")
+                        @ExcludeMissing
+                        destinationCountries: JsonField<List<DestinationCountry>> =
+                            JsonMissing.of(),
+                        @JsonProperty("is_tcr_application")
+                        @ExcludeMissing
+                        isTcrApplication: JsonField<Boolean> = JsonMissing.of(),
+                        @JsonProperty("notes")
+                        @ExcludeMissing
+                        notes: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("phone_number_prefix")
+                        @ExcludeMissing
+                        phoneNumberPrefix: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("primary_use_case")
+                        @ExcludeMissing
+                        primaryUseCase: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("vertical")
+                        @ExcludeMissing
+                        vertical: JsonField<TcrVertical> = JsonMissing.of(),
+                    ) : this(
+                        brandRelationship,
+                        destinationCountries,
+                        isTcrApplication,
+                        notes,
+                        phoneNumberPrefix,
+                        primaryUseCase,
+                        vertical,
+                        mutableMapOf(),
+                    )
+
+                    /**
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun brandRelationship(): Optional<TcrBrandRelationship> =
+                        brandRelationship.getOptional("brand_relationship")
+
+                    /**
+                     * List of destination countries for messaging
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun destinationCountries(): Optional<List<DestinationCountry>> =
+                        destinationCountries.getOptional("destination_countries")
+
+                    /**
+                     * Whether this is a TCR (Campaign Registry) application
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun isTcrApplication(): Optional<Boolean> =
+                        isTcrApplication.getOptional("is_tcr_application")
+
+                    /**
+                     * Additional notes about the business or use case
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun notes(): Optional<String> = notes.getOptional("notes")
+
+                    /**
+                     * Phone number prefix for messaging (e.g., "+1")
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun phoneNumberPrefix(): Optional<String> =
+                        phoneNumberPrefix.getOptional("phone_number_prefix")
+
+                    /**
+                     * Always null. The brand's free-text primary use case is no longer stored: it
+                     * reached neither TCR nor any decision, and its column is dropped with no
+                     * backfill, because the values were prose and the typed equivalent is the
+                     * campaign's MessagingUseCaseUS.
+                     *
+                     * Retained so existing v3 clients reading primary_use_case keep deserializing.
+                     * Unlike the profile sharing flags, which can answer false truthfully, there is
+                     * no value to report here — the field is present and empty rather than present
+                     * and wrong.
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    @Deprecated("deprecated")
+                    fun primaryUseCase(): Optional<String> =
+                        primaryUseCase.getOptional("primary_use_case")
+
+                    /**
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun vertical(): Optional<TcrVertical> = vertical.getOptional("vertical")
+
+                    /**
+                     * Returns the raw JSON value of [brandRelationship].
+                     *
+                     * Unlike [brandRelationship], this method doesn't throw if the JSON field has
+                     * an unexpected type.
+                     */
+                    @JsonProperty("brand_relationship")
+                    @ExcludeMissing
+                    fun _brandRelationship(): JsonField<TcrBrandRelationship> = brandRelationship
+
+                    /**
+                     * Returns the raw JSON value of [destinationCountries].
+                     *
+                     * Unlike [destinationCountries], this method doesn't throw if the JSON field
+                     * has an unexpected type.
+                     */
+                    @JsonProperty("destination_countries")
+                    @ExcludeMissing
+                    fun _destinationCountries(): JsonField<List<DestinationCountry>> =
+                        destinationCountries
+
+                    /**
+                     * Returns the raw JSON value of [isTcrApplication].
+                     *
+                     * Unlike [isTcrApplication], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("is_tcr_application")
+                    @ExcludeMissing
+                    fun _isTcrApplication(): JsonField<Boolean> = isTcrApplication
+
+                    /**
+                     * Returns the raw JSON value of [notes].
+                     *
+                     * Unlike [notes], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("notes") @ExcludeMissing fun _notes(): JsonField<String> = notes
+
+                    /**
+                     * Returns the raw JSON value of [phoneNumberPrefix].
+                     *
+                     * Unlike [phoneNumberPrefix], this method doesn't throw if the JSON field has
+                     * an unexpected type.
+                     */
+                    @JsonProperty("phone_number_prefix")
+                    @ExcludeMissing
+                    fun _phoneNumberPrefix(): JsonField<String> = phoneNumberPrefix
+
+                    /**
+                     * Returns the raw JSON value of [primaryUseCase].
+                     *
+                     * Unlike [primaryUseCase], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @Deprecated("deprecated")
+                    @JsonProperty("primary_use_case")
+                    @ExcludeMissing
+                    fun _primaryUseCase(): JsonField<String> = primaryUseCase
+
+                    /**
+                     * Returns the raw JSON value of [vertical].
+                     *
+                     * Unlike [vertical], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("vertical")
+                    @ExcludeMissing
+                    fun _vertical(): JsonField<TcrVertical> = vertical
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Compliance].
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Compliance]. */
+                    class Builder internal constructor() {
+
+                        private var brandRelationship: JsonField<TcrBrandRelationship> =
+                            JsonMissing.of()
+                        private var destinationCountries:
+                            JsonField<MutableList<DestinationCountry>>? =
+                            null
+                        private var isTcrApplication: JsonField<Boolean> = JsonMissing.of()
+                        private var notes: JsonField<String> = JsonMissing.of()
+                        private var phoneNumberPrefix: JsonField<String> = JsonMissing.of()
+                        private var primaryUseCase: JsonField<String> = JsonMissing.of()
+                        private var vertical: JsonField<TcrVertical> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(compliance: Compliance) = apply {
+                            brandRelationship = compliance.brandRelationship
+                            destinationCountries =
+                                compliance.destinationCountries.map { it.toMutableList() }
+                            isTcrApplication = compliance.isTcrApplication
+                            notes = compliance.notes
+                            phoneNumberPrefix = compliance.phoneNumberPrefix
+                            primaryUseCase = compliance.primaryUseCase
+                            vertical = compliance.vertical
+                            additionalProperties = compliance.additionalProperties.toMutableMap()
+                        }
+
+                        fun brandRelationship(brandRelationship: TcrBrandRelationship?) =
+                            brandRelationship(JsonField.ofNullable(brandRelationship))
+
+                        /**
+                         * Alias for calling [Builder.brandRelationship] with
+                         * `brandRelationship.orElse(null)`.
+                         */
+                        fun brandRelationship(brandRelationship: Optional<TcrBrandRelationship>) =
+                            brandRelationship(brandRelationship.getOrNull())
+
+                        /**
+                         * Sets [Builder.brandRelationship] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.brandRelationship] with a well-typed
+                         * [TcrBrandRelationship] value instead. This method is primarily for
+                         * setting the field to an undocumented or not yet supported value.
+                         */
+                        fun brandRelationship(brandRelationship: JsonField<TcrBrandRelationship>) =
+                            apply {
+                                this.brandRelationship = brandRelationship
+                            }
+
+                        /** List of destination countries for messaging */
+                        fun destinationCountries(destinationCountries: List<DestinationCountry>) =
+                            destinationCountries(JsonField.of(destinationCountries))
+
+                        /**
+                         * Sets [Builder.destinationCountries] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.destinationCountries] with a well-typed
+                         * `List<DestinationCountry>` value instead. This method is primarily for
+                         * setting the field to an undocumented or not yet supported value.
+                         */
+                        fun destinationCountries(
+                            destinationCountries: JsonField<List<DestinationCountry>>
+                        ) = apply {
+                            this.destinationCountries =
+                                destinationCountries.map { it.toMutableList() }
+                        }
+
+                        /**
+                         * Adds a single [DestinationCountry] to [destinationCountries].
+                         *
+                         * @throws IllegalStateException if the field was previously set to a
+                         *   non-list.
+                         */
+                        fun addDestinationCountry(destinationCountry: DestinationCountry) = apply {
+                            destinationCountries =
+                                (destinationCountries ?: JsonField.of(mutableListOf())).also {
+                                    checkKnown("destinationCountries", it).add(destinationCountry)
+                                }
+                        }
+
+                        /** Whether this is a TCR (Campaign Registry) application */
+                        fun isTcrApplication(isTcrApplication: Boolean) =
+                            isTcrApplication(JsonField.of(isTcrApplication))
+
+                        /**
+                         * Sets [Builder.isTcrApplication] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.isTcrApplication] with a well-typed
+                         * [Boolean] value instead. This method is primarily for setting the field
+                         * to an undocumented or not yet supported value.
+                         */
+                        fun isTcrApplication(isTcrApplication: JsonField<Boolean>) = apply {
+                            this.isTcrApplication = isTcrApplication
+                        }
+
+                        /** Additional notes about the business or use case */
+                        fun notes(notes: String?) = notes(JsonField.ofNullable(notes))
+
+                        /** Alias for calling [Builder.notes] with `notes.orElse(null)`. */
+                        fun notes(notes: Optional<String>) = notes(notes.getOrNull())
+
+                        /**
+                         * Sets [Builder.notes] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.notes] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun notes(notes: JsonField<String>) = apply { this.notes = notes }
+
+                        /** Phone number prefix for messaging (e.g., "+1") */
+                        fun phoneNumberPrefix(phoneNumberPrefix: String?) =
+                            phoneNumberPrefix(JsonField.ofNullable(phoneNumberPrefix))
+
+                        /**
+                         * Alias for calling [Builder.phoneNumberPrefix] with
+                         * `phoneNumberPrefix.orElse(null)`.
+                         */
+                        fun phoneNumberPrefix(phoneNumberPrefix: Optional<String>) =
+                            phoneNumberPrefix(phoneNumberPrefix.getOrNull())
+
+                        /**
+                         * Sets [Builder.phoneNumberPrefix] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.phoneNumberPrefix] with a well-typed
+                         * [String] value instead. This method is primarily for setting the field to
+                         * an undocumented or not yet supported value.
+                         */
+                        fun phoneNumberPrefix(phoneNumberPrefix: JsonField<String>) = apply {
+                            this.phoneNumberPrefix = phoneNumberPrefix
+                        }
+
+                        /**
+                         * Always null. The brand's free-text primary use case is no longer stored:
+                         * it reached neither TCR nor any decision, and its column is dropped with
+                         * no backfill, because the values were prose and the typed equivalent is
+                         * the campaign's MessagingUseCaseUS.
+                         *
+                         * Retained so existing v3 clients reading primary_use_case keep
+                         * deserializing. Unlike the profile sharing flags, which can answer false
+                         * truthfully, there is no value to report here — the field is present and
+                         * empty rather than present and wrong.
+                         */
+                        @Deprecated("deprecated")
+                        fun primaryUseCase(primaryUseCase: String?) =
+                            primaryUseCase(JsonField.ofNullable(primaryUseCase))
+
+                        /**
+                         * Alias for calling [Builder.primaryUseCase] with
+                         * `primaryUseCase.orElse(null)`.
+                         */
+                        @Deprecated("deprecated")
+                        fun primaryUseCase(primaryUseCase: Optional<String>) =
+                            primaryUseCase(primaryUseCase.getOrNull())
+
+                        /**
+                         * Sets [Builder.primaryUseCase] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.primaryUseCase] with a well-typed
+                         * [String] value instead. This method is primarily for setting the field to
+                         * an undocumented or not yet supported value.
+                         */
+                        @Deprecated("deprecated")
+                        fun primaryUseCase(primaryUseCase: JsonField<String>) = apply {
+                            this.primaryUseCase = primaryUseCase
+                        }
+
+                        fun vertical(vertical: TcrVertical?) =
+                            vertical(JsonField.ofNullable(vertical))
+
+                        /** Alias for calling [Builder.vertical] with `vertical.orElse(null)`. */
+                        fun vertical(vertical: Optional<TcrVertical>) =
+                            vertical(vertical.getOrNull())
+
+                        /**
+                         * Sets [Builder.vertical] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.vertical] with a well-typed
+                         * [TcrVertical] value instead. This method is primarily for setting the
+                         * field to an undocumented or not yet supported value.
+                         */
+                        fun vertical(vertical: JsonField<TcrVertical>) = apply {
+                            this.vertical = vertical
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Compliance].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         */
+                        fun build(): Compliance =
+                            Compliance(
+                                brandRelationship,
+                                (destinationCountries ?: JsonMissing.of()).map { it.toImmutable() },
+                                isTcrApplication,
+                                notes,
+                                phoneNumberPrefix,
+                                primaryUseCase,
+                                vertical,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws SentInvalidDataException if any value type in this object doesn't
+                     *   match its expected type.
+                     */
+                    fun validate(): Compliance = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        brandRelationship().ifPresent { it.validate() }
+                        destinationCountries().ifPresent { it.forEach { it.validate() } }
+                        isTcrApplication()
+                        notes()
+                        phoneNumberPrefix()
+                        primaryUseCase()
+                        vertical().ifPresent { it.validate() }
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: SentInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (brandRelationship.asKnown().getOrNull()?.validity() ?: 0) +
+                            (destinationCountries.asKnown().getOrNull()?.sumOf {
+                                it.validity().toInt()
+                            } ?: 0) +
+                            (if (isTcrApplication.asKnown().isPresent) 1 else 0) +
+                            (if (notes.asKnown().isPresent) 1 else 0) +
+                            (if (phoneNumberPrefix.asKnown().isPresent) 1 else 0) +
+                            (if (primaryUseCase.asKnown().isPresent) 1 else 0) +
+                            (vertical.asKnown().getOrNull()?.validity() ?: 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Compliance &&
+                            brandRelationship == other.brandRelationship &&
+                            destinationCountries == other.destinationCountries &&
+                            isTcrApplication == other.isTcrApplication &&
+                            notes == other.notes &&
+                            phoneNumberPrefix == other.phoneNumberPrefix &&
+                            primaryUseCase == other.primaryUseCase &&
+                            vertical == other.vertical &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(
+                            brandRelationship,
+                            destinationCountries,
+                            isTcrApplication,
+                            notes,
+                            phoneNumberPrefix,
+                            primaryUseCase,
+                            vertical,
+                            additionalProperties,
+                        )
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Compliance{brandRelationship=$brandRelationship, destinationCountries=$destinationCountries, isTcrApplication=$isTcrApplication, notes=$notes, phoneNumberPrefix=$phoneNumberPrefix, primaryUseCase=$primaryUseCase, vertical=$vertical, additionalProperties=$additionalProperties}"
+                }
+
+                /** Contact information for the brand */
+                class Contact
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val businessName: JsonField<String>,
+                    private val email: JsonField<String>,
+                    private val name: JsonField<String>,
+                    private val phone: JsonField<String>,
+                    private val phoneCountryCode: JsonField<String>,
+                    private val role: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("business_name")
+                        @ExcludeMissing
+                        businessName: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("email")
+                        @ExcludeMissing
+                        email: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("name")
+                        @ExcludeMissing
+                        name: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("phone")
+                        @ExcludeMissing
+                        phone: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("phone_country_code")
+                        @ExcludeMissing
+                        phoneCountryCode: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("role")
+                        @ExcludeMissing
+                        role: JsonField<String> = JsonMissing.of(),
+                    ) : this(
+                        businessName,
+                        email,
+                        name,
+                        phone,
+                        phoneCountryCode,
+                        role,
+                        mutableMapOf(),
+                    )
+
+                    /**
+                     * Business/brand name
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun businessName(): Optional<String> = businessName.getOptional("business_name")
+
+                    /**
+                     * Contact email address
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun email(): Optional<String> = email.getOptional("email")
+
+                    /**
+                     * Primary contact name
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun name(): Optional<String> = name.getOptional("name")
+
+                    /**
+                     * Contact phone number in E.164 format
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun phone(): Optional<String> = phone.getOptional("phone")
+
+                    /**
+                     * Contact phone country code (e.g., "1" for US)
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun phoneCountryCode(): Optional<String> =
+                        phoneCountryCode.getOptional("phone_country_code")
+
+                    /**
+                     * Contact's role in the business
+                     *
+                     * @throws SentInvalidDataException if the JSON field has an unexpected type
+                     *   (e.g. if the server responded with an unexpected value).
+                     */
+                    fun role(): Optional<String> = role.getOptional("role")
+
+                    /**
+                     * Returns the raw JSON value of [businessName].
+                     *
+                     * Unlike [businessName], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("business_name")
+                    @ExcludeMissing
+                    fun _businessName(): JsonField<String> = businessName
+
+                    /**
+                     * Returns the raw JSON value of [email].
+                     *
+                     * Unlike [email], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<String> = email
+
+                    /**
+                     * Returns the raw JSON value of [name].
+                     *
+                     * Unlike [name], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+                    /**
+                     * Returns the raw JSON value of [phone].
+                     *
+                     * Unlike [phone], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("phone") @ExcludeMissing fun _phone(): JsonField<String> = phone
+
+                    /**
+                     * Returns the raw JSON value of [phoneCountryCode].
+                     *
+                     * Unlike [phoneCountryCode], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("phone_country_code")
+                    @ExcludeMissing
+                    fun _phoneCountryCode(): JsonField<String> = phoneCountryCode
+
+                    /**
+                     * Returns the raw JSON value of [role].
+                     *
+                     * Unlike [role], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("role") @ExcludeMissing fun _role(): JsonField<String> = role
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /** Returns a mutable builder for constructing an instance of [Contact]. */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Contact]. */
+                    class Builder internal constructor() {
+
+                        private var businessName: JsonField<String> = JsonMissing.of()
+                        private var email: JsonField<String> = JsonMissing.of()
+                        private var name: JsonField<String> = JsonMissing.of()
+                        private var phone: JsonField<String> = JsonMissing.of()
+                        private var phoneCountryCode: JsonField<String> = JsonMissing.of()
+                        private var role: JsonField<String> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(contact: Contact) = apply {
+                            businessName = contact.businessName
+                            email = contact.email
+                            name = contact.name
+                            phone = contact.phone
+                            phoneCountryCode = contact.phoneCountryCode
+                            role = contact.role
+                            additionalProperties = contact.additionalProperties.toMutableMap()
+                        }
+
+                        /** Business/brand name */
+                        fun businessName(businessName: String?) =
+                            businessName(JsonField.ofNullable(businessName))
+
+                        /**
+                         * Alias for calling [Builder.businessName] with
+                         * `businessName.orElse(null)`.
+                         */
+                        fun businessName(businessName: Optional<String>) =
+                            businessName(businessName.getOrNull())
+
+                        /**
+                         * Sets [Builder.businessName] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.businessName] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun businessName(businessName: JsonField<String>) = apply {
+                            this.businessName = businessName
+                        }
+
+                        /** Contact email address */
+                        fun email(email: String?) = email(JsonField.ofNullable(email))
+
+                        /** Alias for calling [Builder.email] with `email.orElse(null)`. */
+                        fun email(email: Optional<String>) = email(email.getOrNull())
+
+                        /**
+                         * Sets [Builder.email] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.email] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun email(email: JsonField<String>) = apply { this.email = email }
+
+                        /** Primary contact name */
+                        fun name(name: String) = name(JsonField.of(name))
+
+                        /**
+                         * Sets [Builder.name] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.name] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun name(name: JsonField<String>) = apply { this.name = name }
+
+                        /** Contact phone number in E.164 format */
+                        fun phone(phone: String?) = phone(JsonField.ofNullable(phone))
+
+                        /** Alias for calling [Builder.phone] with `phone.orElse(null)`. */
+                        fun phone(phone: Optional<String>) = phone(phone.getOrNull())
+
+                        /**
+                         * Sets [Builder.phone] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.phone] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun phone(phone: JsonField<String>) = apply { this.phone = phone }
+
+                        /** Contact phone country code (e.g., "1" for US) */
+                        fun phoneCountryCode(phoneCountryCode: String?) =
+                            phoneCountryCode(JsonField.ofNullable(phoneCountryCode))
+
+                        /**
+                         * Alias for calling [Builder.phoneCountryCode] with
+                         * `phoneCountryCode.orElse(null)`.
+                         */
+                        fun phoneCountryCode(phoneCountryCode: Optional<String>) =
+                            phoneCountryCode(phoneCountryCode.getOrNull())
+
+                        /**
+                         * Sets [Builder.phoneCountryCode] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.phoneCountryCode] with a well-typed
+                         * [String] value instead. This method is primarily for setting the field to
+                         * an undocumented or not yet supported value.
+                         */
+                        fun phoneCountryCode(phoneCountryCode: JsonField<String>) = apply {
+                            this.phoneCountryCode = phoneCountryCode
+                        }
+
+                        /** Contact's role in the business */
+                        fun role(role: String?) = role(JsonField.ofNullable(role))
+
+                        /** Alias for calling [Builder.role] with `role.orElse(null)`. */
+                        fun role(role: Optional<String>) = role(role.getOrNull())
+
+                        /**
+                         * Sets [Builder.role] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.role] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun role(role: JsonField<String>) = apply { this.role = role }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Contact].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         */
+                        fun build(): Contact =
+                            Contact(
+                                businessName,
+                                email,
+                                name,
+                                phone,
+                                phoneCountryCode,
+                                role,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws SentInvalidDataException if any value type in this object doesn't
+                     *   match its expected type.
+                     */
+                    fun validate(): Contact = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        businessName()
+                        email()
+                        name()
+                        phone()
+                        phoneCountryCode()
+                        role()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: SentInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (businessName.asKnown().isPresent) 1 else 0) +
+                            (if (email.asKnown().isPresent) 1 else 0) +
+                            (if (name.asKnown().isPresent) 1 else 0) +
+                            (if (phone.asKnown().isPresent) 1 else 0) +
+                            (if (phoneCountryCode.asKnown().isPresent) 1 else 0) +
+                            (if (role.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Contact &&
+                            businessName == other.businessName &&
+                            email == other.email &&
+                            name == other.name &&
+                            phone == other.phone &&
+                            phoneCountryCode == other.phoneCountryCode &&
+                            role == other.role &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(
+                            businessName,
+                            email,
+                            name,
+                            phone,
+                            phoneCountryCode,
+                            role,
+                            additionalProperties,
+                        )
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Contact{businessName=$businessName, email=$email, name=$name, phone=$phone, phoneCountryCode=$phoneCountryCode, role=$role, additionalProperties=$additionalProperties}"
+                }
+
+                class IdentityStatus
+                @JsonCreator
+                private constructor(private val value: JsonField<String>) : Enum {
+
+                    /**
+                     * Returns this class instance's raw value.
+                     *
+                     * This is usually only useful if this instance was deserialized from data that
+                     * doesn't match any known member, and you want to know that value. For example,
+                     * if the SDK is on an older version than the API, then the API may respond with
+                     * new members that the SDK is unaware of.
+                     */
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    fun _value(): JsonField<String> = value
+
+                    companion object {
+
+                        @JvmField val SELF_DECLARED = of("SELF_DECLARED")
+
+                        @JvmField val UNVERIFIED = of("UNVERIFIED")
+
+                        @JvmField val VERIFIED = of("VERIFIED")
+
+                        @JvmField val VETTED_VERIFIED = of("VETTED_VERIFIED")
+
+                        @JvmStatic fun of(value: String) = IdentityStatus(JsonField.of(value))
+                    }
+
+                    /** An enum containing [IdentityStatus]'s known values. */
+                    enum class Known {
+                        SELF_DECLARED,
+                        UNVERIFIED,
+                        VERIFIED,
+                        VETTED_VERIFIED,
+                    }
+
+                    /**
+                     * An enum containing [IdentityStatus]'s known values, as well as an [_UNKNOWN]
+                     * member.
+                     *
+                     * An instance of [IdentityStatus] can contain an unknown value in a couple of
+                     * cases:
+                     * - It was deserialized from data that doesn't match any known member. For
+                     *   example, if the SDK is on an older version than the API, then the API may
+                     *   respond with new members that the SDK is unaware of.
+                     * - It was constructed with an arbitrary value using the [of] method.
+                     */
+                    enum class Value {
+                        SELF_DECLARED,
+                        UNVERIFIED,
+                        VERIFIED,
+                        VETTED_VERIFIED,
+                        /**
+                         * An enum member indicating that [IdentityStatus] was instantiated with an
+                         * unknown value.
+                         */
+                        _UNKNOWN,
+                    }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value, or
+                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     *
+                     * Use the [known] method instead if you're certain the value is always known or
+                     * if you want to throw for the unknown case.
+                     */
+                    fun value(): Value =
+                        when (this) {
+                            SELF_DECLARED -> Value.SELF_DECLARED
+                            UNVERIFIED -> Value.UNVERIFIED
+                            VERIFIED -> Value.VERIFIED
+                            VETTED_VERIFIED -> Value.VETTED_VERIFIED
+                            else -> Value._UNKNOWN
+                        }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value.
+                     *
+                     * Use the [value] method instead if you're uncertain the value is always known
+                     * and don't want to throw for the unknown case.
+                     *
+                     * @throws SentInvalidDataException if this class instance's value is a not a
+                     *   known member.
+                     */
+                    fun known(): Known =
+                        when (this) {
+                            SELF_DECLARED -> Known.SELF_DECLARED
+                            UNVERIFIED -> Known.UNVERIFIED
+                            VERIFIED -> Known.VERIFIED
+                            VETTED_VERIFIED -> Known.VETTED_VERIFIED
+                            else -> throw SentInvalidDataException("Unknown IdentityStatus: $value")
+                        }
+
+                    /**
+                     * Returns this class instance's primitive wire representation.
+                     *
+                     * This differs from the [toString] method because that method is primarily for
+                     * debugging and generally doesn't throw.
+                     *
+                     * @throws SentInvalidDataException if this class instance's value does not have
+                     *   the expected primitive type.
+                     */
+                    fun asString(): String =
+                        _value().asString().orElseThrow {
+                            SentInvalidDataException("Value is not a String")
+                        }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws SentInvalidDataException if any value type in this object doesn't
+                     *   match its expected type.
+                     */
+                    fun validate(): IdentityStatus = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        known()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: SentInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is IdentityStatus && value == other.value
+                    }
+
+                    override fun hashCode() = value.hashCode()
+
+                    override fun toString() = value.toString()
+                }
+
+                class Status
+                @JsonCreator
+                private constructor(private val value: JsonField<String>) : Enum {
+
+                    /**
+                     * Returns this class instance's raw value.
+                     *
+                     * This is usually only useful if this instance was deserialized from data that
+                     * doesn't match any known member, and you want to know that value. For example,
+                     * if the SDK is on an older version than the API, then the API may respond with
+                     * new members that the SDK is unaware of.
+                     */
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    fun _value(): JsonField<String> = value
+
+                    companion object {
+
+                        @JvmField val ACTIVE = of("ACTIVE")
+
+                        @JvmField val INACTIVE = of("INACTIVE")
+
+                        @JvmField val SUSPENDED = of("SUSPENDED")
+
+                        @JvmStatic fun of(value: String) = Status(JsonField.of(value))
+                    }
+
+                    /** An enum containing [Status]'s known values. */
+                    enum class Known {
+                        ACTIVE,
+                        INACTIVE,
+                        SUSPENDED,
+                    }
+
+                    /**
+                     * An enum containing [Status]'s known values, as well as an [_UNKNOWN] member.
+                     *
+                     * An instance of [Status] can contain an unknown value in a couple of cases:
+                     * - It was deserialized from data that doesn't match any known member. For
+                     *   example, if the SDK is on an older version than the API, then the API may
+                     *   respond with new members that the SDK is unaware of.
+                     * - It was constructed with an arbitrary value using the [of] method.
+                     */
+                    enum class Value {
+                        ACTIVE,
+                        INACTIVE,
+                        SUSPENDED,
+                        /**
+                         * An enum member indicating that [Status] was instantiated with an unknown
+                         * value.
+                         */
+                        _UNKNOWN,
+                    }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value, or
+                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     *
+                     * Use the [known] method instead if you're certain the value is always known or
+                     * if you want to throw for the unknown case.
+                     */
+                    fun value(): Value =
+                        when (this) {
+                            ACTIVE -> Value.ACTIVE
+                            INACTIVE -> Value.INACTIVE
+                            SUSPENDED -> Value.SUSPENDED
+                            else -> Value._UNKNOWN
+                        }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value.
+                     *
+                     * Use the [value] method instead if you're uncertain the value is always known
+                     * and don't want to throw for the unknown case.
+                     *
+                     * @throws SentInvalidDataException if this class instance's value is a not a
+                     *   known member.
+                     */
+                    fun known(): Known =
+                        when (this) {
+                            ACTIVE -> Known.ACTIVE
+                            INACTIVE -> Known.INACTIVE
+                            SUSPENDED -> Known.SUSPENDED
+                            else -> throw SentInvalidDataException("Unknown Status: $value")
+                        }
+
+                    /**
+                     * Returns this class instance's primitive wire representation.
+                     *
+                     * This differs from the [toString] method because that method is primarily for
+                     * debugging and generally doesn't throw.
+                     *
+                     * @throws SentInvalidDataException if this class instance's value does not have
+                     *   the expected primitive type.
+                     */
+                    fun asString(): String =
+                        _value().asString().orElseThrow {
+                            SentInvalidDataException("Value is not a String")
+                        }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws SentInvalidDataException if any value type in this object doesn't
+                     *   match its expected type.
+                     */
+                    fun validate(): Status = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        known()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: SentInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Status && value == other.value
+                    }
+
+                    override fun hashCode() = value.hashCode()
+
+                    override fun toString() = value.toString()
+                }
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Brand &&
+                        id == other.id &&
+                        business == other.business &&
+                        compliance == other.compliance &&
+                        contact == other.contact &&
+                        createdAt == other.createdAt &&
+                        cspId == other.cspId &&
+                        identityStatus == other.identityStatus &&
+                        isInherited == other.isInherited &&
+                        status == other.status &&
+                        submittedAt == other.submittedAt &&
+                        submittedToTcr == other.submittedToTcr &&
+                        tcrBrandId == other.tcrBrandId &&
+                        universalEin == other.universalEin &&
+                        updatedAt == other.updatedAt &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy {
+                    Objects.hash(
+                        id,
+                        business,
+                        compliance,
+                        contact,
+                        createdAt,
+                        cspId,
+                        identityStatus,
+                        isInherited,
+                        status,
+                        submittedAt,
+                        submittedToTcr,
+                        tcrBrandId,
+                        universalEin,
+                        updatedAt,
+                        additionalProperties,
+                    )
+                }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "Brand{id=$id, business=$business, compliance=$compliance, contact=$contact, createdAt=$createdAt, cspId=$cspId, identityStatus=$identityStatus, isInherited=$isInherited, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrBrandId=$tcrBrandId, universalEin=$universalEin, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Profile &&
+                    id == other.id &&
+                    allowContactSharing == other.allowContactSharing &&
+                    allowNumberChangeDuringOnboarding == other.allowNumberChangeDuringOnboarding &&
+                    allowTemplateSharing == other.allowTemplateSharing &&
+                    billingContact == other.billingContact &&
+                    billingModel == other.billingModel &&
+                    brand == other.brand &&
+                    createdAt == other.createdAt &&
+                    description == other.description &&
+                    email == other.email &&
+                    icon == other.icon &&
+                    inheritContacts == other.inheritContacts &&
+                    inheritTcrBrand == other.inheritTcrBrand &&
+                    inheritTcrCampaign == other.inheritTcrCampaign &&
+                    inheritTemplates == other.inheritTemplates &&
+                    name == other.name &&
+                    organizationId == other.organizationId &&
+                    sendingPhoneNumber == other.sendingPhoneNumber &&
+                    sendingPhoneNumberProfileId == other.sendingPhoneNumberProfileId &&
+                    sendingWhatsappNumberProfileId == other.sendingWhatsappNumberProfileId &&
+                    shortName == other.shortName &&
+                    status == other.status &&
+                    updatedAt == other.updatedAt &&
+                    wabaId == other.wabaId &&
+                    whatsappPhoneNumber == other.whatsappPhoneNumber &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy {
+                Objects.hash(
+                    id,
+                    allowContactSharing,
+                    allowNumberChangeDuringOnboarding,
+                    allowTemplateSharing,
+                    billingContact,
+                    billingModel,
+                    brand,
+                    createdAt,
+                    description,
+                    email,
+                    icon,
+                    inheritContacts,
+                    inheritTcrBrand,
+                    inheritTcrCampaign,
+                    inheritTemplates,
+                    name,
+                    organizationId,
+                    sendingPhoneNumber,
+                    sendingPhoneNumberProfileId,
+                    sendingWhatsappNumberProfileId,
+                    shortName,
+                    status,
+                    updatedAt,
+                    wabaId,
+                    whatsappPhoneNumber,
+                    additionalProperties,
+                )
+            }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "Profile{id=$id, allowContactSharing=$allowContactSharing, allowNumberChangeDuringOnboarding=$allowNumberChangeDuringOnboarding, allowTemplateSharing=$allowTemplateSharing, billingContact=$billingContact, billingModel=$billingModel, brand=$brand, createdAt=$createdAt, description=$description, email=$email, icon=$icon, inheritContacts=$inheritContacts, inheritTcrBrand=$inheritTcrBrand, inheritTcrCampaign=$inheritTcrCampaign, inheritTemplates=$inheritTemplates, name=$name, organizationId=$organizationId, sendingPhoneNumber=$sendingPhoneNumber, sendingPhoneNumberProfileId=$sendingPhoneNumberProfileId, sendingWhatsappNumberProfileId=$sendingWhatsappNumberProfileId, shortName=$shortName, status=$status, updatedAt=$updatedAt, wabaId=$wabaId, whatsappPhoneNumber=$whatsappPhoneNumber, additionalProperties=$additionalProperties}"
+        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -419,16 +5453,628 @@ private constructor(
             }
 
             return other is Data &&
+                pagination == other.pagination &&
                 profiles == other.profiles &&
                 additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy { Objects.hash(profiles, additionalProperties) }
+        private val hashCode: Int by lazy {
+            Objects.hash(pagination, profiles, additionalProperties)
+        }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{profiles=$profiles, additionalProperties=$additionalProperties}"
+            "Data{pagination=$pagination, profiles=$profiles, additionalProperties=$additionalProperties}"
+    }
+
+    /** Error information */
+    class Error
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val code: JsonField<String>,
+        private val details: JsonField<Details>,
+        private val docUrl: JsonField<String>,
+        private val message: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("code") @ExcludeMissing code: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("details") @ExcludeMissing details: JsonField<Details> = JsonMissing.of(),
+            @JsonProperty("doc_url") @ExcludeMissing docUrl: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("message") @ExcludeMissing message: JsonField<String> = JsonMissing.of(),
+        ) : this(code, details, docUrl, message, mutableMapOf())
+
+        /**
+         * Machine-readable error code (e.g., "RESOURCE_001")
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun code(): Optional<String> = code.getOptional("code")
+
+        /**
+         * Additional validation error details (field-level errors)
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun details(): Optional<Details> = details.getOptional("details")
+
+        /**
+         * URL to documentation about this error
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun docUrl(): Optional<String> = docUrl.getOptional("doc_url")
+
+        /**
+         * Human-readable error message
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun message(): Optional<String> = message.getOptional("message")
+
+        /**
+         * Returns the raw JSON value of [code].
+         *
+         * Unlike [code], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("code") @ExcludeMissing fun _code(): JsonField<String> = code
+
+        /**
+         * Returns the raw JSON value of [details].
+         *
+         * Unlike [details], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("details") @ExcludeMissing fun _details(): JsonField<Details> = details
+
+        /**
+         * Returns the raw JSON value of [docUrl].
+         *
+         * Unlike [docUrl], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("doc_url") @ExcludeMissing fun _docUrl(): JsonField<String> = docUrl
+
+        /**
+         * Returns the raw JSON value of [message].
+         *
+         * Unlike [message], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("message") @ExcludeMissing fun _message(): JsonField<String> = message
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Error]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Error]. */
+        class Builder internal constructor() {
+
+            private var code: JsonField<String> = JsonMissing.of()
+            private var details: JsonField<Details> = JsonMissing.of()
+            private var docUrl: JsonField<String> = JsonMissing.of()
+            private var message: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(error: Error) = apply {
+                code = error.code
+                details = error.details
+                docUrl = error.docUrl
+                message = error.message
+                additionalProperties = error.additionalProperties.toMutableMap()
+            }
+
+            /** Machine-readable error code (e.g., "RESOURCE_001") */
+            fun code(code: String) = code(JsonField.of(code))
+
+            /**
+             * Sets [Builder.code] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.code] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun code(code: JsonField<String>) = apply { this.code = code }
+
+            /** Additional validation error details (field-level errors) */
+            fun details(details: Details?) = details(JsonField.ofNullable(details))
+
+            /** Alias for calling [Builder.details] with `details.orElse(null)`. */
+            fun details(details: Optional<Details>) = details(details.getOrNull())
+
+            /**
+             * Sets [Builder.details] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.details] with a well-typed [Details] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun details(details: JsonField<Details>) = apply { this.details = details }
+
+            /** URL to documentation about this error */
+            fun docUrl(docUrl: String?) = docUrl(JsonField.ofNullable(docUrl))
+
+            /** Alias for calling [Builder.docUrl] with `docUrl.orElse(null)`. */
+            fun docUrl(docUrl: Optional<String>) = docUrl(docUrl.getOrNull())
+
+            /**
+             * Sets [Builder.docUrl] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.docUrl] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun docUrl(docUrl: JsonField<String>) = apply { this.docUrl = docUrl }
+
+            /** Human-readable error message */
+            fun message(message: String) = message(JsonField.of(message))
+
+            /**
+             * Sets [Builder.message] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.message] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun message(message: JsonField<String>) = apply { this.message = message }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Error].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Error =
+                Error(code, details, docUrl, message, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws SentInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Error = apply {
+            if (validated) {
+                return@apply
+            }
+
+            code()
+            details().ifPresent { it.validate() }
+            docUrl()
+            message()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (code.asKnown().isPresent) 1 else 0) +
+                (details.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (docUrl.asKnown().isPresent) 1 else 0) +
+                (if (message.asKnown().isPresent) 1 else 0)
+
+        /** Additional validation error details (field-level errors) */
+        class Details
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Details]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Details]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(details: Details) = apply {
+                    additionalProperties = details.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Details].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Details = Details(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws SentInvalidDataException if any value type in this object doesn't match its
+             *   expected type.
+             */
+            fun validate(): Details = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: SentInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Details && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "Details{additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Error &&
+                code == other.code &&
+                details == other.details &&
+                docUrl == other.docUrl &&
+                message == other.message &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(code, details, docUrl, message, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Error{code=$code, details=$details, docUrl=$docUrl, message=$message, additionalProperties=$additionalProperties}"
+    }
+
+    /** Request and response metadata */
+    class Meta
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val requestId: JsonField<String>,
+        private val timestamp: JsonField<OffsetDateTime>,
+        private val version: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("request_id")
+            @ExcludeMissing
+            requestId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("timestamp")
+            @ExcludeMissing
+            timestamp: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("version") @ExcludeMissing version: JsonField<String> = JsonMissing.of(),
+        ) : this(requestId, timestamp, version, mutableMapOf())
+
+        /**
+         * Unique identifier for this request (for tracing and support)
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun requestId(): Optional<String> = requestId.getOptional("request_id")
+
+        /**
+         * Server timestamp when the response was generated
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun timestamp(): Optional<OffsetDateTime> = timestamp.getOptional("timestamp")
+
+        /**
+         * API version used for this request
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun version(): Optional<String> = version.getOptional("version")
+
+        /**
+         * Returns the raw JSON value of [requestId].
+         *
+         * Unlike [requestId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("request_id") @ExcludeMissing fun _requestId(): JsonField<String> = requestId
+
+        /**
+         * Returns the raw JSON value of [timestamp].
+         *
+         * Unlike [timestamp], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("timestamp")
+        @ExcludeMissing
+        fun _timestamp(): JsonField<OffsetDateTime> = timestamp
+
+        /**
+         * Returns the raw JSON value of [version].
+         *
+         * Unlike [version], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("version") @ExcludeMissing fun _version(): JsonField<String> = version
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Meta]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Meta]. */
+        class Builder internal constructor() {
+
+            private var requestId: JsonField<String> = JsonMissing.of()
+            private var timestamp: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var version: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(meta: Meta) = apply {
+                requestId = meta.requestId
+                timestamp = meta.timestamp
+                version = meta.version
+                additionalProperties = meta.additionalProperties.toMutableMap()
+            }
+
+            /** Unique identifier for this request (for tracing and support) */
+            fun requestId(requestId: String) = requestId(JsonField.of(requestId))
+
+            /**
+             * Sets [Builder.requestId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.requestId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun requestId(requestId: JsonField<String>) = apply { this.requestId = requestId }
+
+            /** Server timestamp when the response was generated */
+            fun timestamp(timestamp: OffsetDateTime) = timestamp(JsonField.of(timestamp))
+
+            /**
+             * Sets [Builder.timestamp] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.timestamp] with a well-typed [OffsetDateTime] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun timestamp(timestamp: JsonField<OffsetDateTime>) = apply {
+                this.timestamp = timestamp
+            }
+
+            /** API version used for this request */
+            fun version(version: String) = version(JsonField.of(version))
+
+            /**
+             * Sets [Builder.version] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.version] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun version(version: JsonField<String>) = apply { this.version = version }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Meta].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Meta =
+                Meta(requestId, timestamp, version, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws SentInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Meta = apply {
+            if (validated) {
+                return@apply
+            }
+
+            requestId()
+            timestamp()
+            version()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (requestId.asKnown().isPresent) 1 else 0) +
+                (if (timestamp.asKnown().isPresent) 1 else 0) +
+                (if (version.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Meta &&
+                requestId == other.requestId &&
+                timestamp == other.timestamp &&
+                version == other.version &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(requestId, timestamp, version, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Meta{requestId=$requestId, timestamp=$timestamp, version=$version, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -19,7 +19,13 @@ import dm.sent.models.me.MeRetrieveResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
-/** Retrieve account details */
+/**
+ * Who the current key is.
+ *
+ * `GET /v3/me` answers with the account the key authenticates as, which is the quickest way to tell
+ * a live key from a test one, an organization key from a sender profile's, and to confirm
+ * `x-profile-id` resolved to the profile you meant.
+ */
 class MeServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     MeServiceAsync {
 

@@ -15,12 +15,21 @@ import dm.sent.core.http.HttpResponse.Handler
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
-import dm.sent.models.conversations.ApiResponseOfConversationMessagesList
 import dm.sent.models.conversations.ConversationListMessagesParams
+import dm.sent.models.conversations.ConversationListMessagesResponse
 import dm.sent.models.conversations.ConversationListParams
+import dm.sent.models.conversations.ConversationListResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
+/**
+ * Inbound and outbound messages, grouped by the person they are with.
+ *
+ * A conversation is the thread for one contact across every channel — a reply by SMS and one by
+ * WhatsApp belong to the same conversation, because they are the same person talking to you.
+ *
+ * Read-only. Sending is **Messages**; a reply arrives here and through your webhooks.
+ */
 class ConversationServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     ConversationService {
 
@@ -36,14 +45,14 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: ConversationListParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfConversationMessagesList =
+    ): ConversationListResponse =
         // get /v3/conversations
         withRawResponse().list(params, requestOptions).parse()
 
     override fun listMessages(
         params: ConversationListMessagesParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfConversationMessagesList =
+    ): ConversationListMessagesResponse =
         // get /v3/conversations/{id}
         withRawResponse().listMessages(params, requestOptions).parse()
 
@@ -60,13 +69,13 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val listHandler: Handler<ApiResponseOfConversationMessagesList> =
-            jsonHandler<ApiResponseOfConversationMessagesList>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ConversationListResponse> =
+            jsonHandler<ConversationListResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: ConversationListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfConversationMessagesList> {
+        ): HttpResponseFor<ConversationListResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -87,13 +96,13 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
             }
         }
 
-        private val listMessagesHandler: Handler<ApiResponseOfConversationMessagesList> =
-            jsonHandler<ApiResponseOfConversationMessagesList>(clientOptions.jsonMapper)
+        private val listMessagesHandler: Handler<ConversationListMessagesResponse> =
+            jsonHandler<ConversationListMessagesResponse>(clientOptions.jsonMapper)
 
         override fun listMessages(
             params: ConversationListMessagesParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfConversationMessagesList> {
+        ): HttpResponseFor<ConversationListMessagesResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

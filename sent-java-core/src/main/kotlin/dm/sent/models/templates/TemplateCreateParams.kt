@@ -14,7 +14,6 @@ import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentInvalidDataException
-import dm.sent.models.webhooks.MutationRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -36,15 +35,6 @@ private constructor(
     fun idempotencyKey(): Optional<String> = Optional.ofNullable(idempotencyKey)
 
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
-
-    /**
-     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
-     * integrations without actual execution
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -80,19 +70,21 @@ private constructor(
     fun language(): Optional<String> = body.language()
 
     /**
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun sandbox(): Optional<Boolean> = body.sandbox()
+
+    /**
      * Whether to submit the template for review after creation (default: false)
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
     fun submitForReview(): Optional<Boolean> = body.submitForReview()
-
-    /**
-     * Returns the raw JSON value of [sandbox].
-     *
-     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
      * Returns the raw JSON value of [category].
@@ -121,6 +113,13 @@ private constructor(
      * Unlike [language], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _language(): JsonField<String> = body._language()
+
+    /**
+     * Returns the raw JSON value of [sandbox].
+     *
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
      * Returns the raw JSON value of [submitForReview].
@@ -181,28 +180,14 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [sandbox]
          * - [category]
          * - [creationSource]
          * - [definition]
          * - [language]
+         * - [sandbox]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         */
-        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
-
-        /**
-         * Sets [Builder.sandbox] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /**
          * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -266,6 +251,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun language(language: JsonField<String>) = apply { body.language(language) }
+
+        /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         */
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
+
+        /**
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /** Whether to submit the template for review after creation (default: false) */
         fun submitForReview(submitForReview: Boolean) = apply {
@@ -428,22 +427,20 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** Request to create a new template */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val sandbox: JsonField<Boolean>,
         private val category: JsonField<String>,
         private val creationSource: JsonField<String>,
         private val definition: JsonField<TemplateDefinition>,
         private val language: JsonField<String>,
+        private val sandbox: JsonField<Boolean>,
         private val submitForReview: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("category")
             @ExcludeMissing
             category: JsonField<String> = JsonMissing.of(),
@@ -456,30 +453,19 @@ private constructor(
             @JsonProperty("language")
             @ExcludeMissing
             language: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("submit_for_review")
             @ExcludeMissing
             submitForReview: JsonField<Boolean> = JsonMissing.of(),
         ) : this(
-            sandbox,
             category,
             creationSource,
             definition,
             language,
+            sandbox,
             submitForReview,
             mutableMapOf(),
         )
-
-        fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -515,19 +501,21 @@ private constructor(
         fun language(): Optional<String> = language.getOptional("language")
 
         /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
+
+        /**
          * Whether to submit the template for review after creation (default: false)
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
         fun submitForReview(): Optional<Boolean> = submitForReview.getOptional("submit_for_review")
-
-        /**
-         * Returns the raw JSON value of [sandbox].
-         *
-         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
          * Returns the raw JSON value of [category].
@@ -563,6 +551,13 @@ private constructor(
         @JsonProperty("language") @ExcludeMissing fun _language(): JsonField<String> = language
 
         /**
+         * Returns the raw JSON value of [sandbox].
+         *
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
+        /**
          * Returns the raw JSON value of [submitForReview].
          *
          * Unlike [submitForReview], this method doesn't throw if the JSON field has an unexpected
@@ -593,39 +588,24 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var category: JsonField<String> = JsonMissing.of()
             private var creationSource: JsonField<String> = JsonMissing.of()
             private var definition: JsonField<TemplateDefinition> = JsonMissing.of()
             private var language: JsonField<String> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var submitForReview: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                sandbox = body.sandbox
                 category = body.category
                 creationSource = body.creationSource
                 definition = body.definition
                 language = body.language
+                sandbox = body.sandbox
                 submitForReview = body.submitForReview
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
-
-            /**
-             * Sandbox flag - when true, the operation is simulated without side effects Useful for
-             * testing integrations without actual execution
-             */
-            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
-
-            /**
-             * Sets [Builder.sandbox] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /**
              * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -695,6 +675,21 @@ private constructor(
              */
             fun language(language: JsonField<String>) = apply { this.language = language }
 
+            /**
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
+             */
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
+
+            /**
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
             /** Whether to submit the template for review after creation (default: false) */
             fun submitForReview(submitForReview: Boolean) =
                 submitForReview(JsonField.of(submitForReview))
@@ -736,11 +731,11 @@ private constructor(
              */
             fun build(): Body =
                 Body(
-                    sandbox,
                     category,
                     creationSource,
                     definition,
                     language,
+                    sandbox,
                     submitForReview,
                     additionalProperties.toMutableMap(),
                 )
@@ -762,11 +757,11 @@ private constructor(
                 return@apply
             }
 
-            sandbox()
             category()
             creationSource()
             definition().ifPresent { it.validate() }
             language()
+            sandbox()
             submitForReview()
             validated = true
         }
@@ -787,11 +782,11 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (sandbox.asKnown().isPresent) 1 else 0) +
-                (if (category.asKnown().isPresent) 1 else 0) +
+            (if (category.asKnown().isPresent) 1 else 0) +
                 (if (creationSource.asKnown().isPresent) 1 else 0) +
                 (definition.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (language.asKnown().isPresent) 1 else 0) +
+                (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (if (submitForReview.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -800,22 +795,22 @@ private constructor(
             }
 
             return other is Body &&
-                sandbox == other.sandbox &&
                 category == other.category &&
                 creationSource == other.creationSource &&
                 definition == other.definition &&
                 language == other.language &&
+                sandbox == other.sandbox &&
                 submitForReview == other.submitForReview &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
             Objects.hash(
-                sandbox,
                 category,
                 creationSource,
                 definition,
                 language,
+                sandbox,
                 submitForReview,
                 additionalProperties,
             )
@@ -824,7 +819,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, category=$category, creationSource=$creationSource, definition=$definition, language=$language, submitForReview=$submitForReview, additionalProperties=$additionalProperties}"
+            "Body{category=$category, creationSource=$creationSource, definition=$definition, language=$language, sandbox=$sandbox, submitForReview=$submitForReview, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

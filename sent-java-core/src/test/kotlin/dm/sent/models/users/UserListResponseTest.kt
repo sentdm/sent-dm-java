@@ -5,8 +5,6 @@ package dm.sent.models.users
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -19,10 +17,26 @@ internal class UserListResponseTest {
             UserListResponse.builder()
                 .data(
                     UserListResponse.Data.builder()
+                        .pagination(
+                            UserListResponse.Data.Pagination.builder()
+                                .cursors(
+                                    UserListResponse.Data.Pagination.Cursors.builder()
+                                        .after("after")
+                                        .before("before")
+                                        .build()
+                                )
+                                .hasMore(true)
+                                .page(0)
+                                .pageSize(0)
+                                .totalCount(0)
+                                .totalPages(0)
+                                .build()
+                        )
                         .addUser(
-                            UserResponse.builder()
+                            UserListResponse.Data.User.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .email("email")
                                 .invitedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .lastLoginAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -35,10 +49,10 @@ internal class UserListResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    UserListResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            UserListResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -47,7 +61,7 @@ internal class UserListResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    UserListResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -59,10 +73,26 @@ internal class UserListResponseTest {
         assertThat(userListResponse.data())
             .contains(
                 UserListResponse.Data.builder()
+                    .pagination(
+                        UserListResponse.Data.Pagination.builder()
+                            .cursors(
+                                UserListResponse.Data.Pagination.Cursors.builder()
+                                    .after("after")
+                                    .before("before")
+                                    .build()
+                            )
+                            .hasMore(true)
+                            .page(0)
+                            .pageSize(0)
+                            .totalCount(0)
+                            .totalPages(0)
+                            .build()
+                    )
                     .addUser(
-                        UserResponse.builder()
+                        UserListResponse.Data.User.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .email("email")
                             .invitedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .lastLoginAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -76,10 +106,10 @@ internal class UserListResponseTest {
             )
         assertThat(userListResponse.error())
             .contains(
-                ErrorDetail.builder()
+                UserListResponse.Error.builder()
                     .code("code")
                     .details(
-                        ErrorDetail.Details.builder()
+                        UserListResponse.Error.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -89,7 +119,7 @@ internal class UserListResponseTest {
             )
         assertThat(userListResponse.meta())
             .contains(
-                ApiMeta.builder()
+                UserListResponse.Meta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -105,10 +135,26 @@ internal class UserListResponseTest {
             UserListResponse.builder()
                 .data(
                     UserListResponse.Data.builder()
+                        .pagination(
+                            UserListResponse.Data.Pagination.builder()
+                                .cursors(
+                                    UserListResponse.Data.Pagination.Cursors.builder()
+                                        .after("after")
+                                        .before("before")
+                                        .build()
+                                )
+                                .hasMore(true)
+                                .page(0)
+                                .pageSize(0)
+                                .totalCount(0)
+                                .totalPages(0)
+                                .build()
+                        )
                         .addUser(
-                            UserResponse.builder()
+                            UserListResponse.Data.User.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .email("email")
                                 .invitedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .lastLoginAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -121,10 +167,10 @@ internal class UserListResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    UserListResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            UserListResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -133,7 +179,7 @@ internal class UserListResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    UserListResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

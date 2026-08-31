@@ -10,10 +10,16 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
+ * **Deprecated.** This endpoint is replaced by `/v3/sender-profiles` and will be removed in a
+ * future release. It still behaves exactly as before, so nothing needs to change today — but new
+ * integrations should use `/v3/sender-profiles`, which models a profile's markets, compliance,
+ * brand, campaigns and billing explicitly.
+ *
  * Retrieves all sender profiles within an organization, including brand information for each
  * profile. Profiles represent different brands, departments, or use cases within an organization,
  * each with their own messaging configuration.
  */
+@Deprecated("deprecated")
 class ProfileListParams
 private constructor(
     private val xProfileId: String?,

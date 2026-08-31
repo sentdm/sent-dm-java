@@ -5,8 +5,6 @@ package dm.sent.models.profiles
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -24,10 +22,10 @@ internal class ProfileCompleteResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    ProfileCompleteResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            ProfileCompleteResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -36,7 +34,7 @@ internal class ProfileCompleteResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    ProfileCompleteResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -51,10 +49,10 @@ internal class ProfileCompleteResponseTest {
             )
         assertThat(profileCompleteResponse.error())
             .contains(
-                ErrorDetail.builder()
+                ProfileCompleteResponse.Error.builder()
                     .code("code")
                     .details(
-                        ErrorDetail.Details.builder()
+                        ProfileCompleteResponse.Error.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -64,7 +62,7 @@ internal class ProfileCompleteResponseTest {
             )
         assertThat(profileCompleteResponse.meta())
             .contains(
-                ApiMeta.builder()
+                ProfileCompleteResponse.Meta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -85,10 +83,10 @@ internal class ProfileCompleteResponseTest {
                         .build()
                 )
                 .error(
-                    ErrorDetail.builder()
+                    ProfileCompleteResponse.Error.builder()
                         .code("code")
                         .details(
-                            ErrorDetail.Details.builder()
+                            ProfileCompleteResponse.Error.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -97,7 +95,7 @@ internal class ProfileCompleteResponseTest {
                         .build()
                 )
                 .meta(
-                    ApiMeta.builder()
+                    ProfileCompleteResponse.Meta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

@@ -14,7 +14,6 @@ import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentInvalidDataException
-import dm.sent.models.webhooks.MutationRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -37,15 +36,6 @@ private constructor(
     fun idempotencyKey(): Optional<String> = Optional.ofNullable(idempotencyKey)
 
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
-
-    /**
-     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
-     * integrations without actual execution
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * User email address (required)
@@ -72,11 +62,13 @@ private constructor(
     fun role(): Optional<String> = body.role()
 
     /**
-     * Returns the raw JSON value of [sandbox].
+     * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
+     * integrations without actual execution
      *
-     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
      */
-    fun _sandbox(): JsonField<Boolean> = body._sandbox()
+    fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
      * Returns the raw JSON value of [email].
@@ -98,6 +90,13 @@ private constructor(
      * Unlike [role], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _role(): JsonField<String> = body._role()
+
+    /**
+     * Returns the raw JSON value of [sandbox].
+     *
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -151,26 +150,12 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [sandbox]
          * - [email]
          * - [name]
          * - [role]
+         * - [sandbox]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         */
-        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
-
-        /**
-         * Sets [Builder.sandbox] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /** User email address (required) */
         fun email(email: String) = apply { body.email(email) }
@@ -204,6 +189,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun role(role: JsonField<String>) = apply { body.role(role) }
+
+        /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         */
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
+
+        /**
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -350,36 +349,23 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** Request to invite a user to an organization */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val sandbox: JsonField<Boolean>,
         private val email: JsonField<String>,
         private val name: JsonField<String>,
         private val role: JsonField<String>,
+        private val sandbox: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("role") @ExcludeMissing role: JsonField<String> = JsonMissing.of(),
-        ) : this(sandbox, email, name, role, mutableMapOf())
-
-        fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(email, name, role, sandbox, mutableMapOf())
 
         /**
          * User email address (required)
@@ -406,11 +392,13 @@ private constructor(
         fun role(): Optional<String> = role.getOptional("role")
 
         /**
-         * Returns the raw JSON value of [sandbox].
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
          *
-         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
          */
-        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
          * Returns the raw JSON value of [email].
@@ -433,6 +421,13 @@ private constructor(
          */
         @JsonProperty("role") @ExcludeMissing fun _role(): JsonField<String> = role
 
+        /**
+         * Returns the raw JSON value of [sandbox].
+         *
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -454,35 +449,20 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var email: JsonField<String> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
             private var role: JsonField<String> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                sandbox = body.sandbox
                 email = body.email
                 name = body.name
                 role = body.role
+                sandbox = body.sandbox
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
-
-            /**
-             * Sandbox flag - when true, the operation is simulated without side effects Useful for
-             * testing integrations without actual execution
-             */
-            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
-
-            /**
-             * Sets [Builder.sandbox] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /** User email address (required) */
             fun email(email: String) = email(JsonField.of(email))
@@ -520,6 +500,21 @@ private constructor(
              */
             fun role(role: JsonField<String>) = apply { this.role = role }
 
+            /**
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
+             */
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
+
+            /**
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -545,7 +540,7 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              */
             fun build(): Body =
-                Body(sandbox, email, name, role, additionalProperties.toMutableMap())
+                Body(email, name, role, sandbox, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -564,10 +559,10 @@ private constructor(
                 return@apply
             }
 
-            sandbox()
             email()
             name()
             role()
+            sandbox()
             validated = true
         }
 
@@ -587,10 +582,10 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (sandbox.asKnown().isPresent) 1 else 0) +
-                (if (email.asKnown().isPresent) 1 else 0) +
+            (if (email.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
-                (if (role.asKnown().isPresent) 1 else 0)
+                (if (role.asKnown().isPresent) 1 else 0) +
+                (if (sandbox.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -598,21 +593,21 @@ private constructor(
             }
 
             return other is Body &&
-                sandbox == other.sandbox &&
                 email == other.email &&
                 name == other.name &&
                 role == other.role &&
+                sandbox == other.sandbox &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(sandbox, email, name, role, additionalProperties)
+            Objects.hash(email, name, role, sandbox, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, email=$email, name=$name, role=$role, additionalProperties=$additionalProperties}"
+            "Body{email=$email, name=$name, role=$role, sandbox=$sandbox, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
