@@ -13,8 +13,8 @@ internal class TemplateDeleteParamsTest {
         TemplateDeleteParams.builder()
             .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .sandbox(false)
             .deleteFromMeta(false)
+            .sandbox(false)
             .build()
     }
 
@@ -34,8 +34,8 @@ internal class TemplateDeleteParamsTest {
             TemplateDeleteParams.builder()
                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .deleteFromMeta(false)
+                .sandbox(false)
                 .build()
 
         val headers = params._headers()
@@ -64,14 +64,14 @@ internal class TemplateDeleteParamsTest {
             TemplateDeleteParams.builder()
                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
                 .deleteFromMeta(false)
+                .sandbox(false)
                 .build()
 
         val body = params._body()
 
-        assertThat(body.sandbox()).contains(false)
         assertThat(body.deleteFromMeta()).contains(false)
+        assertThat(body.sandbox()).contains(false)
     }
 
     @Test

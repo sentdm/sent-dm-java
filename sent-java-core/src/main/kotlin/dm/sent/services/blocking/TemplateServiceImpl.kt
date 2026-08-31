@@ -17,17 +17,26 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
-import dm.sent.models.templates.ApiResponseTemplate
 import dm.sent.models.templates.TemplateCreateParams
+import dm.sent.models.templates.TemplateCreateResponse
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateListResponse
 import dm.sent.models.templates.TemplateRetrieveParams
+import dm.sent.models.templates.TemplateRetrieveResponse
 import dm.sent.models.templates.TemplateUpdateParams
+import dm.sent.models.templates.TemplateUpdateResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
-/** Manage message templates with variable substitution */
+/**
+ * Reusable message bodies with named variables.
+ *
+ * A template is substituted at send time from the values you pass, so the copy lives here rather
+ * than in your application. WhatsApp templates additionally need Meta's approval before they can be
+ * sent, and a template's channel status reports where that stands — an approved SMS template and an
+ * unapproved WhatsApp one are the same template in two states.
+ */
 class TemplateServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     TemplateService {
 
@@ -43,21 +52,21 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
     override fun create(
         params: TemplateCreateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseTemplate =
+    ): TemplateCreateResponse =
         // post /v3/templates
         withRawResponse().create(params, requestOptions).parse()
 
     override fun retrieve(
         params: TemplateRetrieveParams,
         requestOptions: RequestOptions,
-    ): ApiResponseTemplate =
+    ): TemplateRetrieveResponse =
         // get /v3/templates/{id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun update(
         params: TemplateUpdateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseTemplate =
+    ): TemplateUpdateResponse =
         // put /v3/templates/{id}
         withRawResponse().update(params, requestOptions).parse()
 
@@ -86,13 +95,13 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<ApiResponseTemplate> =
-            jsonHandler<ApiResponseTemplate>(clientOptions.jsonMapper)
+        private val createHandler: Handler<TemplateCreateResponse> =
+            jsonHandler<TemplateCreateResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: TemplateCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseTemplate> {
+        ): HttpResponseFor<TemplateCreateResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -114,13 +123,13 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
             }
         }
 
-        private val retrieveHandler: Handler<ApiResponseTemplate> =
-            jsonHandler<ApiResponseTemplate>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<TemplateRetrieveResponse> =
+            jsonHandler<TemplateRetrieveResponse>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: TemplateRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseTemplate> {
+        ): HttpResponseFor<TemplateRetrieveResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -144,13 +153,13 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
             }
         }
 
-        private val updateHandler: Handler<ApiResponseTemplate> =
-            jsonHandler<ApiResponseTemplate>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<TemplateUpdateResponse> =
+            jsonHandler<TemplateUpdateResponse>(clientOptions.jsonMapper)
 
         override fun update(
             params: TemplateUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseTemplate> {
+        ): HttpResponseFor<TemplateUpdateResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

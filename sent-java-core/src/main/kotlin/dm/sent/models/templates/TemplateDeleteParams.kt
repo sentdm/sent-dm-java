@@ -14,7 +14,6 @@ import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentInvalidDataException
-import dm.sent.models.webhooks.MutationRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -38,6 +37,14 @@ private constructor(
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /**
+     * Whether to also delete the template from WhatsApp/Meta (optional, defaults to false)
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun deleteFromMeta(): Optional<Boolean> = body.deleteFromMeta()
+
+    /**
      * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
      * integrations without actual execution
      *
@@ -47,12 +54,11 @@ private constructor(
     fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
-     * Whether to also delete the template from WhatsApp/Meta (optional, defaults to false)
+     * Returns the raw JSON value of [deleteFromMeta].
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * Unlike [deleteFromMeta], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun deleteFromMeta(): Optional<Boolean> = body.deleteFromMeta()
+    fun _deleteFromMeta(): JsonField<Boolean> = body._deleteFromMeta()
 
     /**
      * Returns the raw JSON value of [sandbox].
@@ -60,13 +66,6 @@ private constructor(
      * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
-
-    /**
-     * Returns the raw JSON value of [deleteFromMeta].
-     *
-     * Unlike [deleteFromMeta], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _deleteFromMeta(): JsonField<Boolean> = body._deleteFromMeta()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -119,24 +118,10 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [sandbox]
          * - [deleteFromMeta]
+         * - [sandbox]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         */
-        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
-
-        /**
-         * Sets [Builder.sandbox] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /** Whether to also delete the template from WhatsApp/Meta (optional, defaults to false) */
         fun deleteFromMeta(deleteFromMeta: Boolean?) = apply { body.deleteFromMeta(deleteFromMeta) }
@@ -162,6 +147,20 @@ private constructor(
         fun deleteFromMeta(deleteFromMeta: JsonField<Boolean>) = apply {
             body.deleteFromMeta(deleteFromMeta)
         }
+
+        /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         */
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
+
+        /**
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -313,25 +312,29 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** Request to delete a template */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val sandbox: JsonField<Boolean>,
         private val deleteFromMeta: JsonField<Boolean>,
+        private val sandbox: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("delete_from_meta")
             @ExcludeMissing
             deleteFromMeta: JsonField<Boolean> = JsonMissing.of(),
-        ) : this(sandbox, deleteFromMeta, mutableMapOf())
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(deleteFromMeta, sandbox, mutableMapOf())
 
-        fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
+        /**
+         * Whether to also delete the template from WhatsApp/Meta (optional, defaults to false)
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun deleteFromMeta(): Optional<Boolean> = deleteFromMeta.getOptional("delete_from_meta")
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -343,21 +346,6 @@ private constructor(
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
-         * Whether to also delete the template from WhatsApp/Meta (optional, defaults to false)
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun deleteFromMeta(): Optional<Boolean> = deleteFromMeta.getOptional("delete_from_meta")
-
-        /**
-         * Returns the raw JSON value of [sandbox].
-         *
-         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
-
-        /**
          * Returns the raw JSON value of [deleteFromMeta].
          *
          * Unlike [deleteFromMeta], this method doesn't throw if the JSON field has an unexpected
@@ -366,6 +354,13 @@ private constructor(
         @JsonProperty("delete_from_meta")
         @ExcludeMissing
         fun _deleteFromMeta(): JsonField<Boolean> = deleteFromMeta
+
+        /**
+         * Returns the raw JSON value of [sandbox].
+         *
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -388,31 +383,16 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var deleteFromMeta: JsonField<Boolean> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                sandbox = body.sandbox
                 deleteFromMeta = body.deleteFromMeta
+                sandbox = body.sandbox
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
-
-            /**
-             * Sandbox flag - when true, the operation is simulated without side effects Useful for
-             * testing integrations without actual execution
-             */
-            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
-
-            /**
-             * Sets [Builder.sandbox] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /**
              * Whether to also delete the template from WhatsApp/Meta (optional, defaults to false)
@@ -442,6 +422,21 @@ private constructor(
                 this.deleteFromMeta = deleteFromMeta
             }
 
+            /**
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
+             */
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
+
+            /**
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -466,7 +461,7 @@ private constructor(
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              */
-            fun build(): Body = Body(sandbox, deleteFromMeta, additionalProperties.toMutableMap())
+            fun build(): Body = Body(deleteFromMeta, sandbox, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -485,8 +480,8 @@ private constructor(
                 return@apply
             }
 
-            sandbox()
             deleteFromMeta()
+            sandbox()
             validated = true
         }
 
@@ -506,8 +501,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (sandbox.asKnown().isPresent) 1 else 0) +
-                (if (deleteFromMeta.asKnown().isPresent) 1 else 0)
+            (if (deleteFromMeta.asKnown().isPresent) 1 else 0) +
+                (if (sandbox.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -515,19 +510,19 @@ private constructor(
             }
 
             return other is Body &&
-                sandbox == other.sandbox &&
                 deleteFromMeta == other.deleteFromMeta &&
+                sandbox == other.sandbox &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(sandbox, deleteFromMeta, additionalProperties)
+            Objects.hash(deleteFromMeta, sandbox, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, deleteFromMeta=$deleteFromMeta, additionalProperties=$additionalProperties}"
+            "Body{deleteFromMeta=$deleteFromMeta, sandbox=$sandbox, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
