@@ -10,6 +10,7 @@ import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
+import dm.sent.core.checkRequired
 import dm.sent.errors.SentInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -23,47 +24,63 @@ import kotlin.jvm.optionals.getOrNull
 class TemplateEventPayload
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val status: JsonField<String>,
+    private val whatsappTemplateId: JsonField<String>,
     private val accountId: JsonField<String>,
     private val category: JsonField<String>,
     private val channel: JsonField<String>,
     private val language: JsonField<String>,
     private val reason: JsonField<String>,
-    private val status: JsonField<String>,
     private val templateId: JsonField<String>,
     private val templateName: JsonField<String>,
-    private val whatsappTemplateId: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
+        @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("whatsapp_template_id")
+        @ExcludeMissing
+        whatsappTemplateId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("account_id") @ExcludeMissing accountId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("category") @ExcludeMissing category: JsonField<String> = JsonMissing.of(),
         @JsonProperty("channel") @ExcludeMissing channel: JsonField<String> = JsonMissing.of(),
         @JsonProperty("language") @ExcludeMissing language: JsonField<String> = JsonMissing.of(),
         @JsonProperty("reason") @ExcludeMissing reason: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
         @JsonProperty("template_id")
         @ExcludeMissing
         templateId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("template_name")
         @ExcludeMissing
         templateName: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("whatsapp_template_id")
-        @ExcludeMissing
-        whatsappTemplateId: JsonField<String> = JsonMissing.of(),
     ) : this(
+        status,
+        whatsappTemplateId,
         accountId,
         category,
         channel,
         language,
         reason,
-        status,
         templateId,
         templateName,
-        whatsappTemplateId,
         mutableMapOf(),
     )
+
+    /**
+     * The review status the template just reached, for example APPROVED or REJECTED.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun status(): String = status.getRequired("status")
+
+    /**
+     * The template's identifier with Meta, assigned when the template is submitted for review.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun whatsappTemplateId(): String = whatsappTemplateId.getRequired("whatsapp_template_id")
 
     /**
      * The account the template belongs to.
@@ -106,14 +123,6 @@ private constructor(
     fun reason(): Optional<String> = reason.getOptional("reason")
 
     /**
-     * The review status the template just reached, for example APPROVED or REJECTED.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun status(): Optional<String> = status.getOptional("status")
-
-    /**
      * The template in Sent.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -130,13 +139,21 @@ private constructor(
     fun templateName(): Optional<String> = templateName.getOptional("template_name")
 
     /**
-     * The template's identifier with Meta, assigned when the template is submitted for review.
+     * Returns the raw JSON value of [status].
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun whatsappTemplateId(): Optional<String> =
-        whatsappTemplateId.getOptional("whatsapp_template_id")
+    @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<String> = status
+
+    /**
+     * Returns the raw JSON value of [whatsappTemplateId].
+     *
+     * Unlike [whatsappTemplateId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("whatsapp_template_id")
+    @ExcludeMissing
+    fun _whatsappTemplateId(): JsonField<String> = whatsappTemplateId
 
     /**
      * Returns the raw JSON value of [accountId].
@@ -174,13 +191,6 @@ private constructor(
     @JsonProperty("reason") @ExcludeMissing fun _reason(): JsonField<String> = reason
 
     /**
-     * Returns the raw JSON value of [status].
-     *
-     * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<String> = status
-
-    /**
      * Returns the raw JSON value of [templateId].
      *
      * Unlike [templateId], this method doesn't throw if the JSON field has an unexpected type.
@@ -196,16 +206,6 @@ private constructor(
     @ExcludeMissing
     fun _templateName(): JsonField<String> = templateName
 
-    /**
-     * Returns the raw JSON value of [whatsappTemplateId].
-     *
-     * Unlike [whatsappTemplateId], this method doesn't throw if the JSON field has an unexpected
-     * type.
-     */
-    @JsonProperty("whatsapp_template_id")
-    @ExcludeMissing
-    fun _whatsappTemplateId(): JsonField<String> = whatsappTemplateId
-
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -220,36 +220,72 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [TemplateEventPayload]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [TemplateEventPayload].
+         *
+         * The following fields are required:
+         * ```java
+         * .status()
+         * .whatsappTemplateId()
+         * ```
+         */
         @JvmStatic fun builder() = Builder()
     }
 
     /** A builder for [TemplateEventPayload]. */
     class Builder internal constructor() {
 
+        private var status: JsonField<String>? = null
+        private var whatsappTemplateId: JsonField<String>? = null
         private var accountId: JsonField<String> = JsonMissing.of()
         private var category: JsonField<String> = JsonMissing.of()
         private var channel: JsonField<String> = JsonMissing.of()
         private var language: JsonField<String> = JsonMissing.of()
         private var reason: JsonField<String> = JsonMissing.of()
-        private var status: JsonField<String> = JsonMissing.of()
         private var templateId: JsonField<String> = JsonMissing.of()
         private var templateName: JsonField<String> = JsonMissing.of()
-        private var whatsappTemplateId: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(templateEventPayload: TemplateEventPayload) = apply {
+            status = templateEventPayload.status
+            whatsappTemplateId = templateEventPayload.whatsappTemplateId
             accountId = templateEventPayload.accountId
             category = templateEventPayload.category
             channel = templateEventPayload.channel
             language = templateEventPayload.language
             reason = templateEventPayload.reason
-            status = templateEventPayload.status
             templateId = templateEventPayload.templateId
             templateName = templateEventPayload.templateName
-            whatsappTemplateId = templateEventPayload.whatsappTemplateId
             additionalProperties = templateEventPayload.additionalProperties.toMutableMap()
+        }
+
+        /** The review status the template just reached, for example APPROVED or REJECTED. */
+        fun status(status: String) = status(JsonField.of(status))
+
+        /**
+         * Sets [Builder.status] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.status] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun status(status: JsonField<String>) = apply { this.status = status }
+
+        /**
+         * The template's identifier with Meta, assigned when the template is submitted for review.
+         */
+        fun whatsappTemplateId(whatsappTemplateId: String) =
+            whatsappTemplateId(JsonField.of(whatsappTemplateId))
+
+        /**
+         * Sets [Builder.whatsappTemplateId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.whatsappTemplateId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun whatsappTemplateId(whatsappTemplateId: JsonField<String>) = apply {
+            this.whatsappTemplateId = whatsappTemplateId
         }
 
         /** The account the template belongs to. */
@@ -311,17 +347,6 @@ private constructor(
          */
         fun reason(reason: JsonField<String>) = apply { this.reason = reason }
 
-        /** The review status the template just reached, for example APPROVED or REJECTED. */
-        fun status(status: String) = status(JsonField.of(status))
-
-        /**
-         * Sets [Builder.status] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.status] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun status(status: JsonField<String>) = apply { this.status = status }
-
         /** The template in Sent. */
         fun templateId(templateId: String) = templateId(JsonField.of(templateId))
 
@@ -348,23 +373,6 @@ private constructor(
             this.templateName = templateName
         }
 
-        /**
-         * The template's identifier with Meta, assigned when the template is submitted for review.
-         */
-        fun whatsappTemplateId(whatsappTemplateId: String) =
-            whatsappTemplateId(JsonField.of(whatsappTemplateId))
-
-        /**
-         * Sets [Builder.whatsappTemplateId] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.whatsappTemplateId] with a well-typed [String] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
-         */
-        fun whatsappTemplateId(whatsappTemplateId: JsonField<String>) = apply {
-            this.whatsappTemplateId = whatsappTemplateId
-        }
-
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -388,18 +396,26 @@ private constructor(
          * Returns an immutable instance of [TemplateEventPayload].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .status()
+         * .whatsappTemplateId()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): TemplateEventPayload =
             TemplateEventPayload(
+                checkRequired("status", status),
+                checkRequired("whatsappTemplateId", whatsappTemplateId),
                 accountId,
                 category,
                 channel,
                 language,
                 reason,
-                status,
                 templateId,
                 templateName,
-                whatsappTemplateId,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -419,15 +435,15 @@ private constructor(
             return@apply
         }
 
+        status()
+        whatsappTemplateId()
         accountId()
         category()
         channel()
         language()
         reason()
-        status()
         templateId()
         templateName()
-        whatsappTemplateId()
         validated = true
     }
 
@@ -446,15 +462,15 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (accountId.asKnown().isPresent) 1 else 0) +
+        (if (status.asKnown().isPresent) 1 else 0) +
+            (if (whatsappTemplateId.asKnown().isPresent) 1 else 0) +
+            (if (accountId.asKnown().isPresent) 1 else 0) +
             (if (category.asKnown().isPresent) 1 else 0) +
             (if (channel.asKnown().isPresent) 1 else 0) +
             (if (language.asKnown().isPresent) 1 else 0) +
             (if (reason.asKnown().isPresent) 1 else 0) +
-            (if (status.asKnown().isPresent) 1 else 0) +
             (if (templateId.asKnown().isPresent) 1 else 0) +
-            (if (templateName.asKnown().isPresent) 1 else 0) +
-            (if (whatsappTemplateId.asKnown().isPresent) 1 else 0)
+            (if (templateName.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -462,29 +478,29 @@ private constructor(
         }
 
         return other is TemplateEventPayload &&
+            status == other.status &&
+            whatsappTemplateId == other.whatsappTemplateId &&
             accountId == other.accountId &&
             category == other.category &&
             channel == other.channel &&
             language == other.language &&
             reason == other.reason &&
-            status == other.status &&
             templateId == other.templateId &&
             templateName == other.templateName &&
-            whatsappTemplateId == other.whatsappTemplateId &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
         Objects.hash(
+            status,
+            whatsappTemplateId,
             accountId,
             category,
             channel,
             language,
             reason,
-            status,
             templateId,
             templateName,
-            whatsappTemplateId,
             additionalProperties,
         )
     }
@@ -492,5 +508,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TemplateEventPayload{accountId=$accountId, category=$category, channel=$channel, language=$language, reason=$reason, status=$status, templateId=$templateId, templateName=$templateName, whatsappTemplateId=$whatsappTemplateId, additionalProperties=$additionalProperties}"
+        "TemplateEventPayload{status=$status, whatsappTemplateId=$whatsappTemplateId, accountId=$accountId, category=$category, channel=$channel, language=$language, reason=$reason, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
 }
