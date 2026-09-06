@@ -13,28 +13,28 @@ internal class TemplateEventPayloadTest {
     fun create() {
         val templateEventPayload =
             TemplateEventPayload.builder()
+                .status("status")
+                .whatsappTemplateId("whatsapp_template_id")
                 .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .category("category")
                 .channel("channel")
                 .language("language")
                 .reason("reason")
-                .status("status")
                 .templateId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .templateName("template_name")
-                .whatsappTemplateId("whatsapp_template_id")
                 .build()
 
+        assertThat(templateEventPayload.status()).isEqualTo("status")
+        assertThat(templateEventPayload.whatsappTemplateId()).isEqualTo("whatsapp_template_id")
         assertThat(templateEventPayload.accountId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(templateEventPayload.category()).contains("category")
         assertThat(templateEventPayload.channel()).contains("channel")
         assertThat(templateEventPayload.language()).contains("language")
         assertThat(templateEventPayload.reason()).contains("reason")
-        assertThat(templateEventPayload.status()).contains("status")
         assertThat(templateEventPayload.templateId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(templateEventPayload.templateName()).contains("template_name")
-        assertThat(templateEventPayload.whatsappTemplateId()).contains("whatsapp_template_id")
     }
 
     @Test
@@ -42,15 +42,15 @@ internal class TemplateEventPayloadTest {
         val jsonMapper = jsonMapper()
         val templateEventPayload =
             TemplateEventPayload.builder()
+                .status("status")
+                .whatsappTemplateId("whatsapp_template_id")
                 .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .category("category")
                 .channel("channel")
                 .language("language")
                 .reason("reason")
-                .status("status")
                 .templateId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .templateName("template_name")
-                .whatsappTemplateId("whatsapp_template_id")
                 .build()
 
         val roundtrippedTemplateEventPayload =

@@ -10,6 +10,7 @@ import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
+import dm.sent.core.checkRequired
 import dm.sent.errors.SentInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -20,12 +21,12 @@ import kotlin.jvm.optionals.getOrNull
 class InboundMessageEventPayload
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val inboundNumber: JsonField<String>,
+    private val receivedAt: JsonField<String>,
     private val accountId: JsonField<String>,
     private val channel: JsonField<String>,
-    private val inboundNumber: JsonField<String>,
     private val messageId: JsonField<String>,
     private val outboundNumber: JsonField<String>,
-    private val receivedAt: JsonField<String>,
     private val text: JsonField<String>,
     private val updatedAt: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -33,31 +34,47 @@ private constructor(
 
     @JsonCreator
     private constructor(
-        @JsonProperty("account_id") @ExcludeMissing accountId: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("channel") @ExcludeMissing channel: JsonField<String> = JsonMissing.of(),
         @JsonProperty("inbound_number")
         @ExcludeMissing
         inboundNumber: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("received_at")
+        @ExcludeMissing
+        receivedAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("account_id") @ExcludeMissing accountId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("channel") @ExcludeMissing channel: JsonField<String> = JsonMissing.of(),
         @JsonProperty("message_id") @ExcludeMissing messageId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("outbound_number")
         @ExcludeMissing
         outboundNumber: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("received_at")
-        @ExcludeMissing
-        receivedAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("text") @ExcludeMissing text: JsonField<String> = JsonMissing.of(),
         @JsonProperty("updated_at") @ExcludeMissing updatedAt: JsonField<String> = JsonMissing.of(),
     ) : this(
+        inboundNumber,
+        receivedAt,
         accountId,
         channel,
-        inboundNumber,
         messageId,
         outboundNumber,
-        receivedAt,
         text,
         updatedAt,
         mutableMapOf(),
     )
+
+    /**
+     * The contact's number in E.164 format, meaning the number the message came from.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun inboundNumber(): String = inboundNumber.getRequired("inbound_number")
+
+    /**
+     * When the message was received, in UTC (yyyy-MM-ddTHH:mm:ssZ).
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun receivedAt(): String = receivedAt.getRequired("received_at")
 
     /**
      * The account the message belongs to.
@@ -76,14 +93,6 @@ private constructor(
     fun channel(): Optional<String> = channel.getOptional("channel")
 
     /**
-     * The contact's number in E.164 format, meaning the number the message came from.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun inboundNumber(): Optional<String> = inboundNumber.getOptional("inbound_number")
-
-    /**
      * The inbound message.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -98,14 +107,6 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun outboundNumber(): Optional<String> = outboundNumber.getOptional("outbound_number")
-
-    /**
-     * When the message was received, in UTC (yyyy-MM-ddTHH:mm:ssZ).
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun receivedAt(): Optional<String> = receivedAt.getOptional("received_at")
 
     /**
      * The message body. Sent as null when the inbound message carried no text, for example a
@@ -127,6 +128,22 @@ private constructor(
     fun updatedAt(): Optional<String> = updatedAt.getOptional("updated_at")
 
     /**
+     * Returns the raw JSON value of [inboundNumber].
+     *
+     * Unlike [inboundNumber], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("inbound_number")
+    @ExcludeMissing
+    fun _inboundNumber(): JsonField<String> = inboundNumber
+
+    /**
+     * Returns the raw JSON value of [receivedAt].
+     *
+     * Unlike [receivedAt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("received_at") @ExcludeMissing fun _receivedAt(): JsonField<String> = receivedAt
+
+    /**
      * Returns the raw JSON value of [accountId].
      *
      * Unlike [accountId], this method doesn't throw if the JSON field has an unexpected type.
@@ -139,15 +156,6 @@ private constructor(
      * Unlike [channel], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("channel") @ExcludeMissing fun _channel(): JsonField<String> = channel
-
-    /**
-     * Returns the raw JSON value of [inboundNumber].
-     *
-     * Unlike [inboundNumber], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("inbound_number")
-    @ExcludeMissing
-    fun _inboundNumber(): JsonField<String> = inboundNumber
 
     /**
      * Returns the raw JSON value of [messageId].
@@ -164,13 +172,6 @@ private constructor(
     @JsonProperty("outbound_number")
     @ExcludeMissing
     fun _outboundNumber(): JsonField<String> = outboundNumber
-
-    /**
-     * Returns the raw JSON value of [receivedAt].
-     *
-     * Unlike [receivedAt], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("received_at") @ExcludeMissing fun _receivedAt(): JsonField<String> = receivedAt
 
     /**
      * Returns the raw JSON value of [text].
@@ -202,6 +203,12 @@ private constructor(
 
         /**
          * Returns a mutable builder for constructing an instance of [InboundMessageEventPayload].
+         *
+         * The following fields are required:
+         * ```java
+         * .inboundNumber()
+         * .receivedAt()
+         * ```
          */
         @JvmStatic fun builder() = Builder()
     }
@@ -209,28 +216,54 @@ private constructor(
     /** A builder for [InboundMessageEventPayload]. */
     class Builder internal constructor() {
 
+        private var inboundNumber: JsonField<String>? = null
+        private var receivedAt: JsonField<String>? = null
         private var accountId: JsonField<String> = JsonMissing.of()
         private var channel: JsonField<String> = JsonMissing.of()
-        private var inboundNumber: JsonField<String> = JsonMissing.of()
         private var messageId: JsonField<String> = JsonMissing.of()
         private var outboundNumber: JsonField<String> = JsonMissing.of()
-        private var receivedAt: JsonField<String> = JsonMissing.of()
         private var text: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(inboundMessageEventPayload: InboundMessageEventPayload) = apply {
+            inboundNumber = inboundMessageEventPayload.inboundNumber
+            receivedAt = inboundMessageEventPayload.receivedAt
             accountId = inboundMessageEventPayload.accountId
             channel = inboundMessageEventPayload.channel
-            inboundNumber = inboundMessageEventPayload.inboundNumber
             messageId = inboundMessageEventPayload.messageId
             outboundNumber = inboundMessageEventPayload.outboundNumber
-            receivedAt = inboundMessageEventPayload.receivedAt
             text = inboundMessageEventPayload.text
             updatedAt = inboundMessageEventPayload.updatedAt
             additionalProperties = inboundMessageEventPayload.additionalProperties.toMutableMap()
         }
+
+        /** The contact's number in E.164 format, meaning the number the message came from. */
+        fun inboundNumber(inboundNumber: String) = inboundNumber(JsonField.of(inboundNumber))
+
+        /**
+         * Sets [Builder.inboundNumber] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.inboundNumber] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun inboundNumber(inboundNumber: JsonField<String>) = apply {
+            this.inboundNumber = inboundNumber
+        }
+
+        /** When the message was received, in UTC (yyyy-MM-ddTHH:mm:ssZ). */
+        fun receivedAt(receivedAt: String) = receivedAt(JsonField.of(receivedAt))
+
+        /**
+         * Sets [Builder.receivedAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.receivedAt] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun receivedAt(receivedAt: JsonField<String>) = apply { this.receivedAt = receivedAt }
 
         /** The account the message belongs to. */
         fun accountId(accountId: String) = accountId(JsonField.of(accountId))
@@ -254,20 +287,6 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun channel(channel: JsonField<String>) = apply { this.channel = channel }
-
-        /** The contact's number in E.164 format, meaning the number the message came from. */
-        fun inboundNumber(inboundNumber: String) = inboundNumber(JsonField.of(inboundNumber))
-
-        /**
-         * Sets [Builder.inboundNumber] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.inboundNumber] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun inboundNumber(inboundNumber: JsonField<String>) = apply {
-            this.inboundNumber = inboundNumber
-        }
 
         /** The inbound message. */
         fun messageId(messageId: String) = messageId(JsonField.of(messageId))
@@ -294,18 +313,6 @@ private constructor(
         fun outboundNumber(outboundNumber: JsonField<String>) = apply {
             this.outboundNumber = outboundNumber
         }
-
-        /** When the message was received, in UTC (yyyy-MM-ddTHH:mm:ssZ). */
-        fun receivedAt(receivedAt: String) = receivedAt(JsonField.of(receivedAt))
-
-        /**
-         * Sets [Builder.receivedAt] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.receivedAt] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun receivedAt(receivedAt: JsonField<String>) = apply { this.receivedAt = receivedAt }
 
         /**
          * The message body. Sent as null when the inbound message carried no text, for example a
@@ -363,15 +370,23 @@ private constructor(
          * Returns an immutable instance of [InboundMessageEventPayload].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .inboundNumber()
+         * .receivedAt()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): InboundMessageEventPayload =
             InboundMessageEventPayload(
+                checkRequired("inboundNumber", inboundNumber),
+                checkRequired("receivedAt", receivedAt),
                 accountId,
                 channel,
-                inboundNumber,
                 messageId,
                 outboundNumber,
-                receivedAt,
                 text,
                 updatedAt,
                 additionalProperties.toMutableMap(),
@@ -393,12 +408,12 @@ private constructor(
             return@apply
         }
 
+        inboundNumber()
+        receivedAt()
         accountId()
         channel()
-        inboundNumber()
         messageId()
         outboundNumber()
-        receivedAt()
         text()
         updatedAt()
         validated = true
@@ -419,12 +434,12 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (accountId.asKnown().isPresent) 1 else 0) +
+        (if (inboundNumber.asKnown().isPresent) 1 else 0) +
+            (if (receivedAt.asKnown().isPresent) 1 else 0) +
+            (if (accountId.asKnown().isPresent) 1 else 0) +
             (if (channel.asKnown().isPresent) 1 else 0) +
-            (if (inboundNumber.asKnown().isPresent) 1 else 0) +
             (if (messageId.asKnown().isPresent) 1 else 0) +
             (if (outboundNumber.asKnown().isPresent) 1 else 0) +
-            (if (receivedAt.asKnown().isPresent) 1 else 0) +
             (if (text.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
 
@@ -434,12 +449,12 @@ private constructor(
         }
 
         return other is InboundMessageEventPayload &&
+            inboundNumber == other.inboundNumber &&
+            receivedAt == other.receivedAt &&
             accountId == other.accountId &&
             channel == other.channel &&
-            inboundNumber == other.inboundNumber &&
             messageId == other.messageId &&
             outboundNumber == other.outboundNumber &&
-            receivedAt == other.receivedAt &&
             text == other.text &&
             updatedAt == other.updatedAt &&
             additionalProperties == other.additionalProperties
@@ -447,12 +462,12 @@ private constructor(
 
     private val hashCode: Int by lazy {
         Objects.hash(
+            inboundNumber,
+            receivedAt,
             accountId,
             channel,
-            inboundNumber,
             messageId,
             outboundNumber,
-            receivedAt,
             text,
             updatedAt,
             additionalProperties,
@@ -462,5 +477,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InboundMessageEventPayload{accountId=$accountId, channel=$channel, inboundNumber=$inboundNumber, messageId=$messageId, outboundNumber=$outboundNumber, receivedAt=$receivedAt, text=$text, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "InboundMessageEventPayload{inboundNumber=$inboundNumber, receivedAt=$receivedAt, accountId=$accountId, channel=$channel, messageId=$messageId, outboundNumber=$outboundNumber, text=$text, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }
