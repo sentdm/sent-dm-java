@@ -277,6 +277,8 @@ private constructor(
         private val name: JsonField<String>,
         private val organizationId: JsonField<String>,
         private val profiles: JsonField<List<Profile>>,
+        private val sendingPhoneNumber: JsonField<String>,
+        private val sendingPhoneNumberProfileId: JsonField<String>,
         private val settings: JsonField<Settings>,
         private val shortName: JsonField<String>,
         private val status: JsonField<String>,
@@ -305,6 +307,12 @@ private constructor(
             @JsonProperty("profiles")
             @ExcludeMissing
             profiles: JsonField<List<Profile>> = JsonMissing.of(),
+            @JsonProperty("sending_phone_number")
+            @ExcludeMissing
+            sendingPhoneNumber: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("sending_phone_number_profile_id")
+            @ExcludeMissing
+            sendingPhoneNumberProfileId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("settings")
             @ExcludeMissing
             settings: JsonField<Settings> = JsonMissing.of(),
@@ -323,6 +331,8 @@ private constructor(
             name,
             organizationId,
             profiles,
+            sendingPhoneNumber,
+            sendingPhoneNumberProfileId,
             settings,
             shortName,
             status,
@@ -402,6 +412,36 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun profiles(): Optional<List<Profile>> = profiles.getOptional("profiles")
+
+        /**
+         * The SMS sender this account sends from in the United States, in E.164 form. Null when the
+         * account has no US SMS sender.
+         *
+         * The same value as channels.sms.phone_number, published under both names on purpose:
+         * sending_phone_number is what this value is already called on GET /v3/profiles, so the
+         * same key answers the same question whichever of the two endpoints you ask. Neither name
+         * is preferred over the other and neither is deprecated.
+         *
+         * The same value, not the same presence: this key is always written, including as null,
+         * whereas channels.sms.phone_number is left out entirely when there is no sender.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun sendingPhoneNumber(): Optional<String> =
+            sendingPhoneNumber.getOptional("sending_phone_number")
+
+        /**
+         * The account that holds sending_phone_number in number inventory: normally this account
+         * itself, and a different account when the number is held elsewhere. Null when there is no
+         * US sender, or when the sender is not a number drawn from inventory — an alphanumeric
+         * sender ID or a short code.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun sendingPhoneNumberProfileId(): Optional<String> =
+            sendingPhoneNumberProfileId.getOptional("sending_phone_number_profile_id")
 
         /**
          * Profile configuration settings
@@ -509,6 +549,26 @@ private constructor(
         fun _profiles(): JsonField<List<Profile>> = profiles
 
         /**
+         * Returns the raw JSON value of [sendingPhoneNumber].
+         *
+         * Unlike [sendingPhoneNumber], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("sending_phone_number")
+        @ExcludeMissing
+        fun _sendingPhoneNumber(): JsonField<String> = sendingPhoneNumber
+
+        /**
+         * Returns the raw JSON value of [sendingPhoneNumberProfileId].
+         *
+         * Unlike [sendingPhoneNumberProfileId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("sending_phone_number_profile_id")
+        @ExcludeMissing
+        fun _sendingPhoneNumberProfileId(): JsonField<String> = sendingPhoneNumberProfileId
+
+        /**
          * Returns the raw JSON value of [settings].
          *
          * Unlike [settings], this method doesn't throw if the JSON field has an unexpected type.
@@ -566,6 +626,8 @@ private constructor(
             private var name: JsonField<String> = JsonMissing.of()
             private var organizationId: JsonField<String> = JsonMissing.of()
             private var profiles: JsonField<MutableList<Profile>>? = null
+            private var sendingPhoneNumber: JsonField<String> = JsonMissing.of()
+            private var sendingPhoneNumberProfileId: JsonField<String> = JsonMissing.of()
             private var settings: JsonField<Settings> = JsonMissing.of()
             private var shortName: JsonField<String> = JsonMissing.of()
             private var status: JsonField<String> = JsonMissing.of()
@@ -583,6 +645,8 @@ private constructor(
                 name = data.name
                 organizationId = data.organizationId
                 profiles = data.profiles.map { it.toMutableList() }
+                sendingPhoneNumber = data.sendingPhoneNumber
+                sendingPhoneNumberProfileId = data.sendingPhoneNumberProfileId
                 settings = data.settings
                 shortName = data.shortName
                 status = data.status
@@ -737,6 +801,67 @@ private constructor(
                     }
             }
 
+            /**
+             * The SMS sender this account sends from in the United States, in E.164 form. Null when
+             * the account has no US SMS sender.
+             *
+             * The same value as channels.sms.phone_number, published under both names on purpose:
+             * sending_phone_number is what this value is already called on GET /v3/profiles, so the
+             * same key answers the same question whichever of the two endpoints you ask. Neither
+             * name is preferred over the other and neither is deprecated.
+             *
+             * The same value, not the same presence: this key is always written, including as null,
+             * whereas channels.sms.phone_number is left out entirely when there is no sender.
+             */
+            fun sendingPhoneNumber(sendingPhoneNumber: String?) =
+                sendingPhoneNumber(JsonField.ofNullable(sendingPhoneNumber))
+
+            /**
+             * Alias for calling [Builder.sendingPhoneNumber] with
+             * `sendingPhoneNumber.orElse(null)`.
+             */
+            fun sendingPhoneNumber(sendingPhoneNumber: Optional<String>) =
+                sendingPhoneNumber(sendingPhoneNumber.getOrNull())
+
+            /**
+             * Sets [Builder.sendingPhoneNumber] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sendingPhoneNumber] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sendingPhoneNumber(sendingPhoneNumber: JsonField<String>) = apply {
+                this.sendingPhoneNumber = sendingPhoneNumber
+            }
+
+            /**
+             * The account that holds sending_phone_number in number inventory: normally this
+             * account itself, and a different account when the number is held elsewhere. Null when
+             * there is no US sender, or when the sender is not a number drawn from inventory — an
+             * alphanumeric sender ID or a short code.
+             */
+            fun sendingPhoneNumberProfileId(sendingPhoneNumberProfileId: String?) =
+                sendingPhoneNumberProfileId(JsonField.ofNullable(sendingPhoneNumberProfileId))
+
+            /**
+             * Alias for calling [Builder.sendingPhoneNumberProfileId] with
+             * `sendingPhoneNumberProfileId.orElse(null)`.
+             */
+            fun sendingPhoneNumberProfileId(sendingPhoneNumberProfileId: Optional<String>) =
+                sendingPhoneNumberProfileId(sendingPhoneNumberProfileId.getOrNull())
+
+            /**
+             * Sets [Builder.sendingPhoneNumberProfileId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sendingPhoneNumberProfileId] with a well-typed
+             * [String] value instead. This method is primarily for setting the field to an
+             * undocumented or not yet supported value.
+             */
+            fun sendingPhoneNumberProfileId(sendingPhoneNumberProfileId: JsonField<String>) =
+                apply {
+                    this.sendingPhoneNumberProfileId = sendingPhoneNumberProfileId
+                }
+
             /** Profile configuration settings */
             fun settings(settings: Settings?) = settings(JsonField.ofNullable(settings))
 
@@ -834,6 +959,8 @@ private constructor(
                     name,
                     organizationId,
                     (profiles ?: JsonMissing.of()).map { it.toImmutable() },
+                    sendingPhoneNumber,
+                    sendingPhoneNumberProfileId,
                     settings,
                     shortName,
                     status,
@@ -867,6 +994,8 @@ private constructor(
             name()
             organizationId()
             profiles().ifPresent { it.forEach { it.validate() } }
+            sendingPhoneNumber()
+            sendingPhoneNumberProfileId()
             settings().ifPresent { it.validate() }
             shortName()
             status()
@@ -899,6 +1028,8 @@ private constructor(
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (if (organizationId.asKnown().isPresent) 1 else 0) +
                 (profiles.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                (if (sendingPhoneNumber.asKnown().isPresent) 1 else 0) +
+                (if (sendingPhoneNumberProfileId.asKnown().isPresent) 1 else 0) +
                 (settings.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (shortName.asKnown().isPresent) 1 else 0) +
                 (if (status.asKnown().isPresent) 1 else 0) +
@@ -3556,6 +3687,8 @@ private constructor(
                 name == other.name &&
                 organizationId == other.organizationId &&
                 profiles == other.profiles &&
+                sendingPhoneNumber == other.sendingPhoneNumber &&
+                sendingPhoneNumberProfileId == other.sendingPhoneNumberProfileId &&
                 settings == other.settings &&
                 shortName == other.shortName &&
                 status == other.status &&
@@ -3574,6 +3707,8 @@ private constructor(
                 name,
                 organizationId,
                 profiles,
+                sendingPhoneNumber,
+                sendingPhoneNumberProfileId,
                 settings,
                 shortName,
                 status,
@@ -3585,7 +3720,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{id=$id, channels=$channels, createdAt=$createdAt, description=$description, email=$email, icon=$icon, name=$name, organizationId=$organizationId, profiles=$profiles, settings=$settings, shortName=$shortName, status=$status, type=$type, additionalProperties=$additionalProperties}"
+            "Data{id=$id, channels=$channels, createdAt=$createdAt, description=$description, email=$email, icon=$icon, name=$name, organizationId=$organizationId, profiles=$profiles, sendingPhoneNumber=$sendingPhoneNumber, sendingPhoneNumberProfileId=$sendingPhoneNumberProfileId, settings=$settings, shortName=$shortName, status=$status, type=$type, additionalProperties=$additionalProperties}"
     }
 
     /** Error information */
