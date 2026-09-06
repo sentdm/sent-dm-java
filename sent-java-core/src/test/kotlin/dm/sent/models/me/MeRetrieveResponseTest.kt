@@ -70,6 +70,8 @@ internal class MeRetrieveResponseTest {
                                 .status("status")
                                 .build()
                         )
+                        .sendingPhoneNumber("sending_phone_number")
+                        .sendingPhoneNumberProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .settings(
                             MeRetrieveResponse.Data.Settings.builder()
                                 .allowContactSharing(true)
@@ -164,6 +166,8 @@ internal class MeRetrieveResponseTest {
                             .status("status")
                             .build()
                     )
+                    .sendingPhoneNumber("sending_phone_number")
+                    .sendingPhoneNumberProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .settings(
                         MeRetrieveResponse.Data.Settings.builder()
                             .allowContactSharing(true)
@@ -264,6 +268,8 @@ internal class MeRetrieveResponseTest {
                                 .status("status")
                                 .build()
                         )
+                        .sendingPhoneNumber("sending_phone_number")
+                        .sendingPhoneNumberProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .settings(
                             MeRetrieveResponse.Data.Settings.builder()
                                 .allowContactSharing(true)
