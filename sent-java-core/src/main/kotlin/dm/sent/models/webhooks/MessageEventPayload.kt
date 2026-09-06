@@ -10,6 +10,7 @@ import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
+import dm.sent.core.checkRequired
 import dm.sent.errors.SentInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -23,11 +24,11 @@ import kotlin.jvm.optionals.getOrNull
 class MessageEventPayload
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val messageStatus: JsonField<String>,
     private val accountId: JsonField<String>,
     private val agentId: JsonField<String>,
     private val channel: JsonField<String>,
     private val messageId: JsonField<String>,
-    private val messageStatus: JsonField<String>,
     private val outboundNumber: JsonField<String>,
     private val templateId: JsonField<String>,
     private val templateName: JsonField<String>,
@@ -37,13 +38,13 @@ private constructor(
 
     @JsonCreator
     private constructor(
+        @JsonProperty("message_status")
+        @ExcludeMissing
+        messageStatus: JsonField<String> = JsonMissing.of(),
         @JsonProperty("account_id") @ExcludeMissing accountId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("channel") @ExcludeMissing channel: JsonField<String> = JsonMissing.of(),
         @JsonProperty("message_id") @ExcludeMissing messageId: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("message_status")
-        @ExcludeMissing
-        messageStatus: JsonField<String> = JsonMissing.of(),
         @JsonProperty("outbound_number")
         @ExcludeMissing
         outboundNumber: JsonField<String> = JsonMissing.of(),
@@ -55,17 +56,26 @@ private constructor(
         templateName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("updated_at") @ExcludeMissing updatedAt: JsonField<String> = JsonMissing.of(),
     ) : this(
+        messageStatus,
         accountId,
         agentId,
         channel,
         messageId,
-        messageStatus,
         outboundNumber,
         templateId,
         templateName,
         updatedAt,
         mutableMapOf(),
     )
+
+    /**
+     * The status the message just reached, for example SENT, DELIVERED, or FAILED. Sent means
+     * dispatched and delivered means confirmed, so treat them as distinct outcomes.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun messageStatus(): String = messageStatus.getRequired("message_status")
 
     /**
      * The account the message belongs to.
@@ -102,15 +112,6 @@ private constructor(
     fun messageId(): Optional<String> = messageId.getOptional("message_id")
 
     /**
-     * The status the message just reached, for example SENT, DELIVERED, or FAILED. Sent means
-     * dispatched and delivered means confirmed, so treat them as distinct outcomes.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun messageStatus(): Optional<String> = messageStatus.getOptional("message_status")
-
-    /**
      * The recipient's number in E.164 format.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -144,6 +145,15 @@ private constructor(
     fun updatedAt(): Optional<String> = updatedAt.getOptional("updated_at")
 
     /**
+     * Returns the raw JSON value of [messageStatus].
+     *
+     * Unlike [messageStatus], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("message_status")
+    @ExcludeMissing
+    fun _messageStatus(): JsonField<String> = messageStatus
+
+    /**
      * Returns the raw JSON value of [accountId].
      *
      * Unlike [accountId], this method doesn't throw if the JSON field has an unexpected type.
@@ -170,15 +180,6 @@ private constructor(
      * Unlike [messageId], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("message_id") @ExcludeMissing fun _messageId(): JsonField<String> = messageId
-
-    /**
-     * Returns the raw JSON value of [messageStatus].
-     *
-     * Unlike [messageStatus], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("message_status")
-    @ExcludeMissing
-    fun _messageStatus(): JsonField<String> = messageStatus
 
     /**
      * Returns the raw JSON value of [outboundNumber].
@@ -226,18 +227,25 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [MessageEventPayload]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [MessageEventPayload].
+         *
+         * The following fields are required:
+         * ```java
+         * .messageStatus()
+         * ```
+         */
         @JvmStatic fun builder() = Builder()
     }
 
     /** A builder for [MessageEventPayload]. */
     class Builder internal constructor() {
 
+        private var messageStatus: JsonField<String>? = null
         private var accountId: JsonField<String> = JsonMissing.of()
         private var agentId: JsonField<String> = JsonMissing.of()
         private var channel: JsonField<String> = JsonMissing.of()
         private var messageId: JsonField<String> = JsonMissing.of()
-        private var messageStatus: JsonField<String> = JsonMissing.of()
         private var outboundNumber: JsonField<String> = JsonMissing.of()
         private var templateId: JsonField<String> = JsonMissing.of()
         private var templateName: JsonField<String> = JsonMissing.of()
@@ -246,16 +254,33 @@ private constructor(
 
         @JvmSynthetic
         internal fun from(messageEventPayload: MessageEventPayload) = apply {
+            messageStatus = messageEventPayload.messageStatus
             accountId = messageEventPayload.accountId
             agentId = messageEventPayload.agentId
             channel = messageEventPayload.channel
             messageId = messageEventPayload.messageId
-            messageStatus = messageEventPayload.messageStatus
             outboundNumber = messageEventPayload.outboundNumber
             templateId = messageEventPayload.templateId
             templateName = messageEventPayload.templateName
             updatedAt = messageEventPayload.updatedAt
             additionalProperties = messageEventPayload.additionalProperties.toMutableMap()
+        }
+
+        /**
+         * The status the message just reached, for example SENT, DELIVERED, or FAILED. Sent means
+         * dispatched and delivered means confirmed, so treat them as distinct outcomes.
+         */
+        fun messageStatus(messageStatus: String) = messageStatus(JsonField.of(messageStatus))
+
+        /**
+         * Sets [Builder.messageStatus] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.messageStatus] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun messageStatus(messageStatus: JsonField<String>) = apply {
+            this.messageStatus = messageStatus
         }
 
         /** The account the message belongs to. */
@@ -312,23 +337,6 @@ private constructor(
          * value.
          */
         fun messageId(messageId: JsonField<String>) = apply { this.messageId = messageId }
-
-        /**
-         * The status the message just reached, for example SENT, DELIVERED, or FAILED. Sent means
-         * dispatched and delivered means confirmed, so treat them as distinct outcomes.
-         */
-        fun messageStatus(messageStatus: String) = messageStatus(JsonField.of(messageStatus))
-
-        /**
-         * Sets [Builder.messageStatus] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.messageStatus] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun messageStatus(messageStatus: JsonField<String>) = apply {
-            this.messageStatus = messageStatus
-        }
 
         /** The recipient's number in E.164 format. */
         fun outboundNumber(outboundNumber: String) = outboundNumber(JsonField.of(outboundNumber))
@@ -414,14 +422,21 @@ private constructor(
          * Returns an immutable instance of [MessageEventPayload].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .messageStatus()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): MessageEventPayload =
             MessageEventPayload(
+                checkRequired("messageStatus", messageStatus),
                 accountId,
                 agentId,
                 channel,
                 messageId,
-                messageStatus,
                 outboundNumber,
                 templateId,
                 templateName,
@@ -445,11 +460,11 @@ private constructor(
             return@apply
         }
 
+        messageStatus()
         accountId()
         agentId()
         channel()
         messageId()
-        messageStatus()
         outboundNumber()
         templateId()
         templateName()
@@ -472,11 +487,11 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (accountId.asKnown().isPresent) 1 else 0) +
+        (if (messageStatus.asKnown().isPresent) 1 else 0) +
+            (if (accountId.asKnown().isPresent) 1 else 0) +
             (if (agentId.asKnown().isPresent) 1 else 0) +
             (if (channel.asKnown().isPresent) 1 else 0) +
             (if (messageId.asKnown().isPresent) 1 else 0) +
-            (if (messageStatus.asKnown().isPresent) 1 else 0) +
             (if (outboundNumber.asKnown().isPresent) 1 else 0) +
             (if (templateId.asKnown().isPresent) 1 else 0) +
             (if (templateName.asKnown().isPresent) 1 else 0) +
@@ -488,11 +503,11 @@ private constructor(
         }
 
         return other is MessageEventPayload &&
+            messageStatus == other.messageStatus &&
             accountId == other.accountId &&
             agentId == other.agentId &&
             channel == other.channel &&
             messageId == other.messageId &&
-            messageStatus == other.messageStatus &&
             outboundNumber == other.outboundNumber &&
             templateId == other.templateId &&
             templateName == other.templateName &&
@@ -502,11 +517,11 @@ private constructor(
 
     private val hashCode: Int by lazy {
         Objects.hash(
+            messageStatus,
             accountId,
             agentId,
             channel,
             messageId,
-            messageStatus,
             outboundNumber,
             templateId,
             templateName,
@@ -518,5 +533,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "MessageEventPayload{accountId=$accountId, agentId=$agentId, channel=$channel, messageId=$messageId, messageStatus=$messageStatus, outboundNumber=$outboundNumber, templateId=$templateId, templateName=$templateName, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "MessageEventPayload{messageStatus=$messageStatus, accountId=$accountId, agentId=$agentId, channel=$channel, messageId=$messageId, outboundNumber=$outboundNumber, templateId=$templateId, templateName=$templateName, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }
