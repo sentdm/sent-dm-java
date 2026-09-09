@@ -4,6 +4,7 @@ package dm.sent.services.async
 
 import dm.sent.client.okhttp.SentOkHttpClientAsync
 import dm.sent.core.JsonValue
+import dm.sent.models.webhooks.MutationRequest
 import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
@@ -25,11 +26,12 @@ internal class WebhookServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val webhookFuture =
+        val apiResponseWebhookFuture =
             webhookServiceAsync.create(
                 WebhookCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .displayName("Order Notifications")
                     .endpointUrl("https://example.com/webhooks/orders")
                     .eventFilters(
@@ -43,13 +45,12 @@ internal class WebhookServiceAsyncTest {
                     .addEventType("message")
                     .addEventType("templates")
                     .retryCount(3)
-                    .sandbox(false)
                     .timeoutSeconds(30)
                     .build()
             )
 
-        val webhook = webhookFuture.get()
-        webhook.validate()
+        val apiResponseWebhook = apiResponseWebhookFuture.get()
+        apiResponseWebhook.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -58,7 +59,7 @@ internal class WebhookServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val webhookFuture =
+        val apiResponseWebhookFuture =
             webhookServiceAsync.retrieve(
                 WebhookRetrieveParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
@@ -66,8 +67,8 @@ internal class WebhookServiceAsyncTest {
                     .build()
             )
 
-        val webhook = webhookFuture.get()
-        webhook.validate()
+        val apiResponseWebhook = apiResponseWebhookFuture.get()
+        apiResponseWebhook.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -76,12 +77,13 @@ internal class WebhookServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val webhookFuture =
+        val apiResponseWebhookFuture =
             webhookServiceAsync.update(
                 WebhookUpdateParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .displayName("Updated Order Notifications")
                     .endpointUrl("https://example.com/webhooks/orders-v2")
                     .eventFilters(
@@ -95,13 +97,12 @@ internal class WebhookServiceAsyncTest {
                     .addEventType("message")
                     .addEventType("templates")
                     .retryCount(5)
-                    .sandbox(false)
                     .timeoutSeconds(60)
                     .build()
             )
 
-        val webhook = webhookFuture.get()
-        webhook.validate()
+        val apiResponseWebhook = apiResponseWebhookFuture.get()
+        apiResponseWebhook.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -192,7 +193,7 @@ internal class WebhookServiceAsyncTest {
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .sandbox(false)
+                    .mutationRequest(MutationRequest.builder().sandbox(false).build())
                     .build()
             )
 
@@ -212,8 +213,8 @@ internal class WebhookServiceAsyncTest {
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .eventType("message.sent")
                     .sandbox(false)
+                    .eventType("message.sent")
                     .build()
             )
 
@@ -227,18 +228,18 @@ internal class WebhookServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val responseFuture =
+        val apiResponseWebhookFuture =
             webhookServiceAsync.toggleStatus(
                 WebhookToggleStatusParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .isActive(false)
                     .sandbox(false)
+                    .isActive(false)
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val apiResponseWebhook = apiResponseWebhookFuture.get()
+        apiResponseWebhook.validate()
     }
 }

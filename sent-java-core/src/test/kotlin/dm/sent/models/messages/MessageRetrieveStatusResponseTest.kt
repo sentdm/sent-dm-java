@@ -5,6 +5,8 @@ package dm.sent.models.messages
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
+import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -57,10 +59,10 @@ internal class MessageRetrieveStatusResponseTest {
                         .build()
                 )
                 .error(
-                    MessageRetrieveStatusResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            MessageRetrieveStatusResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -69,7 +71,7 @@ internal class MessageRetrieveStatusResponseTest {
                         .build()
                 )
                 .meta(
-                    MessageRetrieveStatusResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -122,10 +124,10 @@ internal class MessageRetrieveStatusResponseTest {
             )
         assertThat(messageRetrieveStatusResponse.error())
             .contains(
-                MessageRetrieveStatusResponse.Error.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        MessageRetrieveStatusResponse.Error.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -135,7 +137,7 @@ internal class MessageRetrieveStatusResponseTest {
             )
         assertThat(messageRetrieveStatusResponse.meta())
             .contains(
-                MessageRetrieveStatusResponse.Meta.builder()
+                ApiMeta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -191,10 +193,10 @@ internal class MessageRetrieveStatusResponseTest {
                         .build()
                 )
                 .error(
-                    MessageRetrieveStatusResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            MessageRetrieveStatusResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -203,7 +205,7 @@ internal class MessageRetrieveStatusResponseTest {
                         .build()
                 )
                 .meta(
-                    MessageRetrieveStatusResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

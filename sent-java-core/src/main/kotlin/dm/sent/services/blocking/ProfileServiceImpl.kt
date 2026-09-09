@@ -17,17 +17,15 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
+import dm.sent.models.profiles.ApiResponseOfProfileDetail
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
-import dm.sent.models.profiles.ProfileCreateResponse
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
-import dm.sent.models.profiles.ProfileRetrieveResponse
 import dm.sent.models.profiles.ProfileUpdateParams
-import dm.sent.models.profiles.ProfileUpdateResponse
 import dm.sent.services.blocking.profiles.CampaignService
 import dm.sent.services.blocking.profiles.CampaignServiceImpl
 import java.util.function.Consumer
@@ -71,7 +69,7 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
     override fun create(
         params: ProfileCreateParams,
         requestOptions: RequestOptions,
-    ): ProfileCreateResponse =
+    ): ApiResponseOfProfileDetail =
         // post /v3/profiles
         withRawResponse().create(params, requestOptions).parse()
 
@@ -79,7 +77,7 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
     override fun retrieve(
         params: ProfileRetrieveParams,
         requestOptions: RequestOptions,
-    ): ProfileRetrieveResponse =
+    ): ApiResponseOfProfileDetail =
         // get /v3/profiles/{profileId}
         withRawResponse().retrieve(params, requestOptions).parse()
 
@@ -87,7 +85,7 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
     override fun update(
         params: ProfileUpdateParams,
         requestOptions: RequestOptions,
-    ): ProfileUpdateResponse =
+    ): ApiResponseOfProfileDetail =
         // patch /v3/profiles/{profileId}
         withRawResponse().update(params, requestOptions).parse()
 
@@ -141,14 +139,14 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
          */
         override fun campaigns(): CampaignService.WithRawResponse = campaigns
 
-        private val createHandler: Handler<ProfileCreateResponse> =
-            jsonHandler<ProfileCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<ApiResponseOfProfileDetail> =
+            jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
 
         @Deprecated("deprecated")
         override fun create(
             params: ProfileCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ProfileCreateResponse> {
+        ): HttpResponseFor<ApiResponseOfProfileDetail> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -170,14 +168,14 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val retrieveHandler: Handler<ProfileRetrieveResponse> =
-            jsonHandler<ProfileRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<ApiResponseOfProfileDetail> =
+            jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
 
         @Deprecated("deprecated")
         override fun retrieve(
             params: ProfileRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ProfileRetrieveResponse> {
+        ): HttpResponseFor<ApiResponseOfProfileDetail> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -201,14 +199,14 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val updateHandler: Handler<ProfileUpdateResponse> =
-            jsonHandler<ProfileUpdateResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<ApiResponseOfProfileDetail> =
+            jsonHandler<ApiResponseOfProfileDetail>(clientOptions.jsonMapper)
 
         @Deprecated("deprecated")
         override fun update(
             params: ProfileUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ProfileUpdateResponse> {
+        ): HttpResponseFor<ApiResponseOfProfileDetail> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
