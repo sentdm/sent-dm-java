@@ -15,10 +15,9 @@ import dm.sent.core.http.HttpResponse.Handler
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
+import dm.sent.models.conversations.ApiResponseOfConversationMessagesList
 import dm.sent.models.conversations.ConversationListMessagesParams
-import dm.sent.models.conversations.ConversationListMessagesResponse
 import dm.sent.models.conversations.ConversationListParams
-import dm.sent.models.conversations.ConversationListResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -45,14 +44,14 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: ConversationListParams,
         requestOptions: RequestOptions,
-    ): ConversationListResponse =
+    ): ApiResponseOfConversationMessagesList =
         // get /v3/conversations
         withRawResponse().list(params, requestOptions).parse()
 
     override fun listMessages(
         params: ConversationListMessagesParams,
         requestOptions: RequestOptions,
-    ): ConversationListMessagesResponse =
+    ): ApiResponseOfConversationMessagesList =
         // get /v3/conversations/{id}
         withRawResponse().listMessages(params, requestOptions).parse()
 
@@ -69,13 +68,13 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val listHandler: Handler<ConversationListResponse> =
-            jsonHandler<ConversationListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ApiResponseOfConversationMessagesList> =
+            jsonHandler<ApiResponseOfConversationMessagesList>(clientOptions.jsonMapper)
 
         override fun list(
             params: ConversationListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ConversationListResponse> {
+        ): HttpResponseFor<ApiResponseOfConversationMessagesList> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -96,13 +95,13 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
             }
         }
 
-        private val listMessagesHandler: Handler<ConversationListMessagesResponse> =
-            jsonHandler<ConversationListMessagesResponse>(clientOptions.jsonMapper)
+        private val listMessagesHandler: Handler<ApiResponseOfConversationMessagesList> =
+            jsonHandler<ApiResponseOfConversationMessagesList>(clientOptions.jsonMapper)
 
         override fun listMessages(
             params: ConversationListMessagesParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ConversationListMessagesResponse> {
+        ): HttpResponseFor<ApiResponseOfConversationMessagesList> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

@@ -14,13 +14,14 @@ internal class CampaignCreateParamsTest {
             .profileId("770e8400-e29b-41d4-a716-446655440002")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .campaign(
-                CampaignCreateParams.Campaign.builder()
+                CampaignData.builder()
                     .description("Appointment reminders and account notifications")
                     .name("Customer Notifications")
                     .type("App")
                     .addUseCase(
-                        CampaignCreateParams.Campaign.UseCase.builder()
+                        CampaignUseCaseData.builder()
                             .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                             .addSampleMessage(
                                 "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -46,7 +47,6 @@ internal class CampaignCreateParamsTest {
                     .volume(null)
                     .build()
             )
-            .sandbox(false)
             .build()
     }
 
@@ -56,12 +56,12 @@ internal class CampaignCreateParamsTest {
             CampaignCreateParams.builder()
                 .profileId("770e8400-e29b-41d4-a716-446655440002")
                 .campaign(
-                    CampaignCreateParams.Campaign.builder()
+                    CampaignData.builder()
                         .description("Appointment reminders and account notifications")
                         .name("Customer Notifications")
                         .type("App")
                         .addUseCase(
-                            CampaignCreateParams.Campaign.UseCase.builder()
+                            CampaignUseCaseData.builder()
                                 .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                 .addSampleMessage(
                                     "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -87,13 +87,14 @@ internal class CampaignCreateParamsTest {
                 .profileId("770e8400-e29b-41d4-a716-446655440002")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .campaign(
-                    CampaignCreateParams.Campaign.builder()
+                    CampaignData.builder()
                         .description("Appointment reminders and account notifications")
                         .name("Customer Notifications")
                         .type("App")
                         .addUseCase(
-                            CampaignCreateParams.Campaign.UseCase.builder()
+                            CampaignUseCaseData.builder()
                                 .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                 .addSampleMessage(
                                     "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -119,7 +120,6 @@ internal class CampaignCreateParamsTest {
                         .volume(null)
                         .build()
                 )
-                .sandbox(false)
                 .build()
 
         val headers = params._headers()
@@ -139,12 +139,12 @@ internal class CampaignCreateParamsTest {
             CampaignCreateParams.builder()
                 .profileId("770e8400-e29b-41d4-a716-446655440002")
                 .campaign(
-                    CampaignCreateParams.Campaign.builder()
+                    CampaignData.builder()
                         .description("Appointment reminders and account notifications")
                         .name("Customer Notifications")
                         .type("App")
                         .addUseCase(
-                            CampaignCreateParams.Campaign.UseCase.builder()
+                            CampaignUseCaseData.builder()
                                 .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                 .addSampleMessage(
                                     "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -170,13 +170,14 @@ internal class CampaignCreateParamsTest {
                 .profileId("770e8400-e29b-41d4-a716-446655440002")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .campaign(
-                    CampaignCreateParams.Campaign.builder()
+                    CampaignData.builder()
                         .description("Appointment reminders and account notifications")
                         .name("Customer Notifications")
                         .type("App")
                         .addUseCase(
-                            CampaignCreateParams.Campaign.UseCase.builder()
+                            CampaignUseCaseData.builder()
                                 .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                 .addSampleMessage(
                                     "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -202,19 +203,19 @@ internal class CampaignCreateParamsTest {
                         .volume(null)
                         .build()
                 )
-                .sandbox(false)
                 .build()
 
         val body = params._body()
 
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.campaign())
             .isEqualTo(
-                CampaignCreateParams.Campaign.builder()
+                CampaignData.builder()
                     .description("Appointment reminders and account notifications")
                     .name("Customer Notifications")
                     .type("App")
                     .addUseCase(
-                        CampaignCreateParams.Campaign.UseCase.builder()
+                        CampaignUseCaseData.builder()
                             .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                             .addSampleMessage(
                                 "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -240,7 +241,6 @@ internal class CampaignCreateParamsTest {
                     .volume(null)
                     .build()
             )
-        assertThat(body.sandbox()).contains(false)
     }
 
     @Test
@@ -249,12 +249,12 @@ internal class CampaignCreateParamsTest {
             CampaignCreateParams.builder()
                 .profileId("770e8400-e29b-41d4-a716-446655440002")
                 .campaign(
-                    CampaignCreateParams.Campaign.builder()
+                    CampaignData.builder()
                         .description("Appointment reminders and account notifications")
                         .name("Customer Notifications")
                         .type("App")
                         .addUseCase(
-                            CampaignCreateParams.Campaign.UseCase.builder()
+                            CampaignUseCaseData.builder()
                                 .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                 .addSampleMessage(
                                     "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -272,12 +272,12 @@ internal class CampaignCreateParamsTest {
 
         assertThat(body.campaign())
             .isEqualTo(
-                CampaignCreateParams.Campaign.builder()
+                CampaignData.builder()
                     .description("Appointment reminders and account notifications")
                     .name("Customer Notifications")
                     .type("App")
                     .addUseCase(
-                        CampaignCreateParams.Campaign.UseCase.builder()
+                        CampaignUseCaseData.builder()
                             .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                             .addSampleMessage(
                                 "Hi {name}, your appointment is confirmed for {date} at {time}."

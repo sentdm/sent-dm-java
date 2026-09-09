@@ -5,6 +5,9 @@ package dm.sent.models.messages
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
+import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
+import dm.sent.models.webhooks.PaginationMeta
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -29,10 +32,9 @@ internal class MessageRetrieveActivitiesResponseTest {
                         )
                         .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .pagination(
-                            MessageRetrieveActivitiesResponse.Data.Pagination.builder()
+                            PaginationMeta.builder()
                                 .cursors(
-                                    MessageRetrieveActivitiesResponse.Data.Pagination.Cursors
-                                        .builder()
+                                    PaginationMeta.Cursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -47,10 +49,10 @@ internal class MessageRetrieveActivitiesResponseTest {
                         .build()
                 )
                 .error(
-                    MessageRetrieveActivitiesResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            MessageRetrieveActivitiesResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -59,7 +61,7 @@ internal class MessageRetrieveActivitiesResponseTest {
                         .build()
                 )
                 .meta(
-                    MessageRetrieveActivitiesResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")
@@ -83,9 +85,9 @@ internal class MessageRetrieveActivitiesResponseTest {
                     )
                     .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .pagination(
-                        MessageRetrieveActivitiesResponse.Data.Pagination.builder()
+                        PaginationMeta.builder()
                             .cursors(
-                                MessageRetrieveActivitiesResponse.Data.Pagination.Cursors.builder()
+                                PaginationMeta.Cursors.builder()
                                     .after("after")
                                     .before("before")
                                     .build()
@@ -101,10 +103,10 @@ internal class MessageRetrieveActivitiesResponseTest {
             )
         assertThat(messageRetrieveActivitiesResponse.error())
             .contains(
-                MessageRetrieveActivitiesResponse.Error.builder()
+                ErrorDetail.builder()
                     .code("code")
                     .details(
-                        MessageRetrieveActivitiesResponse.Error.Details.builder()
+                        ErrorDetail.Details.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -114,7 +116,7 @@ internal class MessageRetrieveActivitiesResponseTest {
             )
         assertThat(messageRetrieveActivitiesResponse.meta())
             .contains(
-                MessageRetrieveActivitiesResponse.Meta.builder()
+                ApiMeta.builder()
                     .requestId("request_id")
                     .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .version("version")
@@ -142,10 +144,9 @@ internal class MessageRetrieveActivitiesResponseTest {
                         )
                         .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .pagination(
-                            MessageRetrieveActivitiesResponse.Data.Pagination.builder()
+                            PaginationMeta.builder()
                                 .cursors(
-                                    MessageRetrieveActivitiesResponse.Data.Pagination.Cursors
-                                        .builder()
+                                    PaginationMeta.Cursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -160,10 +161,10 @@ internal class MessageRetrieveActivitiesResponseTest {
                         .build()
                 )
                 .error(
-                    MessageRetrieveActivitiesResponse.Error.builder()
+                    ErrorDetail.builder()
                         .code("code")
                         .details(
-                            MessageRetrieveActivitiesResponse.Error.Details.builder()
+                            ErrorDetail.Details.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -172,7 +173,7 @@ internal class MessageRetrieveActivitiesResponseTest {
                         .build()
                 )
                 .meta(
-                    MessageRetrieveActivitiesResponse.Meta.builder()
+                    ApiMeta.builder()
                         .requestId("request_id")
                         .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .version("version")

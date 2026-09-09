@@ -14,9 +14,9 @@ internal class ContactUpdateParamsTest {
             .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .defaultChannel("whatsapp")
             .optOut(false)
-            .sandbox(false)
             .build()
     }
 
@@ -37,9 +37,9 @@ internal class ContactUpdateParamsTest {
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .defaultChannel("whatsapp")
                 .optOut(false)
-                .sandbox(false)
                 .build()
 
         val headers = params._headers()
@@ -70,16 +70,16 @@ internal class ContactUpdateParamsTest {
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .defaultChannel("whatsapp")
                 .optOut(false)
-                .sandbox(false)
                 .build()
 
         val body = params._body()
 
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.defaultChannel()).contains("whatsapp")
         assertThat(body.optOut()).contains(false)
-        assertThat(body.sandbox()).contains(false)
     }
 
     @Test

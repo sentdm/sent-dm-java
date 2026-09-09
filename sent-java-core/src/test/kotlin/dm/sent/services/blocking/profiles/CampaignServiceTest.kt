@@ -4,10 +4,13 @@ package dm.sent.services.blocking.profiles
 
 import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.models.profiles.campaigns.CampaignCreateParams
+import dm.sent.models.profiles.campaigns.CampaignData
 import dm.sent.models.profiles.campaigns.CampaignDeleteParams
 import dm.sent.models.profiles.campaigns.CampaignListParams
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
+import dm.sent.models.profiles.campaigns.CampaignUseCaseData
 import dm.sent.models.profiles.campaigns.MessagingUseCaseUs
+import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -19,19 +22,20 @@ internal class CampaignServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val campaignService = client.profiles().campaigns()
 
-        val campaign =
+        val apiResponseOfBrandCampaign =
             campaignService.create(
                 CampaignCreateParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .campaign(
-                        CampaignCreateParams.Campaign.builder()
+                        CampaignData.builder()
                             .description("Appointment reminders and account notifications")
                             .name("Customer Notifications")
                             .type("App")
                             .addUseCase(
-                                CampaignCreateParams.Campaign.UseCase.builder()
+                                CampaignUseCaseData.builder()
                                     .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                     .addSampleMessage(
                                         "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -61,11 +65,10 @@ internal class CampaignServiceTest {
                             .volume(null)
                             .build()
                     )
-                    .sandbox(false)
                     .build()
             )
 
-        campaign.validate()
+        apiResponseOfBrandCampaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -74,20 +77,21 @@ internal class CampaignServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val campaignService = client.profiles().campaigns()
 
-        val campaign =
+        val apiResponseOfBrandCampaign =
             campaignService.update(
                 CampaignUpdateParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
                     .campaignId("b2c3d4e5-f6a7-8901-bcde-f12345678901")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .campaign(
-                        CampaignUpdateParams.Campaign.builder()
+                        CampaignData.builder()
                             .description("Updated appointment reminders and account notifications")
                             .name("Customer Notifications Updated")
                             .type("App")
                             .addUseCase(
-                                CampaignUpdateParams.Campaign.UseCase.builder()
+                                CampaignUseCaseData.builder()
                                     .messagingUseCaseUs(MessagingUseCaseUs.ACCOUNT_NOTIFICATION)
                                     .addSampleMessage(
                                         "Hi {name}, your appointment is confirmed for {date} at {time}."
@@ -111,11 +115,10 @@ internal class CampaignServiceTest {
                             .volume(null)
                             .build()
                     )
-                    .sandbox(false)
                     .build()
             )
 
-        campaign.validate()
+        apiResponseOfBrandCampaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -124,7 +127,7 @@ internal class CampaignServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val campaignService = client.profiles().campaigns()
 
-        val campaigns =
+        val apiResponseOfListOfBrandCampaign =
             campaignService.list(
                 CampaignListParams.builder()
                     .profileId("770e8400-e29b-41d4-a716-446655440002")
@@ -132,7 +135,7 @@ internal class CampaignServiceTest {
                     .build()
             )
 
-        campaigns.validate()
+        apiResponseOfListOfBrandCampaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -146,7 +149,7 @@ internal class CampaignServiceTest {
                 .profileId("770e8400-e29b-41d4-a716-446655440002")
                 .campaignId("b2c3d4e5-f6a7-8901-bcde-f12345678901")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .sandbox(false)
+                .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
         )
     }

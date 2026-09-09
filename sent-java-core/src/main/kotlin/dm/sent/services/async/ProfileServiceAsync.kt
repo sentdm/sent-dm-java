@@ -6,17 +6,15 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.profiles.ApiResponseOfProfileDetail
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
-import dm.sent.models.profiles.ProfileCreateResponse
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
-import dm.sent.models.profiles.ProfileRetrieveResponse
 import dm.sent.models.profiles.ProfileUpdateParams
-import dm.sent.models.profiles.ProfileUpdateResponse
 import dm.sent.services.async.profiles.CampaignServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -90,24 +88,24 @@ interface ProfileServiceAsync {
      * not allowed.
      */
     @Deprecated("deprecated")
-    fun create(): CompletableFuture<ProfileCreateResponse> = create(ProfileCreateParams.none())
+    fun create(): CompletableFuture<ApiResponseOfProfileDetail> = create(ProfileCreateParams.none())
 
     /** @see create */
     @Deprecated("deprecated")
     fun create(
         params: ProfileCreateParams = ProfileCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ProfileCreateResponse>
+    ): CompletableFuture<ApiResponseOfProfileDetail>
 
     /** @see create */
     @Deprecated("deprecated")
     fun create(
         params: ProfileCreateParams = ProfileCreateParams.none()
-    ): CompletableFuture<ProfileCreateResponse> = create(params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfProfileDetail> = create(params, RequestOptions.none())
 
     /** @see create */
     @Deprecated("deprecated")
-    fun create(requestOptions: RequestOptions): CompletableFuture<ProfileCreateResponse> =
+    fun create(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfProfileDetail> =
         create(ProfileCreateParams.none(), requestOptions)
 
     /**
@@ -120,7 +118,7 @@ interface ProfileServiceAsync {
      * including brand and KYC information if a brand has been configured.
      */
     @Deprecated("deprecated")
-    fun retrieve(profileId: String): CompletableFuture<ProfileRetrieveResponse> =
+    fun retrieve(profileId: String): CompletableFuture<ApiResponseOfProfileDetail> =
         retrieve(profileId, ProfileRetrieveParams.none())
 
     /** @see retrieve */
@@ -129,7 +127,7 @@ interface ProfileServiceAsync {
         profileId: String,
         params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ProfileRetrieveResponse> =
+    ): CompletableFuture<ApiResponseOfProfileDetail> =
         retrieve(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see retrieve */
@@ -137,7 +135,7 @@ interface ProfileServiceAsync {
     fun retrieve(
         profileId: String,
         params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
-    ): CompletableFuture<ProfileRetrieveResponse> =
+    ): CompletableFuture<ApiResponseOfProfileDetail> =
         retrieve(profileId, params, RequestOptions.none())
 
     /** @see retrieve */
@@ -145,11 +143,11 @@ interface ProfileServiceAsync {
     fun retrieve(
         params: ProfileRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ProfileRetrieveResponse>
+    ): CompletableFuture<ApiResponseOfProfileDetail>
 
     /** @see retrieve */
     @Deprecated("deprecated")
-    fun retrieve(params: ProfileRetrieveParams): CompletableFuture<ProfileRetrieveResponse> =
+    fun retrieve(params: ProfileRetrieveParams): CompletableFuture<ApiResponseOfProfileDetail> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
@@ -157,7 +155,7 @@ interface ProfileServiceAsync {
     fun retrieve(
         profileId: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ProfileRetrieveResponse> =
+    ): CompletableFuture<ApiResponseOfProfileDetail> =
         retrieve(profileId, ProfileRetrieveParams.none(), requestOptions)
 
     /**
@@ -199,7 +197,7 @@ interface ProfileServiceAsync {
      * /v3/channels/whatsapp`, sent with the `x-profile-id` header naming it.
      */
     @Deprecated("deprecated")
-    fun update(profileId: String): CompletableFuture<ProfileUpdateResponse> =
+    fun update(profileId: String): CompletableFuture<ApiResponseOfProfileDetail> =
         update(profileId, ProfileUpdateParams.none())
 
     /** @see update */
@@ -208,7 +206,7 @@ interface ProfileServiceAsync {
         profileId: String,
         params: ProfileUpdateParams = ProfileUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ProfileUpdateResponse> =
+    ): CompletableFuture<ApiResponseOfProfileDetail> =
         update(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see update */
@@ -216,18 +214,19 @@ interface ProfileServiceAsync {
     fun update(
         profileId: String,
         params: ProfileUpdateParams = ProfileUpdateParams.none(),
-    ): CompletableFuture<ProfileUpdateResponse> = update(profileId, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfProfileDetail> =
+        update(profileId, params, RequestOptions.none())
 
     /** @see update */
     @Deprecated("deprecated")
     fun update(
         params: ProfileUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ProfileUpdateResponse>
+    ): CompletableFuture<ApiResponseOfProfileDetail>
 
     /** @see update */
     @Deprecated("deprecated")
-    fun update(params: ProfileUpdateParams): CompletableFuture<ProfileUpdateResponse> =
+    fun update(params: ProfileUpdateParams): CompletableFuture<ApiResponseOfProfileDetail> =
         update(params, RequestOptions.none())
 
     /** @see update */
@@ -235,7 +234,7 @@ interface ProfileServiceAsync {
     fun update(
         profileId: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ProfileUpdateResponse> =
+    ): CompletableFuture<ApiResponseOfProfileDetail> =
         update(profileId, ProfileUpdateParams.none(), requestOptions)
 
     /**
@@ -281,31 +280,17 @@ interface ProfileServiceAsync {
      * used. Requires admin role in the organization.
      */
     @Deprecated("deprecated")
-    fun delete(profileId: String): CompletableFuture<Void?> =
-        delete(profileId, ProfileDeleteParams.none())
+    fun delete(profileId: String, params: ProfileDeleteParams): CompletableFuture<Void?> =
+        delete(profileId, params, RequestOptions.none())
 
     /** @see delete */
     @Deprecated("deprecated")
     fun delete(
         profileId: String,
-        params: ProfileDeleteParams = ProfileDeleteParams.none(),
+        params: ProfileDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Void?> =
         delete(params.toBuilder().profileId(profileId).build(), requestOptions)
-
-    /** @see delete */
-    @Deprecated("deprecated")
-    fun delete(
-        profileId: String,
-        params: ProfileDeleteParams = ProfileDeleteParams.none(),
-    ): CompletableFuture<Void?> = delete(profileId, params, RequestOptions.none())
-
-    /** @see delete */
-    @Deprecated("deprecated")
-    fun delete(
-        params: ProfileDeleteParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
 
     /** @see delete */
     @Deprecated("deprecated")
@@ -314,8 +299,10 @@ interface ProfileServiceAsync {
 
     /** @see delete */
     @Deprecated("deprecated")
-    fun delete(profileId: String, requestOptions: RequestOptions): CompletableFuture<Void?> =
-        delete(profileId, ProfileDeleteParams.none(), requestOptions)
+    fun delete(
+        params: ProfileDeleteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?>
 
     /**
      * **Deprecated.** This endpoint is replaced by `/v3/sender-profiles` and will be removed in a
@@ -412,7 +399,7 @@ interface ProfileServiceAsync {
          * [ProfileServiceAsync.create].
          */
         @Deprecated("deprecated")
-        fun create(): CompletableFuture<HttpResponseFor<ProfileCreateResponse>> =
+        fun create(): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             create(ProfileCreateParams.none())
 
         /** @see create */
@@ -420,20 +407,20 @@ interface ProfileServiceAsync {
         fun create(
             params: ProfileCreateParams = ProfileCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileCreateResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>>
 
         /** @see create */
         @Deprecated("deprecated")
         fun create(
             params: ProfileCreateParams = ProfileCreateParams.none()
-        ): CompletableFuture<HttpResponseFor<ProfileCreateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         @Deprecated("deprecated")
         fun create(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<ProfileCreateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             create(ProfileCreateParams.none(), requestOptions)
 
         /**
@@ -443,7 +430,7 @@ interface ProfileServiceAsync {
         @Deprecated("deprecated")
         fun retrieve(
             profileId: String
-        ): CompletableFuture<HttpResponseFor<ProfileRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             retrieve(profileId, ProfileRetrieveParams.none())
 
         /** @see retrieve */
@@ -452,7 +439,7 @@ interface ProfileServiceAsync {
             profileId: String,
             params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             retrieve(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see retrieve */
@@ -460,7 +447,7 @@ interface ProfileServiceAsync {
         fun retrieve(
             profileId: String,
             params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             retrieve(profileId, params, RequestOptions.none())
 
         /** @see retrieve */
@@ -468,13 +455,13 @@ interface ProfileServiceAsync {
         fun retrieve(
             params: ProfileRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileRetrieveResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>>
 
         /** @see retrieve */
         @Deprecated("deprecated")
         fun retrieve(
             params: ProfileRetrieveParams
-        ): CompletableFuture<HttpResponseFor<ProfileRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
@@ -482,7 +469,7 @@ interface ProfileServiceAsync {
         fun retrieve(
             profileId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ProfileRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             retrieve(profileId, ProfileRetrieveParams.none(), requestOptions)
 
         /**
@@ -490,7 +477,9 @@ interface ProfileServiceAsync {
          * same as [ProfileServiceAsync.update].
          */
         @Deprecated("deprecated")
-        fun update(profileId: String): CompletableFuture<HttpResponseFor<ProfileUpdateResponse>> =
+        fun update(
+            profileId: String
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             update(profileId, ProfileUpdateParams.none())
 
         /** @see update */
@@ -499,7 +488,7 @@ interface ProfileServiceAsync {
             profileId: String,
             params: ProfileUpdateParams = ProfileUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             update(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see update */
@@ -507,7 +496,7 @@ interface ProfileServiceAsync {
         fun update(
             profileId: String,
             params: ProfileUpdateParams = ProfileUpdateParams.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             update(profileId, params, RequestOptions.none())
 
         /** @see update */
@@ -515,13 +504,13 @@ interface ProfileServiceAsync {
         fun update(
             params: ProfileUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileUpdateResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>>
 
         /** @see update */
         @Deprecated("deprecated")
         fun update(
             params: ProfileUpdateParams
-        ): CompletableFuture<HttpResponseFor<ProfileUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -529,7 +518,7 @@ interface ProfileServiceAsync {
         fun update(
             profileId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ProfileUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileDetail>> =
             update(profileId, ProfileUpdateParams.none(), requestOptions)
 
         /**
@@ -566,31 +555,19 @@ interface ProfileServiceAsync {
          * same as [ProfileServiceAsync.delete].
          */
         @Deprecated("deprecated")
-        fun delete(profileId: String): CompletableFuture<HttpResponse> =
-            delete(profileId, ProfileDeleteParams.none())
-
-        /** @see delete */
-        @Deprecated("deprecated")
         fun delete(
             profileId: String,
-            params: ProfileDeleteParams = ProfileDeleteParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponse> =
-            delete(params.toBuilder().profileId(profileId).build(), requestOptions)
-
-        /** @see delete */
-        @Deprecated("deprecated")
-        fun delete(
-            profileId: String,
-            params: ProfileDeleteParams = ProfileDeleteParams.none(),
+            params: ProfileDeleteParams,
         ): CompletableFuture<HttpResponse> = delete(profileId, params, RequestOptions.none())
 
         /** @see delete */
         @Deprecated("deprecated")
         fun delete(
+            profileId: String,
             params: ProfileDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponse>
+        ): CompletableFuture<HttpResponse> =
+            delete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see delete */
         @Deprecated("deprecated")
@@ -600,10 +577,9 @@ interface ProfileServiceAsync {
         /** @see delete */
         @Deprecated("deprecated")
         fun delete(
-            profileId: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponse> =
-            delete(profileId, ProfileDeleteParams.none(), requestOptions)
+            params: ProfileDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponse>
 
         /**
          * Returns a raw HTTP response for `post /v3/profiles/{profileId}/complete`, but is
