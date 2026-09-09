@@ -17,17 +17,15 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
+import dm.sent.models.contacts.ApiResponseOfContact
+import dm.sent.models.contacts.ApiResponseOfContactMessageSummary
 import dm.sent.models.contacts.ContactCreateParams
-import dm.sent.models.contacts.ContactCreateResponse
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactListResponse
 import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
-import dm.sent.models.contacts.ContactRetrieveMessageSummaryResponse
 import dm.sent.models.contacts.ContactRetrieveParams
-import dm.sent.models.contacts.ContactRetrieveResponse
 import dm.sent.models.contacts.ContactUpdateParams
-import dm.sent.models.contacts.ContactUpdateResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -56,21 +54,21 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
     override fun create(
         params: ContactCreateParams,
         requestOptions: RequestOptions,
-    ): ContactCreateResponse =
+    ): ApiResponseOfContact =
         // post /v3/contacts
         withRawResponse().create(params, requestOptions).parse()
 
     override fun retrieve(
         params: ContactRetrieveParams,
         requestOptions: RequestOptions,
-    ): ContactRetrieveResponse =
+    ): ApiResponseOfContact =
         // get /v3/contacts/{id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun update(
         params: ContactUpdateParams,
         requestOptions: RequestOptions,
-    ): ContactUpdateResponse =
+    ): ApiResponseOfContact =
         // patch /v3/contacts/{id}
         withRawResponse().update(params, requestOptions).parse()
 
@@ -90,7 +88,7 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
     override fun retrieveMessageSummary(
         params: ContactRetrieveMessageSummaryParams,
         requestOptions: RequestOptions,
-    ): ContactRetrieveMessageSummaryResponse =
+    ): ApiResponseOfContactMessageSummary =
         // get /v3/contacts/{contactId}/message-summary
         withRawResponse().retrieveMessageSummary(params, requestOptions).parse()
 
@@ -107,13 +105,13 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<ContactCreateResponse> =
-            jsonHandler<ContactCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<ApiResponseOfContact> =
+            jsonHandler<ApiResponseOfContact>(clientOptions.jsonMapper)
 
         override fun create(
             params: ContactCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ContactCreateResponse> {
+        ): HttpResponseFor<ApiResponseOfContact> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -135,13 +133,13 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val retrieveHandler: Handler<ContactRetrieveResponse> =
-            jsonHandler<ContactRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<ApiResponseOfContact> =
+            jsonHandler<ApiResponseOfContact>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: ContactRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ContactRetrieveResponse> {
+        ): HttpResponseFor<ApiResponseOfContact> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -165,13 +163,13 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val updateHandler: Handler<ContactUpdateResponse> =
-            jsonHandler<ContactUpdateResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<ApiResponseOfContact> =
+            jsonHandler<ApiResponseOfContact>(clientOptions.jsonMapper)
 
         override fun update(
             params: ContactUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ContactUpdateResponse> {
+        ): HttpResponseFor<ApiResponseOfContact> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -248,13 +246,13 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val retrieveMessageSummaryHandler: Handler<ContactRetrieveMessageSummaryResponse> =
-            jsonHandler<ContactRetrieveMessageSummaryResponse>(clientOptions.jsonMapper)
+        private val retrieveMessageSummaryHandler: Handler<ApiResponseOfContactMessageSummary> =
+            jsonHandler<ApiResponseOfContactMessageSummary>(clientOptions.jsonMapper)
 
         override fun retrieveMessageSummary(
             params: ContactRetrieveMessageSummaryParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ContactRetrieveMessageSummaryResponse> {
+        ): HttpResponseFor<ApiResponseOfContactMessageSummary> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("contactId", params.contactId().getOrNull())
