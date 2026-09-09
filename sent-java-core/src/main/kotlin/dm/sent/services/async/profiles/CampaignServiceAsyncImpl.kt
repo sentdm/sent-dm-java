@@ -17,13 +17,12 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
+import dm.sent.models.profiles.campaigns.ApiResponseOfBrandCampaign
+import dm.sent.models.profiles.campaigns.ApiResponseOfListOfBrandCampaign
 import dm.sent.models.profiles.campaigns.CampaignCreateParams
-import dm.sent.models.profiles.campaigns.CampaignCreateResponse
 import dm.sent.models.profiles.campaigns.CampaignDeleteParams
 import dm.sent.models.profiles.campaigns.CampaignListParams
-import dm.sent.models.profiles.campaigns.CampaignListResponse
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
-import dm.sent.models.profiles.campaigns.CampaignUpdateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -53,7 +52,7 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
     override fun create(
         params: CampaignCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<CampaignCreateResponse> =
+    ): CompletableFuture<ApiResponseOfBrandCampaign> =
         // post /v3/profiles/{profileId}/campaigns
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
@@ -61,7 +60,7 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
     override fun update(
         params: CampaignUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<CampaignUpdateResponse> =
+    ): CompletableFuture<ApiResponseOfBrandCampaign> =
         // put /v3/profiles/{profileId}/campaigns/{campaignId}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
@@ -69,7 +68,7 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
     override fun list(
         params: CampaignListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<CampaignListResponse> =
+    ): CompletableFuture<ApiResponseOfListOfBrandCampaign> =
         // get /v3/profiles/{profileId}/campaigns
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -94,14 +93,14 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<CampaignCreateResponse> =
-            jsonHandler<CampaignCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<ApiResponseOfBrandCampaign> =
+            jsonHandler<ApiResponseOfBrandCampaign>(clientOptions.jsonMapper)
 
         @Deprecated("deprecated")
         override fun create(
             params: CampaignCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<CampaignCreateResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
@@ -129,14 +128,14 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
                 }
         }
 
-        private val updateHandler: Handler<CampaignUpdateResponse> =
-            jsonHandler<CampaignUpdateResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<ApiResponseOfBrandCampaign> =
+            jsonHandler<ApiResponseOfBrandCampaign>(clientOptions.jsonMapper)
 
         @Deprecated("deprecated")
         override fun update(
             params: CampaignUpdateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<CampaignUpdateResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("campaignId", params.campaignId().getOrNull())
@@ -170,14 +169,14 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
                 }
         }
 
-        private val listHandler: Handler<CampaignListResponse> =
-            jsonHandler<CampaignListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ApiResponseOfListOfBrandCampaign> =
+            jsonHandler<ApiResponseOfListOfBrandCampaign>(clientOptions.jsonMapper)
 
         @Deprecated("deprecated")
         override fun list(
             params: CampaignListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<CampaignListResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfListOfBrandCampaign>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())
