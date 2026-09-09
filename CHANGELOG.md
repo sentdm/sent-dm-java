@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.36.0](https://github.com/sentdm/sent-dm-java/compare/v0.35.0...v0.36.0) (2026-09-09)
+
+
+### Features
+
+* **api:** repoint dangling model refs at current v3 schema names ([e5be2b6](https://github.com/sentdm/sent-dm-java/commit/e5be2b6126dbf28e817110791dd4ab9668941bdc))
+
 ## [0.35.0](https://github.com/sentdm/sent-dm-java/compare/v0.34.0...v0.35.0) (2026-09-06)
 
 
