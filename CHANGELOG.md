@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.37.0](https://github.com/sentdm/sent-dm-java/compare/v0.36.0...v0.37.0) (2026-09-10)
+
+
+### Features
+
+* **api:** configure page_number pagination for the v3 list endpoints ([ae76f3f](https://github.com/sentdm/sent-dm-java/commit/ae76f3f825f923d2b578eb5318fbf83415de9830))
+
 ## [0.36.0](https://github.com/sentdm/sent-dm-java/compare/v0.35.0...v0.36.0) (2026-09-09)
 
 
