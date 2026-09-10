@@ -9,6 +9,7 @@ import dm.sent.services.blocking.ConversationService
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
 
 /** @see ConversationService.listMessages */
 class ConversationListMessagesPage
@@ -25,7 +26,8 @@ private constructor(
      */
     fun data(): Optional<ConversationMessagesList> = response._data().getOptional("data")
 
-    override fun items(): List<ConversationMessagesList.Message> = messages()
+    override fun items(): List<ConversationMessagesList.Message> =
+        response.messages().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 

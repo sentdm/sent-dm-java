@@ -9,6 +9,7 @@ import dm.sent.services.blocking.TemplateService
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
 
 /** @see TemplateService.list */
 class TemplateListPage
@@ -25,7 +26,7 @@ private constructor(
      */
     fun data(): Optional<TemplateListPageResponse.Data> = response._data().getOptional("data")
 
-    override fun items(): List<Template> = templates()
+    override fun items(): List<Template> = response.templates().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 

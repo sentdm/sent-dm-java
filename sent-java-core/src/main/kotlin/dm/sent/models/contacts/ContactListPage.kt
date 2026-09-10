@@ -9,6 +9,7 @@ import dm.sent.services.blocking.ContactService
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
 
 /** @see ContactService.list */
 class ContactListPage
@@ -25,7 +26,7 @@ private constructor(
      */
     fun data(): Optional<ContactListPageResponse.Data> = response._data().getOptional("data")
 
-    override fun items(): List<ContactResponse> = contacts()
+    override fun items(): List<ContactResponse> = response.contacts().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 

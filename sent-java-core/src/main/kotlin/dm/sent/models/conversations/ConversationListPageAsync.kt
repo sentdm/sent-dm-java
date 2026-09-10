@@ -11,6 +11,7 @@ import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
 
 /** @see ConversationServiceAsync.list */
 class ConversationListPageAsync
@@ -28,7 +29,8 @@ private constructor(
      */
     fun data(): Optional<ConversationMessagesList> = response._data().getOptional("data")
 
-    override fun items(): List<ConversationMessagesList.Message> = messages()
+    override fun items(): List<ConversationMessagesList.Message> =
+        response.messages().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 

@@ -11,6 +11,7 @@ import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
 
 /** @see TemplateServiceAsync.list */
 class TemplateListPageAsync
@@ -28,7 +29,7 @@ private constructor(
      */
     fun data(): Optional<TemplateListPageResponse.Data> = response._data().getOptional("data")
 
-    override fun items(): List<Template> = templates()
+    override fun items(): List<Template> = response.templates().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 

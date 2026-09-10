@@ -9,6 +9,7 @@ import dm.sent.services.blocking.WebhookService
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
 
 /** @see WebhookService.listEvents */
 class WebhookListEventsPage
@@ -25,7 +26,8 @@ private constructor(
      */
     fun data(): Optional<WebhookListEventsPageResponse.Data> = response._data().getOptional("data")
 
-    override fun items(): List<WebhookListEventsResponse> = events()
+    override fun items(): List<WebhookListEventsResponse> =
+        response.events().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 

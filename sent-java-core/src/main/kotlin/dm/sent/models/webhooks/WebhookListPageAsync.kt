@@ -11,6 +11,7 @@ import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
 
 /** @see WebhookServiceAsync.list */
 class WebhookListPageAsync
@@ -28,7 +29,7 @@ private constructor(
      */
     fun data(): Optional<WebhookListPageResponse.Data> = response._data().getOptional("data")
 
-    override fun items(): List<WebhookResponse> = webhooks()
+    override fun items(): List<WebhookResponse> = response.webhooks().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 

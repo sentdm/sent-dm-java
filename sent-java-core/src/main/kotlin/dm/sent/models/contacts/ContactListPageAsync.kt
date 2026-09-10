@@ -11,6 +11,7 @@ import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 import kotlin.jvm.optionals.getOrDefault
+import kotlin.jvm.optionals.getOrNull
 
 /** @see ContactServiceAsync.list */
 class ContactListPageAsync
@@ -28,7 +29,7 @@ private constructor(
      */
     fun data(): Optional<ContactListPageResponse.Data> = response._data().getOptional("data")
 
-    override fun items(): List<ContactResponse> = contacts()
+    override fun items(): List<ContactResponse> = response.contacts().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 
