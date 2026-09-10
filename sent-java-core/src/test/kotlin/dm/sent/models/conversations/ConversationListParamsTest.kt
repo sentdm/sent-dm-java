@@ -39,7 +39,7 @@ internal class ConversationListParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = ConversationListParams.builder().page(0).pageSize(0).build()
+        val params = ConversationListParams.builder().build()
 
         val headers = params._headers()
 
@@ -63,11 +63,10 @@ internal class ConversationListParamsTest {
 
     @Test
     fun queryParamsWithoutOptionalFields() {
-        val params = ConversationListParams.builder().page(0).pageSize(0).build()
+        val params = ConversationListParams.builder().build()
 
         val queryParams = params._queryParams()
 
-        assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("page", "0").put("page_size", "0").build())
+        assertThat(queryParams).isEqualTo(QueryParams.builder().build())
     }
 }
