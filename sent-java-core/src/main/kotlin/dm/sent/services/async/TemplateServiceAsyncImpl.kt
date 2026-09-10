@@ -20,8 +20,9 @@ import dm.sent.core.prepareAsync
 import dm.sent.models.templates.ApiResponseTemplate
 import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDeleteParams
+import dm.sent.models.templates.TemplateListPageAsync
+import dm.sent.models.templates.TemplateListPageResponse
 import dm.sent.models.templates.TemplateListParams
-import dm.sent.models.templates.TemplateListResponse
 import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
 import java.util.concurrent.CompletableFuture
@@ -72,7 +73,7 @@ class TemplateServiceAsyncImpl internal constructor(private val clientOptions: C
     override fun list(
         params: TemplateListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<TemplateListResponse> =
+    ): CompletableFuture<TemplateListPageAsync> =
         // get /v3/templates
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -194,13 +195,13 @@ class TemplateServiceAsyncImpl internal constructor(private val clientOptions: C
                 }
         }
 
-        private val listHandler: Handler<TemplateListResponse> =
-            jsonHandler<TemplateListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<TemplateListPageResponse> =
+            jsonHandler<TemplateListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: TemplateListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<TemplateListResponse>> {
+        ): CompletableFuture<HttpResponseFor<TemplateListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -219,6 +220,14 @@ class TemplateServiceAsyncImpl internal constructor(private val clientOptions: C
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                TemplateListPageAsync.builder()
+                                    .service(TemplateServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }

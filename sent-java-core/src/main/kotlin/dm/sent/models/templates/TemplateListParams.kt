@@ -3,7 +3,6 @@
 package dm.sent.models.templates
 
 import dm.sent.core.Params
-import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import java.util.Objects
@@ -16,22 +15,16 @@ import kotlin.jvm.optionals.getOrNull
  */
 class TemplateListParams
 private constructor(
-    private val page: Int,
-    private val pageSize: Int,
     private val category: String?,
     private val isWelcomePlayground: Boolean?,
+    private val page: Int?,
+    private val pageSize: Int?,
     private val search: String?,
     private val status: String?,
     private val xProfileId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
-
-    /** Page number (1-indexed) */
-    fun page(): Int = page
-
-    /** Number of items per page */
-    fun pageSize(): Int = pageSize
 
     /** Optional category filter: MARKETING, UTILITY, AUTHENTICATION */
     fun category(): Optional<String> = Optional.ofNullable(category)
@@ -43,6 +36,12 @@ private constructor(
      * binding instead of the request shape changing under it.
      */
     fun isWelcomePlayground(): Optional<Boolean> = Optional.ofNullable(isWelcomePlayground)
+
+    /** Page number (1-indexed) */
+    fun page(): Optional<Int> = Optional.ofNullable(page)
+
+    /** Number of items per page */
+    fun pageSize(): Optional<Int> = Optional.ofNullable(pageSize)
 
     /** Optional search term for filtering templates */
     fun search(): Optional<String> = Optional.ofNullable(search)
@@ -62,25 +61,19 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [TemplateListParams].
-         *
-         * The following fields are required:
-         * ```java
-         * .page()
-         * .pageSize()
-         * ```
-         */
+        @JvmStatic fun none(): TemplateListParams = builder().build()
+
+        /** Returns a mutable builder for constructing an instance of [TemplateListParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
     /** A builder for [TemplateListParams]. */
     class Builder internal constructor() {
 
-        private var page: Int? = null
-        private var pageSize: Int? = null
         private var category: String? = null
         private var isWelcomePlayground: Boolean? = null
+        private var page: Int? = null
+        private var pageSize: Int? = null
         private var search: String? = null
         private var status: String? = null
         private var xProfileId: String? = null
@@ -89,22 +82,16 @@ private constructor(
 
         @JvmSynthetic
         internal fun from(templateListParams: TemplateListParams) = apply {
-            page = templateListParams.page
-            pageSize = templateListParams.pageSize
             category = templateListParams.category
             isWelcomePlayground = templateListParams.isWelcomePlayground
+            page = templateListParams.page
+            pageSize = templateListParams.pageSize
             search = templateListParams.search
             status = templateListParams.status
             xProfileId = templateListParams.xProfileId
             additionalHeaders = templateListParams.additionalHeaders.toBuilder()
             additionalQueryParams = templateListParams.additionalQueryParams.toBuilder()
         }
-
-        /** Page number (1-indexed) */
-        fun page(page: Int) = apply { this.page = page }
-
-        /** Number of items per page */
-        fun pageSize(pageSize: Int) = apply { this.pageSize = pageSize }
 
         /** Optional category filter: MARKETING, UTILITY, AUTHENTICATION */
         fun category(category: String?) = apply { this.category = category }
@@ -135,6 +122,32 @@ private constructor(
          */
         fun isWelcomePlayground(isWelcomePlayground: Optional<Boolean>) =
             isWelcomePlayground(isWelcomePlayground.getOrNull())
+
+        /** Page number (1-indexed) */
+        fun page(page: Int?) = apply { this.page = page }
+
+        /**
+         * Alias for [Builder.page].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun page(page: Int) = page(page as Int?)
+
+        /** Alias for calling [Builder.page] with `page.orElse(null)`. */
+        fun page(page: Optional<Int>) = page(page.getOrNull())
+
+        /** Number of items per page */
+        fun pageSize(pageSize: Int?) = apply { this.pageSize = pageSize }
+
+        /**
+         * Alias for [Builder.pageSize].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun pageSize(pageSize: Int) = pageSize(pageSize as Int?)
+
+        /** Alias for calling [Builder.pageSize] with `pageSize.orElse(null)`. */
+        fun pageSize(pageSize: Optional<Int>) = pageSize(pageSize.getOrNull())
 
         /** Optional search term for filtering templates */
         fun search(search: String?) = apply { this.search = search }
@@ -255,21 +268,13 @@ private constructor(
          * Returns an immutable instance of [TemplateListParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .page()
-         * .pageSize()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): TemplateListParams =
             TemplateListParams(
-                checkRequired("page", page),
-                checkRequired("pageSize", pageSize),
                 category,
                 isWelcomePlayground,
+                page,
+                pageSize,
                 search,
                 status,
                 xProfileId,
@@ -289,10 +294,10 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                put("page", page.toString())
-                put("page_size", pageSize.toString())
                 category?.let { put("category", it) }
                 isWelcomePlayground?.let { put("is_welcome_playground", it.toString()) }
+                page?.let { put("page", it.toString()) }
+                pageSize?.let { put("page_size", it.toString()) }
                 search?.let { put("search", it) }
                 status?.let { put("status", it) }
                 putAll(additionalQueryParams)
@@ -305,10 +310,10 @@ private constructor(
         }
 
         return other is TemplateListParams &&
-            page == other.page &&
-            pageSize == other.pageSize &&
             category == other.category &&
             isWelcomePlayground == other.isWelcomePlayground &&
+            page == other.page &&
+            pageSize == other.pageSize &&
             search == other.search &&
             status == other.status &&
             xProfileId == other.xProfileId &&
@@ -318,10 +323,10 @@ private constructor(
 
     override fun hashCode(): Int =
         Objects.hash(
-            page,
-            pageSize,
             category,
             isWelcomePlayground,
+            page,
+            pageSize,
             search,
             status,
             xProfileId,
@@ -330,5 +335,5 @@ private constructor(
         )
 
     override fun toString() =
-        "TemplateListParams{page=$page, pageSize=$pageSize, category=$category, isWelcomePlayground=$isWelcomePlayground, search=$search, status=$status, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TemplateListParams{category=$category, isWelcomePlayground=$isWelcomePlayground, page=$page, pageSize=$pageSize, search=$search, status=$status, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
