@@ -22,7 +22,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Standard API response envelope for all v3 endpoints */
-class ContactListResponse
+class ContactListPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val data: JsonField<Data>,
@@ -114,11 +114,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [ContactListResponse]. */
+        /** Returns a mutable builder for constructing an instance of [ContactListPageResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ContactListResponse]. */
+    /** A builder for [ContactListPageResponse]. */
     class Builder internal constructor() {
 
         private var data: JsonField<Data> = JsonMissing.of()
@@ -128,12 +128,12 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(contactListResponse: ContactListResponse) = apply {
-            data = contactListResponse.data
-            error = contactListResponse.error
-            meta = contactListResponse.meta
-            success = contactListResponse.success
-            additionalProperties = contactListResponse.additionalProperties.toMutableMap()
+        internal fun from(contactListPageResponse: ContactListPageResponse) = apply {
+            data = contactListPageResponse.data
+            error = contactListPageResponse.error
+            meta = contactListPageResponse.meta
+            success = contactListPageResponse.success
+            additionalProperties = contactListPageResponse.additionalProperties.toMutableMap()
         }
 
         /** A paginated list of contacts. */
@@ -207,12 +207,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ContactListResponse].
+         * Returns an immutable instance of [ContactListPageResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ContactListResponse =
-            ContactListResponse(data, error, meta, success, additionalProperties.toMutableMap())
+        fun build(): ContactListPageResponse =
+            ContactListPageResponse(data, error, meta, success, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
@@ -225,7 +225,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): ContactListResponse = apply {
+    fun validate(): ContactListPageResponse = apply {
         if (validated) {
             return@apply
         }
@@ -480,7 +480,7 @@ private constructor(
             return true
         }
 
-        return other is ContactListResponse &&
+        return other is ContactListPageResponse &&
             data == other.data &&
             error == other.error &&
             meta == other.meta &&
@@ -495,5 +495,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ContactListResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
+        "ContactListPageResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
 }

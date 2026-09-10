@@ -9,6 +9,7 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.LogLevel
 import dm.sent.core.Sleeper
 import dm.sent.core.Timeout
+import dm.sent.core.http.AsyncStreamResponse
 import dm.sent.core.http.Headers
 import dm.sent.core.http.HttpClient
 import dm.sent.core.http.ProxyAuthenticator
@@ -18,6 +19,7 @@ import java.net.Proxy
 import java.time.Clock
 import java.time.Duration
 import java.util.Optional
+import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLSocketFactory
@@ -200,6 +202,17 @@ class SentOkHttpClient private constructor() {
          * to be overridden.
          */
         fun jsonMapper(jsonMapper: JsonMapper) = apply { clientOptions.jsonMapper(jsonMapper) }
+
+        /**
+         * The executor to use for running [AsyncStreamResponse.Handler] callbacks.
+         *
+         * Defaults to a dedicated cached thread pool.
+         *
+         * This class takes ownership of the executor and shuts it down, if possible, when closed.
+         */
+        fun streamHandlerExecutor(streamHandlerExecutor: Executor) = apply {
+            clientOptions.streamHandlerExecutor(streamHandlerExecutor)
+        }
 
         /**
          * The interface to use for delaying execution, like during retries.

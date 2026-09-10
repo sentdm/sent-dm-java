@@ -10,8 +10,8 @@ import dm.sent.models.contacts.ApiResponseOfContact
 import dm.sent.models.contacts.ApiResponseOfContactMessageSummary
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
+import dm.sent.models.contacts.ContactListPageAsync
 import dm.sent.models.contacts.ContactListParams
-import dm.sent.models.contacts.ContactListResponse
 import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
@@ -129,14 +129,14 @@ interface ContactServiceAsync {
      * Retrieves a paginated list of contacts for the authenticated customer. Supports filtering by
      * search term, channel, or phone number.
      */
-    fun list(params: ContactListParams): CompletableFuture<ContactListResponse> =
+    fun list(params: ContactListParams): CompletableFuture<ContactListPageAsync> =
         list(params, RequestOptions.none())
 
     /** @see list */
     fun list(
         params: ContactListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ContactListResponse>
+    ): CompletableFuture<ContactListPageAsync>
 
     /**
      * **Deprecated.** Use `PATCH /v3/contacts/{id}` with `{"opt_out": true}` instead, and expect
@@ -340,14 +340,14 @@ interface ContactServiceAsync {
          */
         fun list(
             params: ContactListParams
-        ): CompletableFuture<HttpResponseFor<ContactListResponse>> =
+        ): CompletableFuture<HttpResponseFor<ContactListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             params: ContactListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ContactListResponse>>
+        ): CompletableFuture<HttpResponseFor<ContactListPageAsync>>
 
         /**
          * Returns a raw HTTP response for `delete /v3/contacts/{id}`, but is otherwise the same as

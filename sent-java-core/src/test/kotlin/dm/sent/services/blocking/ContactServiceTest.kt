@@ -78,19 +78,9 @@ internal class ContactServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val contactService = client.contacts()
 
-        val contacts =
-            contactService.list(
-                ContactListParams.builder()
-                    .page(0)
-                    .pageSize(0)
-                    .channel("channel")
-                    .phone("phone")
-                    .search("search")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val page = contactService.list(ContactListParams.builder().page(0).pageSize(0).build())
 
-        contacts.validate()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")

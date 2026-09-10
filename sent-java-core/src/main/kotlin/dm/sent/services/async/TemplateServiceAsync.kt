@@ -9,8 +9,8 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.models.templates.ApiResponseTemplate
 import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDeleteParams
+import dm.sent.models.templates.TemplateListPageAsync
 import dm.sent.models.templates.TemplateListParams
-import dm.sent.models.templates.TemplateListResponse
 import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
 import java.util.concurrent.CompletableFuture
@@ -136,14 +136,14 @@ interface TemplateServiceAsync {
      * Retrieves a paginated list of message templates for the authenticated customer. Supports
      * filtering by status, category, and search term.
      */
-    fun list(params: TemplateListParams): CompletableFuture<TemplateListResponse> =
+    fun list(params: TemplateListParams): CompletableFuture<TemplateListPageAsync> =
         list(params, RequestOptions.none())
 
     /** @see list */
     fun list(
         params: TemplateListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<TemplateListResponse>
+    ): CompletableFuture<TemplateListPageAsync>
 
     /**
      * Deletes a template by ID. Optionally, you can also delete the template from WhatsApp/Meta by
@@ -305,14 +305,14 @@ interface TemplateServiceAsync {
          */
         fun list(
             params: TemplateListParams
-        ): CompletableFuture<HttpResponseFor<TemplateListResponse>> =
+        ): CompletableFuture<HttpResponseFor<TemplateListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             params: TemplateListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<TemplateListResponse>>
+        ): CompletableFuture<HttpResponseFor<TemplateListPageAsync>>
 
         /**
          * Returns a raw HTTP response for `delete /v3/templates/{id}`, but is otherwise the same as
