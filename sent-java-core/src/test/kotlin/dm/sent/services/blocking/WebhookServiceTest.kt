@@ -8,8 +8,6 @@ import dm.sent.models.webhooks.MutationRequest
 import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
-import dm.sent.models.webhooks.WebhookListEventsParams
-import dm.sent.models.webhooks.WebhookListParams
 import dm.sent.models.webhooks.WebhookRetrieveParams
 import dm.sent.models.webhooks.WebhookRotateSecretParams
 import dm.sent.models.webhooks.WebhookTestParams
@@ -108,7 +106,7 @@ internal class WebhookServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val webhookService = client.webhooks()
 
-        val page = webhookService.list(WebhookListParams.builder().page(0).pageSize(0).build())
+        val page = webhookService.list()
 
         page.response().validate()
     }
@@ -149,14 +147,7 @@ internal class WebhookServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val webhookService = client.webhooks()
 
-        val page =
-            webhookService.listEvents(
-                WebhookListEventsParams.builder()
-                    .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
-                    .page(0)
-                    .pageSize(0)
-                    .build()
-            )
+        val page = webhookService.listEvents("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
 
         page.response().validate()
     }

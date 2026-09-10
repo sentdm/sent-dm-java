@@ -10,6 +10,7 @@ import java.util.Objects
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
+import kotlin.jvm.optionals.getOrDefault
 
 /** @see WebhookServiceAsync.list */
 class WebhookListPageAsync
@@ -32,7 +33,7 @@ private constructor(
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 
     fun nextPageParams(): WebhookListParams {
-        val pageNumber = params.page()
+        val pageNumber = params.page().getOrDefault(1)
         return params.toBuilder().page(pageNumber + 1).build()
     }
 

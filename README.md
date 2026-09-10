@@ -297,7 +297,7 @@ When using the synchronous client, the method returns an [`Iterable`](https://do
 import dm.sent.models.webhooks.WebhookListPage;
 import dm.sent.models.webhooks.WebhookResponse;
 
-WebhookListPage page = client.webhooks().list(params);
+WebhookListPage page = client.webhooks().list();
 
 // Process as an Iterable
 for (WebhookResponse webhook : page.autoPager()) {
@@ -320,7 +320,7 @@ import dm.sent.models.webhooks.WebhookResponse;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-CompletableFuture<WebhookListPageAsync> pageFuture = client.async().webhooks().list(params);
+CompletableFuture<WebhookListPageAsync> pageFuture = client.async().webhooks().list();
 
 pageFuture.thenRun(page -> page.autoPager().subscribe(webhook -> {
     System.out.println(webhook);
@@ -369,7 +369,7 @@ To access individual page items and manually request the next page, use the `ite
 import dm.sent.models.webhooks.WebhookListPage;
 import dm.sent.models.webhooks.WebhookResponse;
 
-WebhookListPage page = client.webhooks().list(params);
+WebhookListPage page = client.webhooks().list();
 while (true) {
     for (WebhookResponse webhook : page.items()) {
         System.out.println(webhook);

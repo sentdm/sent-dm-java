@@ -5,7 +5,6 @@ package dm.sent.services.async
 import dm.sent.client.okhttp.SentOkHttpClientAsync
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
-import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
@@ -81,8 +80,7 @@ internal class ContactServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val contactServiceAsync = client.contacts()
 
-        val pageFuture =
-            contactServiceAsync.list(ContactListParams.builder().page(0).pageSize(0).build())
+        val pageFuture = contactServiceAsync.list()
 
         val page = pageFuture.get()
         page.response().validate()

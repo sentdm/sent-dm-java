@@ -38,32 +38,50 @@ interface ConversationServiceAsync {
      * Retrieves a paginated list of the authenticated customer's messages across all conversations,
      * ordered by created date (most recent first).
      */
-    fun list(params: ConversationListParams): CompletableFuture<ConversationListPageAsync> =
-        list(params, RequestOptions.none())
+    fun list(): CompletableFuture<ConversationListPageAsync> = list(ConversationListParams.none())
 
     /** @see list */
     fun list(
-        params: ConversationListParams,
+        params: ConversationListParams = ConversationListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ConversationListPageAsync>
+
+    /** @see list */
+    fun list(
+        params: ConversationListParams = ConversationListParams.none()
+    ): CompletableFuture<ConversationListPageAsync> = list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): CompletableFuture<ConversationListPageAsync> =
+        list(ConversationListParams.none(), requestOptions)
 
     /**
      * Retrieves a paginated list of the messages in a single conversation (scoped to the
      * authenticated customer), ordered by created date (most recent first).
      */
+    fun listMessages(id: String): CompletableFuture<ConversationListMessagesPageAsync> =
+        listMessages(id, ConversationListMessagesParams.none())
+
+    /** @see listMessages */
     fun listMessages(
         id: String,
-        params: ConversationListMessagesParams,
+        params: ConversationListMessagesParams = ConversationListMessagesParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ConversationListMessagesPageAsync> =
+        listMessages(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see listMessages */
+    fun listMessages(
+        id: String,
+        params: ConversationListMessagesParams = ConversationListMessagesParams.none(),
     ): CompletableFuture<ConversationListMessagesPageAsync> =
         listMessages(id, params, RequestOptions.none())
 
     /** @see listMessages */
     fun listMessages(
-        id: String,
         params: ConversationListMessagesParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ConversationListMessagesPageAsync> =
-        listMessages(params.toBuilder().id(id).build(), requestOptions)
+    ): CompletableFuture<ConversationListMessagesPageAsync>
 
     /** @see listMessages */
     fun listMessages(
@@ -73,9 +91,10 @@ interface ConversationServiceAsync {
 
     /** @see listMessages */
     fun listMessages(
-        params: ConversationListMessagesParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ConversationListMessagesPageAsync>
+        id: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ConversationListMessagesPageAsync> =
+        listMessages(id, ConversationListMessagesParams.none(), requestOptions)
 
     /**
      * A view of [ConversationServiceAsync] that provides access to raw HTTP responses for each
@@ -96,34 +115,56 @@ interface ConversationServiceAsync {
          * Returns a raw HTTP response for `get /v3/conversations`, but is otherwise the same as
          * [ConversationServiceAsync.list].
          */
+        fun list(): CompletableFuture<HttpResponseFor<ConversationListPageAsync>> =
+            list(ConversationListParams.none())
+
+        /** @see list */
         fun list(
-            params: ConversationListParams
+            params: ConversationListParams = ConversationListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ConversationListPageAsync>>
+
+        /** @see list */
+        fun list(
+            params: ConversationListParams = ConversationListParams.none()
         ): CompletableFuture<HttpResponseFor<ConversationListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
-            params: ConversationListParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ConversationListPageAsync>>
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<ConversationListPageAsync>> =
+            list(ConversationListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /v3/conversations/{id}`, but is otherwise the same
          * as [ConversationServiceAsync.listMessages].
          */
         fun listMessages(
+            id: String
+        ): CompletableFuture<HttpResponseFor<ConversationListMessagesPageAsync>> =
+            listMessages(id, ConversationListMessagesParams.none())
+
+        /** @see listMessages */
+        fun listMessages(
             id: String,
-            params: ConversationListMessagesParams,
+            params: ConversationListMessagesParams = ConversationListMessagesParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ConversationListMessagesPageAsync>> =
+            listMessages(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see listMessages */
+        fun listMessages(
+            id: String,
+            params: ConversationListMessagesParams = ConversationListMessagesParams.none(),
         ): CompletableFuture<HttpResponseFor<ConversationListMessagesPageAsync>> =
             listMessages(id, params, RequestOptions.none())
 
         /** @see listMessages */
         fun listMessages(
-            id: String,
             params: ConversationListMessagesParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ConversationListMessagesPageAsync>> =
-            listMessages(params.toBuilder().id(id).build(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<ConversationListMessagesPageAsync>>
 
         /** @see listMessages */
         fun listMessages(
@@ -133,8 +174,9 @@ interface ConversationServiceAsync {
 
         /** @see listMessages */
         fun listMessages(
-            params: ConversationListMessagesParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ConversationListMessagesPageAsync>>
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<ConversationListMessagesPageAsync>> =
+            listMessages(id, ConversationListMessagesParams.none(), requestOptions)
     }
 }

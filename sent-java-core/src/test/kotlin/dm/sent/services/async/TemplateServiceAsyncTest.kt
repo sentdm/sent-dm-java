@@ -13,7 +13,6 @@ import dm.sent.models.templates.TemplateDefinition
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateFooter
 import dm.sent.models.templates.TemplateHeader
-import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
 import dm.sent.models.templates.TemplateVariable
@@ -511,8 +510,7 @@ internal class TemplateServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val templateServiceAsync = client.templates()
 
-        val pageFuture =
-            templateServiceAsync.list(TemplateListParams.builder().page(0).pageSize(0).build())
+        val pageFuture = templateServiceAsync.list()
 
         val page = pageFuture.get()
         page.response().validate()

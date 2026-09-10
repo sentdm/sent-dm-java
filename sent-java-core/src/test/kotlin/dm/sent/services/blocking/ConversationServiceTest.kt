@@ -3,8 +3,6 @@
 package dm.sent.services.blocking
 
 import dm.sent.client.okhttp.SentOkHttpClient
-import dm.sent.models.conversations.ConversationListMessagesParams
-import dm.sent.models.conversations.ConversationListParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -16,8 +14,7 @@ internal class ConversationServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val conversationService = client.conversations()
 
-        val page =
-            conversationService.list(ConversationListParams.builder().page(0).pageSize(0).build())
+        val page = conversationService.list()
 
         page.response().validate()
     }
@@ -28,14 +25,7 @@ internal class ConversationServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val conversationService = client.conversations()
 
-        val page =
-            conversationService.listMessages(
-                ConversationListMessagesParams.builder()
-                    .id("08fab313-c9e2-502c-975e-08b0356c432e")
-                    .page(0)
-                    .pageSize(0)
-                    .build()
-            )
+        val page = conversationService.listMessages("08fab313-c9e2-502c-975e-08b0356c432e")
 
         page.response().validate()
     }

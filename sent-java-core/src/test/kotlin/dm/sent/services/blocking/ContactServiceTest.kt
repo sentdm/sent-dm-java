@@ -5,7 +5,6 @@ package dm.sent.services.blocking
 import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
-import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
@@ -78,7 +77,7 @@ internal class ContactServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val contactService = client.contacts()
 
-        val page = contactService.list(ContactListParams.builder().page(0).pageSize(0).build())
+        val page = contactService.list()
 
         page.response().validate()
     }

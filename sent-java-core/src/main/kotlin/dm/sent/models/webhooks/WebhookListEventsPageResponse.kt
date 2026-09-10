@@ -37,6 +37,10 @@ private constructor(
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
+    fun events(): Optional<List<WebhookListEventsResponse>> = data().flatMap { it.events() }
+
+    fun pagination(): Optional<PaginationMeta> = data().flatMap { it.pagination() }
+
     /**
      * A paginated list of webhook delivery records.
      *

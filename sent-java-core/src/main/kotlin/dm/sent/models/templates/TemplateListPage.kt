@@ -8,6 +8,7 @@ import dm.sent.core.checkRequired
 import dm.sent.services.blocking.TemplateService
 import java.util.Objects
 import java.util.Optional
+import kotlin.jvm.optionals.getOrDefault
 
 /** @see TemplateService.list */
 class TemplateListPage
@@ -29,7 +30,7 @@ private constructor(
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 
     fun nextPageParams(): TemplateListParams {
-        val pageNumber = params.page()
+        val pageNumber = params.page().getOrDefault(1)
         return params.toBuilder().page(pageNumber + 1).build()
     }
 

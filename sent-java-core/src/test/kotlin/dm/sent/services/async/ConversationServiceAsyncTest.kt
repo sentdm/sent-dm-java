@@ -3,8 +3,6 @@
 package dm.sent.services.async
 
 import dm.sent.client.okhttp.SentOkHttpClientAsync
-import dm.sent.models.conversations.ConversationListMessagesParams
-import dm.sent.models.conversations.ConversationListParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -16,10 +14,7 @@ internal class ConversationServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val conversationServiceAsync = client.conversations()
 
-        val pageFuture =
-            conversationServiceAsync.list(
-                ConversationListParams.builder().page(0).pageSize(0).build()
-            )
+        val pageFuture = conversationServiceAsync.list()
 
         val page = pageFuture.get()
         page.response().validate()
@@ -32,13 +27,7 @@ internal class ConversationServiceAsyncTest {
         val conversationServiceAsync = client.conversations()
 
         val pageFuture =
-            conversationServiceAsync.listMessages(
-                ConversationListMessagesParams.builder()
-                    .id("08fab313-c9e2-502c-975e-08b0356c432e")
-                    .page(0)
-                    .pageSize(0)
-                    .build()
-            )
+            conversationServiceAsync.listMessages("08fab313-c9e2-502c-975e-08b0356c432e")
 
         val page = pageFuture.get()
         page.response().validate()

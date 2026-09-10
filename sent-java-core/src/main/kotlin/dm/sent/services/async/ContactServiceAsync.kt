@@ -129,14 +129,22 @@ interface ContactServiceAsync {
      * Retrieves a paginated list of contacts for the authenticated customer. Supports filtering by
      * search term, channel, or phone number.
      */
-    fun list(params: ContactListParams): CompletableFuture<ContactListPageAsync> =
-        list(params, RequestOptions.none())
+    fun list(): CompletableFuture<ContactListPageAsync> = list(ContactListParams.none())
 
     /** @see list */
     fun list(
-        params: ContactListParams,
+        params: ContactListParams = ContactListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ContactListPageAsync>
+
+    /** @see list */
+    fun list(
+        params: ContactListParams = ContactListParams.none()
+    ): CompletableFuture<ContactListPageAsync> = list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): CompletableFuture<ContactListPageAsync> =
+        list(ContactListParams.none(), requestOptions)
 
     /**
      * **Deprecated.** Use `PATCH /v3/contacts/{id}` with `{"opt_out": true}` instead, and expect
@@ -338,16 +346,26 @@ interface ContactServiceAsync {
          * Returns a raw HTTP response for `get /v3/contacts`, but is otherwise the same as
          * [ContactServiceAsync.list].
          */
+        fun list(): CompletableFuture<HttpResponseFor<ContactListPageAsync>> =
+            list(ContactListParams.none())
+
+        /** @see list */
         fun list(
-            params: ContactListParams
+            params: ContactListParams = ContactListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ContactListPageAsync>>
+
+        /** @see list */
+        fun list(
+            params: ContactListParams = ContactListParams.none()
         ): CompletableFuture<HttpResponseFor<ContactListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
-            params: ContactListParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ContactListPageAsync>>
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<ContactListPageAsync>> =
+            list(ContactListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /v3/contacts/{id}`, but is otherwise the same as

@@ -136,14 +136,22 @@ interface TemplateServiceAsync {
      * Retrieves a paginated list of message templates for the authenticated customer. Supports
      * filtering by status, category, and search term.
      */
-    fun list(params: TemplateListParams): CompletableFuture<TemplateListPageAsync> =
-        list(params, RequestOptions.none())
+    fun list(): CompletableFuture<TemplateListPageAsync> = list(TemplateListParams.none())
 
     /** @see list */
     fun list(
-        params: TemplateListParams,
+        params: TemplateListParams = TemplateListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<TemplateListPageAsync>
+
+    /** @see list */
+    fun list(
+        params: TemplateListParams = TemplateListParams.none()
+    ): CompletableFuture<TemplateListPageAsync> = list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): CompletableFuture<TemplateListPageAsync> =
+        list(TemplateListParams.none(), requestOptions)
 
     /**
      * Deletes a template by ID. Optionally, you can also delete the template from WhatsApp/Meta by
@@ -303,16 +311,26 @@ interface TemplateServiceAsync {
          * Returns a raw HTTP response for `get /v3/templates`, but is otherwise the same as
          * [TemplateServiceAsync.list].
          */
+        fun list(): CompletableFuture<HttpResponseFor<TemplateListPageAsync>> =
+            list(TemplateListParams.none())
+
+        /** @see list */
         fun list(
-            params: TemplateListParams
+            params: TemplateListParams = TemplateListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<TemplateListPageAsync>>
+
+        /** @see list */
+        fun list(
+            params: TemplateListParams = TemplateListParams.none()
         ): CompletableFuture<HttpResponseFor<TemplateListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
-            params: TemplateListParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<TemplateListPageAsync>>
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<TemplateListPageAsync>> =
+            list(TemplateListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /v3/templates/{id}`, but is otherwise the same as

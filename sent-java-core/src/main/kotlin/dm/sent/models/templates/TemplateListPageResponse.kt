@@ -40,6 +40,10 @@ private constructor(
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
+    fun templates(): Optional<List<Template>> = data().flatMap { it.templates() }
+
+    fun pagination(): Optional<PaginationMeta> = data().flatMap { it.pagination() }
+
     /**
      * A paginated list of templates.
      *
