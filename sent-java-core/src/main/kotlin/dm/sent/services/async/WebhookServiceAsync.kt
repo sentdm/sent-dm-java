@@ -11,10 +11,10 @@ import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
 import dm.sent.models.webhooks.WebhookListEventTypesResponse
+import dm.sent.models.webhooks.WebhookListEventsPageAsync
 import dm.sent.models.webhooks.WebhookListEventsParams
-import dm.sent.models.webhooks.WebhookListEventsResponse
+import dm.sent.models.webhooks.WebhookListPageAsync
 import dm.sent.models.webhooks.WebhookListParams
-import dm.sent.models.webhooks.WebhookListResponse
 import dm.sent.models.webhooks.WebhookRetrieveParams
 import dm.sent.models.webhooks.WebhookRotateSecretParams
 import dm.sent.models.webhooks.WebhookRotateSecretResponse
@@ -137,14 +137,22 @@ interface WebhookServiceAsync {
         update(id, WebhookUpdateParams.none(), requestOptions)
 
     /** Retrieves a paginated list of webhooks for the authenticated customer. */
-    fun list(params: WebhookListParams): CompletableFuture<WebhookListResponse> =
-        list(params, RequestOptions.none())
+    fun list(): CompletableFuture<WebhookListPageAsync> = list(WebhookListParams.none())
 
     /** @see list */
     fun list(
-        params: WebhookListParams,
+        params: WebhookListParams = WebhookListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookListResponse>
+    ): CompletableFuture<WebhookListPageAsync>
+
+    /** @see list */
+    fun list(
+        params: WebhookListParams = WebhookListParams.none()
+    ): CompletableFuture<WebhookListPageAsync> = list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): CompletableFuture<WebhookListPageAsync> =
+        list(WebhookListParams.none(), requestOptions)
 
     /** Deletes a webhook for the authenticated customer. */
     fun delete(id: String): CompletableFuture<Void?> = delete(id, WebhookDeleteParams.none())
@@ -199,28 +207,39 @@ interface WebhookServiceAsync {
         listEventTypes(WebhookListEventTypesParams.none(), requestOptions)
 
     /** Retrieves a paginated list of delivery events for the specified webhook. */
-    fun listEvents(
-        id: String,
-        params: WebhookListEventsParams,
-    ): CompletableFuture<WebhookListEventsResponse> = listEvents(id, params, RequestOptions.none())
+    fun listEvents(id: String): CompletableFuture<WebhookListEventsPageAsync> =
+        listEvents(id, WebhookListEventsParams.none())
 
     /** @see listEvents */
     fun listEvents(
         id: String,
-        params: WebhookListEventsParams,
+        params: WebhookListEventsParams = WebhookListEventsParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookListEventsResponse> =
+    ): CompletableFuture<WebhookListEventsPageAsync> =
         listEvents(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see listEvents */
-    fun listEvents(params: WebhookListEventsParams): CompletableFuture<WebhookListEventsResponse> =
+    fun listEvents(
+        id: String,
+        params: WebhookListEventsParams = WebhookListEventsParams.none(),
+    ): CompletableFuture<WebhookListEventsPageAsync> = listEvents(id, params, RequestOptions.none())
+
+    /** @see listEvents */
+    fun listEvents(
+        params: WebhookListEventsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<WebhookListEventsPageAsync>
+
+    /** @see listEvents */
+    fun listEvents(params: WebhookListEventsParams): CompletableFuture<WebhookListEventsPageAsync> =
         listEvents(params, RequestOptions.none())
 
     /** @see listEvents */
     fun listEvents(
-        params: WebhookListEventsParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookListEventsResponse>
+        id: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<WebhookListEventsPageAsync> =
+        listEvents(id, WebhookListEventsParams.none(), requestOptions)
 
     /**
      * Generates a new signing secret for the specified webhook. The old secret is immediately
@@ -443,16 +462,26 @@ interface WebhookServiceAsync {
          * Returns a raw HTTP response for `get /v3/webhooks`, but is otherwise the same as
          * [WebhookServiceAsync.list].
          */
+        fun list(): CompletableFuture<HttpResponseFor<WebhookListPageAsync>> =
+            list(WebhookListParams.none())
+
+        /** @see list */
         fun list(
-            params: WebhookListParams
-        ): CompletableFuture<HttpResponseFor<WebhookListResponse>> =
+            params: WebhookListParams = WebhookListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<WebhookListPageAsync>>
+
+        /** @see list */
+        fun list(
+            params: WebhookListParams = WebhookListParams.none()
+        ): CompletableFuture<HttpResponseFor<WebhookListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
-            params: WebhookListParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookListResponse>>
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<WebhookListPageAsync>> =
+            list(WebhookListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /v3/webhooks/{id}`, but is otherwise the same as
@@ -518,31 +547,42 @@ interface WebhookServiceAsync {
          * Returns a raw HTTP response for `get /v3/webhooks/{id}/events`, but is otherwise the same
          * as [WebhookServiceAsync.listEvents].
          */
-        fun listEvents(
-            id: String,
-            params: WebhookListEventsParams,
-        ): CompletableFuture<HttpResponseFor<WebhookListEventsResponse>> =
-            listEvents(id, params, RequestOptions.none())
+        fun listEvents(id: String): CompletableFuture<HttpResponseFor<WebhookListEventsPageAsync>> =
+            listEvents(id, WebhookListEventsParams.none())
 
         /** @see listEvents */
         fun listEvents(
             id: String,
-            params: WebhookListEventsParams,
+            params: WebhookListEventsParams = WebhookListEventsParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookListEventsResponse>> =
+        ): CompletableFuture<HttpResponseFor<WebhookListEventsPageAsync>> =
             listEvents(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see listEvents */
         fun listEvents(
-            params: WebhookListEventsParams
-        ): CompletableFuture<HttpResponseFor<WebhookListEventsResponse>> =
-            listEvents(params, RequestOptions.none())
+            id: String,
+            params: WebhookListEventsParams = WebhookListEventsParams.none(),
+        ): CompletableFuture<HttpResponseFor<WebhookListEventsPageAsync>> =
+            listEvents(id, params, RequestOptions.none())
 
         /** @see listEvents */
         fun listEvents(
             params: WebhookListEventsParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookListEventsResponse>>
+        ): CompletableFuture<HttpResponseFor<WebhookListEventsPageAsync>>
+
+        /** @see listEvents */
+        fun listEvents(
+            params: WebhookListEventsParams
+        ): CompletableFuture<HttpResponseFor<WebhookListEventsPageAsync>> =
+            listEvents(params, RequestOptions.none())
+
+        /** @see listEvents */
+        fun listEvents(
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<WebhookListEventsPageAsync>> =
+            listEvents(id, WebhookListEventsParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /v3/webhooks/{id}/rotate-secret`, but is otherwise

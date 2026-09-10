@@ -24,8 +24,6 @@ internal class ConversationListMessagesParamsTest {
         val params =
             ConversationListMessagesParams.builder()
                 .id("08fab313-c9e2-502c-975e-08b0356c432e")
-                .page(0)
-                .pageSize(0)
                 .build()
 
         assertThat(params._pathParam(0)).isEqualTo("08fab313-c9e2-502c-975e-08b0356c432e")
@@ -58,8 +56,6 @@ internal class ConversationListMessagesParamsTest {
         val params =
             ConversationListMessagesParams.builder()
                 .id("08fab313-c9e2-502c-975e-08b0356c432e")
-                .page(0)
-                .pageSize(0)
                 .build()
 
         val headers = params._headers()
@@ -88,13 +84,10 @@ internal class ConversationListMessagesParamsTest {
         val params =
             ConversationListMessagesParams.builder()
                 .id("08fab313-c9e2-502c-975e-08b0356c432e")
-                .page(0)
-                .pageSize(0)
                 .build()
 
         val queryParams = params._queryParams()
 
-        assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("page", "0").put("page_size", "0").build())
+        assertThat(queryParams).isEqualTo(QueryParams.builder().build())
     }
 }

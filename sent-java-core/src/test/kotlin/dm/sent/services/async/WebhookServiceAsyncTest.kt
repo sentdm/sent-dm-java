@@ -8,8 +8,6 @@ import dm.sent.models.webhooks.MutationRequest
 import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
-import dm.sent.models.webhooks.WebhookListEventsParams
-import dm.sent.models.webhooks.WebhookListParams
 import dm.sent.models.webhooks.WebhookRetrieveParams
 import dm.sent.models.webhooks.WebhookRotateSecretParams
 import dm.sent.models.webhooks.WebhookTestParams
@@ -111,19 +109,10 @@ internal class WebhookServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val webhooksFuture =
-            webhookServiceAsync.list(
-                WebhookListParams.builder()
-                    .page(0)
-                    .pageSize(0)
-                    .isActive(true)
-                    .search("search")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val pageFuture = webhookServiceAsync.list()
 
-        val webhooks = webhooksFuture.get()
-        webhooks.validate()
+        val page = pageFuture.get()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -166,19 +155,10 @@ internal class WebhookServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val responseFuture =
-            webhookServiceAsync.listEvents(
-                WebhookListEventsParams.builder()
-                    .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
-                    .page(0)
-                    .pageSize(0)
-                    .search("search")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val pageFuture = webhookServiceAsync.listEvents("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
 
-        val response = responseFuture.get()
-        response.validate()
+        val page = pageFuture.get()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")

@@ -283,6 +283,106 @@ The SDK throws custom unchecked exception types:
 
 - [`SentException`](sent-java-core/src/main/kotlin/dm/sent/errors/SentException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
 
+## Pagination
+
+The SDK defines methods that return a paginated lists of results. It provides convenient ways to access the results either one page at a time or item-by-item across all pages.
+
+### Auto-pagination
+
+To iterate through all results across all pages, use the `autoPager()` method, which automatically fetches more pages as needed.
+
+When using the synchronous client, the method returns an [`Iterable`](https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html)
+
+```java
+import dm.sent.models.webhooks.WebhookListPage;
+import dm.sent.models.webhooks.WebhookResponse;
+
+WebhookListPage page = client.webhooks().list();
+
+// Process as an Iterable
+for (WebhookResponse webhook : page.autoPager()) {
+    System.out.println(webhook);
+}
+
+// Process as a Stream
+page.autoPager()
+    .stream()
+    .limit(50)
+    .forEach(webhook -> System.out.println(webhook));
+```
+
+When using the asynchronous client, the method returns an [`AsyncStreamResponse`](sent-java-core/src/main/kotlin/dm/sent/core/http/AsyncStreamResponse.kt):
+
+```java
+import dm.sent.core.http.AsyncStreamResponse;
+import dm.sent.models.webhooks.WebhookListPageAsync;
+import dm.sent.models.webhooks.WebhookResponse;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+CompletableFuture<WebhookListPageAsync> pageFuture = client.async().webhooks().list();
+
+pageFuture.thenRun(page -> page.autoPager().subscribe(webhook -> {
+    System.out.println(webhook);
+}));
+
+// If you need to handle errors or completion of the stream
+pageFuture.thenRun(page -> page.autoPager().subscribe(new AsyncStreamResponse.Handler<>() {
+    @Override
+    public void onNext(WebhookResponse webhook) {
+        System.out.println(webhook);
+    }
+
+    @Override
+    public void onComplete(Optional<Throwable> error) {
+        if (error.isPresent()) {
+            System.out.println("Something went wrong!");
+            throw new RuntimeException(error.get());
+        } else {
+            System.out.println("No more!");
+        }
+    }
+}));
+
+// Or use futures
+pageFuture.thenRun(page -> page.autoPager()
+    .subscribe(webhook -> {
+        System.out.println(webhook);
+    })
+    .onCompleteFuture()
+    .whenComplete((unused, error) -> {
+        if (error != null) {
+            System.out.println("Something went wrong!");
+            throw new RuntimeException(error);
+        } else {
+            System.out.println("No more!");
+        }
+    }));
+```
+
+### Manual pagination
+
+To access individual page items and manually request the next page, use the `items()`,
+`hasNextPage()`, and `nextPage()` methods:
+
+```java
+import dm.sent.models.webhooks.WebhookListPage;
+import dm.sent.models.webhooks.WebhookResponse;
+
+WebhookListPage page = client.webhooks().list();
+while (true) {
+    for (WebhookResponse webhook : page.items()) {
+        System.out.println(webhook);
+    }
+
+    if (!page.hasNextPage()) {
+        break;
+    }
+
+    page = page.nextPage();
+}
+```
+
 ## Logging
 
 Enable logging by setting the `SENT_LOG` environment variable to `info`:

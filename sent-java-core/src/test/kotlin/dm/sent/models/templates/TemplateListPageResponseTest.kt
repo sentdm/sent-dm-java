@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.contacts
+package dm.sent.models.templates
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
@@ -12,33 +12,14 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ContactListResponseTest {
+internal class TemplateListPageResponseTest {
 
     @Test
     fun create() {
-        val contactListResponse =
-            ContactListResponse.builder()
+        val templateListPageResponse =
+            TemplateListPageResponse.builder()
                 .data(
-                    ContactListResponse.Data.builder()
-                        .addContact(
-                            ContactResponse.builder()
-                                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .availableChannels("available_channels")
-                                .countryCode("country_code")
-                                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .defaultChannel("default_channel")
-                                .formatE164("format_e164")
-                                .formatInternational("format_international")
-                                .formatNational("format_national")
-                                .formatRfc("format_rfc")
-                                .isInherited(true)
-                                .optOut(true)
-                                .phoneNumber("phone_number")
-                                .regionCode("region_code")
-                                .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .build()
-                        )
+                    TemplateListPageResponse.Data.builder()
                         .pagination(
                             PaginationMeta.builder()
                                 .cursors(
@@ -52,6 +33,21 @@ internal class ContactListResponseTest {
                                 .pageSize(0)
                                 .totalCount(0)
                                 .totalPages(0)
+                                .build()
+                        )
+                        .addTemplate(
+                            Template.builder()
+                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .category("category")
+                                .addChannel("string")
+                                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .isPublished(true)
+                                .language("language")
+                                .name("name")
+                                .status("status")
+                                .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .addVariable("string")
                                 .build()
                         )
                         .build()
@@ -78,28 +74,9 @@ internal class ContactListResponseTest {
                 .success(true)
                 .build()
 
-        assertThat(contactListResponse.data())
+        assertThat(templateListPageResponse.data())
             .contains(
-                ContactListResponse.Data.builder()
-                    .addContact(
-                        ContactResponse.builder()
-                            .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .availableChannels("available_channels")
-                            .countryCode("country_code")
-                            .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .defaultChannel("default_channel")
-                            .formatE164("format_e164")
-                            .formatInternational("format_international")
-                            .formatNational("format_national")
-                            .formatRfc("format_rfc")
-                            .isInherited(true)
-                            .optOut(true)
-                            .phoneNumber("phone_number")
-                            .regionCode("region_code")
-                            .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .build()
-                    )
+                TemplateListPageResponse.Data.builder()
                     .pagination(
                         PaginationMeta.builder()
                             .cursors(
@@ -115,9 +92,24 @@ internal class ContactListResponseTest {
                             .totalPages(0)
                             .build()
                     )
+                    .addTemplate(
+                        Template.builder()
+                            .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                            .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                            .category("category")
+                            .addChannel("string")
+                            .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .isPublished(true)
+                            .language("language")
+                            .name("name")
+                            .status("status")
+                            .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .addVariable("string")
+                            .build()
+                    )
                     .build()
             )
-        assertThat(contactListResponse.error())
+        assertThat(templateListPageResponse.error())
             .contains(
                 ErrorDetail.builder()
                     .code("code")
@@ -130,7 +122,7 @@ internal class ContactListResponseTest {
                     .message("message")
                     .build()
             )
-        assertThat(contactListResponse.meta())
+        assertThat(templateListPageResponse.meta())
             .contains(
                 ApiMeta.builder()
                     .requestId("request_id")
@@ -138,35 +130,16 @@ internal class ContactListResponseTest {
                     .version("version")
                     .build()
             )
-        assertThat(contactListResponse.success()).contains(true)
+        assertThat(templateListPageResponse.success()).contains(true)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val contactListResponse =
-            ContactListResponse.builder()
+        val templateListPageResponse =
+            TemplateListPageResponse.builder()
                 .data(
-                    ContactListResponse.Data.builder()
-                        .addContact(
-                            ContactResponse.builder()
-                                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .availableChannels("available_channels")
-                                .countryCode("country_code")
-                                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .defaultChannel("default_channel")
-                                .formatE164("format_e164")
-                                .formatInternational("format_international")
-                                .formatNational("format_national")
-                                .formatRfc("format_rfc")
-                                .isInherited(true)
-                                .optOut(true)
-                                .phoneNumber("phone_number")
-                                .regionCode("region_code")
-                                .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .build()
-                        )
+                    TemplateListPageResponse.Data.builder()
                         .pagination(
                             PaginationMeta.builder()
                                 .cursors(
@@ -180,6 +153,21 @@ internal class ContactListResponseTest {
                                 .pageSize(0)
                                 .totalCount(0)
                                 .totalPages(0)
+                                .build()
+                        )
+                        .addTemplate(
+                            Template.builder()
+                                .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .category("category")
+                                .addChannel("string")
+                                .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .isPublished(true)
+                                .language("language")
+                                .name("name")
+                                .status("status")
+                                .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .addVariable("string")
                                 .build()
                         )
                         .build()
@@ -206,12 +194,12 @@ internal class ContactListResponseTest {
                 .success(true)
                 .build()
 
-        val roundtrippedContactListResponse =
+        val roundtrippedTemplateListPageResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(contactListResponse),
-                jacksonTypeRef<ContactListResponse>(),
+                jsonMapper.writeValueAsString(templateListPageResponse),
+                jacksonTypeRef<TemplateListPageResponse>(),
             )
 
-        assertThat(roundtrippedContactListResponse).isEqualTo(contactListResponse)
+        assertThat(roundtrippedTemplateListPageResponse).isEqualTo(templateListPageResponse)
     }
 }

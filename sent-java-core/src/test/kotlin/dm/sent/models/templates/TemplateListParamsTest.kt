@@ -12,10 +12,10 @@ internal class TemplateListParamsTest {
     @Test
     fun create() {
         TemplateListParams.builder()
-            .page(0)
-            .pageSize(0)
             .category("category")
             .isWelcomePlayground(true)
+            .page(0)
+            .pageSize(0)
             .search("search")
             .status("status")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -26,10 +26,10 @@ internal class TemplateListParamsTest {
     fun headers() {
         val params =
             TemplateListParams.builder()
-                .page(0)
-                .pageSize(0)
                 .category("category")
                 .isWelcomePlayground(true)
+                .page(0)
+                .pageSize(0)
                 .search("search")
                 .status("status")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -47,7 +47,7 @@ internal class TemplateListParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = TemplateListParams.builder().page(0).pageSize(0).build()
+        val params = TemplateListParams.builder().build()
 
         val headers = params._headers()
 
@@ -58,10 +58,10 @@ internal class TemplateListParamsTest {
     fun queryParams() {
         val params =
             TemplateListParams.builder()
-                .page(0)
-                .pageSize(0)
                 .category("category")
                 .isWelcomePlayground(true)
+                .page(0)
+                .pageSize(0)
                 .search("search")
                 .status("status")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -72,10 +72,10 @@ internal class TemplateListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
-                    .put("page", "0")
-                    .put("page_size", "0")
                     .put("category", "category")
                     .put("is_welcome_playground", "true")
+                    .put("page", "0")
+                    .put("page_size", "0")
                     .put("search", "search")
                     .put("status", "status")
                     .build()
@@ -84,11 +84,10 @@ internal class TemplateListParamsTest {
 
     @Test
     fun queryParamsWithoutOptionalFields() {
-        val params = TemplateListParams.builder().page(0).pageSize(0).build()
+        val params = TemplateListParams.builder().build()
 
         val queryParams = params._queryParams()
 
-        assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("page", "0").put("page_size", "0").build())
+        assertThat(queryParams).isEqualTo(QueryParams.builder().build())
     }
 }

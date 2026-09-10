@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.contacts
+package dm.sent.models.webhooks
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -13,16 +13,13 @@ import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
-import dm.sent.models.webhooks.PaginationMeta
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Standard API response envelope for all v3 endpoints */
-class ContactListResponse
+class WebhookListEventsPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val data: JsonField<Data>,
@@ -40,8 +37,12 @@ private constructor(
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
+    fun events(): Optional<List<WebhookListEventsResponse>> = data().flatMap { it.events() }
+
+    fun pagination(): Optional<PaginationMeta> = data().flatMap { it.pagination() }
+
     /**
-     * A paginated list of contacts.
+     * A paginated list of webhook delivery records.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -114,11 +115,14 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [ContactListResponse]. */
+        /**
+         * Returns a mutable builder for constructing an instance of
+         * [WebhookListEventsPageResponse].
+         */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ContactListResponse]. */
+    /** A builder for [WebhookListEventsPageResponse]. */
     class Builder internal constructor() {
 
         private var data: JsonField<Data> = JsonMissing.of()
@@ -128,15 +132,15 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(contactListResponse: ContactListResponse) = apply {
-            data = contactListResponse.data
-            error = contactListResponse.error
-            meta = contactListResponse.meta
-            success = contactListResponse.success
-            additionalProperties = contactListResponse.additionalProperties.toMutableMap()
+        internal fun from(webhookListEventsPageResponse: WebhookListEventsPageResponse) = apply {
+            data = webhookListEventsPageResponse.data
+            error = webhookListEventsPageResponse.error
+            meta = webhookListEventsPageResponse.meta
+            success = webhookListEventsPageResponse.success
+            additionalProperties = webhookListEventsPageResponse.additionalProperties.toMutableMap()
         }
 
-        /** A paginated list of contacts. */
+        /** A paginated list of webhook delivery records. */
         fun data(data: Data?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
@@ -207,12 +211,18 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ContactListResponse].
+         * Returns an immutable instance of [WebhookListEventsPageResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ContactListResponse =
-            ContactListResponse(data, error, meta, success, additionalProperties.toMutableMap())
+        fun build(): WebhookListEventsPageResponse =
+            WebhookListEventsPageResponse(
+                data,
+                error,
+                meta,
+                success,
+                additionalProperties.toMutableMap(),
+            )
     }
 
     private var validated: Boolean = false
@@ -225,7 +235,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): ContactListResponse = apply {
+    fun validate(): WebhookListEventsPageResponse = apply {
         if (validated) {
             return@apply
         }
@@ -257,32 +267,32 @@ private constructor(
             (meta.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
 
-    /** A paginated list of contacts. */
+    /** A paginated list of webhook delivery records. */
     class Data
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val contacts: JsonField<List<ContactResponse>>,
+        private val events: JsonField<List<WebhookListEventsResponse>>,
         private val pagination: JsonField<PaginationMeta>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("contacts")
+            @JsonProperty("events")
             @ExcludeMissing
-            contacts: JsonField<List<ContactResponse>> = JsonMissing.of(),
+            events: JsonField<List<WebhookListEventsResponse>> = JsonMissing.of(),
             @JsonProperty("pagination")
             @ExcludeMissing
             pagination: JsonField<PaginationMeta> = JsonMissing.of(),
-        ) : this(contacts, pagination, mutableMapOf())
+        ) : this(events, pagination, mutableMapOf())
 
         /**
-         * The contacts on this page.
+         * The events on this page.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun contacts(): Optional<List<ContactResponse>> = contacts.getOptional("contacts")
+        fun events(): Optional<List<WebhookListEventsResponse>> = events.getOptional("events")
 
         /**
          * Pagination metadata for list responses
@@ -293,13 +303,13 @@ private constructor(
         fun pagination(): Optional<PaginationMeta> = pagination.getOptional("pagination")
 
         /**
-         * Returns the raw JSON value of [contacts].
+         * Returns the raw JSON value of [events].
          *
-         * Unlike [contacts], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [events], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("contacts")
+        @JsonProperty("events")
         @ExcludeMissing
-        fun _contacts(): JsonField<List<ContactResponse>> = contacts
+        fun _events(): JsonField<List<WebhookListEventsResponse>> = events
 
         /**
          * Returns the raw JSON value of [pagination].
@@ -331,40 +341,40 @@ private constructor(
         /** A builder for [Data]. */
         class Builder internal constructor() {
 
-            private var contacts: JsonField<MutableList<ContactResponse>>? = null
+            private var events: JsonField<MutableList<WebhookListEventsResponse>>? = null
             private var pagination: JsonField<PaginationMeta> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(data: Data) = apply {
-                contacts = data.contacts.map { it.toMutableList() }
+                events = data.events.map { it.toMutableList() }
                 pagination = data.pagination
                 additionalProperties = data.additionalProperties.toMutableMap()
             }
 
-            /** The contacts on this page. */
-            fun contacts(contacts: List<ContactResponse>) = contacts(JsonField.of(contacts))
+            /** The events on this page. */
+            fun events(events: List<WebhookListEventsResponse>) = events(JsonField.of(events))
 
             /**
-             * Sets [Builder.contacts] to an arbitrary JSON value.
+             * Sets [Builder.events] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.contacts] with a well-typed `List<ContactResponse>`
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
+             * You should usually call [Builder.events] with a well-typed
+             * `List<WebhookListEventsResponse>` value instead. This method is primarily for setting
+             * the field to an undocumented or not yet supported value.
              */
-            fun contacts(contacts: JsonField<List<ContactResponse>>) = apply {
-                this.contacts = contacts.map { it.toMutableList() }
+            fun events(events: JsonField<List<WebhookListEventsResponse>>) = apply {
+                this.events = events.map { it.toMutableList() }
             }
 
             /**
-             * Adds a single [ContactResponse] to [contacts].
+             * Adds a single [WebhookListEventsResponse] to [events].
              *
              * @throws IllegalStateException if the field was previously set to a non-list.
              */
-            fun addContact(contact: ContactResponse) = apply {
-                contacts =
-                    (contacts ?: JsonField.of(mutableListOf())).also {
-                        checkKnown("contacts", it).add(contact)
+            fun addEvent(event: WebhookListEventsResponse) = apply {
+                events =
+                    (events ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("events", it).add(event)
                     }
             }
 
@@ -408,7 +418,7 @@ private constructor(
              */
             fun build(): Data =
                 Data(
-                    (contacts ?: JsonMissing.of()).map { it.toImmutable() },
+                    (events ?: JsonMissing.of()).map { it.toImmutable() },
                     pagination,
                     additionalProperties.toMutableMap(),
                 )
@@ -430,7 +440,7 @@ private constructor(
                 return@apply
             }
 
-            contacts().ifPresent { it.forEach { it.validate() } }
+            events().ifPresent { it.forEach { it.validate() } }
             pagination().ifPresent { it.validate() }
             validated = true
         }
@@ -451,7 +461,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (contacts.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (events.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (pagination.asKnown().getOrNull()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
@@ -460,19 +470,17 @@ private constructor(
             }
 
             return other is Data &&
-                contacts == other.contacts &&
+                events == other.events &&
                 pagination == other.pagination &&
                 additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy {
-            Objects.hash(contacts, pagination, additionalProperties)
-        }
+        private val hashCode: Int by lazy { Objects.hash(events, pagination, additionalProperties) }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{contacts=$contacts, pagination=$pagination, additionalProperties=$additionalProperties}"
+            "Data{events=$events, pagination=$pagination, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -480,7 +488,7 @@ private constructor(
             return true
         }
 
-        return other is ContactListResponse &&
+        return other is WebhookListEventsPageResponse &&
             data == other.data &&
             error == other.error &&
             meta == other.meta &&
@@ -495,5 +503,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ContactListResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
+        "WebhookListEventsPageResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
 }

@@ -22,10 +22,12 @@ import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
 import dm.sent.models.webhooks.WebhookListEventTypesResponse
+import dm.sent.models.webhooks.WebhookListEventsPageAsync
+import dm.sent.models.webhooks.WebhookListEventsPageResponse
 import dm.sent.models.webhooks.WebhookListEventsParams
-import dm.sent.models.webhooks.WebhookListEventsResponse
+import dm.sent.models.webhooks.WebhookListPageAsync
+import dm.sent.models.webhooks.WebhookListPageResponse
 import dm.sent.models.webhooks.WebhookListParams
-import dm.sent.models.webhooks.WebhookListResponse
 import dm.sent.models.webhooks.WebhookRetrieveParams
 import dm.sent.models.webhooks.WebhookRotateSecretParams
 import dm.sent.models.webhooks.WebhookRotateSecretResponse
@@ -85,7 +87,7 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: WebhookListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookListResponse> =
+    ): CompletableFuture<WebhookListPageAsync> =
         // get /v3/webhooks
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -106,7 +108,7 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun listEvents(
         params: WebhookListEventsParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookListEventsResponse> =
+    ): CompletableFuture<WebhookListEventsPageAsync> =
         // get /v3/webhooks/{id}/events
         withRawResponse().listEvents(params, requestOptions).thenApply { it.parse() }
 
@@ -242,13 +244,13 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val listHandler: Handler<WebhookListResponse> =
-            jsonHandler<WebhookListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<WebhookListPageResponse> =
+            jsonHandler<WebhookListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: WebhookListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookListResponse>> {
+        ): CompletableFuture<HttpResponseFor<WebhookListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -267,6 +269,14 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                WebhookListPageAsync.builder()
+                                    .service(WebhookServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }
@@ -329,13 +339,13 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val listEventsHandler: Handler<WebhookListEventsResponse> =
-            jsonHandler<WebhookListEventsResponse>(clientOptions.jsonMapper)
+        private val listEventsHandler: Handler<WebhookListEventsPageResponse> =
+            jsonHandler<WebhookListEventsPageResponse>(clientOptions.jsonMapper)
 
         override fun listEvents(
             params: WebhookListEventsParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookListEventsResponse>> {
+        ): CompletableFuture<HttpResponseFor<WebhookListEventsPageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -357,6 +367,14 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                WebhookListEventsPageAsync.builder()
+                                    .service(WebhookServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }

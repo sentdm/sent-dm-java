@@ -13,7 +13,6 @@ import dm.sent.models.templates.TemplateDefinition
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateFooter
 import dm.sent.models.templates.TemplateHeader
-import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
 import dm.sent.models.templates.TemplateVariable
@@ -508,20 +507,9 @@ internal class TemplateServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
-        val templates =
-            templateService.list(
-                TemplateListParams.builder()
-                    .page(0)
-                    .pageSize(0)
-                    .category("category")
-                    .isWelcomePlayground(true)
-                    .search("search")
-                    .status("status")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val page = templateService.list()
 
-        templates.validate()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")

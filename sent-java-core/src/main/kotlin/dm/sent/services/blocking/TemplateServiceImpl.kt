@@ -20,8 +20,9 @@ import dm.sent.core.prepare
 import dm.sent.models.templates.ApiResponseTemplate
 import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDeleteParams
+import dm.sent.models.templates.TemplateListPage
+import dm.sent.models.templates.TemplateListPageResponse
 import dm.sent.models.templates.TemplateListParams
-import dm.sent.models.templates.TemplateListResponse
 import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
 import java.util.function.Consumer
@@ -71,7 +72,7 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
     override fun list(
         params: TemplateListParams,
         requestOptions: RequestOptions,
-    ): TemplateListResponse =
+    ): TemplateListPage =
         // get /v3/templates
         withRawResponse().list(params, requestOptions).parse()
 
@@ -182,13 +183,13 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
             }
         }
 
-        private val listHandler: Handler<TemplateListResponse> =
-            jsonHandler<TemplateListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<TemplateListPageResponse> =
+            jsonHandler<TemplateListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: TemplateListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TemplateListResponse> {
+        ): HttpResponseFor<TemplateListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -205,6 +206,13 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+                    .let {
+                        TemplateListPage.builder()
+                            .service(TemplateServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }

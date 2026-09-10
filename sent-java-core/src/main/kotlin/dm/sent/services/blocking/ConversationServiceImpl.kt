@@ -16,7 +16,9 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
 import dm.sent.models.conversations.ApiResponseOfConversationMessagesList
+import dm.sent.models.conversations.ConversationListMessagesPage
 import dm.sent.models.conversations.ConversationListMessagesParams
+import dm.sent.models.conversations.ConversationListPage
 import dm.sent.models.conversations.ConversationListParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -44,14 +46,14 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: ConversationListParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfConversationMessagesList =
+    ): ConversationListPage =
         // get /v3/conversations
         withRawResponse().list(params, requestOptions).parse()
 
     override fun listMessages(
         params: ConversationListMessagesParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfConversationMessagesList =
+    ): ConversationListMessagesPage =
         // get /v3/conversations/{id}
         withRawResponse().listMessages(params, requestOptions).parse()
 
@@ -74,7 +76,7 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
         override fun list(
             params: ConversationListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfConversationMessagesList> {
+        ): HttpResponseFor<ConversationListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -92,6 +94,13 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
                             it.validate()
                         }
                     }
+                    .let {
+                        ConversationListPage.builder()
+                            .service(ConversationServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
+                    }
             }
         }
 
@@ -101,7 +110,7 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
         override fun listMessages(
             params: ConversationListMessagesParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfConversationMessagesList> {
+        ): HttpResponseFor<ConversationListMessagesPage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -121,6 +130,13 @@ class ConversationServiceImpl internal constructor(private val clientOptions: Cl
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+                    .let {
+                        ConversationListMessagesPage.builder()
+                            .service(ConversationServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }

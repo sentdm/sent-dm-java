@@ -12,10 +12,10 @@ import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
 import dm.sent.models.webhooks.WebhookListEventTypesResponse
+import dm.sent.models.webhooks.WebhookListEventsPage
 import dm.sent.models.webhooks.WebhookListEventsParams
-import dm.sent.models.webhooks.WebhookListEventsResponse
+import dm.sent.models.webhooks.WebhookListPage
 import dm.sent.models.webhooks.WebhookListParams
-import dm.sent.models.webhooks.WebhookListResponse
 import dm.sent.models.webhooks.WebhookRetrieveParams
 import dm.sent.models.webhooks.WebhookRotateSecretParams
 import dm.sent.models.webhooks.WebhookRotateSecretResponse
@@ -129,13 +129,21 @@ interface WebhookService {
         update(id, WebhookUpdateParams.none(), requestOptions)
 
     /** Retrieves a paginated list of webhooks for the authenticated customer. */
-    fun list(params: WebhookListParams): WebhookListResponse = list(params, RequestOptions.none())
+    fun list(): WebhookListPage = list(WebhookListParams.none())
 
     /** @see list */
     fun list(
-        params: WebhookListParams,
+        params: WebhookListParams = WebhookListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookListResponse
+    ): WebhookListPage
+
+    /** @see list */
+    fun list(params: WebhookListParams = WebhookListParams.none()): WebhookListPage =
+        list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): WebhookListPage =
+        list(WebhookListParams.none(), requestOptions)
 
     /** Deletes a webhook for the authenticated customer. */
     fun delete(id: String) = delete(id, WebhookDeleteParams.none())
@@ -181,25 +189,35 @@ interface WebhookService {
         listEventTypes(WebhookListEventTypesParams.none(), requestOptions)
 
     /** Retrieves a paginated list of delivery events for the specified webhook. */
-    fun listEvents(id: String, params: WebhookListEventsParams): WebhookListEventsResponse =
-        listEvents(id, params, RequestOptions.none())
+    fun listEvents(id: String): WebhookListEventsPage =
+        listEvents(id, WebhookListEventsParams.none())
 
     /** @see listEvents */
     fun listEvents(
         id: String,
-        params: WebhookListEventsParams,
+        params: WebhookListEventsParams = WebhookListEventsParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookListEventsResponse = listEvents(params.toBuilder().id(id).build(), requestOptions)
+    ): WebhookListEventsPage = listEvents(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see listEvents */
-    fun listEvents(params: WebhookListEventsParams): WebhookListEventsResponse =
-        listEvents(params, RequestOptions.none())
+    fun listEvents(
+        id: String,
+        params: WebhookListEventsParams = WebhookListEventsParams.none(),
+    ): WebhookListEventsPage = listEvents(id, params, RequestOptions.none())
 
     /** @see listEvents */
     fun listEvents(
         params: WebhookListEventsParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookListEventsResponse
+    ): WebhookListEventsPage
+
+    /** @see listEvents */
+    fun listEvents(params: WebhookListEventsParams): WebhookListEventsPage =
+        listEvents(params, RequestOptions.none())
+
+    /** @see listEvents */
+    fun listEvents(id: String, requestOptions: RequestOptions): WebhookListEventsPage =
+        listEvents(id, WebhookListEventsParams.none(), requestOptions)
 
     /**
      * Generates a new signing secret for the specified webhook. The old secret is immediately
@@ -412,16 +430,25 @@ interface WebhookService {
          * Returns a raw HTTP response for `get /v3/webhooks`, but is otherwise the same as
          * [WebhookService.list].
          */
-        @MustBeClosed
-        fun list(params: WebhookListParams): HttpResponseFor<WebhookListResponse> =
-            list(params, RequestOptions.none())
+        @MustBeClosed fun list(): HttpResponseFor<WebhookListPage> = list(WebhookListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
-            params: WebhookListParams,
+            params: WebhookListParams = WebhookListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookListResponse>
+        ): HttpResponseFor<WebhookListPage>
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: WebhookListParams = WebhookListParams.none()
+        ): HttpResponseFor<WebhookListPage> = list(params, RequestOptions.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(requestOptions: RequestOptions): HttpResponseFor<WebhookListPage> =
+            list(WebhookListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /v3/webhooks/{id}`, but is otherwise the same as
@@ -495,33 +522,44 @@ interface WebhookService {
          * as [WebhookService.listEvents].
          */
         @MustBeClosed
-        fun listEvents(
-            id: String,
-            params: WebhookListEventsParams,
-        ): HttpResponseFor<WebhookListEventsResponse> =
-            listEvents(id, params, RequestOptions.none())
+        fun listEvents(id: String): HttpResponseFor<WebhookListEventsPage> =
+            listEvents(id, WebhookListEventsParams.none())
 
         /** @see listEvents */
         @MustBeClosed
         fun listEvents(
             id: String,
-            params: WebhookListEventsParams,
+            params: WebhookListEventsParams = WebhookListEventsParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookListEventsResponse> =
+        ): HttpResponseFor<WebhookListEventsPage> =
             listEvents(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see listEvents */
         @MustBeClosed
         fun listEvents(
-            params: WebhookListEventsParams
-        ): HttpResponseFor<WebhookListEventsResponse> = listEvents(params, RequestOptions.none())
+            id: String,
+            params: WebhookListEventsParams = WebhookListEventsParams.none(),
+        ): HttpResponseFor<WebhookListEventsPage> = listEvents(id, params, RequestOptions.none())
 
         /** @see listEvents */
         @MustBeClosed
         fun listEvents(
             params: WebhookListEventsParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookListEventsResponse>
+        ): HttpResponseFor<WebhookListEventsPage>
+
+        /** @see listEvents */
+        @MustBeClosed
+        fun listEvents(params: WebhookListEventsParams): HttpResponseFor<WebhookListEventsPage> =
+            listEvents(params, RequestOptions.none())
+
+        /** @see listEvents */
+        @MustBeClosed
+        fun listEvents(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<WebhookListEventsPage> =
+            listEvents(id, WebhookListEventsParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /v3/webhooks/{id}/rotate-secret`, but is otherwise

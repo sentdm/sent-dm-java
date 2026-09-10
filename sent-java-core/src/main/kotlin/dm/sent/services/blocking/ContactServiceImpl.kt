@@ -21,8 +21,9 @@ import dm.sent.models.contacts.ApiResponseOfContact
 import dm.sent.models.contacts.ApiResponseOfContactMessageSummary
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
+import dm.sent.models.contacts.ContactListPage
+import dm.sent.models.contacts.ContactListPageResponse
 import dm.sent.models.contacts.ContactListParams
-import dm.sent.models.contacts.ContactListResponse
 import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
@@ -72,10 +73,7 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
         // patch /v3/contacts/{id}
         withRawResponse().update(params, requestOptions).parse()
 
-    override fun list(
-        params: ContactListParams,
-        requestOptions: RequestOptions,
-    ): ContactListResponse =
+    override fun list(params: ContactListParams, requestOptions: RequestOptions): ContactListPage =
         // get /v3/contacts
         withRawResponse().list(params, requestOptions).parse()
 
@@ -194,13 +192,13 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val listHandler: Handler<ContactListResponse> =
-            jsonHandler<ContactListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ContactListPageResponse> =
+            jsonHandler<ContactListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: ContactListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ContactListResponse> {
+        ): HttpResponseFor<ContactListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -217,6 +215,13 @@ class ContactServiceImpl internal constructor(private val clientOptions: ClientO
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+                    .let {
+                        ContactListPage.builder()
+                            .service(ContactServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }

@@ -21,8 +21,9 @@ import dm.sent.models.contacts.ApiResponseOfContact
 import dm.sent.models.contacts.ApiResponseOfContactMessageSummary
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
+import dm.sent.models.contacts.ContactListPageAsync
+import dm.sent.models.contacts.ContactListPageResponse
 import dm.sent.models.contacts.ContactListParams
-import dm.sent.models.contacts.ContactListResponse
 import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
@@ -76,7 +77,7 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: ContactListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ContactListResponse> =
+    ): CompletableFuture<ContactListPageAsync> =
         // get /v3/contacts
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -206,13 +207,13 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val listHandler: Handler<ContactListResponse> =
-            jsonHandler<ContactListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ContactListPageResponse> =
+            jsonHandler<ContactListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: ContactListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ContactListResponse>> {
+        ): CompletableFuture<HttpResponseFor<ContactListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -231,6 +232,14 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                ContactListPageAsync.builder()
+                                    .service(ContactServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }

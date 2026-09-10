@@ -3,7 +3,6 @@
 package dm.sent.models.contacts
 
 import dm.sent.core.Params
-import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import java.util.Objects
@@ -16,9 +15,9 @@ import kotlin.jvm.optionals.getOrNull
  */
 class ContactListParams
 private constructor(
-    private val page: Int,
-    private val pageSize: Int,
     private val channel: String?,
+    private val page: Int?,
+    private val pageSize: Int?,
     private val phone: String?,
     private val search: String?,
     private val xProfileId: String?,
@@ -26,14 +25,14 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** Page number (1-indexed) */
-    fun page(): Int = page
-
-    /** Number of items per page */
-    fun pageSize(): Int = pageSize
-
     /** Optional channel filter (sms, whatsapp) */
     fun channel(): Optional<String> = Optional.ofNullable(channel)
+
+    /** Page number (1-indexed) */
+    fun page(): Optional<Int> = Optional.ofNullable(page)
+
+    /** Number of items per page */
+    fun pageSize(): Optional<Int> = Optional.ofNullable(pageSize)
 
     /** Optional phone number filter (alternative to list view) */
     fun phone(): Optional<String> = Optional.ofNullable(phone)
@@ -53,24 +52,18 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [ContactListParams].
-         *
-         * The following fields are required:
-         * ```java
-         * .page()
-         * .pageSize()
-         * ```
-         */
+        @JvmStatic fun none(): ContactListParams = builder().build()
+
+        /** Returns a mutable builder for constructing an instance of [ContactListParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
     /** A builder for [ContactListParams]. */
     class Builder internal constructor() {
 
+        private var channel: String? = null
         private var page: Int? = null
         private var pageSize: Int? = null
-        private var channel: String? = null
         private var phone: String? = null
         private var search: String? = null
         private var xProfileId: String? = null
@@ -79,9 +72,9 @@ private constructor(
 
         @JvmSynthetic
         internal fun from(contactListParams: ContactListParams) = apply {
+            channel = contactListParams.channel
             page = contactListParams.page
             pageSize = contactListParams.pageSize
-            channel = contactListParams.channel
             phone = contactListParams.phone
             search = contactListParams.search
             xProfileId = contactListParams.xProfileId
@@ -89,17 +82,37 @@ private constructor(
             additionalQueryParams = contactListParams.additionalQueryParams.toBuilder()
         }
 
-        /** Page number (1-indexed) */
-        fun page(page: Int) = apply { this.page = page }
-
-        /** Number of items per page */
-        fun pageSize(pageSize: Int) = apply { this.pageSize = pageSize }
-
         /** Optional channel filter (sms, whatsapp) */
         fun channel(channel: String?) = apply { this.channel = channel }
 
         /** Alias for calling [Builder.channel] with `channel.orElse(null)`. */
         fun channel(channel: Optional<String>) = channel(channel.getOrNull())
+
+        /** Page number (1-indexed) */
+        fun page(page: Int?) = apply { this.page = page }
+
+        /**
+         * Alias for [Builder.page].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun page(page: Int) = page(page as Int?)
+
+        /** Alias for calling [Builder.page] with `page.orElse(null)`. */
+        fun page(page: Optional<Int>) = page(page.getOrNull())
+
+        /** Number of items per page */
+        fun pageSize(pageSize: Int?) = apply { this.pageSize = pageSize }
+
+        /**
+         * Alias for [Builder.pageSize].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun pageSize(pageSize: Int) = pageSize(pageSize as Int?)
+
+        /** Alias for calling [Builder.pageSize] with `pageSize.orElse(null)`. */
+        fun pageSize(pageSize: Optional<Int>) = pageSize(pageSize.getOrNull())
 
         /** Optional phone number filter (alternative to list view) */
         fun phone(phone: String?) = apply { this.phone = phone }
@@ -220,20 +233,12 @@ private constructor(
          * Returns an immutable instance of [ContactListParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .page()
-         * .pageSize()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): ContactListParams =
             ContactListParams(
-                checkRequired("page", page),
-                checkRequired("pageSize", pageSize),
                 channel,
+                page,
+                pageSize,
                 phone,
                 search,
                 xProfileId,
@@ -253,9 +258,9 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                put("page", page.toString())
-                put("page_size", pageSize.toString())
                 channel?.let { put("channel", it) }
+                page?.let { put("page", it.toString()) }
+                pageSize?.let { put("page_size", it.toString()) }
                 phone?.let { put("phone", it) }
                 search?.let { put("search", it) }
                 putAll(additionalQueryParams)
@@ -268,9 +273,9 @@ private constructor(
         }
 
         return other is ContactListParams &&
+            channel == other.channel &&
             page == other.page &&
             pageSize == other.pageSize &&
-            channel == other.channel &&
             phone == other.phone &&
             search == other.search &&
             xProfileId == other.xProfileId &&
@@ -280,9 +285,9 @@ private constructor(
 
     override fun hashCode(): Int =
         Objects.hash(
+            channel,
             page,
             pageSize,
-            channel,
             phone,
             search,
             xProfileId,
@@ -291,5 +296,5 @@ private constructor(
         )
 
     override fun toString() =
-        "ContactListParams{page=$page, pageSize=$pageSize, channel=$channel, phone=$phone, search=$search, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ContactListParams{channel=$channel, page=$page, pageSize=$pageSize, phone=$phone, search=$search, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

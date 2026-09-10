@@ -12,9 +12,9 @@ internal class ContactListParamsTest {
     @Test
     fun create() {
         ContactListParams.builder()
+            .channel("channel")
             .page(0)
             .pageSize(0)
-            .channel("channel")
             .phone("phone")
             .search("search")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -25,9 +25,9 @@ internal class ContactListParamsTest {
     fun headers() {
         val params =
             ContactListParams.builder()
+                .channel("channel")
                 .page(0)
                 .pageSize(0)
-                .channel("channel")
                 .phone("phone")
                 .search("search")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -45,7 +45,7 @@ internal class ContactListParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = ContactListParams.builder().page(0).pageSize(0).build()
+        val params = ContactListParams.builder().build()
 
         val headers = params._headers()
 
@@ -56,9 +56,9 @@ internal class ContactListParamsTest {
     fun queryParams() {
         val params =
             ContactListParams.builder()
+                .channel("channel")
                 .page(0)
                 .pageSize(0)
-                .channel("channel")
                 .phone("phone")
                 .search("search")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -69,9 +69,9 @@ internal class ContactListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
+                    .put("channel", "channel")
                     .put("page", "0")
                     .put("page_size", "0")
-                    .put("channel", "channel")
                     .put("phone", "phone")
                     .put("search", "search")
                     .build()
@@ -80,11 +80,10 @@ internal class ContactListParamsTest {
 
     @Test
     fun queryParamsWithoutOptionalFields() {
-        val params = ContactListParams.builder().page(0).pageSize(0).build()
+        val params = ContactListParams.builder().build()
 
         val queryParams = params._queryParams()
 
-        assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("page", "0").put("page_size", "0").build())
+        assertThat(queryParams).isEqualTo(QueryParams.builder().build())
     }
 }

@@ -10,8 +10,8 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.models.templates.ApiResponseTemplate
 import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDeleteParams
+import dm.sent.models.templates.TemplateListPage
 import dm.sent.models.templates.TemplateListParams
-import dm.sent.models.templates.TemplateListResponse
 import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
 import java.util.function.Consumer
@@ -128,13 +128,21 @@ interface TemplateService {
      * Retrieves a paginated list of message templates for the authenticated customer. Supports
      * filtering by status, category, and search term.
      */
-    fun list(params: TemplateListParams): TemplateListResponse = list(params, RequestOptions.none())
+    fun list(): TemplateListPage = list(TemplateListParams.none())
 
     /** @see list */
     fun list(
-        params: TemplateListParams,
+        params: TemplateListParams = TemplateListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): TemplateListResponse
+    ): TemplateListPage
+
+    /** @see list */
+    fun list(params: TemplateListParams = TemplateListParams.none()): TemplateListPage =
+        list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): TemplateListPage =
+        list(TemplateListParams.none(), requestOptions)
 
     /**
      * Deletes a template by ID. Optionally, you can also delete the template from WhatsApp/Meta by
@@ -291,15 +299,25 @@ interface TemplateService {
          * [TemplateService.list].
          */
         @MustBeClosed
-        fun list(params: TemplateListParams): HttpResponseFor<TemplateListResponse> =
-            list(params, RequestOptions.none())
+        fun list(): HttpResponseFor<TemplateListPage> = list(TemplateListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
-            params: TemplateListParams,
+            params: TemplateListParams = TemplateListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TemplateListResponse>
+        ): HttpResponseFor<TemplateListPage>
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: TemplateListParams = TemplateListParams.none()
+        ): HttpResponseFor<TemplateListPage> = list(params, RequestOptions.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(requestOptions: RequestOptions): HttpResponseFor<TemplateListPage> =
+            list(TemplateListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /v3/templates/{id}`, but is otherwise the same as

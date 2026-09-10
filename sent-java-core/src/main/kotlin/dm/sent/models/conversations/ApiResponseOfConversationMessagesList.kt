@@ -13,6 +13,7 @@ import dm.sent.core.JsonValue
 import dm.sent.errors.SentInvalidDataException
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
+import dm.sent.models.webhooks.PaginationMeta
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -38,6 +39,11 @@ private constructor(
         @JsonProperty("meta") @ExcludeMissing meta: JsonField<ApiMeta> = JsonMissing.of(),
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
+
+    fun messages(): Optional<List<ConversationMessagesList.Message>> =
+        data().flatMap { it.messages() }
+
+    fun pagination(): Optional<PaginationMeta> = data().flatMap { it.pagination() }
 
     /**
      * A paginated list of messages — used by both conversation read endpoints.
