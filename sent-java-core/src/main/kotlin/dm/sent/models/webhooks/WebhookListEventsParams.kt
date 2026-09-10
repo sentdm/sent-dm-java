@@ -3,7 +3,6 @@
 package dm.sent.models.webhooks
 
 import dm.sent.core.Params
-import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import java.util.Objects
@@ -14,8 +13,8 @@ import kotlin.jvm.optionals.getOrNull
 class WebhookListEventsParams
 private constructor(
     private val id: String?,
-    private val page: Int,
-    private val pageSize: Int,
+    private val page: Int?,
+    private val pageSize: Int?,
     private val search: String?,
     private val xProfileId: String?,
     private val additionalHeaders: Headers,
@@ -24,9 +23,9 @@ private constructor(
 
     fun id(): Optional<String> = Optional.ofNullable(id)
 
-    fun page(): Int = page
+    fun page(): Optional<Int> = Optional.ofNullable(page)
 
-    fun pageSize(): Int = pageSize
+    fun pageSize(): Optional<Int> = Optional.ofNullable(pageSize)
 
     fun search(): Optional<String> = Optional.ofNullable(search)
 
@@ -42,15 +41,9 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [WebhookListEventsParams].
-         *
-         * The following fields are required:
-         * ```java
-         * .page()
-         * .pageSize()
-         * ```
-         */
+        @JvmStatic fun none(): WebhookListEventsParams = builder().build()
+
+        /** Returns a mutable builder for constructing an instance of [WebhookListEventsParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
@@ -81,9 +74,29 @@ private constructor(
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
         fun id(id: Optional<String>) = id(id.getOrNull())
 
-        fun page(page: Int) = apply { this.page = page }
+        fun page(page: Int?) = apply { this.page = page }
 
-        fun pageSize(pageSize: Int) = apply { this.pageSize = pageSize }
+        /**
+         * Alias for [Builder.page].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun page(page: Int) = page(page as Int?)
+
+        /** Alias for calling [Builder.page] with `page.orElse(null)`. */
+        fun page(page: Optional<Int>) = page(page.getOrNull())
+
+        fun pageSize(pageSize: Int?) = apply { this.pageSize = pageSize }
+
+        /**
+         * Alias for [Builder.pageSize].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun pageSize(pageSize: Int) = pageSize(pageSize as Int?)
+
+        /** Alias for calling [Builder.pageSize] with `pageSize.orElse(null)`. */
+        fun pageSize(pageSize: Optional<Int>) = pageSize(pageSize.getOrNull())
 
         fun search(search: String?) = apply { this.search = search }
 
@@ -197,20 +210,12 @@ private constructor(
          * Returns an immutable instance of [WebhookListEventsParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .page()
-         * .pageSize()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): WebhookListEventsParams =
             WebhookListEventsParams(
                 id,
-                checkRequired("page", page),
-                checkRequired("pageSize", pageSize),
+                page,
+                pageSize,
                 search,
                 xProfileId,
                 additionalHeaders.build(),
@@ -235,8 +240,8 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                put("page", page.toString())
-                put("page_size", pageSize.toString())
+                page?.let { put("page", it.toString()) }
+                pageSize?.let { put("page_size", it.toString()) }
                 search?.let { put("search", it) }
                 putAll(additionalQueryParams)
             }

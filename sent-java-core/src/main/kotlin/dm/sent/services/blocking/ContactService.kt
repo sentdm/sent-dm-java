@@ -11,8 +11,8 @@ import dm.sent.models.contacts.ApiResponseOfContact
 import dm.sent.models.contacts.ApiResponseOfContactMessageSummary
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
+import dm.sent.models.contacts.ContactListPage
 import dm.sent.models.contacts.ContactListParams
-import dm.sent.models.contacts.ContactListResponse
 import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
@@ -119,13 +119,21 @@ interface ContactService {
      * Retrieves a paginated list of contacts for the authenticated customer. Supports filtering by
      * search term, channel, or phone number.
      */
-    fun list(params: ContactListParams): ContactListResponse = list(params, RequestOptions.none())
+    fun list(): ContactListPage = list(ContactListParams.none())
 
     /** @see list */
     fun list(
-        params: ContactListParams,
+        params: ContactListParams = ContactListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ContactListResponse
+    ): ContactListPage
+
+    /** @see list */
+    fun list(params: ContactListParams = ContactListParams.none()): ContactListPage =
+        list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): ContactListPage =
+        list(ContactListParams.none(), requestOptions)
 
     /**
      * **Deprecated.** Use `PATCH /v3/contacts/{id}` with `{"opt_out": true}` instead, and expect
@@ -321,16 +329,25 @@ interface ContactService {
          * Returns a raw HTTP response for `get /v3/contacts`, but is otherwise the same as
          * [ContactService.list].
          */
-        @MustBeClosed
-        fun list(params: ContactListParams): HttpResponseFor<ContactListResponse> =
-            list(params, RequestOptions.none())
+        @MustBeClosed fun list(): HttpResponseFor<ContactListPage> = list(ContactListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
-            params: ContactListParams,
+            params: ContactListParams = ContactListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ContactListResponse>
+        ): HttpResponseFor<ContactListPage>
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: ContactListParams = ContactListParams.none()
+        ): HttpResponseFor<ContactListPage> = list(params, RequestOptions.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(requestOptions: RequestOptions): HttpResponseFor<ContactListPage> =
+            list(ContactListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /v3/contacts/{id}`, but is otherwise the same as

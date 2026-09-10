@@ -16,7 +16,9 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
 import dm.sent.models.conversations.ApiResponseOfConversationMessagesList
+import dm.sent.models.conversations.ConversationListMessagesPageAsync
 import dm.sent.models.conversations.ConversationListMessagesParams
+import dm.sent.models.conversations.ConversationListPageAsync
 import dm.sent.models.conversations.ConversationListParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -45,14 +47,14 @@ class ConversationServiceAsyncImpl internal constructor(private val clientOption
     override fun list(
         params: ConversationListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfConversationMessagesList> =
+    ): CompletableFuture<ConversationListPageAsync> =
         // get /v3/conversations
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun listMessages(
         params: ConversationListMessagesParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfConversationMessagesList> =
+    ): CompletableFuture<ConversationListMessagesPageAsync> =
         // get /v3/conversations/{id}
         withRawResponse().listMessages(params, requestOptions).thenApply { it.parse() }
 
@@ -75,7 +77,7 @@ class ConversationServiceAsyncImpl internal constructor(private val clientOption
         override fun list(
             params: ConversationListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfConversationMessagesList>> {
+        ): CompletableFuture<HttpResponseFor<ConversationListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -95,6 +97,14 @@ class ConversationServiceAsyncImpl internal constructor(private val clientOption
                                     it.validate()
                                 }
                             }
+                            .let {
+                                ConversationListPageAsync.builder()
+                                    .service(ConversationServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
+                            }
                     }
                 }
         }
@@ -105,7 +115,7 @@ class ConversationServiceAsyncImpl internal constructor(private val clientOption
         override fun listMessages(
             params: ConversationListMessagesParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfConversationMessagesList>> {
+        ): CompletableFuture<HttpResponseFor<ConversationListMessagesPageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -127,6 +137,14 @@ class ConversationServiceAsyncImpl internal constructor(private val clientOption
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                ConversationListMessagesPageAsync.builder()
+                                    .service(ConversationServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }

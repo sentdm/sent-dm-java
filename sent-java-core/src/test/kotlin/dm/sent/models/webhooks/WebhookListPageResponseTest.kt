@@ -9,14 +9,14 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class WebhookListResponseTest {
+internal class WebhookListPageResponseTest {
 
     @Test
     fun create() {
-        val webhookListResponse =
-            WebhookListResponse.builder()
+        val webhookListPageResponse =
+            WebhookListPageResponse.builder()
                 .data(
-                    WebhookListResponse.Data.builder()
+                    WebhookListPageResponse.Data.builder()
                         .pagination(
                             PaginationMeta.builder()
                                 .cursors(
@@ -86,9 +86,9 @@ internal class WebhookListResponseTest {
                 .success(true)
                 .build()
 
-        assertThat(webhookListResponse.data())
+        assertThat(webhookListPageResponse.data())
             .contains(
-                WebhookListResponse.Data.builder()
+                WebhookListPageResponse.Data.builder()
                     .pagination(
                         PaginationMeta.builder()
                             .cursors(
@@ -131,7 +131,7 @@ internal class WebhookListResponseTest {
                     )
                     .build()
             )
-        assertThat(webhookListResponse.error())
+        assertThat(webhookListPageResponse.error())
             .contains(
                 ErrorDetail.builder()
                     .code("code")
@@ -144,7 +144,7 @@ internal class WebhookListResponseTest {
                     .message("message")
                     .build()
             )
-        assertThat(webhookListResponse.meta())
+        assertThat(webhookListPageResponse.meta())
             .contains(
                 ApiMeta.builder()
                     .requestId("request_id")
@@ -152,16 +152,16 @@ internal class WebhookListResponseTest {
                     .version("version")
                     .build()
             )
-        assertThat(webhookListResponse.success()).contains(true)
+        assertThat(webhookListPageResponse.success()).contains(true)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val webhookListResponse =
-            WebhookListResponse.builder()
+        val webhookListPageResponse =
+            WebhookListPageResponse.builder()
                 .data(
-                    WebhookListResponse.Data.builder()
+                    WebhookListPageResponse.Data.builder()
                         .pagination(
                             PaginationMeta.builder()
                                 .cursors(
@@ -231,12 +231,12 @@ internal class WebhookListResponseTest {
                 .success(true)
                 .build()
 
-        val roundtrippedWebhookListResponse =
+        val roundtrippedWebhookListPageResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(webhookListResponse),
-                jacksonTypeRef<WebhookListResponse>(),
+                jsonMapper.writeValueAsString(webhookListPageResponse),
+                jacksonTypeRef<WebhookListPageResponse>(),
             )
 
-        assertThat(roundtrippedWebhookListResponse).isEqualTo(webhookListResponse)
+        assertThat(roundtrippedWebhookListPageResponse).isEqualTo(webhookListPageResponse)
     }
 }

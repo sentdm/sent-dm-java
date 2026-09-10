@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.webhooks
+package dm.sent.models.templates
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -13,13 +13,16 @@ import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
+import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
+import dm.sent.models.webhooks.PaginationMeta
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Standard API response envelope for all v3 endpoints */
-class WebhookListResponse
+class TemplateListPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val data: JsonField<Data>,
@@ -37,8 +40,12 @@ private constructor(
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
+    fun templates(): Optional<List<Template>> = data().flatMap { it.templates() }
+
+    fun pagination(): Optional<PaginationMeta> = data().flatMap { it.pagination() }
+
     /**
-     * A paginated list of webhooks.
+     * A paginated list of templates.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -111,11 +118,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [WebhookListResponse]. */
+        /** Returns a mutable builder for constructing an instance of [TemplateListPageResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [WebhookListResponse]. */
+    /** A builder for [TemplateListPageResponse]. */
     class Builder internal constructor() {
 
         private var data: JsonField<Data> = JsonMissing.of()
@@ -125,15 +132,15 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(webhookListResponse: WebhookListResponse) = apply {
-            data = webhookListResponse.data
-            error = webhookListResponse.error
-            meta = webhookListResponse.meta
-            success = webhookListResponse.success
-            additionalProperties = webhookListResponse.additionalProperties.toMutableMap()
+        internal fun from(templateListPageResponse: TemplateListPageResponse) = apply {
+            data = templateListPageResponse.data
+            error = templateListPageResponse.error
+            meta = templateListPageResponse.meta
+            success = templateListPageResponse.success
+            additionalProperties = templateListPageResponse.additionalProperties.toMutableMap()
         }
 
-        /** A paginated list of webhooks. */
+        /** A paginated list of templates. */
         fun data(data: Data?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
@@ -204,12 +211,18 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [WebhookListResponse].
+         * Returns an immutable instance of [TemplateListPageResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): WebhookListResponse =
-            WebhookListResponse(data, error, meta, success, additionalProperties.toMutableMap())
+        fun build(): TemplateListPageResponse =
+            TemplateListPageResponse(
+                data,
+                error,
+                meta,
+                success,
+                additionalProperties.toMutableMap(),
+            )
     }
 
     private var validated: Boolean = false
@@ -222,7 +235,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): WebhookListResponse = apply {
+    fun validate(): TemplateListPageResponse = apply {
         if (validated) {
             return@apply
         }
@@ -254,12 +267,12 @@ private constructor(
             (meta.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
 
-    /** A paginated list of webhooks. */
+    /** A paginated list of templates. */
     class Data
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val pagination: JsonField<PaginationMeta>,
-        private val webhooks: JsonField<List<WebhookResponse>>,
+        private val templates: JsonField<List<Template>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -268,10 +281,10 @@ private constructor(
             @JsonProperty("pagination")
             @ExcludeMissing
             pagination: JsonField<PaginationMeta> = JsonMissing.of(),
-            @JsonProperty("webhooks")
+            @JsonProperty("templates")
             @ExcludeMissing
-            webhooks: JsonField<List<WebhookResponse>> = JsonMissing.of(),
-        ) : this(pagination, webhooks, mutableMapOf())
+            templates: JsonField<List<Template>> = JsonMissing.of(),
+        ) : this(pagination, templates, mutableMapOf())
 
         /**
          * Pagination metadata for list responses
@@ -282,12 +295,12 @@ private constructor(
         fun pagination(): Optional<PaginationMeta> = pagination.getOptional("pagination")
 
         /**
-         * The webhooks on this page.
+         * The templates on this page.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun webhooks(): Optional<List<WebhookResponse>> = webhooks.getOptional("webhooks")
+        fun templates(): Optional<List<Template>> = templates.getOptional("templates")
 
         /**
          * Returns the raw JSON value of [pagination].
@@ -299,13 +312,13 @@ private constructor(
         fun _pagination(): JsonField<PaginationMeta> = pagination
 
         /**
-         * Returns the raw JSON value of [webhooks].
+         * Returns the raw JSON value of [templates].
          *
-         * Unlike [webhooks], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [templates], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("webhooks")
+        @JsonProperty("templates")
         @ExcludeMissing
-        fun _webhooks(): JsonField<List<WebhookResponse>> = webhooks
+        fun _templates(): JsonField<List<Template>> = templates
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -329,13 +342,13 @@ private constructor(
         class Builder internal constructor() {
 
             private var pagination: JsonField<PaginationMeta> = JsonMissing.of()
-            private var webhooks: JsonField<MutableList<WebhookResponse>>? = null
+            private var templates: JsonField<MutableList<Template>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(data: Data) = apply {
                 pagination = data.pagination
-                webhooks = data.webhooks.map { it.toMutableList() }
+                templates = data.templates.map { it.toMutableList() }
                 additionalProperties = data.additionalProperties.toMutableMap()
             }
 
@@ -353,29 +366,29 @@ private constructor(
                 this.pagination = pagination
             }
 
-            /** The webhooks on this page. */
-            fun webhooks(webhooks: List<WebhookResponse>) = webhooks(JsonField.of(webhooks))
+            /** The templates on this page. */
+            fun templates(templates: List<Template>) = templates(JsonField.of(templates))
 
             /**
-             * Sets [Builder.webhooks] to an arbitrary JSON value.
+             * Sets [Builder.templates] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.webhooks] with a well-typed `List<WebhookResponse>`
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
+             * You should usually call [Builder.templates] with a well-typed `List<Template>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun webhooks(webhooks: JsonField<List<WebhookResponse>>) = apply {
-                this.webhooks = webhooks.map { it.toMutableList() }
+            fun templates(templates: JsonField<List<Template>>) = apply {
+                this.templates = templates.map { it.toMutableList() }
             }
 
             /**
-             * Adds a single [WebhookResponse] to [webhooks].
+             * Adds a single [Template] to [templates].
              *
              * @throws IllegalStateException if the field was previously set to a non-list.
              */
-            fun addWebhook(webhook: WebhookResponse) = apply {
-                webhooks =
-                    (webhooks ?: JsonField.of(mutableListOf())).also {
-                        checkKnown("webhooks", it).add(webhook)
+            fun addTemplate(template: Template) = apply {
+                templates =
+                    (templates ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("templates", it).add(template)
                     }
             }
 
@@ -406,7 +419,7 @@ private constructor(
             fun build(): Data =
                 Data(
                     pagination,
-                    (webhooks ?: JsonMissing.of()).map { it.toImmutable() },
+                    (templates ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -428,7 +441,7 @@ private constructor(
             }
 
             pagination().ifPresent { it.validate() }
-            webhooks().ifPresent { it.forEach { it.validate() } }
+            templates().ifPresent { it.forEach { it.validate() } }
             validated = true
         }
 
@@ -449,7 +462,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (pagination.asKnown().getOrNull()?.validity() ?: 0) +
-                (webhooks.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+                (templates.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -458,18 +471,18 @@ private constructor(
 
             return other is Data &&
                 pagination == other.pagination &&
-                webhooks == other.webhooks &&
+                templates == other.templates &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(pagination, webhooks, additionalProperties)
+            Objects.hash(pagination, templates, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{pagination=$pagination, webhooks=$webhooks, additionalProperties=$additionalProperties}"
+            "Data{pagination=$pagination, templates=$templates, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -477,7 +490,7 @@ private constructor(
             return true
         }
 
-        return other is WebhookListResponse &&
+        return other is TemplateListPageResponse &&
             data == other.data &&
             error == other.error &&
             meta == other.meta &&
@@ -492,5 +505,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "WebhookListResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
+        "TemplateListPageResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
 }
