@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.36.0](https://github.com/sentdm/sent-dm-java/compare/v0.35.0...v0.36.0) (2026-09-09)
+
+
+### Highlights
+
+This release is breaking for the webhook endpoints. Webhook responses now use one shared model instead of a separate type per operation: the create, retrieve, update and toggle-status response types are gone, and all four now return the shared webhook API response model (`ApiResponseWebhook`, in this language's casing). If your code references one of the removed types, or its nested data, error or meta members, point it at the shared model. The list, list-event-types, list-events, rotate-secret and test responses are unchanged, because each returns a different envelope.
+
+### Features
+
+* **api:** repoint dangling model refs at current v3 schema names ([e5be2b6](https://github.com/sentdm/sent-dm-java/commit/e5be2b6126dbf28e817110791dd4ab9668941bdc))
+
 ## [0.35.0](https://github.com/sentdm/sent-dm-java/compare/v0.34.0...v0.35.0) (2026-09-06)
 
 
