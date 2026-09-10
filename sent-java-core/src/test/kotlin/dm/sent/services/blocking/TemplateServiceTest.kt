@@ -508,20 +508,9 @@ internal class TemplateServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val templateService = client.templates()
 
-        val templates =
-            templateService.list(
-                TemplateListParams.builder()
-                    .page(0)
-                    .pageSize(0)
-                    .category("category")
-                    .isWelcomePlayground(true)
-                    .search("search")
-                    .status("status")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val page = templateService.list(TemplateListParams.builder().page(0).pageSize(0).build())
 
-        templates.validate()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")
