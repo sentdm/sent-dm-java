@@ -22,7 +22,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Standard API response envelope for all v3 endpoints */
-class TemplateListResponse
+class TemplateListPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val data: JsonField<Data>,
@@ -114,11 +114,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [TemplateListResponse]. */
+        /** Returns a mutable builder for constructing an instance of [TemplateListPageResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [TemplateListResponse]. */
+    /** A builder for [TemplateListPageResponse]. */
     class Builder internal constructor() {
 
         private var data: JsonField<Data> = JsonMissing.of()
@@ -128,12 +128,12 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(templateListResponse: TemplateListResponse) = apply {
-            data = templateListResponse.data
-            error = templateListResponse.error
-            meta = templateListResponse.meta
-            success = templateListResponse.success
-            additionalProperties = templateListResponse.additionalProperties.toMutableMap()
+        internal fun from(templateListPageResponse: TemplateListPageResponse) = apply {
+            data = templateListPageResponse.data
+            error = templateListPageResponse.error
+            meta = templateListPageResponse.meta
+            success = templateListPageResponse.success
+            additionalProperties = templateListPageResponse.additionalProperties.toMutableMap()
         }
 
         /** A paginated list of templates. */
@@ -207,12 +207,18 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [TemplateListResponse].
+         * Returns an immutable instance of [TemplateListPageResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): TemplateListResponse =
-            TemplateListResponse(data, error, meta, success, additionalProperties.toMutableMap())
+        fun build(): TemplateListPageResponse =
+            TemplateListPageResponse(
+                data,
+                error,
+                meta,
+                success,
+                additionalProperties.toMutableMap(),
+            )
     }
 
     private var validated: Boolean = false
@@ -225,7 +231,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): TemplateListResponse = apply {
+    fun validate(): TemplateListPageResponse = apply {
         if (validated) {
             return@apply
         }
@@ -480,7 +486,7 @@ private constructor(
             return true
         }
 
-        return other is TemplateListResponse &&
+        return other is TemplateListPageResponse &&
             data == other.data &&
             error == other.error &&
             meta == other.meta &&
@@ -495,5 +501,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TemplateListResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
+        "TemplateListPageResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
 }

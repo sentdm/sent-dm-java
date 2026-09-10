@@ -511,21 +511,11 @@ internal class TemplateServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val templateServiceAsync = client.templates()
 
-        val templatesFuture =
-            templateServiceAsync.list(
-                TemplateListParams.builder()
-                    .page(0)
-                    .pageSize(0)
-                    .category("category")
-                    .isWelcomePlayground(true)
-                    .search("search")
-                    .status("status")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val pageFuture =
+            templateServiceAsync.list(TemplateListParams.builder().page(0).pageSize(0).build())
 
-        val templates = templatesFuture.get()
-        templates.validate()
+        val page = pageFuture.get()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")
