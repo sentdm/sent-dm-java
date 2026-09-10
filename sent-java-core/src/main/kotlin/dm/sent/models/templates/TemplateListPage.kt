@@ -8,8 +8,6 @@ import dm.sent.core.checkRequired
 import dm.sent.services.blocking.TemplateService
 import java.util.Objects
 import java.util.Optional
-import kotlin.jvm.optionals.getOrDefault
-import kotlin.jvm.optionals.getOrNull
 
 /** @see TemplateService.list */
 class TemplateListPage
@@ -28,23 +26,7 @@ private constructor(
 
     override fun items(): List<Template> = templates()
 
-    override fun hasNextPage(): Boolean {
-        if (items().isEmpty()) {
-            return false
-        }
-
-        val pageNumber =
-            data()
-                .flatMap { it._pagination().getOptional("pagination") }
-                .flatMap { it._page().getOptional("page") }
-                .getOrDefault(1)
-        val pageCount =
-            data()
-                .flatMap { it._pagination().getOptional("pagination") }
-                .flatMap { it._totalPages().getOptional("total_pages") }
-                .getOrNull()
-        return pageCount == null || pageNumber < pageCount
-    }
+    override fun hasNextPage(): Boolean = items().isNotEmpty()
 
     fun nextPageParams(): TemplateListParams {
         val pageNumber = params.page()

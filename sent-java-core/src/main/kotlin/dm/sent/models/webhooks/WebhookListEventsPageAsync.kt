@@ -10,8 +10,6 @@ import java.util.Objects
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
-import kotlin.jvm.optionals.getOrDefault
-import kotlin.jvm.optionals.getOrNull
 
 /** @see WebhookServiceAsync.listEvents */
 class WebhookListEventsPageAsync
@@ -31,23 +29,7 @@ private constructor(
 
     override fun items(): List<WebhookListEventsResponse> = events()
 
-    override fun hasNextPage(): Boolean {
-        if (items().isEmpty()) {
-            return false
-        }
-
-        val pageNumber =
-            data()
-                .flatMap { it._pagination().getOptional("pagination") }
-                .flatMap { it._page().getOptional("page") }
-                .getOrDefault(1)
-        val pageCount =
-            data()
-                .flatMap { it._pagination().getOptional("pagination") }
-                .flatMap { it._totalPages().getOptional("total_pages") }
-                .getOrNull()
-        return pageCount == null || pageNumber < pageCount
-    }
+    override fun hasNextPage(): Boolean = items().isNotEmpty()
 
     fun nextPageParams(): WebhookListEventsParams {
         val pageNumber = params.page()
