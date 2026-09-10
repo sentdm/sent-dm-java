@@ -15,6 +15,7 @@ import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentInvalidDataException
+import dm.sent.models.webhooks.MutationRequest
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -75,14 +76,6 @@ private constructor(
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /**
-     * Webhook URL to call when profile completion finishes (success or failure)
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
-     *   missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun webHookUrl(): String = body.webHookUrl()
-
-    /**
      * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
      * integrations without actual execution
      *
@@ -92,11 +85,12 @@ private constructor(
     fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
-     * Returns the raw JSON value of [webHookUrl].
+     * Webhook URL to call when profile completion finishes (success or failure)
      *
-     * Unlike [webHookUrl], this method doesn't throw if the JSON field has an unexpected type.
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun _webHookUrl(): JsonField<String> = body._webHookUrl()
+    fun webHookUrl(): String = body.webHookUrl()
 
     /**
      * Returns the raw JSON value of [sandbox].
@@ -104,6 +98,13 @@ private constructor(
      * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
+
+    /**
+     * Returns the raw JSON value of [webHookUrl].
+     *
+     * Unlike [webHookUrl], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _webHookUrl(): JsonField<String> = body._webHookUrl()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -169,22 +170,10 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [webHookUrl]
          * - [sandbox]
+         * - [webHookUrl]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        /** Webhook URL to call when profile completion finishes (success or failure) */
-        fun webHookUrl(webHookUrl: String) = apply { body.webHookUrl(webHookUrl) }
-
-        /**
-         * Sets [Builder.webHookUrl] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.webHookUrl] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun webHookUrl(webHookUrl: JsonField<String>) = apply { body.webHookUrl(webHookUrl) }
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -199,6 +188,18 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
+
+        /** Webhook URL to call when profile completion finishes (success or failure) */
+        fun webHookUrl(webHookUrl: String) = apply { body.webHookUrl(webHookUrl) }
+
+        /**
+         * Sets [Builder.webHookUrl] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.webHookUrl] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun webHookUrl(webHookUrl: JsonField<String>) = apply { body.webHookUrl(webHookUrl) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -359,29 +360,25 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
+    /** Request to complete a profile setup and connect it to the SMS and WhatsApp channels */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val webHookUrl: JsonField<String>,
         private val sandbox: JsonField<Boolean>,
+        private val webHookUrl: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("webHookUrl")
             @ExcludeMissing
             webHookUrl: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
-        ) : this(webHookUrl, sandbox, mutableMapOf())
+        ) : this(sandbox, webHookUrl, mutableMapOf())
 
-        /**
-         * Webhook URL to call when profile completion finishes (success or failure)
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun webHookUrl(): String = webHookUrl.getRequired("webHookUrl")
+        fun toMutationRequest(): MutationRequest =
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -393,13 +390,12 @@ private constructor(
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
-         * Returns the raw JSON value of [webHookUrl].
+         * Webhook URL to call when profile completion finishes (success or failure)
          *
-         * Unlike [webHookUrl], this method doesn't throw if the JSON field has an unexpected type.
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        @JsonProperty("webHookUrl")
-        @ExcludeMissing
-        fun _webHookUrl(): JsonField<String> = webHookUrl
+        fun webHookUrl(): String = webHookUrl.getRequired("webHookUrl")
 
         /**
          * Returns the raw JSON value of [sandbox].
@@ -407,6 +403,15 @@ private constructor(
          * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
+        /**
+         * Returns the raw JSON value of [webHookUrl].
+         *
+         * Unlike [webHookUrl], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("webHookUrl")
+        @ExcludeMissing
+        fun _webHookUrl(): JsonField<String> = webHookUrl
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -436,28 +441,16 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var webHookUrl: JsonField<String>? = null
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
+            private var webHookUrl: JsonField<String>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                webHookUrl = body.webHookUrl
                 sandbox = body.sandbox
+                webHookUrl = body.webHookUrl
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
-
-            /** Webhook URL to call when profile completion finishes (success or failure) */
-            fun webHookUrl(webHookUrl: String) = webHookUrl(JsonField.of(webHookUrl))
-
-            /**
-             * Sets [Builder.webHookUrl] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.webHookUrl] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun webHookUrl(webHookUrl: JsonField<String>) = apply { this.webHookUrl = webHookUrl }
 
             /**
              * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -473,6 +466,18 @@ private constructor(
              * supported value.
              */
             fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
+            /** Webhook URL to call when profile completion finishes (success or failure) */
+            fun webHookUrl(webHookUrl: String) = webHookUrl(JsonField.of(webHookUrl))
+
+            /**
+             * Sets [Builder.webHookUrl] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.webHookUrl] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun webHookUrl(webHookUrl: JsonField<String>) = apply { this.webHookUrl = webHookUrl }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -507,8 +512,8 @@ private constructor(
              */
             fun build(): Body =
                 Body(
-                    checkRequired("webHookUrl", webHookUrl),
                     sandbox,
+                    checkRequired("webHookUrl", webHookUrl),
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -529,8 +534,8 @@ private constructor(
                 return@apply
             }
 
-            webHookUrl()
             sandbox()
+            webHookUrl()
             validated = true
         }
 
@@ -550,8 +555,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (webHookUrl.asKnown().isPresent) 1 else 0) +
-                (if (sandbox.asKnown().isPresent) 1 else 0)
+            (if (sandbox.asKnown().isPresent) 1 else 0) +
+                (if (webHookUrl.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -559,19 +564,19 @@ private constructor(
             }
 
             return other is Body &&
-                webHookUrl == other.webHookUrl &&
                 sandbox == other.sandbox &&
+                webHookUrl == other.webHookUrl &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(webHookUrl, sandbox, additionalProperties)
+            Objects.hash(sandbox, webHookUrl, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{webHookUrl=$webHookUrl, sandbox=$sandbox, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, webHookUrl=$webHookUrl, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

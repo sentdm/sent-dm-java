@@ -6,13 +6,12 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.profiles.campaigns.ApiResponseOfBrandCampaign
+import dm.sent.models.profiles.campaigns.ApiResponseOfListOfBrandCampaign
 import dm.sent.models.profiles.campaigns.CampaignCreateParams
-import dm.sent.models.profiles.campaigns.CampaignCreateResponse
 import dm.sent.models.profiles.campaigns.CampaignDeleteParams
 import dm.sent.models.profiles.campaigns.CampaignListParams
-import dm.sent.models.profiles.campaigns.CampaignListResponse
 import dm.sent.models.profiles.campaigns.CampaignUpdateParams
-import dm.sent.models.profiles.campaigns.CampaignUpdateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -52,7 +51,8 @@ interface CampaignServiceAsync {
     fun create(
         profileId: String,
         params: CampaignCreateParams,
-    ): CompletableFuture<CampaignCreateResponse> = create(profileId, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfBrandCampaign> =
+        create(profileId, params, RequestOptions.none())
 
     /** @see create */
     @Deprecated("deprecated")
@@ -60,12 +60,12 @@ interface CampaignServiceAsync {
         profileId: String,
         params: CampaignCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CampaignCreateResponse> =
+    ): CompletableFuture<ApiResponseOfBrandCampaign> =
         create(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see create */
     @Deprecated("deprecated")
-    fun create(params: CampaignCreateParams): CompletableFuture<CampaignCreateResponse> =
+    fun create(params: CampaignCreateParams): CompletableFuture<ApiResponseOfBrandCampaign> =
         create(params, RequestOptions.none())
 
     /** @see create */
@@ -73,7 +73,7 @@ interface CampaignServiceAsync {
     fun create(
         params: CampaignCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CampaignCreateResponse>
+    ): CompletableFuture<ApiResponseOfBrandCampaign>
 
     /**
      * **Deprecated.** This endpoint is replaced by `/v3/sender-profiles` and will be removed in a
@@ -88,7 +88,8 @@ interface CampaignServiceAsync {
     fun update(
         campaignId: String,
         params: CampaignUpdateParams,
-    ): CompletableFuture<CampaignUpdateResponse> = update(campaignId, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfBrandCampaign> =
+        update(campaignId, params, RequestOptions.none())
 
     /** @see update */
     @Deprecated("deprecated")
@@ -96,12 +97,12 @@ interface CampaignServiceAsync {
         campaignId: String,
         params: CampaignUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CampaignUpdateResponse> =
+    ): CompletableFuture<ApiResponseOfBrandCampaign> =
         update(params.toBuilder().campaignId(campaignId).build(), requestOptions)
 
     /** @see update */
     @Deprecated("deprecated")
-    fun update(params: CampaignUpdateParams): CompletableFuture<CampaignUpdateResponse> =
+    fun update(params: CampaignUpdateParams): CompletableFuture<ApiResponseOfBrandCampaign> =
         update(params, RequestOptions.none())
 
     /** @see update */
@@ -109,7 +110,7 @@ interface CampaignServiceAsync {
     fun update(
         params: CampaignUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CampaignUpdateResponse>
+    ): CompletableFuture<ApiResponseOfBrandCampaign>
 
     /**
      * **Deprecated.** This endpoint is replaced by `/v3/sender-profiles` and will be removed in a
@@ -121,7 +122,7 @@ interface CampaignServiceAsync {
      * messages. Returns inherited campaigns if inherit_tcr_campaign=true.
      */
     @Deprecated("deprecated")
-    fun list(profileId: String): CompletableFuture<CampaignListResponse> =
+    fun list(profileId: String): CompletableFuture<ApiResponseOfListOfBrandCampaign> =
         list(profileId, CampaignListParams.none())
 
     /** @see list */
@@ -130,7 +131,7 @@ interface CampaignServiceAsync {
         profileId: String,
         params: CampaignListParams = CampaignListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CampaignListResponse> =
+    ): CompletableFuture<ApiResponseOfListOfBrandCampaign> =
         list(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see list */
@@ -138,18 +139,19 @@ interface CampaignServiceAsync {
     fun list(
         profileId: String,
         params: CampaignListParams = CampaignListParams.none(),
-    ): CompletableFuture<CampaignListResponse> = list(profileId, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfListOfBrandCampaign> =
+        list(profileId, params, RequestOptions.none())
 
     /** @see list */
     @Deprecated("deprecated")
     fun list(
         params: CampaignListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CampaignListResponse>
+    ): CompletableFuture<ApiResponseOfListOfBrandCampaign>
 
     /** @see list */
     @Deprecated("deprecated")
-    fun list(params: CampaignListParams): CompletableFuture<CampaignListResponse> =
+    fun list(params: CampaignListParams): CompletableFuture<ApiResponseOfListOfBrandCampaign> =
         list(params, RequestOptions.none())
 
     /** @see list */
@@ -157,7 +159,7 @@ interface CampaignServiceAsync {
     fun list(
         profileId: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<CampaignListResponse> =
+    ): CompletableFuture<ApiResponseOfListOfBrandCampaign> =
         list(profileId, CampaignListParams.none(), requestOptions)
 
     /**
@@ -216,7 +218,7 @@ interface CampaignServiceAsync {
         fun create(
             profileId: String,
             params: CampaignCreateParams,
-        ): CompletableFuture<HttpResponseFor<CampaignCreateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>> =
             create(profileId, params, RequestOptions.none())
 
         /** @see create */
@@ -225,14 +227,14 @@ interface CampaignServiceAsync {
             profileId: String,
             params: CampaignCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CampaignCreateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>> =
             create(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see create */
         @Deprecated("deprecated")
         fun create(
             params: CampaignCreateParams
-        ): CompletableFuture<HttpResponseFor<CampaignCreateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>> =
             create(params, RequestOptions.none())
 
         /** @see create */
@@ -240,7 +242,7 @@ interface CampaignServiceAsync {
         fun create(
             params: CampaignCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CampaignCreateResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>>
 
         /**
          * Returns a raw HTTP response for `put /v3/profiles/{profileId}/campaigns/{campaignId}`,
@@ -250,7 +252,7 @@ interface CampaignServiceAsync {
         fun update(
             campaignId: String,
             params: CampaignUpdateParams,
-        ): CompletableFuture<HttpResponseFor<CampaignUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>> =
             update(campaignId, params, RequestOptions.none())
 
         /** @see update */
@@ -259,14 +261,14 @@ interface CampaignServiceAsync {
             campaignId: String,
             params: CampaignUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CampaignUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>> =
             update(params.toBuilder().campaignId(campaignId).build(), requestOptions)
 
         /** @see update */
         @Deprecated("deprecated")
         fun update(
             params: CampaignUpdateParams
-        ): CompletableFuture<HttpResponseFor<CampaignUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -274,14 +276,16 @@ interface CampaignServiceAsync {
         fun update(
             params: CampaignUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CampaignUpdateResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfBrandCampaign>>
 
         /**
          * Returns a raw HTTP response for `get /v3/profiles/{profileId}/campaigns`, but is
          * otherwise the same as [CampaignServiceAsync.list].
          */
         @Deprecated("deprecated")
-        fun list(profileId: String): CompletableFuture<HttpResponseFor<CampaignListResponse>> =
+        fun list(
+            profileId: String
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfListOfBrandCampaign>> =
             list(profileId, CampaignListParams.none())
 
         /** @see list */
@@ -290,7 +294,7 @@ interface CampaignServiceAsync {
             profileId: String,
             params: CampaignListParams = CampaignListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CampaignListResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfListOfBrandCampaign>> =
             list(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see list */
@@ -298,7 +302,7 @@ interface CampaignServiceAsync {
         fun list(
             profileId: String,
             params: CampaignListParams = CampaignListParams.none(),
-        ): CompletableFuture<HttpResponseFor<CampaignListResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfListOfBrandCampaign>> =
             list(profileId, params, RequestOptions.none())
 
         /** @see list */
@@ -306,13 +310,13 @@ interface CampaignServiceAsync {
         fun list(
             params: CampaignListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CampaignListResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfListOfBrandCampaign>>
 
         /** @see list */
         @Deprecated("deprecated")
         fun list(
             params: CampaignListParams
-        ): CompletableFuture<HttpResponseFor<CampaignListResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfListOfBrandCampaign>> =
             list(params, RequestOptions.none())
 
         /** @see list */
@@ -320,7 +324,7 @@ interface CampaignServiceAsync {
         fun list(
             profileId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<CampaignListResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfListOfBrandCampaign>> =
             list(profileId, CampaignListParams.none(), requestOptions)
 
         /**

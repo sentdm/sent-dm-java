@@ -37,12 +37,6 @@ private constructor(
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /**
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun eventType(): Optional<String> = body.eventType()
-
-    /**
      * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
      * integrations without actual execution
      *
@@ -52,11 +46,10 @@ private constructor(
     fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
-     * Returns the raw JSON value of [eventType].
-     *
-     * Unlike [eventType], this method doesn't throw if the JSON field has an unexpected type.
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
      */
-    fun _eventType(): JsonField<String> = body._eventType()
+    fun eventType(): Optional<String> = body.eventType()
 
     /**
      * Returns the raw JSON value of [sandbox].
@@ -64,6 +57,13 @@ private constructor(
      * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
+
+    /**
+     * Returns the raw JSON value of [eventType].
+     *
+     * Unlike [eventType], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _eventType(): JsonField<String> = body._eventType()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -124,21 +124,10 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [eventType]
          * - [sandbox]
+         * - [eventType]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        fun eventType(eventType: String) = apply { body.eventType(eventType) }
-
-        /**
-         * Sets [Builder.eventType] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.eventType] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun eventType(eventType: JsonField<String>) = apply { body.eventType(eventType) }
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -153,6 +142,17 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
+
+        fun eventType(eventType: String) = apply { body.eventType(eventType) }
+
+        /**
+         * Sets [Builder.eventType] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.eventType] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun eventType(eventType: JsonField<String>) = apply { body.eventType(eventType) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -309,24 +309,21 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val eventType: JsonField<String>,
         private val sandbox: JsonField<Boolean>,
+        private val eventType: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("event_type")
             @ExcludeMissing
             eventType: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
-        ) : this(eventType, sandbox, mutableMapOf())
+        ) : this(sandbox, eventType, mutableMapOf())
 
-        /**
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun eventType(): Optional<String> = eventType.getOptional("event_type")
+        fun toMutationRequest(): MutationRequest =
+            MutationRequest.builder().sandbox(sandbox).build()
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -338,11 +335,10 @@ private constructor(
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
-         * Returns the raw JSON value of [eventType].
-         *
-         * Unlike [eventType], this method doesn't throw if the JSON field has an unexpected type.
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
          */
-        @JsonProperty("event_type") @ExcludeMissing fun _eventType(): JsonField<String> = eventType
+        fun eventType(): Optional<String> = eventType.getOptional("event_type")
 
         /**
          * Returns the raw JSON value of [sandbox].
@@ -350,6 +346,13 @@ private constructor(
          * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
+        /**
+         * Returns the raw JSON value of [eventType].
+         *
+         * Unlike [eventType], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("event_type") @ExcludeMissing fun _eventType(): JsonField<String> = eventType
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -372,27 +375,16 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var eventType: JsonField<String> = JsonMissing.of()
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
+            private var eventType: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                eventType = body.eventType
                 sandbox = body.sandbox
+                eventType = body.eventType
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
-
-            fun eventType(eventType: String) = eventType(JsonField.of(eventType))
-
-            /**
-             * Sets [Builder.eventType] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.eventType] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun eventType(eventType: JsonField<String>) = apply { this.eventType = eventType }
 
             /**
              * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -408,6 +400,17 @@ private constructor(
              * supported value.
              */
             fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
+            fun eventType(eventType: String) = eventType(JsonField.of(eventType))
+
+            /**
+             * Sets [Builder.eventType] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.eventType] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun eventType(eventType: JsonField<String>) = apply { this.eventType = eventType }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -433,7 +436,7 @@ private constructor(
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              */
-            fun build(): Body = Body(eventType, sandbox, additionalProperties.toMutableMap())
+            fun build(): Body = Body(sandbox, eventType, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -452,8 +455,8 @@ private constructor(
                 return@apply
             }
 
-            eventType()
             sandbox()
+            eventType()
             validated = true
         }
 
@@ -473,8 +476,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (eventType.asKnown().isPresent) 1 else 0) +
-                (if (sandbox.asKnown().isPresent) 1 else 0)
+            (if (sandbox.asKnown().isPresent) 1 else 0) +
+                (if (eventType.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -482,17 +485,17 @@ private constructor(
             }
 
             return other is Body &&
-                eventType == other.eventType &&
                 sandbox == other.sandbox &&
+                eventType == other.eventType &&
                 additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy { Objects.hash(eventType, sandbox, additionalProperties) }
+        private val hashCode: Int by lazy { Objects.hash(sandbox, eventType, additionalProperties) }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{eventType=$eventType, sandbox=$sandbox, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, eventType=$eventType, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

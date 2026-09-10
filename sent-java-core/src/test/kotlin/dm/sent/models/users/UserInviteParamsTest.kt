@@ -13,10 +13,10 @@ internal class UserInviteParamsTest {
         UserInviteParams.builder()
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .sandbox(false)
             .email("newuser@example.com")
             .name("New User")
             .role("developer")
-            .sandbox(false)
             .build()
     }
 
@@ -26,10 +26,10 @@ internal class UserInviteParamsTest {
             UserInviteParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .email("newuser@example.com")
                 .name("New User")
                 .role("developer")
-                .sandbox(false)
                 .build()
 
         val headers = params._headers()
@@ -58,18 +58,18 @@ internal class UserInviteParamsTest {
             UserInviteParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sandbox(false)
                 .email("newuser@example.com")
                 .name("New User")
                 .role("developer")
-                .sandbox(false)
                 .build()
 
         val body = params._body()
 
+        assertThat(body.sandbox()).contains(false)
         assertThat(body.email()).contains("newuser@example.com")
         assertThat(body.name()).contains("New User")
         assertThat(body.role()).contains("developer")
-        assertThat(body.sandbox()).contains(false)
     }
 
     @Test
