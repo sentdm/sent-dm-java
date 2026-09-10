@@ -5,7 +5,6 @@ package dm.sent.services.async
 import dm.sent.client.okhttp.SentOkHttpClientAsync
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
-import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
 import dm.sent.models.contacts.ContactUpdateParams
@@ -81,20 +80,10 @@ internal class ContactServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val contactServiceAsync = client.contacts()
 
-        val contactsFuture =
-            contactServiceAsync.list(
-                ContactListParams.builder()
-                    .page(0)
-                    .pageSize(0)
-                    .channel("channel")
-                    .phone("phone")
-                    .search("search")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val pageFuture = contactServiceAsync.list()
 
-        val contacts = contactsFuture.get()
-        contacts.validate()
+        val page = pageFuture.get()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")

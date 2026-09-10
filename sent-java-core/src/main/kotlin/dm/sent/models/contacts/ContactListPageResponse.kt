@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.templates
+package dm.sent.models.contacts
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -22,7 +22,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Standard API response envelope for all v3 endpoints */
-class TemplateListResponse
+class ContactListPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val data: JsonField<Data>,
@@ -40,8 +40,12 @@ private constructor(
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
+    fun contacts(): Optional<List<ContactResponse>> = data().flatMap { it.contacts() }
+
+    fun pagination(): Optional<PaginationMeta> = data().flatMap { it.pagination() }
+
     /**
-     * A paginated list of templates.
+     * A paginated list of contacts.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -114,11 +118,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [TemplateListResponse]. */
+        /** Returns a mutable builder for constructing an instance of [ContactListPageResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [TemplateListResponse]. */
+    /** A builder for [ContactListPageResponse]. */
     class Builder internal constructor() {
 
         private var data: JsonField<Data> = JsonMissing.of()
@@ -128,15 +132,15 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(templateListResponse: TemplateListResponse) = apply {
-            data = templateListResponse.data
-            error = templateListResponse.error
-            meta = templateListResponse.meta
-            success = templateListResponse.success
-            additionalProperties = templateListResponse.additionalProperties.toMutableMap()
+        internal fun from(contactListPageResponse: ContactListPageResponse) = apply {
+            data = contactListPageResponse.data
+            error = contactListPageResponse.error
+            meta = contactListPageResponse.meta
+            success = contactListPageResponse.success
+            additionalProperties = contactListPageResponse.additionalProperties.toMutableMap()
         }
 
-        /** A paginated list of templates. */
+        /** A paginated list of contacts. */
         fun data(data: Data?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
@@ -207,12 +211,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [TemplateListResponse].
+         * Returns an immutable instance of [ContactListPageResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): TemplateListResponse =
-            TemplateListResponse(data, error, meta, success, additionalProperties.toMutableMap())
+        fun build(): ContactListPageResponse =
+            ContactListPageResponse(data, error, meta, success, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
@@ -225,7 +229,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): TemplateListResponse = apply {
+    fun validate(): ContactListPageResponse = apply {
         if (validated) {
             return@apply
         }
@@ -257,24 +261,32 @@ private constructor(
             (meta.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
 
-    /** A paginated list of templates. */
+    /** A paginated list of contacts. */
     class Data
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val contacts: JsonField<List<ContactResponse>>,
         private val pagination: JsonField<PaginationMeta>,
-        private val templates: JsonField<List<Template>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
+            @JsonProperty("contacts")
+            @ExcludeMissing
+            contacts: JsonField<List<ContactResponse>> = JsonMissing.of(),
             @JsonProperty("pagination")
             @ExcludeMissing
             pagination: JsonField<PaginationMeta> = JsonMissing.of(),
-            @JsonProperty("templates")
-            @ExcludeMissing
-            templates: JsonField<List<Template>> = JsonMissing.of(),
-        ) : this(pagination, templates, mutableMapOf())
+        ) : this(contacts, pagination, mutableMapOf())
+
+        /**
+         * The contacts on this page.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun contacts(): Optional<List<ContactResponse>> = contacts.getOptional("contacts")
 
         /**
          * Pagination metadata for list responses
@@ -285,12 +297,13 @@ private constructor(
         fun pagination(): Optional<PaginationMeta> = pagination.getOptional("pagination")
 
         /**
-         * The templates on this page.
+         * Returns the raw JSON value of [contacts].
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * Unlike [contacts], this method doesn't throw if the JSON field has an unexpected type.
          */
-        fun templates(): Optional<List<Template>> = templates.getOptional("templates")
+        @JsonProperty("contacts")
+        @ExcludeMissing
+        fun _contacts(): JsonField<List<ContactResponse>> = contacts
 
         /**
          * Returns the raw JSON value of [pagination].
@@ -300,15 +313,6 @@ private constructor(
         @JsonProperty("pagination")
         @ExcludeMissing
         fun _pagination(): JsonField<PaginationMeta> = pagination
-
-        /**
-         * Returns the raw JSON value of [templates].
-         *
-         * Unlike [templates], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("templates")
-        @ExcludeMissing
-        fun _templates(): JsonField<List<Template>> = templates
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -331,15 +335,41 @@ private constructor(
         /** A builder for [Data]. */
         class Builder internal constructor() {
 
+            private var contacts: JsonField<MutableList<ContactResponse>>? = null
             private var pagination: JsonField<PaginationMeta> = JsonMissing.of()
-            private var templates: JsonField<MutableList<Template>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(data: Data) = apply {
+                contacts = data.contacts.map { it.toMutableList() }
                 pagination = data.pagination
-                templates = data.templates.map { it.toMutableList() }
                 additionalProperties = data.additionalProperties.toMutableMap()
+            }
+
+            /** The contacts on this page. */
+            fun contacts(contacts: List<ContactResponse>) = contacts(JsonField.of(contacts))
+
+            /**
+             * Sets [Builder.contacts] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.contacts] with a well-typed `List<ContactResponse>`
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun contacts(contacts: JsonField<List<ContactResponse>>) = apply {
+                this.contacts = contacts.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [ContactResponse] to [contacts].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addContact(contact: ContactResponse) = apply {
+                contacts =
+                    (contacts ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("contacts", it).add(contact)
+                    }
             }
 
             /** Pagination metadata for list responses */
@@ -354,32 +384,6 @@ private constructor(
              */
             fun pagination(pagination: JsonField<PaginationMeta>) = apply {
                 this.pagination = pagination
-            }
-
-            /** The templates on this page. */
-            fun templates(templates: List<Template>) = templates(JsonField.of(templates))
-
-            /**
-             * Sets [Builder.templates] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.templates] with a well-typed `List<Template>` value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun templates(templates: JsonField<List<Template>>) = apply {
-                this.templates = templates.map { it.toMutableList() }
-            }
-
-            /**
-             * Adds a single [Template] to [templates].
-             *
-             * @throws IllegalStateException if the field was previously set to a non-list.
-             */
-            fun addTemplate(template: Template) = apply {
-                templates =
-                    (templates ?: JsonField.of(mutableListOf())).also {
-                        checkKnown("templates", it).add(template)
-                    }
             }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
@@ -408,8 +412,8 @@ private constructor(
              */
             fun build(): Data =
                 Data(
+                    (contacts ?: JsonMissing.of()).map { it.toImmutable() },
                     pagination,
-                    (templates ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -430,8 +434,8 @@ private constructor(
                 return@apply
             }
 
+            contacts().ifPresent { it.forEach { it.validate() } }
             pagination().ifPresent { it.validate() }
-            templates().ifPresent { it.forEach { it.validate() } }
             validated = true
         }
 
@@ -451,8 +455,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (pagination.asKnown().getOrNull()?.validity() ?: 0) +
-                (templates.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+            (contacts.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                (pagination.asKnown().getOrNull()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -460,19 +464,19 @@ private constructor(
             }
 
             return other is Data &&
+                contacts == other.contacts &&
                 pagination == other.pagination &&
-                templates == other.templates &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(pagination, templates, additionalProperties)
+            Objects.hash(contacts, pagination, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{pagination=$pagination, templates=$templates, additionalProperties=$additionalProperties}"
+            "Data{contacts=$contacts, pagination=$pagination, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -480,7 +484,7 @@ private constructor(
             return true
         }
 
-        return other is TemplateListResponse &&
+        return other is ContactListPageResponse &&
             data == other.data &&
             error == other.error &&
             meta == other.meta &&
@@ -495,5 +499,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TemplateListResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
+        "ContactListPageResponse{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
 }

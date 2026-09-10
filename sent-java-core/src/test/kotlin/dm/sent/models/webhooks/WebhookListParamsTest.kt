@@ -12,9 +12,9 @@ internal class WebhookListParamsTest {
     @Test
     fun create() {
         WebhookListParams.builder()
+            .isActive(true)
             .page(0)
             .pageSize(0)
-            .isActive(true)
             .search("search")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
@@ -24,9 +24,9 @@ internal class WebhookListParamsTest {
     fun headers() {
         val params =
             WebhookListParams.builder()
+                .isActive(true)
                 .page(0)
                 .pageSize(0)
-                .isActive(true)
                 .search("search")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
@@ -43,7 +43,7 @@ internal class WebhookListParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = WebhookListParams.builder().page(0).pageSize(0).build()
+        val params = WebhookListParams.builder().build()
 
         val headers = params._headers()
 
@@ -54,9 +54,9 @@ internal class WebhookListParamsTest {
     fun queryParams() {
         val params =
             WebhookListParams.builder()
+                .isActive(true)
                 .page(0)
                 .pageSize(0)
-                .isActive(true)
                 .search("search")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
@@ -66,9 +66,9 @@ internal class WebhookListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
+                    .put("is_active", "true")
                     .put("page", "0")
                     .put("page_size", "0")
-                    .put("is_active", "true")
                     .put("search", "search")
                     .build()
             )
@@ -76,11 +76,10 @@ internal class WebhookListParamsTest {
 
     @Test
     fun queryParamsWithoutOptionalFields() {
-        val params = WebhookListParams.builder().page(0).pageSize(0).build()
+        val params = WebhookListParams.builder().build()
 
         val queryParams = params._queryParams()
 
-        assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("page", "0").put("page_size", "0").build())
+        assertThat(queryParams).isEqualTo(QueryParams.builder().build())
     }
 }
