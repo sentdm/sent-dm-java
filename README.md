@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.35.0)
-[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.35.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java)
+[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.37.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.37.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java)
 
 <!-- x-release-please-end -->
 
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-java/0.35.0).
+The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-java/0.37.0).
 
 <!-- x-release-please-end -->
 
@@ -24,7 +24,7 @@ The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm).
 ### Gradle
 
 ```kotlin
-implementation("dm.sent:sent-java:0.35.0")
+implementation("dm.sent:sent-java:0.37.0")
 ```
 
 ### Maven
@@ -33,7 +33,7 @@ implementation("dm.sent:sent-java:0.35.0")
 <dependency>
   <groupId>dm.sent</groupId>
   <artifactId>sent-java</artifactId>
-  <version>0.35.0</version>
+  <version>0.37.0</version>
 </dependency>
 ```
 
@@ -282,6 +282,106 @@ The SDK throws custom unchecked exception types:
 - [`SentInvalidDataException`](sent-java-core/src/main/kotlin/dm/sent/errors/SentInvalidDataException.kt): Failure to interpret successfully parsed data. For example, when accessing a property that's supposed to be required, but the API unexpectedly omitted it from the response.
 
 - [`SentException`](sent-java-core/src/main/kotlin/dm/sent/errors/SentException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
+
+## Pagination
+
+The SDK defines methods that return a paginated lists of results. It provides convenient ways to access the results either one page at a time or item-by-item across all pages.
+
+### Auto-pagination
+
+To iterate through all results across all pages, use the `autoPager()` method, which automatically fetches more pages as needed.
+
+When using the synchronous client, the method returns an [`Iterable`](https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html)
+
+```java
+import dm.sent.models.webhooks.WebhookListPage;
+import dm.sent.models.webhooks.WebhookResponse;
+
+WebhookListPage page = client.webhooks().list();
+
+// Process as an Iterable
+for (WebhookResponse webhook : page.autoPager()) {
+    System.out.println(webhook);
+}
+
+// Process as a Stream
+page.autoPager()
+    .stream()
+    .limit(50)
+    .forEach(webhook -> System.out.println(webhook));
+```
+
+When using the asynchronous client, the method returns an [`AsyncStreamResponse`](sent-java-core/src/main/kotlin/dm/sent/core/http/AsyncStreamResponse.kt):
+
+```java
+import dm.sent.core.http.AsyncStreamResponse;
+import dm.sent.models.webhooks.WebhookListPageAsync;
+import dm.sent.models.webhooks.WebhookResponse;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+CompletableFuture<WebhookListPageAsync> pageFuture = client.async().webhooks().list();
+
+pageFuture.thenRun(page -> page.autoPager().subscribe(webhook -> {
+    System.out.println(webhook);
+}));
+
+// If you need to handle errors or completion of the stream
+pageFuture.thenRun(page -> page.autoPager().subscribe(new AsyncStreamResponse.Handler<>() {
+    @Override
+    public void onNext(WebhookResponse webhook) {
+        System.out.println(webhook);
+    }
+
+    @Override
+    public void onComplete(Optional<Throwable> error) {
+        if (error.isPresent()) {
+            System.out.println("Something went wrong!");
+            throw new RuntimeException(error.get());
+        } else {
+            System.out.println("No more!");
+        }
+    }
+}));
+
+// Or use futures
+pageFuture.thenRun(page -> page.autoPager()
+    .subscribe(webhook -> {
+        System.out.println(webhook);
+    })
+    .onCompleteFuture()
+    .whenComplete((unused, error) -> {
+        if (error != null) {
+            System.out.println("Something went wrong!");
+            throw new RuntimeException(error);
+        } else {
+            System.out.println("No more!");
+        }
+    }));
+```
+
+### Manual pagination
+
+To access individual page items and manually request the next page, use the `items()`,
+`hasNextPage()`, and `nextPage()` methods:
+
+```java
+import dm.sent.models.webhooks.WebhookListPage;
+import dm.sent.models.webhooks.WebhookResponse;
+
+WebhookListPage page = client.webhooks().list();
+while (true) {
+    for (WebhookResponse webhook : page.items()) {
+        System.out.println(webhook);
+    }
+
+    if (!page.hasNextPage()) {
+        break;
+    }
+
+    page = page.nextPage();
+}
+```
 
 ## Logging
 
@@ -641,19 +741,19 @@ To access a property's raw JSON value, which may be undocumented, call its `_` p
 import dm.sent.core.JsonField;
 import java.util.Optional;
 
-JsonField<List<String>> channel = client.messages().send(params)._channel();
+JsonField<Boolean> sandbox = client.messages().send(params)._sandbox();
 
-if (channel.isMissing()) {
+if (sandbox.isMissing()) {
   // The property is absent from the JSON response
-} else if (channel.isNull()) {
+} else if (sandbox.isNull()) {
   // The property was set to literal null
 } else {
   // Check if value was provided as a string
   // Other methods include `asNumber()`, `asBoolean()`, etc.
-  Optional<String> jsonString = channel.asString();
+  Optional<String> jsonString = sandbox.asString();
 
   // Try to deserialize into a custom type
-  MyClass myObject = channel.asUnknown().orElseThrow().convert(MyClass.class);
+  MyClass myObject = sandbox.asUnknown().orElseThrow().convert(MyClass.class);
 }
 ```
 

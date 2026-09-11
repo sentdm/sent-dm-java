@@ -13,7 +13,6 @@ import dm.sent.models.templates.TemplateDefinition
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateFooter
 import dm.sent.models.templates.TemplateHeader
-import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
 import dm.sent.models.templates.TemplateVariable
@@ -28,11 +27,12 @@ internal class TemplateServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val templateServiceAsync = client.templates()
 
-        val templateFuture =
+        val apiResponseTemplateFuture =
             templateServiceAsync.create(
                 TemplateCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .category("MARKETING")
                     .creationSource(null)
                     .definition(
@@ -255,13 +255,12 @@ internal class TemplateServiceAsyncTest {
                             .build()
                     )
                     .language("en_US")
-                    .sandbox(false)
                     .submitForReview(false)
                     .build()
             )
 
-        val template = templateFuture.get()
-        template.validate()
+        val apiResponseTemplate = apiResponseTemplateFuture.get()
+        apiResponseTemplate.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -270,7 +269,7 @@ internal class TemplateServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val templateServiceAsync = client.templates()
 
-        val templateFuture =
+        val apiResponseTemplateFuture =
             templateServiceAsync.retrieve(
                 TemplateRetrieveParams.builder()
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -278,8 +277,8 @@ internal class TemplateServiceAsyncTest {
                     .build()
             )
 
-        val template = templateFuture.get()
-        template.validate()
+        val apiResponseTemplate = apiResponseTemplateFuture.get()
+        apiResponseTemplate.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -288,12 +287,13 @@ internal class TemplateServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val templateServiceAsync = client.templates()
 
-        val templateFuture =
+        val apiResponseTemplateFuture =
             templateServiceAsync.update(
                 TemplateUpdateParams.builder()
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .sandbox(false)
                     .category("MARKETING")
                     .definition(
                         TemplateDefinition.builder()
@@ -496,13 +496,12 @@ internal class TemplateServiceAsyncTest {
                     )
                     .language(null)
                     .name("Updated Welcome Message")
-                    .sandbox(false)
                     .submitForReview(false)
                     .build()
             )
 
-        val template = templateFuture.get()
-        template.validate()
+        val apiResponseTemplate = apiResponseTemplateFuture.get()
+        apiResponseTemplate.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -511,21 +510,10 @@ internal class TemplateServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val templateServiceAsync = client.templates()
 
-        val templatesFuture =
-            templateServiceAsync.list(
-                TemplateListParams.builder()
-                    .page(0)
-                    .pageSize(0)
-                    .category("category")
-                    .isWelcomePlayground(true)
-                    .search("search")
-                    .status("status")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val pageFuture = templateServiceAsync.list()
 
-        val templates = templatesFuture.get()
-        templates.validate()
+        val page = pageFuture.get()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -539,8 +527,8 @@ internal class TemplateServiceAsyncTest {
                 TemplateDeleteParams.builder()
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .deleteFromMeta(false)
                     .sandbox(false)
+                    .deleteFromMeta(false)
                     .build()
             )
 

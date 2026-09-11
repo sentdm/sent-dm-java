@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.37.0](https://github.com/sentdm/sent-dm-java/compare/v0.36.0...v0.37.0) (2026-09-10)
+
+
+### Highlights
+
+The contacts, templates, webhooks, webhook events, conversations, and conversation messages list methods now return a page you can iterate instead of a single response body. Iterate the result and the SDK fetches each page as it goes. This changes those methods' return type, so code that read the response body directly needs to iterate the page, or read its items, instead.
+
+`page` and `page_size` are now optional on those calls. You don't have to pass them to list anything.
+
+### Features
+
+* **api:** configure page_number pagination for the v3 list endpoints ([ae76f3f](https://github.com/sentdm/sent-dm-java/commit/ae76f3f825f923d2b578eb5318fbf83415de9830))
+
+## [0.36.0](https://github.com/sentdm/sent-dm-java/compare/v0.35.0...v0.36.0) (2026-09-09)
+
+
+### Highlights
+
+This release is breaking for the webhook endpoints. Webhook responses now use one shared model instead of a separate type per operation: the create, retrieve, update and toggle-status response types are gone, and all four now return the shared webhook API response model (`ApiResponseWebhook`, in this language's casing). If your code references one of the removed types, or its nested data, error or meta members, point it at the shared model. The list, list-event-types, list-events, rotate-secret and test responses are unchanged, because each returns a different envelope.
+
+### Features
+
+* **api:** repoint dangling model refs at current v3 schema names ([e5be2b6](https://github.com/sentdm/sent-dm-java/commit/e5be2b6126dbf28e817110791dd4ab9668941bdc))
+
 ## [0.35.0](https://github.com/sentdm/sent-dm-java/compare/v0.34.0...v0.35.0) (2026-09-06)
 
 

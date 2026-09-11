@@ -7,17 +7,15 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.profiles.ApiResponseOfProfileDetail
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
-import dm.sent.models.profiles.ProfileCreateResponse
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
 import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
-import dm.sent.models.profiles.ProfileRetrieveResponse
 import dm.sent.models.profiles.ProfileUpdateParams
-import dm.sent.models.profiles.ProfileUpdateResponse
 import dm.sent.services.blocking.profiles.CampaignService
 import java.util.function.Consumer
 
@@ -90,23 +88,24 @@ interface ProfileService {
      * not allowed.
      */
     @Deprecated("deprecated")
-    fun create(): ProfileCreateResponse = create(ProfileCreateParams.none())
+    fun create(): ApiResponseOfProfileDetail = create(ProfileCreateParams.none())
 
     /** @see create */
     @Deprecated("deprecated")
     fun create(
         params: ProfileCreateParams = ProfileCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileCreateResponse
+    ): ApiResponseOfProfileDetail
 
     /** @see create */
     @Deprecated("deprecated")
-    fun create(params: ProfileCreateParams = ProfileCreateParams.none()): ProfileCreateResponse =
-        create(params, RequestOptions.none())
+    fun create(
+        params: ProfileCreateParams = ProfileCreateParams.none()
+    ): ApiResponseOfProfileDetail = create(params, RequestOptions.none())
 
     /** @see create */
     @Deprecated("deprecated")
-    fun create(requestOptions: RequestOptions): ProfileCreateResponse =
+    fun create(requestOptions: RequestOptions): ApiResponseOfProfileDetail =
         create(ProfileCreateParams.none(), requestOptions)
 
     /**
@@ -119,7 +118,7 @@ interface ProfileService {
      * including brand and KYC information if a brand has been configured.
      */
     @Deprecated("deprecated")
-    fun retrieve(profileId: String): ProfileRetrieveResponse =
+    fun retrieve(profileId: String): ApiResponseOfProfileDetail =
         retrieve(profileId, ProfileRetrieveParams.none())
 
     /** @see retrieve */
@@ -128,7 +127,7 @@ interface ProfileService {
         profileId: String,
         params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileRetrieveResponse =
+    ): ApiResponseOfProfileDetail =
         retrieve(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see retrieve */
@@ -136,23 +135,23 @@ interface ProfileService {
     fun retrieve(
         profileId: String,
         params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
-    ): ProfileRetrieveResponse = retrieve(profileId, params, RequestOptions.none())
+    ): ApiResponseOfProfileDetail = retrieve(profileId, params, RequestOptions.none())
 
     /** @see retrieve */
     @Deprecated("deprecated")
     fun retrieve(
         params: ProfileRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileRetrieveResponse
+    ): ApiResponseOfProfileDetail
 
     /** @see retrieve */
     @Deprecated("deprecated")
-    fun retrieve(params: ProfileRetrieveParams): ProfileRetrieveResponse =
+    fun retrieve(params: ProfileRetrieveParams): ApiResponseOfProfileDetail =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
     @Deprecated("deprecated")
-    fun retrieve(profileId: String, requestOptions: RequestOptions): ProfileRetrieveResponse =
+    fun retrieve(profileId: String, requestOptions: RequestOptions): ApiResponseOfProfileDetail =
         retrieve(profileId, ProfileRetrieveParams.none(), requestOptions)
 
     /**
@@ -194,7 +193,7 @@ interface ProfileService {
      * /v3/channels/whatsapp`, sent with the `x-profile-id` header naming it.
      */
     @Deprecated("deprecated")
-    fun update(profileId: String): ProfileUpdateResponse =
+    fun update(profileId: String): ApiResponseOfProfileDetail =
         update(profileId, ProfileUpdateParams.none())
 
     /** @see update */
@@ -203,7 +202,7 @@ interface ProfileService {
         profileId: String,
         params: ProfileUpdateParams = ProfileUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileUpdateResponse =
+    ): ApiResponseOfProfileDetail =
         update(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see update */
@@ -211,23 +210,23 @@ interface ProfileService {
     fun update(
         profileId: String,
         params: ProfileUpdateParams = ProfileUpdateParams.none(),
-    ): ProfileUpdateResponse = update(profileId, params, RequestOptions.none())
+    ): ApiResponseOfProfileDetail = update(profileId, params, RequestOptions.none())
 
     /** @see update */
     @Deprecated("deprecated")
     fun update(
         params: ProfileUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileUpdateResponse
+    ): ApiResponseOfProfileDetail
 
     /** @see update */
     @Deprecated("deprecated")
-    fun update(params: ProfileUpdateParams): ProfileUpdateResponse =
+    fun update(params: ProfileUpdateParams): ApiResponseOfProfileDetail =
         update(params, RequestOptions.none())
 
     /** @see update */
     @Deprecated("deprecated")
-    fun update(profileId: String, requestOptions: RequestOptions): ProfileUpdateResponse =
+    fun update(profileId: String, requestOptions: RequestOptions): ApiResponseOfProfileDetail =
         update(profileId, ProfileUpdateParams.none(), requestOptions)
 
     /**
@@ -271,24 +270,16 @@ interface ProfileService {
      * used. Requires admin role in the organization.
      */
     @Deprecated("deprecated")
-    fun delete(profileId: String) = delete(profileId, ProfileDeleteParams.none())
+    fun delete(profileId: String, params: ProfileDeleteParams) =
+        delete(profileId, params, RequestOptions.none())
 
     /** @see delete */
     @Deprecated("deprecated")
     fun delete(
         profileId: String,
-        params: ProfileDeleteParams = ProfileDeleteParams.none(),
+        params: ProfileDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ) = delete(params.toBuilder().profileId(profileId).build(), requestOptions)
-
-    /** @see delete */
-    @Deprecated("deprecated")
-    fun delete(profileId: String, params: ProfileDeleteParams = ProfileDeleteParams.none()) =
-        delete(profileId, params, RequestOptions.none())
-
-    /** @see delete */
-    @Deprecated("deprecated")
-    fun delete(params: ProfileDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
     @Deprecated("deprecated")
@@ -296,8 +287,7 @@ interface ProfileService {
 
     /** @see delete */
     @Deprecated("deprecated")
-    fun delete(profileId: String, requestOptions: RequestOptions) =
-        delete(profileId, ProfileDeleteParams.none(), requestOptions)
+    fun delete(params: ProfileDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /**
      * **Deprecated.** This endpoint is replaced by `/v3/sender-profiles` and will be removed in a
@@ -388,7 +378,8 @@ interface ProfileService {
          */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun create(): HttpResponseFor<ProfileCreateResponse> = create(ProfileCreateParams.none())
+        fun create(): HttpResponseFor<ApiResponseOfProfileDetail> =
+            create(ProfileCreateParams.none())
 
         /** @see create */
         @Deprecated("deprecated")
@@ -396,19 +387,19 @@ interface ProfileService {
         fun create(
             params: ProfileCreateParams = ProfileCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileCreateResponse>
+        ): HttpResponseFor<ApiResponseOfProfileDetail>
 
         /** @see create */
         @Deprecated("deprecated")
         @MustBeClosed
         fun create(
             params: ProfileCreateParams = ProfileCreateParams.none()
-        ): HttpResponseFor<ProfileCreateResponse> = create(params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseOfProfileDetail> = create(params, RequestOptions.none())
 
         /** @see create */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun create(requestOptions: RequestOptions): HttpResponseFor<ProfileCreateResponse> =
+        fun create(requestOptions: RequestOptions): HttpResponseFor<ApiResponseOfProfileDetail> =
             create(ProfileCreateParams.none(), requestOptions)
 
         /**
@@ -417,7 +408,7 @@ interface ProfileService {
          */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun retrieve(profileId: String): HttpResponseFor<ProfileRetrieveResponse> =
+        fun retrieve(profileId: String): HttpResponseFor<ApiResponseOfProfileDetail> =
             retrieve(profileId, ProfileRetrieveParams.none())
 
         /** @see retrieve */
@@ -427,7 +418,7 @@ interface ProfileService {
             profileId: String,
             params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileRetrieveResponse> =
+        ): HttpResponseFor<ApiResponseOfProfileDetail> =
             retrieve(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see retrieve */
@@ -436,7 +427,7 @@ interface ProfileService {
         fun retrieve(
             profileId: String,
             params: ProfileRetrieveParams = ProfileRetrieveParams.none(),
-        ): HttpResponseFor<ProfileRetrieveResponse> =
+        ): HttpResponseFor<ApiResponseOfProfileDetail> =
             retrieve(profileId, params, RequestOptions.none())
 
         /** @see retrieve */
@@ -445,12 +436,12 @@ interface ProfileService {
         fun retrieve(
             params: ProfileRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileRetrieveResponse>
+        ): HttpResponseFor<ApiResponseOfProfileDetail>
 
         /** @see retrieve */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun retrieve(params: ProfileRetrieveParams): HttpResponseFor<ProfileRetrieveResponse> =
+        fun retrieve(params: ProfileRetrieveParams): HttpResponseFor<ApiResponseOfProfileDetail> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
@@ -459,7 +450,7 @@ interface ProfileService {
         fun retrieve(
             profileId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ProfileRetrieveResponse> =
+        ): HttpResponseFor<ApiResponseOfProfileDetail> =
             retrieve(profileId, ProfileRetrieveParams.none(), requestOptions)
 
         /**
@@ -468,7 +459,7 @@ interface ProfileService {
          */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun update(profileId: String): HttpResponseFor<ProfileUpdateResponse> =
+        fun update(profileId: String): HttpResponseFor<ApiResponseOfProfileDetail> =
             update(profileId, ProfileUpdateParams.none())
 
         /** @see update */
@@ -478,7 +469,7 @@ interface ProfileService {
             profileId: String,
             params: ProfileUpdateParams = ProfileUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileUpdateResponse> =
+        ): HttpResponseFor<ApiResponseOfProfileDetail> =
             update(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see update */
@@ -487,7 +478,8 @@ interface ProfileService {
         fun update(
             profileId: String,
             params: ProfileUpdateParams = ProfileUpdateParams.none(),
-        ): HttpResponseFor<ProfileUpdateResponse> = update(profileId, params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseOfProfileDetail> =
+            update(profileId, params, RequestOptions.none())
 
         /** @see update */
         @Deprecated("deprecated")
@@ -495,12 +487,12 @@ interface ProfileService {
         fun update(
             params: ProfileUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileUpdateResponse>
+        ): HttpResponseFor<ApiResponseOfProfileDetail>
 
         /** @see update */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun update(params: ProfileUpdateParams): HttpResponseFor<ProfileUpdateResponse> =
+        fun update(params: ProfileUpdateParams): HttpResponseFor<ApiResponseOfProfileDetail> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -509,7 +501,7 @@ interface ProfileService {
         fun update(
             profileId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ProfileUpdateResponse> =
+        ): HttpResponseFor<ApiResponseOfProfileDetail> =
             update(profileId, ProfileUpdateParams.none(), requestOptions)
 
         /**
@@ -547,32 +539,17 @@ interface ProfileService {
          */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun delete(profileId: String): HttpResponse = delete(profileId, ProfileDeleteParams.none())
+        fun delete(profileId: String, params: ProfileDeleteParams): HttpResponse =
+            delete(profileId, params, RequestOptions.none())
 
         /** @see delete */
         @Deprecated("deprecated")
         @MustBeClosed
         fun delete(
             profileId: String,
-            params: ProfileDeleteParams = ProfileDeleteParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse = delete(params.toBuilder().profileId(profileId).build(), requestOptions)
-
-        /** @see delete */
-        @Deprecated("deprecated")
-        @MustBeClosed
-        fun delete(
-            profileId: String,
-            params: ProfileDeleteParams = ProfileDeleteParams.none(),
-        ): HttpResponse = delete(profileId, params, RequestOptions.none())
-
-        /** @see delete */
-        @Deprecated("deprecated")
-        @MustBeClosed
-        fun delete(
             params: ProfileDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        ): HttpResponse = delete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see delete */
         @Deprecated("deprecated")
@@ -583,8 +560,10 @@ interface ProfileService {
         /** @see delete */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun delete(profileId: String, requestOptions: RequestOptions): HttpResponse =
-            delete(profileId, ProfileDeleteParams.none(), requestOptions)
+        fun delete(
+            params: ProfileDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponse
 
         /**
          * Returns a raw HTTP response for `post /v3/profiles/{profileId}/complete`, but is
