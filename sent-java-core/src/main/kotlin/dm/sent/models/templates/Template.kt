@@ -144,7 +144,8 @@ private constructor(
     fun name(): Optional<String> = name.getOptional("name")
 
     /**
-     * Template status: APPROVED, PENDING, REJECTED
+     * Template status: DRAFT, PENDING, APPROVED, REJECTED. A template created with
+     * submit_for_review: false starts as DRAFT and stays there until it is submitted.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -419,7 +420,10 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { this.name = name }
 
-        /** Template status: APPROVED, PENDING, REJECTED */
+        /**
+         * Template status: DRAFT, PENDING, APPROVED, REJECTED. A template created with
+         * submit_for_review: false starts as DRAFT and stays there until it is submitted.
+         */
         fun status(status: String) = status(JsonField.of(status))
 
         /**

@@ -21,10 +21,13 @@ internal class WebhookCreateParamsTest {
             .eventFilters(
                 WebhookCreateParams.EventFilters.builder()
                     .putAdditionalProperty("message", JsonValue.from(listOf("delivered", "failed")))
+                    .putAdditionalProperty(
+                        "templates",
+                        JsonValue.from(listOf("approved", "rejected")),
+                    )
                     .build()
             )
-            .addEventType("message")
-            .addEventType("templates")
+            .eventTypes(listOf("contact", "message", "templates"))
             .retryCount(3)
             .timeoutSeconds(30)
             .build()
@@ -45,10 +48,13 @@ internal class WebhookCreateParamsTest {
                             "message",
                             JsonValue.from(listOf("delivered", "failed")),
                         )
+                        .putAdditionalProperty(
+                            "templates",
+                            JsonValue.from(listOf("approved", "rejected")),
+                        )
                         .build()
                 )
-                .addEventType("message")
-                .addEventType("templates")
+                .eventTypes(listOf("contact", "message", "templates"))
                 .retryCount(3)
                 .timeoutSeconds(30)
                 .build()
@@ -88,10 +94,13 @@ internal class WebhookCreateParamsTest {
                             "message",
                             JsonValue.from(listOf("delivered", "failed")),
                         )
+                        .putAdditionalProperty(
+                            "templates",
+                            JsonValue.from(listOf("approved", "rejected")),
+                        )
                         .build()
                 )
-                .addEventType("message")
-                .addEventType("templates")
+                .eventTypes(listOf("contact", "message", "templates"))
                 .retryCount(3)
                 .timeoutSeconds(30)
                 .build()
@@ -105,9 +114,13 @@ internal class WebhookCreateParamsTest {
             .contains(
                 WebhookCreateParams.EventFilters.builder()
                     .putAdditionalProperty("message", JsonValue.from(listOf("delivered", "failed")))
+                    .putAdditionalProperty(
+                        "templates",
+                        JsonValue.from(listOf("approved", "rejected")),
+                    )
                     .build()
             )
-        assertThat(body.eventTypes().getOrNull()).containsExactly("message", "templates")
+        assertThat(body.eventTypes().getOrNull()).containsExactly("contact", "message", "templates")
         assertThat(body.retryCount()).contains(3)
         assertThat(body.timeoutSeconds()).contains(30)
     }

@@ -28,6 +28,7 @@ internal class TemplateEventTest {
                         .templateName("template_name")
                         .build()
                 )
+                .requestId("request_id")
                 .timestamp("timestamp")
                 .build()
 
@@ -47,6 +48,7 @@ internal class TemplateEventTest {
                     .templateName("template_name")
                     .build()
             )
+        assertThat(templateEvent.requestId()).contains("request_id")
         assertThat(templateEvent.timestamp()).contains("timestamp")
     }
 
@@ -70,6 +72,7 @@ internal class TemplateEventTest {
                         .templateName("template_name")
                         .build()
                 )
+                .requestId("request_id")
                 .timestamp("timestamp")
                 .build()
 
