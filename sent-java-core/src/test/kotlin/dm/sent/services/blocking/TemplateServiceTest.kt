@@ -42,9 +42,9 @@ internal class TemplateServiceTest {
                                     .multiChannel(
                                         TemplateBodyContent.builder()
                                             .template(
-                                                "Hello {{0:variable}}! Welcome to {{1:variable}}."
+                                                "Hello {{0:variable}}! Welcome to {{1:variable}}. We are glad to have you on board."
                                             )
-                                            .type("type")
+                                            .type("text")
                                             .addVariable(
                                                 TemplateVariable.builder()
                                                     .name("name")

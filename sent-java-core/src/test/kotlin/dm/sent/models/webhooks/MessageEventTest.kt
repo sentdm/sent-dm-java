@@ -28,6 +28,7 @@ internal class MessageEventTest {
                         .updatedAt("updated_at")
                         .build()
                 )
+                .requestId("request_id")
                 .timestamp("timestamp")
                 .build()
 
@@ -47,6 +48,7 @@ internal class MessageEventTest {
                     .updatedAt("updated_at")
                     .build()
             )
+        assertThat(messageEvent.requestId()).contains("request_id")
         assertThat(messageEvent.timestamp()).contains("timestamp")
     }
 
@@ -70,6 +72,7 @@ internal class MessageEventTest {
                         .updatedAt("updated_at")
                         .build()
                 )
+                .requestId("request_id")
                 .timestamp("timestamp")
                 .build()
 

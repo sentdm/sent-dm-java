@@ -99,7 +99,12 @@ private constructor(
     fun category(): Optional<String> = category.getOptional("category")
 
     /**
-     * The channel the template applies to.
+     * The channel leg this decision is about, for example whatsapp, sms, or rcs. A template is
+     * reviewed per channel and the legs come back independently, so each one reports separately.
+     *
+     * Omitted when the decision applies to the template as a whole rather than to one leg. That
+     * event is the broader news: a template-wide rejection blocks every channel, whatever the
+     * individual legs say.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -311,8 +316,19 @@ private constructor(
          */
         fun category(category: JsonField<String>) = apply { this.category = category }
 
-        /** The channel the template applies to. */
-        fun channel(channel: String) = channel(JsonField.of(channel))
+        /**
+         * The channel leg this decision is about, for example whatsapp, sms, or rcs. A template is
+         * reviewed per channel and the legs come back independently, so each one reports
+         * separately.
+         *
+         * Omitted when the decision applies to the template as a whole rather than to one leg. That
+         * event is the broader news: a template-wide rejection blocks every channel, whatever the
+         * individual legs say.
+         */
+        fun channel(channel: String?) = channel(JsonField.ofNullable(channel))
+
+        /** Alias for calling [Builder.channel] with `channel.orElse(null)`. */
+        fun channel(channel: Optional<String>) = channel(channel.getOrNull())
 
         /**
          * Sets [Builder.channel] to an arbitrary JSON value.
