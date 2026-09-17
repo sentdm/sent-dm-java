@@ -38,10 +38,13 @@ internal class WebhookServiceTest {
                                 "message",
                                 JsonValue.from(listOf("delivered", "failed")),
                             )
+                            .putAdditionalProperty(
+                                "templates",
+                                JsonValue.from(listOf("approved", "rejected")),
+                            )
                             .build()
                     )
-                    .addEventType("message")
-                    .addEventType("templates")
+                    .eventTypes(listOf("contact", "message", "templates"))
                     .retryCount(3)
                     .timeoutSeconds(30)
                     .build()
@@ -90,8 +93,7 @@ internal class WebhookServiceTest {
                             )
                             .build()
                     )
-                    .addEventType("message")
-                    .addEventType("templates")
+                    .eventTypes(listOf("contact", "message", "templates"))
                     .retryCount(5)
                     .timeoutSeconds(60)
                     .build()
