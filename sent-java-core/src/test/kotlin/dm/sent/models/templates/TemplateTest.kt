@@ -17,6 +17,7 @@ internal class TemplateTest {
             Template.builder()
                 .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .autoReplyAction("auto_reply_action")
                 .category("category")
                 .addChannel("string")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -30,6 +31,7 @@ internal class TemplateTest {
 
         assertThat(template.customerId()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(template.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(template.autoReplyAction()).contains("auto_reply_action")
         assertThat(template.category()).contains("category")
         assertThat(template.channels().getOrNull()).containsExactly("string")
         assertThat(template.createdAt()).contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -48,6 +50,7 @@ internal class TemplateTest {
             Template.builder()
                 .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .autoReplyAction("auto_reply_action")
                 .category("category")
                 .addChannel("string")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))

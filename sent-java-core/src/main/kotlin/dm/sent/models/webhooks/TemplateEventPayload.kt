@@ -27,6 +27,7 @@ private constructor(
     private val status: JsonField<String>,
     private val whatsappTemplateId: JsonField<String>,
     private val accountId: JsonField<String>,
+    private val autoReplyAction: JsonField<String>,
     private val category: JsonField<String>,
     private val channel: JsonField<String>,
     private val language: JsonField<String>,
@@ -43,6 +44,9 @@ private constructor(
         @ExcludeMissing
         whatsappTemplateId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("account_id") @ExcludeMissing accountId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("auto_reply_action")
+        @ExcludeMissing
+        autoReplyAction: JsonField<String> = JsonMissing.of(),
         @JsonProperty("category") @ExcludeMissing category: JsonField<String> = JsonMissing.of(),
         @JsonProperty("channel") @ExcludeMissing channel: JsonField<String> = JsonMissing.of(),
         @JsonProperty("language") @ExcludeMissing language: JsonField<String> = JsonMissing.of(),
@@ -57,6 +61,7 @@ private constructor(
         status,
         whatsappTemplateId,
         accountId,
+        autoReplyAction,
         category,
         channel,
         language,
@@ -89,6 +94,26 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun accountId(): Optional<String> = accountId.getOptional("account_id")
+
+    /**
+     * Which consent keyword this template answers, when it is one of Sent's auto-replies: OPT_IN,
+     * OPT_OUT, HELP, or OTHER for a customer-defined keyword.
+     *
+     * Omitted for an ordinary template, so its presence is the answer to "is this an auto-reply".
+     * Sent creates the three compliance auto-replies at signup and they go through review like any
+     * other template, so their events arrive mixed in with the customer's own with nothing else to
+     * tell them apart.
+     *
+     * Named for the reader rather than after Template.OptAction, which it is mapped from. The MCP
+     * tool result deliberately keeps OptAction, OptKeywords and IsOpt: it mirrors the internal
+     * shape on purpose and publishes the keywords too, so renaming one of the three there would
+     * leave a surface half in each vocabulary. Two names for one concept, each consistent within
+     * its own surface, chosen over a rename that breaks MCP clients silently.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun autoReplyAction(): Optional<String> = autoReplyAction.getOptional("auto_reply_action")
 
     /**
      * The template's category, for example UTILITY, MARKETING, or AUTHENTICATION.
@@ -168,6 +193,15 @@ private constructor(
     @JsonProperty("account_id") @ExcludeMissing fun _accountId(): JsonField<String> = accountId
 
     /**
+     * Returns the raw JSON value of [autoReplyAction].
+     *
+     * Unlike [autoReplyAction], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("auto_reply_action")
+    @ExcludeMissing
+    fun _autoReplyAction(): JsonField<String> = autoReplyAction
+
+    /**
      * Returns the raw JSON value of [category].
      *
      * Unlike [category], this method doesn't throw if the JSON field has an unexpected type.
@@ -243,6 +277,7 @@ private constructor(
         private var status: JsonField<String>? = null
         private var whatsappTemplateId: JsonField<String>? = null
         private var accountId: JsonField<String> = JsonMissing.of()
+        private var autoReplyAction: JsonField<String> = JsonMissing.of()
         private var category: JsonField<String> = JsonMissing.of()
         private var channel: JsonField<String> = JsonMissing.of()
         private var language: JsonField<String> = JsonMissing.of()
@@ -256,6 +291,7 @@ private constructor(
             status = templateEventPayload.status
             whatsappTemplateId = templateEventPayload.whatsappTemplateId
             accountId = templateEventPayload.accountId
+            autoReplyAction = templateEventPayload.autoReplyAction
             category = templateEventPayload.category
             channel = templateEventPayload.channel
             language = templateEventPayload.language
@@ -304,6 +340,39 @@ private constructor(
          * value.
          */
         fun accountId(accountId: JsonField<String>) = apply { this.accountId = accountId }
+
+        /**
+         * Which consent keyword this template answers, when it is one of Sent's auto-replies:
+         * OPT_IN, OPT_OUT, HELP, or OTHER for a customer-defined keyword.
+         *
+         * Omitted for an ordinary template, so its presence is the answer to "is this an
+         * auto-reply". Sent creates the three compliance auto-replies at signup and they go through
+         * review like any other template, so their events arrive mixed in with the customer's own
+         * with nothing else to tell them apart.
+         *
+         * Named for the reader rather than after Template.OptAction, which it is mapped from. The
+         * MCP tool result deliberately keeps OptAction, OptKeywords and IsOpt: it mirrors the
+         * internal shape on purpose and publishes the keywords too, so renaming one of the three
+         * there would leave a surface half in each vocabulary. Two names for one concept, each
+         * consistent within its own surface, chosen over a rename that breaks MCP clients silently.
+         */
+        fun autoReplyAction(autoReplyAction: String?) =
+            autoReplyAction(JsonField.ofNullable(autoReplyAction))
+
+        /** Alias for calling [Builder.autoReplyAction] with `autoReplyAction.orElse(null)`. */
+        fun autoReplyAction(autoReplyAction: Optional<String>) =
+            autoReplyAction(autoReplyAction.getOrNull())
+
+        /**
+         * Sets [Builder.autoReplyAction] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.autoReplyAction] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun autoReplyAction(autoReplyAction: JsonField<String>) = apply {
+            this.autoReplyAction = autoReplyAction
+        }
 
         /** The template's category, for example UTILITY, MARKETING, or AUTHENTICATION. */
         fun category(category: String) = category(JsonField.of(category))
@@ -426,6 +495,7 @@ private constructor(
                 checkRequired("status", status),
                 checkRequired("whatsappTemplateId", whatsappTemplateId),
                 accountId,
+                autoReplyAction,
                 category,
                 channel,
                 language,
@@ -454,6 +524,7 @@ private constructor(
         status()
         whatsappTemplateId()
         accountId()
+        autoReplyAction()
         category()
         channel()
         language()
@@ -481,6 +552,7 @@ private constructor(
         (if (status.asKnown().isPresent) 1 else 0) +
             (if (whatsappTemplateId.asKnown().isPresent) 1 else 0) +
             (if (accountId.asKnown().isPresent) 1 else 0) +
+            (if (autoReplyAction.asKnown().isPresent) 1 else 0) +
             (if (category.asKnown().isPresent) 1 else 0) +
             (if (channel.asKnown().isPresent) 1 else 0) +
             (if (language.asKnown().isPresent) 1 else 0) +
@@ -497,6 +569,7 @@ private constructor(
             status == other.status &&
             whatsappTemplateId == other.whatsappTemplateId &&
             accountId == other.accountId &&
+            autoReplyAction == other.autoReplyAction &&
             category == other.category &&
             channel == other.channel &&
             language == other.language &&
@@ -511,6 +584,7 @@ private constructor(
             status,
             whatsappTemplateId,
             accountId,
+            autoReplyAction,
             category,
             channel,
             language,
@@ -524,5 +598,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TemplateEventPayload{status=$status, whatsappTemplateId=$whatsappTemplateId, accountId=$accountId, category=$category, channel=$channel, language=$language, reason=$reason, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
+        "TemplateEventPayload{status=$status, whatsappTemplateId=$whatsappTemplateId, accountId=$accountId, autoReplyAction=$autoReplyAction, category=$category, channel=$channel, language=$language, reason=$reason, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
 }
