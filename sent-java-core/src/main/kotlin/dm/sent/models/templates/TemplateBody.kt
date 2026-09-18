@@ -16,7 +16,17 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Body section of a message template with channel-specific content */
+/**
+ * Body section of a message template.
+ *
+ * A body picks one of two authoring strategies, and mixing them is refused
+ * (TemplateDefinitionValidator.HaveValidChannelConfiguration): a shared multiChannel body on its
+ * own, or an explicit sms + whatsapp pair, both present.
+ *
+ * multiChannel together with sms or whatsapp is rejected, and so is sms or whatsapp on its own —
+ * every template is expected to be deliverable on every channel. rcs is the one true override: it
+ * may accompany either strategy to vary the copy, but cannot stand alone.
+ */
 class TemplateBody
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
@@ -40,8 +50,7 @@ private constructor(
     ) : this(multiChannel, rcs, sms, whatsapp, mutableMapOf())
 
     /**
-     * Content that will be used for all channels (SMS and WhatsApp) unless channel-specific content
-     * is provided
+     * The shared body, used for every channel. One half of the choice described above.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -49,7 +58,9 @@ private constructor(
     fun multiChannel(): Optional<TemplateBodyContent> = multiChannel.getOptional("multiChannel")
 
     /**
-     * RCS-specific content that overrides multi-channel content for RCS messages
+     * RCS-specific copy that overrides the chosen strategy for RCS only. The one true override:
+     * optional on top of either strategy, but it cannot be the only body present. Its length cap is
+     * the higher one described on Template.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -57,7 +68,7 @@ private constructor(
     fun rcs(): Optional<TemplateBodyContent> = rcs.getOptional("rcs")
 
     /**
-     * SMS-specific content that overrides multi-channel content for SMS messages
+     * The SMS body. It does not override multiChannel, it replaces it.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -65,7 +76,7 @@ private constructor(
     fun sms(): Optional<TemplateBodyContent> = sms.getOptional("sms")
 
     /**
-     * WhatsApp-specific content that overrides multi-channel content for WhatsApp messages
+     * The WhatsApp body. It does not override multiChannel, it replaces it.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -140,10 +151,7 @@ private constructor(
             additionalProperties = templateBody.additionalProperties.toMutableMap()
         }
 
-        /**
-         * Content that will be used for all channels (SMS and WhatsApp) unless channel-specific
-         * content is provided
-         */
+        /** The shared body, used for every channel. One half of the choice described above. */
         fun multiChannel(multiChannel: TemplateBodyContent?) =
             multiChannel(JsonField.ofNullable(multiChannel))
 
@@ -162,7 +170,11 @@ private constructor(
             this.multiChannel = multiChannel
         }
 
-        /** RCS-specific content that overrides multi-channel content for RCS messages */
+        /**
+         * RCS-specific copy that overrides the chosen strategy for RCS only. The one true override:
+         * optional on top of either strategy, but it cannot be the only body present. Its length
+         * cap is the higher one described on Template.
+         */
         fun rcs(rcs: TemplateBodyContent?) = rcs(JsonField.ofNullable(rcs))
 
         /** Alias for calling [Builder.rcs] with `rcs.orElse(null)`. */
@@ -177,7 +189,7 @@ private constructor(
          */
         fun rcs(rcs: JsonField<TemplateBodyContent>) = apply { this.rcs = rcs }
 
-        /** SMS-specific content that overrides multi-channel content for SMS messages */
+        /** The SMS body. It does not override multiChannel, it replaces it. */
         fun sms(sms: TemplateBodyContent?) = sms(JsonField.ofNullable(sms))
 
         /** Alias for calling [Builder.sms] with `sms.orElse(null)`. */
@@ -192,7 +204,7 @@ private constructor(
          */
         fun sms(sms: JsonField<TemplateBodyContent>) = apply { this.sms = sms }
 
-        /** WhatsApp-specific content that overrides multi-channel content for WhatsApp messages */
+        /** The WhatsApp body. It does not override multiChannel, it replaces it. */
         fun whatsapp(whatsapp: TemplateBodyContent?) = whatsapp(JsonField.ofNullable(whatsapp))
 
         /** Alias for calling [Builder.whatsapp] with `whatsapp.orElse(null)`. */

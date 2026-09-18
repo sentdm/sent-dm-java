@@ -122,9 +122,10 @@ private constructor(
     fun errorMessage(): Optional<String> = errorMessage.getOptional("error_message")
 
     /**
-     * The exact event body that was delivered, or attempted, for this record. One of the three
-     * webhook envelopes: a message status change, an inbound message, or a template status change.
-     * Read field and event to tell which, the same way your endpoint does.
+     * The exact event body that was delivered, or attempted, for this record. One of the four
+     * webhook envelopes: a message status change, an inbound message, a template status change, or
+     * a contact consent signal. Read field and event to tell which, the same way your endpoint
+     * does.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -376,9 +377,10 @@ private constructor(
         }
 
         /**
-         * The exact event body that was delivered, or attempted, for this record. One of the three
-         * webhook envelopes: a message status change, an inbound message, or a template status
-         * change. Read field and event to tell which, the same way your endpoint does.
+         * The exact event body that was delivered, or attempted, for this record. One of the four
+         * webhook envelopes: a message status change, an inbound message, a template status change,
+         * or a contact consent signal. Read field and event to tell which, the same way your
+         * endpoint does.
          */
         fun eventData(eventData: EventData) = eventData(JsonField.of(eventData))
 
@@ -405,6 +407,14 @@ private constructor(
         /** Alias for calling [eventData] with `EventData.ofTemplateEvent(templateEvent)`. */
         fun eventData(templateEvent: TemplateEvent) =
             eventData(EventData.ofTemplateEvent(templateEvent))
+
+        /** Alias for calling [eventData] with `EventData.ofChannelEvent(channelEvent)`. */
+        fun eventData(channelEvent: ChannelEvent) =
+            eventData(EventData.ofChannelEvent(channelEvent))
+
+        /** Alias for calling [eventData] with `EventData.ofContactEvent(contactEvent)`. */
+        fun eventData(contactEvent: ContactEvent) =
+            eventData(EventData.ofContactEvent(contactEvent))
 
         fun eventType(eventType: String) = eventType(JsonField.of(eventType))
 
@@ -597,9 +607,10 @@ private constructor(
             (if (responseBody.asKnown().isPresent) 1 else 0)
 
     /**
-     * The exact event body that was delivered, or attempted, for this record. One of the three
-     * webhook envelopes: a message status change, an inbound message, or a template status change.
-     * Read field and event to tell which, the same way your endpoint does.
+     * The exact event body that was delivered, or attempted, for this record. One of the four
+     * webhook envelopes: a message status change, an inbound message, a template status change, or
+     * a contact consent signal. Read field and event to tell which, the same way your endpoint
+     * does.
      */
     @JsonDeserialize(using = EventData.Deserializer::class)
     @JsonSerialize(using = EventData.Serializer::class)
@@ -608,6 +619,8 @@ private constructor(
         private val messageEvent: MessageEvent? = null,
         private val inboundMessageEvent: InboundMessageEvent? = null,
         private val templateEvent: TemplateEvent? = null,
+        private val channelEvent: ChannelEvent? = null,
+        private val contactEvent: ContactEvent? = null,
         private val _json: JsonValue? = null,
     ) {
 
@@ -630,11 +643,27 @@ private constructor(
          */
         fun templateEvent(): Optional<TemplateEvent> = Optional.ofNullable(templateEvent)
 
+        /**
+         * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this shape
+         * and varies only in Payload.
+         */
+        fun channelEvent(): Optional<ChannelEvent> = Optional.ofNullable(channelEvent)
+
+        /**
+         * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this shape
+         * and varies only in Payload.
+         */
+        fun contactEvent(): Optional<ContactEvent> = Optional.ofNullable(contactEvent)
+
         fun isMessageEvent(): Boolean = messageEvent != null
 
         fun isInboundMessageEvent(): Boolean = inboundMessageEvent != null
 
         fun isTemplateEvent(): Boolean = templateEvent != null
+
+        fun isChannelEvent(): Boolean = channelEvent != null
+
+        fun isContactEvent(): Boolean = contactEvent != null
 
         /**
          * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this shape
@@ -654,6 +683,18 @@ private constructor(
          * and varies only in Payload.
          */
         fun asTemplateEvent(): TemplateEvent = templateEvent.getOrThrow("templateEvent")
+
+        /**
+         * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this shape
+         * and varies only in Payload.
+         */
+        fun asChannelEvent(): ChannelEvent = channelEvent.getOrThrow("channelEvent")
+
+        /**
+         * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this shape
+         * and varies only in Payload.
+         */
+        fun asContactEvent(): ContactEvent = contactEvent.getOrThrow("contactEvent")
 
         fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
@@ -691,6 +732,8 @@ private constructor(
                 messageEvent != null -> visitor.visitMessageEvent(messageEvent)
                 inboundMessageEvent != null -> visitor.visitInboundMessageEvent(inboundMessageEvent)
                 templateEvent != null -> visitor.visitTemplateEvent(templateEvent)
+                channelEvent != null -> visitor.visitChannelEvent(channelEvent)
+                contactEvent != null -> visitor.visitContactEvent(contactEvent)
                 else -> visitor.unknown(_json)
             }
 
@@ -725,6 +768,14 @@ private constructor(
                     override fun visitTemplateEvent(templateEvent: TemplateEvent) {
                         templateEvent.validate()
                     }
+
+                    override fun visitChannelEvent(channelEvent: ChannelEvent) {
+                        channelEvent.validate()
+                    }
+
+                    override fun visitContactEvent(contactEvent: ContactEvent) {
+                        contactEvent.validate()
+                    }
                 }
             )
             validated = true
@@ -758,6 +809,12 @@ private constructor(
                     override fun visitTemplateEvent(templateEvent: TemplateEvent) =
                         templateEvent.validity()
 
+                    override fun visitChannelEvent(channelEvent: ChannelEvent) =
+                        channelEvent.validity()
+
+                    override fun visitContactEvent(contactEvent: ContactEvent) =
+                        contactEvent.validity()
+
                     override fun unknown(json: JsonValue?) = 0
                 }
             )
@@ -770,17 +827,27 @@ private constructor(
             return other is EventData &&
                 messageEvent == other.messageEvent &&
                 inboundMessageEvent == other.inboundMessageEvent &&
-                templateEvent == other.templateEvent
+                templateEvent == other.templateEvent &&
+                channelEvent == other.channelEvent &&
+                contactEvent == other.contactEvent
         }
 
         override fun hashCode(): Int =
-            Objects.hash(messageEvent, inboundMessageEvent, templateEvent)
+            Objects.hash(
+                messageEvent,
+                inboundMessageEvent,
+                templateEvent,
+                channelEvent,
+                contactEvent,
+            )
 
         override fun toString(): String =
             when {
                 messageEvent != null -> "EventData{messageEvent=$messageEvent}"
                 inboundMessageEvent != null -> "EventData{inboundMessageEvent=$inboundMessageEvent}"
                 templateEvent != null -> "EventData{templateEvent=$templateEvent}"
+                channelEvent != null -> "EventData{channelEvent=$channelEvent}"
+                contactEvent != null -> "EventData{contactEvent=$contactEvent}"
                 _json != null -> "EventData{_unknown=$_json}"
                 else -> throw IllegalStateException("Invalid EventData")
             }
@@ -809,6 +876,20 @@ private constructor(
             @JvmStatic
             fun ofTemplateEvent(templateEvent: TemplateEvent) =
                 EventData(templateEvent = templateEvent)
+
+            /**
+             * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+             * shape and varies only in Payload.
+             */
+            @JvmStatic
+            fun ofChannelEvent(channelEvent: ChannelEvent) = EventData(channelEvent = channelEvent)
+
+            /**
+             * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+             * shape and varies only in Payload.
+             */
+            @JvmStatic
+            fun ofContactEvent(contactEvent: ContactEvent) = EventData(contactEvent = contactEvent)
         }
 
         /**
@@ -833,6 +914,18 @@ private constructor(
              * shape and varies only in Payload.
              */
             fun visitTemplateEvent(templateEvent: TemplateEvent): T
+
+            /**
+             * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+             * shape and varies only in Payload.
+             */
+            fun visitChannelEvent(channelEvent: ChannelEvent): T
+
+            /**
+             * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+             * shape and varies only in Payload.
+             */
+            fun visitContactEvent(contactEvent: ContactEvent): T
 
             /**
              * Maps an unknown variant of [EventData] to a value of type [T].
@@ -865,6 +958,12 @@ private constructor(
                             tryDeserialize(node, jacksonTypeRef<TemplateEvent>())?.let {
                                 EventData(templateEvent = it, _json = json)
                             },
+                            tryDeserialize(node, jacksonTypeRef<ChannelEvent>())?.let {
+                                EventData(channelEvent = it, _json = json)
+                            },
+                            tryDeserialize(node, jacksonTypeRef<ContactEvent>())?.let {
+                                EventData(contactEvent = it, _json = json)
+                            },
                         )
                         .filterNotNull()
                         .allMaxBy { it.validity() }
@@ -894,6 +993,8 @@ private constructor(
                     value.inboundMessageEvent != null ->
                         generator.writeObject(value.inboundMessageEvent)
                     value.templateEvent != null -> generator.writeObject(value.templateEvent)
+                    value.channelEvent != null -> generator.writeObject(value.channelEvent)
+                    value.contactEvent != null -> generator.writeObject(value.contactEvent)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid EventData")
                 }
