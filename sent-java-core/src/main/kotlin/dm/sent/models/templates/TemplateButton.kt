@@ -53,7 +53,12 @@ private constructor(
     fun type(): String = type.getRequired("type")
 
     /**
-     * The unique identifier of the button (1-based index)
+     * The button's identifier (1-based index), unique within the template.
+     *
+     * Omitting it is only safe for a template holding a single button. The field is a non-nullable
+     * int, so every button that leaves it out defaults to 0, and two such buttons are refused by
+     * the unique-id rule ("Button IDs must be unique"). Number them from 1 in the order they should
+     * appear — order matters on RCS, where only the first four buttons render.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -146,7 +151,15 @@ private constructor(
          */
         fun type(type: JsonField<String>) = apply { this.type = type }
 
-        /** The unique identifier of the button (1-based index) */
+        /**
+         * The button's identifier (1-based index), unique within the template.
+         *
+         * Omitting it is only safe for a template holding a single button. The field is a
+         * non-nullable int, so every button that leaves it out defaults to 0, and two such buttons
+         * are refused by the unique-id rule ("Button IDs must be unique"). Number them from 1 in
+         * the order they should appear — order matters on RCS, where only the first four buttons
+         * render.
+         */
         fun id(id: Int) = id(JsonField.of(id))
 
         /**

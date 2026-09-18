@@ -26,6 +26,7 @@ private constructor(
     private val event: JsonField<String>,
     private val field: JsonField<String>,
     private val payload: JsonField<InboundMessageEventPayload>,
+    private val requestId: JsonField<String>,
     private val timestamp: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -37,12 +38,13 @@ private constructor(
         @JsonProperty("payload")
         @ExcludeMissing
         payload: JsonField<InboundMessageEventPayload> = JsonMissing.of(),
+        @JsonProperty("request_id") @ExcludeMissing requestId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("timestamp") @ExcludeMissing timestamp: JsonField<String> = JsonMissing.of(),
-    ) : this(event, field, payload, timestamp, mutableMapOf())
+    ) : this(event, field, payload, requestId, timestamp, mutableMapOf())
 
     /**
-     * The specific event within the family, for example message.delivered or message.received.
-     * Absent on events that have no subtype, so treat it as optional.
+     * The specific event within the family, for example message.delivered, message.received or
+     * contact.opt_out. Absent on events that have no subtype, so treat it as optional.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -50,8 +52,8 @@ private constructor(
     fun event(): Optional<String> = event.getOptional("event")
 
     /**
-     * The event family, for example message or templates. Route on this first, then on event for
-     * the specific change.
+     * The event family, for example message, templates or contact. Route on this first, then on
+     * event for the specific change.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -65,6 +67,14 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun payload(): Optional<InboundMessageEventPayload> = payload.getOptional("payload")
+
+    /**
+     * The event-specific body.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun requestId(): Optional<String> = requestId.getOptional("request_id")
 
     /**
      * When Sent emitted the event, in UTC (yyyy-MM-ddTHH:mm:ssZ). This is the emission time, not
@@ -99,6 +109,13 @@ private constructor(
     fun _payload(): JsonField<InboundMessageEventPayload> = payload
 
     /**
+     * Returns the raw JSON value of [requestId].
+     *
+     * Unlike [requestId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("request_id") @ExcludeMissing fun _requestId(): JsonField<String> = requestId
+
+    /**
      * Returns the raw JSON value of [timestamp].
      *
      * Unlike [timestamp], this method doesn't throw if the JSON field has an unexpected type.
@@ -129,6 +146,7 @@ private constructor(
         private var event: JsonField<String> = JsonMissing.of()
         private var field: JsonField<String> = JsonMissing.of()
         private var payload: JsonField<InboundMessageEventPayload> = JsonMissing.of()
+        private var requestId: JsonField<String> = JsonMissing.of()
         private var timestamp: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -137,13 +155,14 @@ private constructor(
             event = inboundMessageEvent.event
             field = inboundMessageEvent.field
             payload = inboundMessageEvent.payload
+            requestId = inboundMessageEvent.requestId
             timestamp = inboundMessageEvent.timestamp
             additionalProperties = inboundMessageEvent.additionalProperties.toMutableMap()
         }
 
         /**
-         * The specific event within the family, for example message.delivered or message.received.
-         * Absent on events that have no subtype, so treat it as optional.
+         * The specific event within the family, for example message.delivered, message.received or
+         * contact.opt_out. Absent on events that have no subtype, so treat it as optional.
          */
         fun event(event: String?) = event(JsonField.ofNullable(event))
 
@@ -159,8 +178,8 @@ private constructor(
         fun event(event: JsonField<String>) = apply { this.event = event }
 
         /**
-         * The event family, for example message or templates. Route on this first, then on event
-         * for the specific change.
+         * The event family, for example message, templates or contact. Route on this first, then on
+         * event for the specific change.
          */
         fun field(field: String) = field(JsonField.of(field))
 
@@ -190,6 +209,21 @@ private constructor(
         fun payload(payload: JsonField<InboundMessageEventPayload>) = apply {
             this.payload = payload
         }
+
+        /** The event-specific body. */
+        fun requestId(requestId: String?) = requestId(JsonField.ofNullable(requestId))
+
+        /** Alias for calling [Builder.requestId] with `requestId.orElse(null)`. */
+        fun requestId(requestId: Optional<String>) = requestId(requestId.getOrNull())
+
+        /**
+         * Sets [Builder.requestId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.requestId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun requestId(requestId: JsonField<String>) = apply { this.requestId = requestId }
 
         /**
          * When Sent emitted the event, in UTC (yyyy-MM-ddTHH:mm:ssZ). This is the emission time,
@@ -236,6 +270,7 @@ private constructor(
                 event,
                 field,
                 payload,
+                requestId,
                 timestamp,
                 additionalProperties.toMutableMap(),
             )
@@ -259,6 +294,7 @@ private constructor(
         event()
         field()
         payload().ifPresent { it.validate() }
+        requestId()
         timestamp()
         validated = true
     }
@@ -281,6 +317,7 @@ private constructor(
         (if (event.asKnown().isPresent) 1 else 0) +
             (if (field.asKnown().isPresent) 1 else 0) +
             (payload.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (requestId.asKnown().isPresent) 1 else 0) +
             (if (timestamp.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
@@ -292,16 +329,17 @@ private constructor(
             event == other.event &&
             field == other.field &&
             payload == other.payload &&
+            requestId == other.requestId &&
             timestamp == other.timestamp &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(event, field, payload, timestamp, additionalProperties)
+        Objects.hash(event, field, payload, requestId, timestamp, additionalProperties)
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InboundMessageEvent{event=$event, field=$field, payload=$payload, timestamp=$timestamp, additionalProperties=$additionalProperties}"
+        "InboundMessageEvent{event=$event, field=$field, payload=$payload, requestId=$requestId, timestamp=$timestamp, additionalProperties=$additionalProperties}"
 }

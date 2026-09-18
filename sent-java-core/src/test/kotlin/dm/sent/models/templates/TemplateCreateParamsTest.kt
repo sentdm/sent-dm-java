@@ -22,8 +22,10 @@ internal class TemplateCreateParamsTest {
                         TemplateBody.builder()
                             .multiChannel(
                                 TemplateBodyContent.builder()
-                                    .template("Hello {{0:variable}}! Welcome to {{1:variable}}.")
-                                    .type(null)
+                                    .template(
+                                        "Hello {{0:variable}}! Welcome to {{1:variable}}. We are glad to have you on board."
+                                    )
+                                    .type("text")
                                     .addVariable(
                                         TemplateVariable.builder()
                                             .name("name")
@@ -33,9 +35,9 @@ internal class TemplateCreateParamsTest {
                                                     .sample("John")
                                                     .url("x")
                                                     .variableType("text")
-                                                    .alt(null)
-                                                    .regex(null)
-                                                    .shortUrl(null)
+                                                    .alt("alt")
+                                                    .regex("regex")
+                                                    .shortUrl("shortUrl")
                                                     .build()
                                             )
                                             .type("variable")
@@ -51,9 +53,9 @@ internal class TemplateCreateParamsTest {
                                                     .sample("SentDM")
                                                     .url("x")
                                                     .variableType("text")
-                                                    .alt(null)
-                                                    .regex(null)
-                                                    .shortUrl(null)
+                                                    .alt("alt")
+                                                    .regex("regex")
+                                                    .shortUrl("shortUrl")
                                                     .build()
                                             )
                                             .type("variable")
@@ -254,9 +256,9 @@ internal class TemplateCreateParamsTest {
                                 .multiChannel(
                                     TemplateBodyContent.builder()
                                         .template(
-                                            "Hello {{0:variable}}! Welcome to {{1:variable}}."
+                                            "Hello {{0:variable}}! Welcome to {{1:variable}}. We are glad to have you on board."
                                         )
-                                        .type(null)
+                                        .type("text")
                                         .addVariable(
                                             TemplateVariable.builder()
                                                 .name("name")
@@ -266,9 +268,9 @@ internal class TemplateCreateParamsTest {
                                                         .sample("John")
                                                         .url("x")
                                                         .variableType("text")
-                                                        .alt(null)
-                                                        .regex(null)
-                                                        .shortUrl(null)
+                                                        .alt("alt")
+                                                        .regex("regex")
+                                                        .shortUrl("shortUrl")
                                                         .build()
                                                 )
                                                 .type("variable")
@@ -284,9 +286,9 @@ internal class TemplateCreateParamsTest {
                                                         .sample("SentDM")
                                                         .url("x")
                                                         .variableType("text")
-                                                        .alt(null)
-                                                        .regex(null)
-                                                        .shortUrl(null)
+                                                        .alt("alt")
+                                                        .regex("regex")
+                                                        .shortUrl("shortUrl")
                                                         .build()
                                                 )
                                                 .type("variable")
@@ -506,9 +508,9 @@ internal class TemplateCreateParamsTest {
                                 .multiChannel(
                                     TemplateBodyContent.builder()
                                         .template(
-                                            "Hello {{0:variable}}! Welcome to {{1:variable}}."
+                                            "Hello {{0:variable}}! Welcome to {{1:variable}}. We are glad to have you on board."
                                         )
-                                        .type(null)
+                                        .type("text")
                                         .addVariable(
                                             TemplateVariable.builder()
                                                 .name("name")
@@ -518,9 +520,9 @@ internal class TemplateCreateParamsTest {
                                                         .sample("John")
                                                         .url("x")
                                                         .variableType("text")
-                                                        .alt(null)
-                                                        .regex(null)
-                                                        .shortUrl(null)
+                                                        .alt("alt")
+                                                        .regex("regex")
+                                                        .shortUrl("shortUrl")
                                                         .build()
                                                 )
                                                 .type("variable")
@@ -536,9 +538,9 @@ internal class TemplateCreateParamsTest {
                                                         .sample("SentDM")
                                                         .url("x")
                                                         .variableType("text")
-                                                        .alt(null)
-                                                        .regex(null)
-                                                        .shortUrl(null)
+                                                        .alt("alt")
+                                                        .regex("regex")
+                                                        .shortUrl("shortUrl")
                                                         .build()
                                                 )
                                                 .type("variable")
@@ -734,8 +736,10 @@ internal class TemplateCreateParamsTest {
                         TemplateBody.builder()
                             .multiChannel(
                                 TemplateBodyContent.builder()
-                                    .template("Hello {{0:variable}}! Welcome to {{1:variable}}.")
-                                    .type(null)
+                                    .template(
+                                        "Hello {{0:variable}}! Welcome to {{1:variable}}. We are glad to have you on board."
+                                    )
+                                    .type("text")
                                     .addVariable(
                                         TemplateVariable.builder()
                                             .name("name")
@@ -745,9 +749,9 @@ internal class TemplateCreateParamsTest {
                                                     .sample("John")
                                                     .url("x")
                                                     .variableType("text")
-                                                    .alt(null)
-                                                    .regex(null)
-                                                    .shortUrl(null)
+                                                    .alt("alt")
+                                                    .regex("regex")
+                                                    .shortUrl("shortUrl")
                                                     .build()
                                             )
                                             .type("variable")
@@ -763,9 +767,9 @@ internal class TemplateCreateParamsTest {
                                                     .sample("SentDM")
                                                     .url("x")
                                                     .variableType("text")
-                                                    .alt(null)
-                                                    .regex(null)
-                                                    .shortUrl(null)
+                                                    .alt("alt")
+                                                    .regex("regex")
+                                                    .shortUrl("shortUrl")
                                                     .build()
                                             )
                                             .type("variable")

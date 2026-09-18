@@ -20,6 +20,7 @@ internal class MessageEventTest {
                         .messageStatus("message_status")
                         .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .agentId("agent_id")
+                        .body("body")
                         .channel("channel")
                         .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .outboundNumber("outbound_number")
@@ -28,6 +29,7 @@ internal class MessageEventTest {
                         .updatedAt("updated_at")
                         .build()
                 )
+                .requestId("request_id")
                 .timestamp("timestamp")
                 .build()
 
@@ -39,6 +41,7 @@ internal class MessageEventTest {
                     .messageStatus("message_status")
                     .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .agentId("agent_id")
+                    .body("body")
                     .channel("channel")
                     .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .outboundNumber("outbound_number")
@@ -47,6 +50,7 @@ internal class MessageEventTest {
                     .updatedAt("updated_at")
                     .build()
             )
+        assertThat(messageEvent.requestId()).contains("request_id")
         assertThat(messageEvent.timestamp()).contains("timestamp")
     }
 
@@ -62,6 +66,7 @@ internal class MessageEventTest {
                         .messageStatus("message_status")
                         .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .agentId("agent_id")
+                        .body("body")
                         .channel("channel")
                         .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .outboundNumber("outbound_number")
@@ -70,6 +75,7 @@ internal class MessageEventTest {
                         .updatedAt("updated_at")
                         .build()
                 )
+                .requestId("request_id")
                 .timestamp("timestamp")
                 .build()
 

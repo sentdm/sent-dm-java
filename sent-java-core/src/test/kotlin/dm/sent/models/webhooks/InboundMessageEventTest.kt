@@ -27,6 +27,7 @@ internal class InboundMessageEventTest {
                         .updatedAt("updated_at")
                         .build()
                 )
+                .requestId("request_id")
                 .timestamp("timestamp")
                 .build()
 
@@ -45,6 +46,7 @@ internal class InboundMessageEventTest {
                     .updatedAt("updated_at")
                     .build()
             )
+        assertThat(inboundMessageEvent.requestId()).contains("request_id")
         assertThat(inboundMessageEvent.timestamp()).contains("timestamp")
     }
 
@@ -67,6 +69,7 @@ internal class InboundMessageEventTest {
                         .updatedAt("updated_at")
                         .build()
                 )
+                .requestId("request_id")
                 .timestamp("timestamp")
                 .build()
 

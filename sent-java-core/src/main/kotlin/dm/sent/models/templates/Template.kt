@@ -26,6 +26,7 @@ class Template
 private constructor(
     private val customerId: JsonField<String>,
     private val id: JsonField<String>,
+    private val autoReplyAction: JsonField<String>,
     private val category: JsonField<String>,
     private val channels: JsonField<List<String>>,
     private val createdAt: JsonField<OffsetDateTime>,
@@ -44,6 +45,9 @@ private constructor(
         @ExcludeMissing
         customerId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("auto_reply_action")
+        @ExcludeMissing
+        autoReplyAction: JsonField<String> = JsonMissing.of(),
         @JsonProperty("category") @ExcludeMissing category: JsonField<String> = JsonMissing.of(),
         @JsonProperty("channels")
         @ExcludeMissing
@@ -66,6 +70,7 @@ private constructor(
     ) : this(
         customerId,
         id,
+        autoReplyAction,
         category,
         channels,
         createdAt,
@@ -96,6 +101,23 @@ private constructor(
     fun id(): Optional<String> = id.getOptional("id")
 
     /**
+     * Which consent keyword this template answers, when it is one of Sent's auto-replies: OPT_IN,
+     * OPT_OUT, HELP, or OTHER for a customer-defined keyword. Null for an ordinary template, and
+     * omitted from the response, so its presence is the answer to "is this an auto-reply".
+     *
+     * Deliberately not required, unlike CustomerId, even though the same "no single mapper"
+     * argument applies: NJsonSchema publishes a C# required member in the schema's required array,
+     * so the contract would have advertised a field this response omits for every ordinary
+     * template, and a generated client could refuse the common case. A compile-time guard is not
+     * worth a wrong published contract. Every mapping site sets it explicitly, and
+     * TemplateResponseSchemaTests pins the field as optional so it cannot be reintroduced.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun autoReplyAction(): Optional<String> = autoReplyAction.getOptional("auto_reply_action")
+
+    /**
      * Template category: MARKETING, UTILITY, AUTHENTICATION
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -104,7 +126,17 @@ private constructor(
     fun category(): Optional<String> = category.getOptional("category")
 
     /**
-     * Supported channels: sms, whatsapp
+     * The channels this template's definition can render on, in canonical order: sms, whatsapp,
+     * rcs.
+     *
+     * Derived from the definition's body, mirroring each channel's send-time fallback chain, so a
+     * channel is listed only when a real body would be produced for it: SMS reads sms ??
+     * multiChannel, WhatsApp reads whatsapp ?? multiChannel, and RCS reads rcs ?? multiChannel ??
+     * sms. A multiChannel body therefore reports all three, and the extra SMS fallback on RCS is
+     * why an sms/whatsapp pair reports RCS too.
+     *
+     * This says what the content can render on, not what may be sent: sending also needs the
+     * template approved for that channel.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -144,7 +176,8 @@ private constructor(
     fun name(): Optional<String> = name.getOptional("name")
 
     /**
-     * Template status: APPROVED, PENDING, REJECTED
+     * Template status: DRAFT, PENDING, APPROVED, REJECTED. A template created with
+     * submit_for_review: false starts as DRAFT and stays there until it is submitted.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -180,6 +213,15 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [autoReplyAction].
+     *
+     * Unlike [autoReplyAction], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("auto_reply_action")
+    @ExcludeMissing
+    fun _autoReplyAction(): JsonField<String> = autoReplyAction
 
     /**
      * Returns the raw JSON value of [category].
@@ -280,6 +322,7 @@ private constructor(
 
         private var customerId: JsonField<String>? = null
         private var id: JsonField<String> = JsonMissing.of()
+        private var autoReplyAction: JsonField<String> = JsonMissing.of()
         private var category: JsonField<String> = JsonMissing.of()
         private var channels: JsonField<MutableList<String>>? = null
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -295,6 +338,7 @@ private constructor(
         internal fun from(template: Template) = apply {
             customerId = template.customerId
             id = template.id
+            autoReplyAction = template.autoReplyAction
             category = template.category
             channels = template.channels.map { it.toMutableList() }
             createdAt = template.createdAt
@@ -333,6 +377,37 @@ private constructor(
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
 
+        /**
+         * Which consent keyword this template answers, when it is one of Sent's auto-replies:
+         * OPT_IN, OPT_OUT, HELP, or OTHER for a customer-defined keyword. Null for an ordinary
+         * template, and omitted from the response, so its presence is the answer to "is this an
+         * auto-reply".
+         *
+         * Deliberately not required, unlike CustomerId, even though the same "no single mapper"
+         * argument applies: NJsonSchema publishes a C# required member in the schema's required
+         * array, so the contract would have advertised a field this response omits for every
+         * ordinary template, and a generated client could refuse the common case. A compile-time
+         * guard is not worth a wrong published contract. Every mapping site sets it explicitly, and
+         * TemplateResponseSchemaTests pins the field as optional so it cannot be reintroduced.
+         */
+        fun autoReplyAction(autoReplyAction: String?) =
+            autoReplyAction(JsonField.ofNullable(autoReplyAction))
+
+        /** Alias for calling [Builder.autoReplyAction] with `autoReplyAction.orElse(null)`. */
+        fun autoReplyAction(autoReplyAction: Optional<String>) =
+            autoReplyAction(autoReplyAction.getOrNull())
+
+        /**
+         * Sets [Builder.autoReplyAction] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.autoReplyAction] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun autoReplyAction(autoReplyAction: JsonField<String>) = apply {
+            this.autoReplyAction = autoReplyAction
+        }
+
         /** Template category: MARKETING, UTILITY, AUTHENTICATION */
         fun category(category: String) = category(JsonField.of(category))
 
@@ -344,7 +419,19 @@ private constructor(
          */
         fun category(category: JsonField<String>) = apply { this.category = category }
 
-        /** Supported channels: sms, whatsapp */
+        /**
+         * The channels this template's definition can render on, in canonical order: sms, whatsapp,
+         * rcs.
+         *
+         * Derived from the definition's body, mirroring each channel's send-time fallback chain, so
+         * a channel is listed only when a real body would be produced for it: SMS reads sms ??
+         * multiChannel, WhatsApp reads whatsapp ?? multiChannel, and RCS reads rcs ?? multiChannel
+         * ?? sms. A multiChannel body therefore reports all three, and the extra SMS fallback on
+         * RCS is why an sms/whatsapp pair reports RCS too.
+         *
+         * This says what the content can render on, not what may be sent: sending also needs the
+         * template approved for that channel.
+         */
         fun channels(channels: List<String>?) = channels(JsonField.ofNullable(channels))
 
         /** Alias for calling [Builder.channels] with `channels.orElse(null)`. */
@@ -419,7 +506,10 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { this.name = name }
 
-        /** Template status: APPROVED, PENDING, REJECTED */
+        /**
+         * Template status: DRAFT, PENDING, APPROVED, REJECTED. A template created with
+         * submit_for_review: false starts as DRAFT and stays there until it is submitted.
+         */
         fun status(status: String) = status(JsonField.of(status))
 
         /**
@@ -509,6 +599,7 @@ private constructor(
             Template(
                 checkRequired("customerId", customerId),
                 id,
+                autoReplyAction,
                 category,
                 (channels ?: JsonMissing.of()).map { it.toImmutable() },
                 createdAt,
@@ -539,6 +630,7 @@ private constructor(
 
         customerId()
         id()
+        autoReplyAction()
         category()
         channels()
         createdAt()
@@ -568,6 +660,7 @@ private constructor(
     internal fun validity(): Int =
         (if (customerId.asKnown().isPresent) 1 else 0) +
             (if (id.asKnown().isPresent) 1 else 0) +
+            (if (autoReplyAction.asKnown().isPresent) 1 else 0) +
             (if (category.asKnown().isPresent) 1 else 0) +
             (channels.asKnown().getOrNull()?.size ?: 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
@@ -586,6 +679,7 @@ private constructor(
         return other is Template &&
             customerId == other.customerId &&
             id == other.id &&
+            autoReplyAction == other.autoReplyAction &&
             category == other.category &&
             channels == other.channels &&
             createdAt == other.createdAt &&
@@ -602,6 +696,7 @@ private constructor(
         Objects.hash(
             customerId,
             id,
+            autoReplyAction,
             category,
             channels,
             createdAt,
@@ -618,5 +713,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Template{customerId=$customerId, id=$id, category=$category, channels=$channels, createdAt=$createdAt, isPublished=$isPublished, language=$language, name=$name, status=$status, updatedAt=$updatedAt, variables=$variables, additionalProperties=$additionalProperties}"
+        "Template{customerId=$customerId, id=$id, autoReplyAction=$autoReplyAction, category=$category, channels=$channels, createdAt=$createdAt, isPublished=$isPublished, language=$language, name=$name, status=$status, updatedAt=$updatedAt, variables=$variables, additionalProperties=$additionalProperties}"
 }

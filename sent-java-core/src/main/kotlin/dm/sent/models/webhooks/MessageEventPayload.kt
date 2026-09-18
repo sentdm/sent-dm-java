@@ -27,6 +27,7 @@ private constructor(
     private val messageStatus: JsonField<String>,
     private val accountId: JsonField<String>,
     private val agentId: JsonField<String>,
+    private val body: JsonField<String>,
     private val channel: JsonField<String>,
     private val messageId: JsonField<String>,
     private val outboundNumber: JsonField<String>,
@@ -43,6 +44,7 @@ private constructor(
         messageStatus: JsonField<String> = JsonMissing.of(),
         @JsonProperty("account_id") @ExcludeMissing accountId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("body") @ExcludeMissing body: JsonField<String> = JsonMissing.of(),
         @JsonProperty("channel") @ExcludeMissing channel: JsonField<String> = JsonMissing.of(),
         @JsonProperty("message_id") @ExcludeMissing messageId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("outbound_number")
@@ -59,6 +61,7 @@ private constructor(
         messageStatus,
         accountId,
         agentId,
+        body,
         channel,
         messageId,
         outboundNumber,
@@ -92,6 +95,16 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun agentId(): Optional<String> = agentId.getOptional("agent_id")
+
+    /**
+     * The rendered message body, as plain text. Sent as null when we aren't asserting a body for
+     * this event. The field is always present, so read it and check for null rather than checking
+     * whether the key exists. Truncated to 3072 characters.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun body(): Optional<String> = body.getOptional("body")
 
     /**
      * The channel the message went out on, for example sms or whatsapp. A message that falls back
@@ -166,6 +179,13 @@ private constructor(
      * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
+
+    /**
+     * Returns the raw JSON value of [body].
+     *
+     * Unlike [body], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("body") @ExcludeMissing fun _body(): JsonField<String> = body
 
     /**
      * Returns the raw JSON value of [channel].
@@ -244,6 +264,7 @@ private constructor(
         private var messageStatus: JsonField<String>? = null
         private var accountId: JsonField<String> = JsonMissing.of()
         private var agentId: JsonField<String> = JsonMissing.of()
+        private var body: JsonField<String> = JsonMissing.of()
         private var channel: JsonField<String> = JsonMissing.of()
         private var messageId: JsonField<String> = JsonMissing.of()
         private var outboundNumber: JsonField<String> = JsonMissing.of()
@@ -257,6 +278,7 @@ private constructor(
             messageStatus = messageEventPayload.messageStatus
             accountId = messageEventPayload.accountId
             agentId = messageEventPayload.agentId
+            body = messageEventPayload.body
             channel = messageEventPayload.channel
             messageId = messageEventPayload.messageId
             outboundNumber = messageEventPayload.outboundNumber
@@ -308,6 +330,24 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
+
+        /**
+         * The rendered message body, as plain text. Sent as null when we aren't asserting a body
+         * for this event. The field is always present, so read it and check for null rather than
+         * checking whether the key exists. Truncated to 3072 characters.
+         */
+        fun body(body: String?) = body(JsonField.ofNullable(body))
+
+        /** Alias for calling [Builder.body] with `body.orElse(null)`. */
+        fun body(body: Optional<String>) = body(body.getOrNull())
+
+        /**
+         * Sets [Builder.body] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.body] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun body(body: JsonField<String>) = apply { this.body = body }
 
         /**
          * The channel the message went out on, for example sms or whatsapp. A message that falls
@@ -435,6 +475,7 @@ private constructor(
                 checkRequired("messageStatus", messageStatus),
                 accountId,
                 agentId,
+                body,
                 channel,
                 messageId,
                 outboundNumber,
@@ -463,6 +504,7 @@ private constructor(
         messageStatus()
         accountId()
         agentId()
+        body()
         channel()
         messageId()
         outboundNumber()
@@ -490,6 +532,7 @@ private constructor(
         (if (messageStatus.asKnown().isPresent) 1 else 0) +
             (if (accountId.asKnown().isPresent) 1 else 0) +
             (if (agentId.asKnown().isPresent) 1 else 0) +
+            (if (body.asKnown().isPresent) 1 else 0) +
             (if (channel.asKnown().isPresent) 1 else 0) +
             (if (messageId.asKnown().isPresent) 1 else 0) +
             (if (outboundNumber.asKnown().isPresent) 1 else 0) +
@@ -506,6 +549,7 @@ private constructor(
             messageStatus == other.messageStatus &&
             accountId == other.accountId &&
             agentId == other.agentId &&
+            body == other.body &&
             channel == other.channel &&
             messageId == other.messageId &&
             outboundNumber == other.outboundNumber &&
@@ -520,6 +564,7 @@ private constructor(
             messageStatus,
             accountId,
             agentId,
+            body,
             channel,
             messageId,
             outboundNumber,
@@ -533,5 +578,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "MessageEventPayload{messageStatus=$messageStatus, accountId=$accountId, agentId=$agentId, channel=$channel, messageId=$messageId, outboundNumber=$outboundNumber, templateId=$templateId, templateName=$templateName, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "MessageEventPayload{messageStatus=$messageStatus, accountId=$accountId, agentId=$agentId, body=$body, channel=$channel, messageId=$messageId, outboundNumber=$outboundNumber, templateId=$templateId, templateName=$templateName, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }
