@@ -46,6 +46,13 @@ internal class MessageRetrieveStatusResponseTest {
                                 .content("content")
                                 .footer("footer")
                                 .header("header")
+                                .headerMedia(
+                                    MessageRetrieveStatusResponse.Data.MessageBody.HeaderMedia
+                                        .builder()
+                                        .type("type")
+                                        .url("url")
+                                        .build()
+                                )
                                 .build()
                         )
                         .phone("phone")
@@ -110,6 +117,12 @@ internal class MessageRetrieveStatusResponseTest {
                             .content("content")
                             .footer("footer")
                             .header("header")
+                            .headerMedia(
+                                MessageRetrieveStatusResponse.Data.MessageBody.HeaderMedia.builder()
+                                    .type("type")
+                                    .url("url")
+                                    .build()
+                            )
                             .build()
                     )
                     .phone("phone")
@@ -180,6 +193,13 @@ internal class MessageRetrieveStatusResponseTest {
                                 .content("content")
                                 .footer("footer")
                                 .header("header")
+                                .headerMedia(
+                                    MessageRetrieveStatusResponse.Data.MessageBody.HeaderMedia
+                                        .builder()
+                                        .type("type")
+                                        .url("url")
+                                        .build()
+                                )
                                 .build()
                         )
                         .phone("phone")
