@@ -38,18 +38,44 @@ private constructor(
     ) : this(template, type, variables, mutableMapOf())
 
     /**
+     * The body copy, with variables written as {{index:variable}}.
+     *
+     * Length cap depends on which channel this body belongs to: TemplateContentLimits.MaxBodyLength
+     * (1024) for multiChannel, sms and whatsapp — Meta's BODY limit, which a multiChannel body may
+     * be delivered under — and TemplateContentLimits.MaxRcsBodyLength (3072) for an rcs body, which
+     * never reaches Meta. The maxLength advertised on this schema is the 1024 one, because all four
+     * channel bodies share this single schema — an rcs body between the two is accepted.
+     *
+     * Meta requires every variable to carry surrounding context, so a body is refused unless it
+     * also satisfies all of the following (enforced by TemplateDefinitionValidator): At least one
+     * letter before the first variable and after the last — trailing punctuation such as "...
+     * {{1:variable}}." does not count. At least (2 × variable count) + 1 words once the
+     * placeholders are removed. No two variables adjacent with only whitespace between them. No
+     * leading or trailing newline, no more than two consecutive line breaks, and no more than four
+     * consecutive spaces.
+     *
+     * Example: "Hello {{0:variable}}! Welcome to {{1:variable}}. We are glad to have you on board."
+     * — two variables, so at least five words are required, and the copy after the final variable
+     * contains letters.
+     *
      * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
      *   missing or null (e.g. if the server responded with an unexpected value).
      */
     fun template(): String = template.getRequired("template")
 
     /**
+     * The type of body content — send "text". It is dropped from the stored definition when null,
+     * so a body posted without it is saved with no type key at all and the template editor has
+     * nothing to render the block from.
+     *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
     fun type(): Optional<String> = type.getOptional("type")
 
     /**
+     * The variables referenced by the body copy, one entry per {{index:variable}} placeholder.
+     *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
@@ -119,6 +145,28 @@ private constructor(
             additionalProperties = templateBodyContent.additionalProperties.toMutableMap()
         }
 
+        /**
+         * The body copy, with variables written as {{index:variable}}.
+         *
+         * Length cap depends on which channel this body belongs to:
+         * TemplateContentLimits.MaxBodyLength (1024) for multiChannel, sms and whatsapp — Meta's
+         * BODY limit, which a multiChannel body may be delivered under — and
+         * TemplateContentLimits.MaxRcsBodyLength (3072) for an rcs body, which never reaches Meta.
+         * The maxLength advertised on this schema is the 1024 one, because all four channel bodies
+         * share this single schema — an rcs body between the two is accepted.
+         *
+         * Meta requires every variable to carry surrounding context, so a body is refused unless it
+         * also satisfies all of the following (enforced by TemplateDefinitionValidator): At least
+         * one letter before the first variable and after the last — trailing punctuation such as
+         * "... {{1:variable}}." does not count. At least (2 × variable count) + 1 words once the
+         * placeholders are removed. No two variables adjacent with only whitespace between them. No
+         * leading or trailing newline, no more than two consecutive line breaks, and no more than
+         * four consecutive spaces.
+         *
+         * Example: "Hello {{0:variable}}! Welcome to {{1:variable}}. We are glad to have you on
+         * board." — two variables, so at least five words are required, and the copy after the
+         * final variable contains letters.
+         */
         fun template(template: String) = template(JsonField.of(template))
 
         /**
@@ -129,6 +177,11 @@ private constructor(
          */
         fun template(template: JsonField<String>) = apply { this.template = template }
 
+        /**
+         * The type of body content — send "text". It is dropped from the stored definition when
+         * null, so a body posted without it is saved with no type key at all and the template
+         * editor has nothing to render the block from.
+         */
         fun type(type: String?) = type(JsonField.ofNullable(type))
 
         /** Alias for calling [Builder.type] with `type.orElse(null)`. */
@@ -142,6 +195,9 @@ private constructor(
          */
         fun type(type: JsonField<String>) = apply { this.type = type }
 
+        /**
+         * The variables referenced by the body copy, one entry per {{index:variable}} placeholder.
+         */
         fun variables(variables: List<TemplateVariable>?) =
             variables(JsonField.ofNullable(variables))
 
