@@ -20,6 +20,7 @@ internal class TemplateEventTest {
                         .status("status")
                         .whatsappTemplateId("whatsapp_template_id")
                         .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .autoReplyAction("auto_reply_action")
                         .category("category")
                         .channel("channel")
                         .language("language")
@@ -28,6 +29,7 @@ internal class TemplateEventTest {
                         .templateName("template_name")
                         .build()
                 )
+                .requestId("request_id")
                 .timestamp("timestamp")
                 .build()
 
@@ -39,6 +41,7 @@ internal class TemplateEventTest {
                     .status("status")
                     .whatsappTemplateId("whatsapp_template_id")
                     .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .autoReplyAction("auto_reply_action")
                     .category("category")
                     .channel("channel")
                     .language("language")
@@ -47,6 +50,7 @@ internal class TemplateEventTest {
                     .templateName("template_name")
                     .build()
             )
+        assertThat(templateEvent.requestId()).contains("request_id")
         assertThat(templateEvent.timestamp()).contains("timestamp")
     }
 
@@ -62,6 +66,7 @@ internal class TemplateEventTest {
                         .status("status")
                         .whatsappTemplateId("whatsapp_template_id")
                         .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .autoReplyAction("auto_reply_action")
                         .category("category")
                         .channel("channel")
                         .language("language")
@@ -70,6 +75,7 @@ internal class TemplateEventTest {
                         .templateName("template_name")
                         .build()
                 )
+                .requestId("request_id")
                 .timestamp("timestamp")
                 .build()
 
