@@ -800,7 +800,20 @@ private constructor(
         fun name(): Optional<String> = name.getOptional("name")
 
         /**
-         * Template variable parameters for personalization
+         * Template variable parameters for personalization, keyed by variable name.
+         *
+         * Every variable the template declares is required; GET /v3/templates/{id} lists them.
+         * Supplying a key the template does not declare is ignored.
+         *
+         * Media headers. A template whose header is an image (designed in WhatsApp Manager and
+         * imported into Sent) declares a reserved header_image key. Its value is a publicly
+         * reachable https URL that Meta fetches at send time — Sent does not host the asset, and
+         * the sample approved with the template is not reused. The key is derived from the header's
+         * media type, so header_video and header_document follow the same shape when those formats
+         * ship.
+         *
+         * "parameters": { "header_image": "https://cdn.example.com/banner.jpg", "name": "John Doe"
+         * }
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -894,7 +907,22 @@ private constructor(
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
 
-            /** Template variable parameters for personalization */
+            /**
+             * Template variable parameters for personalization, keyed by variable name.
+             *
+             * Every variable the template declares is required; GET /v3/templates/{id} lists them.
+             * Supplying a key the template does not declare is ignored.
+             *
+             * Media headers. A template whose header is an image (designed in WhatsApp Manager and
+             * imported into Sent) declares a reserved header_image key. Its value is a publicly
+             * reachable https URL that Meta fetches at send time — Sent does not host the asset,
+             * and the sample approved with the template is not reused. The key is derived from the
+             * header's media type, so header_video and header_document follow the same shape when
+             * those formats ship.
+             *
+             * "parameters": { "header_image": "https://cdn.example.com/banner.jpg", "name": "John
+             * Doe" }
+             */
             fun parameters(parameters: Parameters?) = parameters(JsonField.ofNullable(parameters))
 
             /** Alias for calling [Builder.parameters] with `parameters.orElse(null)`. */
@@ -981,7 +1009,22 @@ private constructor(
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (parameters.asKnown().getOrNull()?.validity() ?: 0)
 
-        /** Template variable parameters for personalization */
+        /**
+         * Template variable parameters for personalization, keyed by variable name.
+         *
+         * Every variable the template declares is required; GET /v3/templates/{id} lists them.
+         * Supplying a key the template does not declare is ignored.
+         *
+         * Media headers. A template whose header is an image (designed in WhatsApp Manager and
+         * imported into Sent) declares a reserved header_image key. Its value is a publicly
+         * reachable https URL that Meta fetches at send time — Sent does not host the asset, and
+         * the sample approved with the template is not reused. The key is derived from the header's
+         * media type, so header_video and header_document follow the same shape when those formats
+         * ship.
+         *
+         * "parameters": { "header_image": "https://cdn.example.com/banner.jpg", "name": "John Doe"
+         * }
+         */
         class Parameters
         @JsonCreator
         private constructor(

@@ -45,6 +45,13 @@ internal class ConversationMessagesListTest {
                                 .content("content")
                                 .footer("footer")
                                 .header("header")
+                                .headerMedia(
+                                    ConversationMessagesList.Message.MessageBody.HeaderMedia
+                                        .builder()
+                                        .type("type")
+                                        .url("url")
+                                        .build()
+                                )
                                 .build()
                         )
                         .phone("phone")
@@ -101,6 +108,12 @@ internal class ConversationMessagesListTest {
                             .content("content")
                             .footer("footer")
                             .header("header")
+                            .headerMedia(
+                                ConversationMessagesList.Message.MessageBody.HeaderMedia.builder()
+                                    .type("type")
+                                    .url("url")
+                                    .build()
+                            )
                             .build()
                     )
                     .phone("phone")
@@ -162,6 +175,13 @@ internal class ConversationMessagesListTest {
                                 .content("content")
                                 .footer("footer")
                                 .header("header")
+                                .headerMedia(
+                                    ConversationMessagesList.Message.MessageBody.HeaderMedia
+                                        .builder()
+                                        .type("type")
+                                        .url("url")
+                                        .build()
+                                )
                                 .build()
                         )
                         .phone("phone")
