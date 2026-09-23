@@ -502,7 +502,12 @@ private constructor(
                 (if (messageId.asKnown().isPresent) 1 else 0) +
                 (pagination.asKnown().getOrNull()?.validity() ?: 0)
 
-        /** A single message activity event for v3 API */
+        /**
+         * A single message activity event for v3 API.
+         *
+         * The activity list mixes statuses, so unlike a message it is one shape rather than two: a
+         * SCHEDULED entry carries scheduled_at, and every other entry has no such key.
+         */
         class Activity
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
@@ -510,6 +515,7 @@ private constructor(
             private val description: JsonField<String>,
             private val from: JsonField<String>,
             private val price: JsonField<String>,
+            private val scheduledAt: JsonField<OffsetDateTime>,
             private val status: JsonField<String>,
             private val timestamp: JsonField<OffsetDateTime>,
             private val additionalProperties: MutableMap<String, JsonValue>,
@@ -525,6 +531,9 @@ private constructor(
                 description: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("from") @ExcludeMissing from: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("price") @ExcludeMissing price: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("scheduled_at")
+                @ExcludeMissing
+                scheduledAt: JsonField<OffsetDateTime> = JsonMissing.of(),
                 @JsonProperty("status")
                 @ExcludeMissing
                 status: JsonField<String> = JsonMissing.of(),
@@ -536,6 +545,7 @@ private constructor(
                 description,
                 from,
                 price,
+                scheduledAt,
                 status,
                 timestamp,
                 mutableMapOf(),
@@ -578,8 +588,19 @@ private constructor(
             fun price(): Optional<String> = price.getOptional("price")
 
             /**
-             * Activity status. Outbound: QUEUED, PROCESSED, ROUTED, SENT, DELIVERED, READ, FAILED.
-             * Inbound (from contact): RECEIVED (terminal).
+             * SCHEDULED activities only: when the held message will be released for delivery, in
+             * UTC. Same wire name as on the send response, the message and the webhook. Omitted on
+             * every other activity. A message that quiet hours moved at release has two SCHEDULED
+             * entries, each carrying the instant as it stood at that moment.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun scheduledAt(): Optional<OffsetDateTime> = scheduledAt.getOptional("scheduled_at")
+
+            /**
+             * Activity status. Outbound: QUEUED, PROCESSED, ROUTED, SCHEDULED, SENT, DELIVERED,
+             * READ, FAILED. Inbound (from contact): RECEIVED (terminal).
              *
              * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
@@ -629,6 +650,16 @@ private constructor(
             @JsonProperty("price") @ExcludeMissing fun _price(): JsonField<String> = price
 
             /**
+             * Returns the raw JSON value of [scheduledAt].
+             *
+             * Unlike [scheduledAt], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("scheduled_at")
+            @ExcludeMissing
+            fun _scheduledAt(): JsonField<OffsetDateTime> = scheduledAt
+
+            /**
              * Returns the raw JSON value of [status].
              *
              * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
@@ -670,6 +701,7 @@ private constructor(
                 private var description: JsonField<String> = JsonMissing.of()
                 private var from: JsonField<String> = JsonMissing.of()
                 private var price: JsonField<String> = JsonMissing.of()
+                private var scheduledAt: JsonField<OffsetDateTime> = JsonMissing.of()
                 private var status: JsonField<String> = JsonMissing.of()
                 private var timestamp: JsonField<OffsetDateTime> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -680,6 +712,7 @@ private constructor(
                     description = activity.description
                     from = activity.from
                     price = activity.price
+                    scheduledAt = activity.scheduledAt
                     status = activity.status
                     timestamp = activity.timestamp
                     additionalProperties = activity.additionalProperties.toMutableMap()
@@ -762,8 +795,32 @@ private constructor(
                 fun price(price: JsonField<String>) = apply { this.price = price }
 
                 /**
-                 * Activity status. Outbound: QUEUED, PROCESSED, ROUTED, SENT, DELIVERED, READ,
-                 * FAILED. Inbound (from contact): RECEIVED (terminal).
+                 * SCHEDULED activities only: when the held message will be released for delivery,
+                 * in UTC. Same wire name as on the send response, the message and the webhook.
+                 * Omitted on every other activity. A message that quiet hours moved at release has
+                 * two SCHEDULED entries, each carrying the instant as it stood at that moment.
+                 */
+                fun scheduledAt(scheduledAt: OffsetDateTime?) =
+                    scheduledAt(JsonField.ofNullable(scheduledAt))
+
+                /** Alias for calling [Builder.scheduledAt] with `scheduledAt.orElse(null)`. */
+                fun scheduledAt(scheduledAt: Optional<OffsetDateTime>) =
+                    scheduledAt(scheduledAt.getOrNull())
+
+                /**
+                 * Sets [Builder.scheduledAt] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.scheduledAt] with a well-typed [OffsetDateTime]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun scheduledAt(scheduledAt: JsonField<OffsetDateTime>) = apply {
+                    this.scheduledAt = scheduledAt
+                }
+
+                /**
+                 * Activity status. Outbound: QUEUED, PROCESSED, ROUTED, SCHEDULED, SENT, DELIVERED,
+                 * READ, FAILED. Inbound (from contact): RECEIVED (terminal).
                  */
                 fun status(status: String) = status(JsonField.of(status))
 
@@ -823,6 +880,7 @@ private constructor(
                         description,
                         from,
                         price,
+                        scheduledAt,
                         status,
                         timestamp,
                         additionalProperties.toMutableMap(),
@@ -850,6 +908,7 @@ private constructor(
                 description()
                 from()
                 price()
+                scheduledAt()
                 status()
                 timestamp()
                 validated = true
@@ -875,6 +934,7 @@ private constructor(
                     (if (description.asKnown().isPresent) 1 else 0) +
                     (if (from.asKnown().isPresent) 1 else 0) +
                     (if (price.asKnown().isPresent) 1 else 0) +
+                    (if (scheduledAt.asKnown().isPresent) 1 else 0) +
                     (if (status.asKnown().isPresent) 1 else 0) +
                     (if (timestamp.asKnown().isPresent) 1 else 0)
 
@@ -888,6 +948,7 @@ private constructor(
                     description == other.description &&
                     from == other.from &&
                     price == other.price &&
+                    scheduledAt == other.scheduledAt &&
                     status == other.status &&
                     timestamp == other.timestamp &&
                     additionalProperties == other.additionalProperties
@@ -899,6 +960,7 @@ private constructor(
                     description,
                     from,
                     price,
+                    scheduledAt,
                     status,
                     timestamp,
                     additionalProperties,
@@ -908,7 +970,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Activity{activeContactPrice=$activeContactPrice, description=$description, from=$from, price=$price, status=$status, timestamp=$timestamp, additionalProperties=$additionalProperties}"
+                "Activity{activeContactPrice=$activeContactPrice, description=$description, from=$from, price=$price, scheduledAt=$scheduledAt, status=$status, timestamp=$timestamp, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {

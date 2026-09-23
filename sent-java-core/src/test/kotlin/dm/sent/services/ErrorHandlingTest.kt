@@ -77,6 +77,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -120,6 +123,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -163,6 +169,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -206,6 +215,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -249,6 +261,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -292,6 +307,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -335,6 +353,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -378,6 +399,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -421,6 +445,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -464,6 +491,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -507,6 +537,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -550,6 +583,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -593,6 +629,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -636,6 +675,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -679,6 +721,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -722,6 +767,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
@@ -763,6 +811,9 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .addMediaUrl("string")
+                        .scheduledAt(null)
+                        .subject(null)
                         .template(
                             MessageSendParams.Template.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")

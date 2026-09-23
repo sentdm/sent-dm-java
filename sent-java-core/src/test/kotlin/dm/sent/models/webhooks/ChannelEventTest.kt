@@ -3,6 +3,7 @@
 package dm.sent.models.webhooks
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -20,6 +21,27 @@ internal class ChannelEventTest {
                         .country("country")
                         .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .channel("channel")
+                        .compliance(
+                            ChannelEventPayload.Compliance.builder()
+                                .brand(
+                                    ChannelEventPayload.Compliance.Brand.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .campaign(
+                                    ChannelEventPayload.Compliance.Campaign.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .addDocument(
+                                    ChannelEventPayload.Compliance.Document.builder()
+                                        .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                        .fileName("file_name")
+                                        .key("key")
+                                        .build()
+                                )
+                                .build()
+                        )
                         .numberType("number_type")
                         .reason("reason")
                         .senderValue("sender_value")
@@ -39,6 +61,27 @@ internal class ChannelEventTest {
                     .country("country")
                     .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .channel("channel")
+                    .compliance(
+                        ChannelEventPayload.Compliance.builder()
+                            .brand(
+                                ChannelEventPayload.Compliance.Brand.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .campaign(
+                                ChannelEventPayload.Compliance.Campaign.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .addDocument(
+                                ChannelEventPayload.Compliance.Document.builder()
+                                    .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                    .fileName("file_name")
+                                    .key("key")
+                                    .build()
+                            )
+                            .build()
+                    )
                     .numberType("number_type")
                     .reason("reason")
                     .senderValue("sender_value")
@@ -62,6 +105,27 @@ internal class ChannelEventTest {
                         .country("country")
                         .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .channel("channel")
+                        .compliance(
+                            ChannelEventPayload.Compliance.builder()
+                                .brand(
+                                    ChannelEventPayload.Compliance.Brand.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .campaign(
+                                    ChannelEventPayload.Compliance.Campaign.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .addDocument(
+                                    ChannelEventPayload.Compliance.Document.builder()
+                                        .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                        .fileName("file_name")
+                                        .key("key")
+                                        .build()
+                                )
+                                .build()
+                        )
                         .numberType("number_type")
                         .reason("reason")
                         .senderValue("sender_value")

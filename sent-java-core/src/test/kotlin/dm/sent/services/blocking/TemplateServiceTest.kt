@@ -39,6 +39,37 @@ internal class TemplateServiceTest {
                         TemplateDefinition.builder()
                             .body(
                                 TemplateBody.builder()
+                                    .mms(
+                                        TemplateBody.Mms.builder()
+                                            .template("template")
+                                            .type("type")
+                                            .addVariable(
+                                                TemplateVariable.builder()
+                                                    .name("x")
+                                                    .props(
+                                                        TemplateVariable.Props.builder()
+                                                            .mediaType("x")
+                                                            .sample("x")
+                                                            .url("x")
+                                                            .variableType("x")
+                                                            .alt("alt")
+                                                            .regex("regex")
+                                                            .shortUrl("shortUrl")
+                                                            .build()
+                                                    )
+                                                    .type("x")
+                                                    .id(0)
+                                                    .build()
+                                            )
+                                            .addMedia(
+                                                TemplateBody.Mms.Media.builder()
+                                                    .mediaType("mediaType")
+                                                    .url("url")
+                                                    .build()
+                                            )
+                                            .subject("subject")
+                                            .build()
+                                    )
                                     .multiChannel(
                                         TemplateBodyContent.builder()
                                             .template(
@@ -297,6 +328,37 @@ internal class TemplateServiceTest {
                         TemplateDefinition.builder()
                             .body(
                                 TemplateBody.builder()
+                                    .mms(
+                                        TemplateBody.Mms.builder()
+                                            .template("template")
+                                            .type("type")
+                                            .addVariable(
+                                                TemplateVariable.builder()
+                                                    .name("x")
+                                                    .props(
+                                                        TemplateVariable.Props.builder()
+                                                            .mediaType("x")
+                                                            .sample("x")
+                                                            .url("x")
+                                                            .variableType("x")
+                                                            .alt("alt")
+                                                            .regex("regex")
+                                                            .shortUrl("shortUrl")
+                                                            .build()
+                                                    )
+                                                    .type("x")
+                                                    .id(0)
+                                                    .build()
+                                            )
+                                            .addMedia(
+                                                TemplateBody.Mms.Media.builder()
+                                                    .mediaType("mediaType")
+                                                    .url("url")
+                                                    .build()
+                                            )
+                                            .subject("subject")
+                                            .build()
+                                    )
                                     .multiChannel(
                                         TemplateBodyContent.builder()
                                             .template("template")

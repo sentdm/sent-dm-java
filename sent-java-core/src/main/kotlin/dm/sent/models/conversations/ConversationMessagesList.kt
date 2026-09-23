@@ -214,7 +214,13 @@ private constructor(
         (messages.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (pagination.asKnown().getOrNull()?.validity() ?: 0)
 
-    /** Message response for v3 API — same shape as v2 with snake_case JSON conventions */
+    /**
+     * Message response for v3 API — same shape as v2 with snake_case JSON conventions.
+     *
+     * The shape of a message that was sent immediately: it never has a scheduled_at key. A message
+     * that is or was held for a later instant is a ScheduledMessageResponse, and the endpoint
+     * decides which of the two to answer with. From always returns this type.
+     */
     class Message
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -353,7 +359,13 @@ private constructor(
 
         /**
          * Structured message body format for database storage. Preserves channel-specific
-         * components (header, body, footer, buttons).
+         * components (header, header media, body, footer, buttons, MMS subject and media).
+         *
+         * Persisted as the messageBody jsonb column on Messages. Every write path goes through
+         * MessageUtils.MessageBodyJsonOptions, which writes nulls, so the envelope shape is stable
+         * regardless of channel or status. Anything that rebuilds this object field by field — the
+         * four IMessageBodyStrategy implementations and MessageUtils.BuildSegmentBody — has to
+         * carry every member, or that member is silently dropped on whichever path forgot it.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -739,7 +751,14 @@ private constructor(
 
             /**
              * Structured message body format for database storage. Preserves channel-specific
-             * components (header, body, footer, buttons).
+             * components (header, header media, body, footer, buttons, MMS subject and media).
+             *
+             * Persisted as the messageBody jsonb column on Messages. Every write path goes through
+             * MessageUtils.MessageBodyJsonOptions, which writes nulls, so the envelope shape is
+             * stable regardless of channel or status. Anything that rebuilds this object field by
+             * field — the four IMessageBodyStrategy implementations and
+             * MessageUtils.BuildSegmentBody — has to carry every member, or that member is silently
+             * dropped on whichever path forgot it.
              */
             fun messageBody(messageBody: MessageBody?) =
                 messageBody(JsonField.ofNullable(messageBody))
@@ -1261,7 +1280,13 @@ private constructor(
 
         /**
          * Structured message body format for database storage. Preserves channel-specific
-         * components (header, body, footer, buttons).
+         * components (header, header media, body, footer, buttons, MMS subject and media).
+         *
+         * Persisted as the messageBody jsonb column on Messages. Every write path goes through
+         * MessageUtils.MessageBodyJsonOptions, which writes nulls, so the envelope shape is stable
+         * regardless of channel or status. Anything that rebuilds this object field by field — the
+         * four IMessageBodyStrategy implementations and MessageUtils.BuildSegmentBody — has to
+         * carry every member, or that member is silently dropped on whichever path forgot it.
          */
         class MessageBody
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -1270,6 +1295,9 @@ private constructor(
             private val content: JsonField<String>,
             private val footer: JsonField<String>,
             private val header: JsonField<String>,
+            private val headerMedia: JsonField<HeaderMedia>,
+            private val media: JsonField<List<Media>>,
+            private val subject: JsonField<String>,
             private val additionalProperties: MutableMap<String, JsonValue>,
         ) {
 
@@ -1284,8 +1312,19 @@ private constructor(
                 @JsonProperty("footer")
                 @ExcludeMissing
                 footer: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("header") @ExcludeMissing header: JsonField<String> = JsonMissing.of(),
-            ) : this(buttons, content, footer, header, mutableMapOf())
+                @JsonProperty("header")
+                @ExcludeMissing
+                header: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("headerMedia")
+                @ExcludeMissing
+                headerMedia: JsonField<HeaderMedia> = JsonMissing.of(),
+                @JsonProperty("media")
+                @ExcludeMissing
+                media: JsonField<List<Media>> = JsonMissing.of(),
+                @JsonProperty("subject")
+                @ExcludeMissing
+                subject: JsonField<String> = JsonMissing.of(),
+            ) : this(buttons, content, footer, header, headerMedia, media, subject, mutableMapOf())
 
             /**
              * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1310,6 +1349,36 @@ private constructor(
              *   the server responded with an unexpected value).
              */
             fun header(): Optional<String> = header.getOptional("header")
+
+            /**
+             * The media asset that rode a message's header, recorded as sent.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun headerMedia(): Optional<HeaderMedia> = headerMedia.getOptional("headerMedia")
+
+            /**
+             * MMS attachments, as the publicly fetchable URLs handed to the carrier. Null on every
+             * other channel.
+             *
+             * Persisted rather than derived because a resend and a curfew release rebuild the send
+             * from the stored row — MessageReplayCommandBuilder reads templateId and
+             * templateVariables and nothing else — so media that lives only on the original request
+             * would silently turn a replayed MMS into a text message.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun media(): Optional<List<Media>> = media.getOptional("media")
+
+            /**
+             * MMS subject line. Null on every other channel.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun subject(): Optional<String> = subject.getOptional("subject")
 
             /**
              * Returns the raw JSON value of [buttons].
@@ -1341,6 +1410,30 @@ private constructor(
              */
             @JsonProperty("header") @ExcludeMissing fun _header(): JsonField<String> = header
 
+            /**
+             * Returns the raw JSON value of [headerMedia].
+             *
+             * Unlike [headerMedia], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("headerMedia")
+            @ExcludeMissing
+            fun _headerMedia(): JsonField<HeaderMedia> = headerMedia
+
+            /**
+             * Returns the raw JSON value of [media].
+             *
+             * Unlike [media], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("media") @ExcludeMissing fun _media(): JsonField<List<Media>> = media
+
+            /**
+             * Returns the raw JSON value of [subject].
+             *
+             * Unlike [subject], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("subject") @ExcludeMissing fun _subject(): JsonField<String> = subject
+
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
                 additionalProperties.put(key, value)
@@ -1366,6 +1459,9 @@ private constructor(
                 private var content: JsonField<String> = JsonMissing.of()
                 private var footer: JsonField<String> = JsonMissing.of()
                 private var header: JsonField<String> = JsonMissing.of()
+                private var headerMedia: JsonField<HeaderMedia> = JsonMissing.of()
+                private var media: JsonField<MutableList<Media>>? = null
+                private var subject: JsonField<String> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                 @JvmSynthetic
@@ -1374,6 +1470,9 @@ private constructor(
                     content = messageBody.content
                     footer = messageBody.footer
                     header = messageBody.header
+                    headerMedia = messageBody.headerMedia
+                    media = messageBody.media.map { it.toMutableList() }
+                    subject = messageBody.subject
                     additionalProperties = messageBody.additionalProperties.toMutableMap()
                 }
 
@@ -1444,6 +1543,77 @@ private constructor(
                  */
                 fun header(header: JsonField<String>) = apply { this.header = header }
 
+                /** The media asset that rode a message's header, recorded as sent. */
+                fun headerMedia(headerMedia: HeaderMedia?) =
+                    headerMedia(JsonField.ofNullable(headerMedia))
+
+                /** Alias for calling [Builder.headerMedia] with `headerMedia.orElse(null)`. */
+                fun headerMedia(headerMedia: Optional<HeaderMedia>) =
+                    headerMedia(headerMedia.getOrNull())
+
+                /**
+                 * Sets [Builder.headerMedia] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.headerMedia] with a well-typed [HeaderMedia]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun headerMedia(headerMedia: JsonField<HeaderMedia>) = apply {
+                    this.headerMedia = headerMedia
+                }
+
+                /**
+                 * MMS attachments, as the publicly fetchable URLs handed to the carrier. Null on
+                 * every other channel.
+                 *
+                 * Persisted rather than derived because a resend and a curfew release rebuild the
+                 * send from the stored row — MessageReplayCommandBuilder reads templateId and
+                 * templateVariables and nothing else — so media that lives only on the original
+                 * request would silently turn a replayed MMS into a text message.
+                 */
+                fun media(media: List<Media>?) = media(JsonField.ofNullable(media))
+
+                /** Alias for calling [Builder.media] with `media.orElse(null)`. */
+                fun media(media: Optional<List<Media>>) = media(media.getOrNull())
+
+                /**
+                 * Sets [Builder.media] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.media] with a well-typed `List<Media>` value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun media(media: JsonField<List<Media>>) = apply {
+                    this.media = media.map { it.toMutableList() }
+                }
+
+                /**
+                 * Adds a single [Media] to [Builder.media].
+                 *
+                 * @throws IllegalStateException if the field was previously set to a non-list.
+                 */
+                fun addMedia(media: Media) = apply {
+                    this.media =
+                        (this.media ?: JsonField.of(mutableListOf())).also {
+                            checkKnown("media", it).add(media)
+                        }
+                }
+
+                /** MMS subject line. Null on every other channel. */
+                fun subject(subject: String?) = subject(JsonField.ofNullable(subject))
+
+                /** Alias for calling [Builder.subject] with `subject.orElse(null)`. */
+                fun subject(subject: Optional<String>) = subject(subject.getOrNull())
+
+                /**
+                 * Sets [Builder.subject] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.subject] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun subject(subject: JsonField<String>) = apply { this.subject = subject }
+
                 fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                     this.additionalProperties.clear()
                     putAllAdditionalProperties(additionalProperties)
@@ -1477,6 +1647,9 @@ private constructor(
                         content,
                         footer,
                         header,
+                        headerMedia,
+                        (media ?: JsonMissing.of()).map { it.toImmutable() },
+                        subject,
                         additionalProperties.toMutableMap(),
                     )
             }
@@ -1502,6 +1675,9 @@ private constructor(
                 content()
                 footer()
                 header()
+                headerMedia().ifPresent { it.validate() }
+                media().ifPresent { it.forEach { it.validate() } }
+                subject()
                 validated = true
             }
 
@@ -1524,7 +1700,10 @@ private constructor(
                 (buttons.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                     (if (content.asKnown().isPresent) 1 else 0) +
                     (if (footer.asKnown().isPresent) 1 else 0) +
-                    (if (header.asKnown().isPresent) 1 else 0)
+                    (if (header.asKnown().isPresent) 1 else 0) +
+                    (headerMedia.asKnown().getOrNull()?.validity() ?: 0) +
+                    (media.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                    (if (subject.asKnown().isPresent) 1 else 0)
 
             class Button
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -1801,6 +1980,418 @@ private constructor(
                     "Button{postbackData=$postbackData, text=$text, type=$type, value=$value, additionalProperties=$additionalProperties}"
             }
 
+            /** The media asset that rode a message's header, recorded as sent. */
+            class HeaderMedia
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val type: JsonField<String>,
+                private val url: JsonField<String>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("type")
+                    @ExcludeMissing
+                    type: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
+                ) : this(type, url, mutableMapOf())
+
+                /**
+                 * "image", "video" or "document" — taken from the header's media variable.
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun type(): Optional<String> = type.getOptional("type")
+
+                /**
+                 * The https URL the caller supplied for this send. Never the template's stored
+                 * props.sample, which is Meta's expiring header_handle rather than what was
+                 * delivered.
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun url(): Optional<String> = url.getOptional("url")
+
+                /**
+                 * Returns the raw JSON value of [type].
+                 *
+                 * Unlike [type], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<String> = type
+
+                /**
+                 * Returns the raw JSON value of [url].
+                 *
+                 * Unlike [url], this method doesn't throw if the JSON field has an unexpected type.
+                 */
+                @JsonProperty("url") @ExcludeMissing fun _url(): JsonField<String> = url
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /** Returns a mutable builder for constructing an instance of [HeaderMedia]. */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [HeaderMedia]. */
+                class Builder internal constructor() {
+
+                    private var type: JsonField<String> = JsonMissing.of()
+                    private var url: JsonField<String> = JsonMissing.of()
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(headerMedia: HeaderMedia) = apply {
+                        type = headerMedia.type
+                        url = headerMedia.url
+                        additionalProperties = headerMedia.additionalProperties.toMutableMap()
+                    }
+
+                    /** "image", "video" or "document" — taken from the header's media variable. */
+                    fun type(type: String) = type(JsonField.of(type))
+
+                    /**
+                     * Sets [Builder.type] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.type] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun type(type: JsonField<String>) = apply { this.type = type }
+
+                    /**
+                     * The https URL the caller supplied for this send. Never the template's stored
+                     * props.sample, which is Meta's expiring header_handle rather than what was
+                     * delivered.
+                     */
+                    fun url(url: String) = url(JsonField.of(url))
+
+                    /**
+                     * Sets [Builder.url] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.url] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun url(url: JsonField<String>) = apply { this.url = url }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [HeaderMedia].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     */
+                    fun build(): HeaderMedia =
+                        HeaderMedia(type, url, additionalProperties.toMutableMap())
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws SentInvalidDataException if any value type in this object doesn't match
+                 *   its expected type.
+                 */
+                fun validate(): HeaderMedia = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    type()
+                    url()
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: SentInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (if (type.asKnown().isPresent) 1 else 0) +
+                        (if (url.asKnown().isPresent) 1 else 0)
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is HeaderMedia &&
+                        type == other.type &&
+                        url == other.url &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy { Objects.hash(type, url, additionalProperties) }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "HeaderMedia{type=$type, url=$url, additionalProperties=$additionalProperties}"
+            }
+
+            /**
+             * One attachment on a message: a customer-supplied public URL handed to the carrier
+             * as-is.
+             *
+             *              A URL and nothing else. sent.dm never takes custody of MMS media — the customer hosts it and we
+             *              pass the link through at send time — so there is no storage key, size or expiry to record. If we ever
+             *              do host attachments, that belongs with the change that introduces the hosting, not here.
+             */
+            class Media
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val mediaType: JsonField<String>,
+                private val url: JsonField<String>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("mediaType")
+                    @ExcludeMissing
+                    mediaType: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
+                ) : this(mediaType, url, mutableMapOf())
+
+                /**
+                 * One of Constants.MmsMediaTypes when known. Advisory — the carrier reads the
+                 * fetched object's Content-Type, not this.
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun mediaType(): Optional<String> = mediaType.getOptional("mediaType")
+
+                /**
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun url(): Optional<String> = url.getOptional("url")
+
+                /**
+                 * Returns the raw JSON value of [mediaType].
+                 *
+                 * Unlike [mediaType], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("mediaType")
+                @ExcludeMissing
+                fun _mediaType(): JsonField<String> = mediaType
+
+                /**
+                 * Returns the raw JSON value of [url].
+                 *
+                 * Unlike [url], this method doesn't throw if the JSON field has an unexpected type.
+                 */
+                @JsonProperty("url") @ExcludeMissing fun _url(): JsonField<String> = url
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /** Returns a mutable builder for constructing an instance of [Media]. */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [Media]. */
+                class Builder internal constructor() {
+
+                    private var mediaType: JsonField<String> = JsonMissing.of()
+                    private var url: JsonField<String> = JsonMissing.of()
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(media: Media) = apply {
+                        mediaType = media.mediaType
+                        url = media.url
+                        additionalProperties = media.additionalProperties.toMutableMap()
+                    }
+
+                    /**
+                     * One of Constants.MmsMediaTypes when known. Advisory — the carrier reads the
+                     * fetched object's Content-Type, not this.
+                     */
+                    fun mediaType(mediaType: String?) = mediaType(JsonField.ofNullable(mediaType))
+
+                    /** Alias for calling [Builder.mediaType] with `mediaType.orElse(null)`. */
+                    fun mediaType(mediaType: Optional<String>) = mediaType(mediaType.getOrNull())
+
+                    /**
+                     * Sets [Builder.mediaType] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.mediaType] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun mediaType(mediaType: JsonField<String>) = apply {
+                        this.mediaType = mediaType
+                    }
+
+                    fun url(url: String) = url(JsonField.of(url))
+
+                    /**
+                     * Sets [Builder.url] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.url] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun url(url: JsonField<String>) = apply { this.url = url }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [Media].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     */
+                    fun build(): Media = Media(mediaType, url, additionalProperties.toMutableMap())
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws SentInvalidDataException if any value type in this object doesn't match
+                 *   its expected type.
+                 */
+                fun validate(): Media = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    mediaType()
+                    url()
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: SentInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (if (mediaType.asKnown().isPresent) 1 else 0) +
+                        (if (url.asKnown().isPresent) 1 else 0)
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Media &&
+                        mediaType == other.mediaType &&
+                        url == other.url &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy {
+                    Objects.hash(mediaType, url, additionalProperties)
+                }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "Media{mediaType=$mediaType, url=$url, additionalProperties=$additionalProperties}"
+            }
+
             override fun equals(other: Any?): Boolean {
                 if (this === other) {
                     return true
@@ -1811,17 +2402,29 @@ private constructor(
                     content == other.content &&
                     footer == other.footer &&
                     header == other.header &&
+                    headerMedia == other.headerMedia &&
+                    media == other.media &&
+                    subject == other.subject &&
                     additionalProperties == other.additionalProperties
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(buttons, content, footer, header, additionalProperties)
+                Objects.hash(
+                    buttons,
+                    content,
+                    footer,
+                    header,
+                    headerMedia,
+                    media,
+                    subject,
+                    additionalProperties,
+                )
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "MessageBody{buttons=$buttons, content=$content, footer=$footer, header=$header, additionalProperties=$additionalProperties}"
+                "MessageBody{buttons=$buttons, content=$content, footer=$footer, header=$header, headerMedia=$headerMedia, media=$media, subject=$subject, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {

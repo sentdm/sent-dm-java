@@ -31,6 +31,8 @@ private constructor(
     private val channel: JsonField<String>,
     private val messageId: JsonField<String>,
     private val outboundNumber: JsonField<String>,
+    private val scheduleReason: JsonField<String>,
+    private val scheduledAt: JsonField<String>,
     private val templateId: JsonField<String>,
     private val templateName: JsonField<String>,
     private val updatedAt: JsonField<String>,
@@ -50,6 +52,12 @@ private constructor(
         @JsonProperty("outbound_number")
         @ExcludeMissing
         outboundNumber: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("schedule_reason")
+        @ExcludeMissing
+        scheduleReason: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("scheduled_at")
+        @ExcludeMissing
+        scheduledAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("template_id")
         @ExcludeMissing
         templateId: JsonField<String> = JsonMissing.of(),
@@ -65,6 +73,8 @@ private constructor(
         channel,
         messageId,
         outboundNumber,
+        scheduleReason,
+        scheduledAt,
         templateId,
         templateName,
         updatedAt,
@@ -131,6 +141,24 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun outboundNumber(): Optional<String> = outboundNumber.getOptional("outbound_number")
+
+    /**
+     * message.scheduled only: why the message is held, either because you scheduled it or because
+     * the recipient is inside a protected quiet-hours window. Omitted on every other event.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun scheduleReason(): Optional<String> = scheduleReason.getOptional("schedule_reason")
+
+    /**
+     * message.scheduled only: when the held message will be released for delivery, in UTC
+     * (yyyy-MM-ddTHH:mm:ssZ). Omitted on every other event.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun scheduledAt(): Optional<String> = scheduledAt.getOptional("scheduled_at")
 
     /**
      * The template the message was sent from, when it was sent from one.
@@ -211,6 +239,24 @@ private constructor(
     fun _outboundNumber(): JsonField<String> = outboundNumber
 
     /**
+     * Returns the raw JSON value of [scheduleReason].
+     *
+     * Unlike [scheduleReason], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("schedule_reason")
+    @ExcludeMissing
+    fun _scheduleReason(): JsonField<String> = scheduleReason
+
+    /**
+     * Returns the raw JSON value of [scheduledAt].
+     *
+     * Unlike [scheduledAt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("scheduled_at")
+    @ExcludeMissing
+    fun _scheduledAt(): JsonField<String> = scheduledAt
+
+    /**
      * Returns the raw JSON value of [templateId].
      *
      * Unlike [templateId], this method doesn't throw if the JSON field has an unexpected type.
@@ -268,6 +314,8 @@ private constructor(
         private var channel: JsonField<String> = JsonMissing.of()
         private var messageId: JsonField<String> = JsonMissing.of()
         private var outboundNumber: JsonField<String> = JsonMissing.of()
+        private var scheduleReason: JsonField<String> = JsonMissing.of()
+        private var scheduledAt: JsonField<String> = JsonMissing.of()
         private var templateId: JsonField<String> = JsonMissing.of()
         private var templateName: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<String> = JsonMissing.of()
@@ -282,6 +330,8 @@ private constructor(
             channel = messageEventPayload.channel
             messageId = messageEventPayload.messageId
             outboundNumber = messageEventPayload.outboundNumber
+            scheduleReason = messageEventPayload.scheduleReason
+            scheduledAt = messageEventPayload.scheduledAt
             templateId = messageEventPayload.templateId
             templateName = messageEventPayload.templateName
             updatedAt = messageEventPayload.updatedAt
@@ -392,6 +442,47 @@ private constructor(
             this.outboundNumber = outboundNumber
         }
 
+        /**
+         * message.scheduled only: why the message is held, either because you scheduled it or
+         * because the recipient is inside a protected quiet-hours window. Omitted on every other
+         * event.
+         */
+        fun scheduleReason(scheduleReason: String?) =
+            scheduleReason(JsonField.ofNullable(scheduleReason))
+
+        /** Alias for calling [Builder.scheduleReason] with `scheduleReason.orElse(null)`. */
+        fun scheduleReason(scheduleReason: Optional<String>) =
+            scheduleReason(scheduleReason.getOrNull())
+
+        /**
+         * Sets [Builder.scheduleReason] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.scheduleReason] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun scheduleReason(scheduleReason: JsonField<String>) = apply {
+            this.scheduleReason = scheduleReason
+        }
+
+        /**
+         * message.scheduled only: when the held message will be released for delivery, in UTC
+         * (yyyy-MM-ddTHH:mm:ssZ). Omitted on every other event.
+         */
+        fun scheduledAt(scheduledAt: String?) = scheduledAt(JsonField.ofNullable(scheduledAt))
+
+        /** Alias for calling [Builder.scheduledAt] with `scheduledAt.orElse(null)`. */
+        fun scheduledAt(scheduledAt: Optional<String>) = scheduledAt(scheduledAt.getOrNull())
+
+        /**
+         * Sets [Builder.scheduledAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.scheduledAt] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun scheduledAt(scheduledAt: JsonField<String>) = apply { this.scheduledAt = scheduledAt }
+
         /** The template the message was sent from, when it was sent from one. */
         fun templateId(templateId: String?) = templateId(JsonField.ofNullable(templateId))
 
@@ -479,6 +570,8 @@ private constructor(
                 channel,
                 messageId,
                 outboundNumber,
+                scheduleReason,
+                scheduledAt,
                 templateId,
                 templateName,
                 updatedAt,
@@ -508,6 +601,8 @@ private constructor(
         channel()
         messageId()
         outboundNumber()
+        scheduleReason()
+        scheduledAt()
         templateId()
         templateName()
         updatedAt()
@@ -536,6 +631,8 @@ private constructor(
             (if (channel.asKnown().isPresent) 1 else 0) +
             (if (messageId.asKnown().isPresent) 1 else 0) +
             (if (outboundNumber.asKnown().isPresent) 1 else 0) +
+            (if (scheduleReason.asKnown().isPresent) 1 else 0) +
+            (if (scheduledAt.asKnown().isPresent) 1 else 0) +
             (if (templateId.asKnown().isPresent) 1 else 0) +
             (if (templateName.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
@@ -553,6 +650,8 @@ private constructor(
             channel == other.channel &&
             messageId == other.messageId &&
             outboundNumber == other.outboundNumber &&
+            scheduleReason == other.scheduleReason &&
+            scheduledAt == other.scheduledAt &&
             templateId == other.templateId &&
             templateName == other.templateName &&
             updatedAt == other.updatedAt &&
@@ -568,6 +667,8 @@ private constructor(
             channel,
             messageId,
             outboundNumber,
+            scheduleReason,
+            scheduledAt,
             templateId,
             templateName,
             updatedAt,
@@ -578,5 +679,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "MessageEventPayload{messageStatus=$messageStatus, accountId=$accountId, agentId=$agentId, body=$body, channel=$channel, messageId=$messageId, outboundNumber=$outboundNumber, templateId=$templateId, templateName=$templateName, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "MessageEventPayload{messageStatus=$messageStatus, accountId=$accountId, agentId=$agentId, body=$body, channel=$channel, messageId=$messageId, outboundNumber=$outboundNumber, scheduleReason=$scheduleReason, scheduledAt=$scheduledAt, templateId=$templateId, templateName=$templateName, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

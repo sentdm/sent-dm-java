@@ -48,7 +48,9 @@ private constructor(
      * reason changed the API. The service keeps its result; this is what a caller sees, and the
      * mapping between them is a decision the endpoint makes.
      *
-     * The wire is unchanged by the move: same names, same values.
+     * The shape of an immediate send: it never has a scheduled_at key. A send that carried
+     * scheduled_at is a ScheduledSendMessageResponse, and the endpoint decides which of the two to
+     * answer with. From always returns this type.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -152,7 +154,9 @@ private constructor(
          * an internal reason changed the API. The service keeps its result; this is what a caller
          * sees, and the mapping between them is a decision the endpoint makes.
          *
-         * The wire is unchanged by the move: same names, same values.
+         * The shape of an immediate send: it never has a scheduled_at key. A send that carried
+         * scheduled_at is a ScheduledSendMessageResponse, and the endpoint decides which of the two
+         * to answer with. From always returns this type.
          */
         fun data(data: Data?) = data(JsonField.ofNullable(data))
 
@@ -283,7 +287,9 @@ private constructor(
      * reason changed the API. The service keeps its result; this is what a caller sees, and the
      * mapping between them is a decision the endpoint makes.
      *
-     * The wire is unchanged by the move: same names, same values.
+     * The shape of an immediate send: it never has a scheduled_at key. A send that carried
+     * scheduled_at is a ScheduledSendMessageResponse, and the endpoint decides which of the two to
+     * answer with. From always returns this type.
      */
     class Data
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -316,7 +322,9 @@ private constructor(
         fun recipients(): Optional<List<Recipient>> = recipients.getOptional("recipients")
 
         /**
-         * Overall status — QUEUED once the batch is accepted for delivery.
+         * QUEUED: the batch is accepted. A request that carried scheduled_at is QUEUED here too;
+         * each message moves to SCHEDULED once it is held, as GET /v3/messages/{id} and the
+         * message.scheduled webhook report.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -431,7 +439,11 @@ private constructor(
                     }
             }
 
-            /** Overall status — QUEUED once the batch is accepted for delivery. */
+            /**
+             * QUEUED: the batch is accepted. A request that carried scheduled_at is QUEUED here
+             * too; each message moves to SCHEDULED once it is held, as GET /v3/messages/{id} and
+             * the message.scheduled webhook report.
+             */
             fun status(status: String) = status(JsonField.of(status))
 
             /**

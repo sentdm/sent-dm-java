@@ -11,7 +11,10 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Retrieves the current status and details of a message by ID. Includes delivery status,
- * timestamps, and error information if applicable.
+ * timestamps, and error information if applicable. A message that is or was held for a later time
+ * (a send you scheduled with scheduled_at, or a quiet-hours hold) is returned as a
+ * ScheduledMessageResponse: the same fields plus scheduled_at, the release instant in UTC. A
+ * message sent immediately has no scheduled_at key.
  */
 class MessageRetrieveStatusParams
 private constructor(

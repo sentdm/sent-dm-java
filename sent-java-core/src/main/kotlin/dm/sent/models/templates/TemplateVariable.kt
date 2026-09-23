@@ -317,6 +317,11 @@ private constructor(
         fun mediaType(): String = mediaType.getRequired("mediaType")
 
         /**
+         * Example value substituted into the template when previewing it and when submitting it to
+         * Meta for review. Free text by nature, so the converter accepts a JSON number or boolean
+         * here and normalizes it — see JsonScalarToStringConverter for why — and guarantees it is
+         * always serialized back out as a JSON string.
+         *
          * @throws SentInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
@@ -467,6 +472,12 @@ private constructor(
              */
             fun mediaType(mediaType: JsonField<String>) = apply { this.mediaType = mediaType }
 
+            /**
+             * Example value substituted into the template when previewing it and when submitting it
+             * to Meta for review. Free text by nature, so the converter accepts a JSON number or
+             * boolean here and normalizes it — see JsonScalarToStringConverter for why — and
+             * guarantees it is always serialized back out as a JSON string.
+             */
             fun sample(sample: String) = sample(JsonField.of(sample))
 
             /**
