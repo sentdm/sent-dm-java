@@ -50,6 +50,21 @@ internal class ApiResponseOfConversationMessagesListTest {
                                         .content("content")
                                         .footer("footer")
                                         .header("header")
+                                        .headerMedia(
+                                            ConversationMessagesList.Message.MessageBody.HeaderMedia
+                                                .builder()
+                                                .type("type")
+                                                .url("url")
+                                                .build()
+                                        )
+                                        .addMedia(
+                                            ConversationMessagesList.Message.MessageBody.Media
+                                                .builder()
+                                                .mediaType("mediaType")
+                                                .url("url")
+                                                .build()
+                                        )
+                                        .subject("subject")
                                         .build()
                                 )
                                 .phone("phone")
@@ -134,6 +149,20 @@ internal class ApiResponseOfConversationMessagesListTest {
                                     .content("content")
                                     .footer("footer")
                                     .header("header")
+                                    .headerMedia(
+                                        ConversationMessagesList.Message.MessageBody.HeaderMedia
+                                            .builder()
+                                            .type("type")
+                                            .url("url")
+                                            .build()
+                                    )
+                                    .addMedia(
+                                        ConversationMessagesList.Message.MessageBody.Media.builder()
+                                            .mediaType("mediaType")
+                                            .url("url")
+                                            .build()
+                                    )
+                                    .subject("subject")
                                     .build()
                             )
                             .phone("phone")
@@ -224,6 +253,21 @@ internal class ApiResponseOfConversationMessagesListTest {
                                         .content("content")
                                         .footer("footer")
                                         .header("header")
+                                        .headerMedia(
+                                            ConversationMessagesList.Message.MessageBody.HeaderMedia
+                                                .builder()
+                                                .type("type")
+                                                .url("url")
+                                                .build()
+                                        )
+                                        .addMedia(
+                                            ConversationMessagesList.Message.MessageBody.Media
+                                                .builder()
+                                                .mediaType("mediaType")
+                                                .url("url")
+                                                .build()
+                                        )
+                                        .subject("subject")
                                         .build()
                                 )
                                 .phone("phone")

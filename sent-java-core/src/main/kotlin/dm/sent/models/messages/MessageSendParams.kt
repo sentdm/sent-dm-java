@@ -17,6 +17,7 @@ import dm.sent.core.http.QueryParams
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import dm.sent.models.webhooks.MutationRequest
+import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -30,7 +31,16 @@ import kotlin.jvm.optionals.getOrNull
  * do not reject the request — an account-level precondition such as insufficient balance, a
  * template not approved for sending, or free-form content with no open conversation with the
  * contact. The send is accepted with 202 and the affected messages are reported as BLOCKED on GET
- * /messages/{id} and the message.blocked webhook.
+ * /messages/{id} and the message.blocked webhook. To send later, set scheduled_at (ISO-8601 with an
+ * explicit UTC offset; a value without one is rejected) between 1 minute and 30 days ahead: the
+ * response is a ScheduledSendMessageResponse (the same fields plus scheduled_at; status is still
+ * QUEUED), each message then moves to SCHEDULED, is held and released at that time (within a few
+ * minutes), and a message.scheduled webhook fires once it is held. Balance and template approval
+ * are evaluated at release, not at acceptance. Quiet hours are not checked when the request is
+ * accepted: if the time falls inside a legally protected quiet-hours window for a recipient, that
+ * message is moved to the next allowed time at release and a second message.scheduled webhook
+ * reports the new scheduled_at. An account may hold at most 1,000,000 scheduled messages at once
+ * (429 LIMIT_001).
  */
 class MessageSendParams
 private constructor(
@@ -62,6 +72,49 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun channel(): Optional<List<String>> = body.channel()
+
+    /**
+     * Attachments for this send, as publicly fetchable https URLs. Used by the MMS channel and
+     * ignored by every other one.
+     *
+     * Supplying these replaces the media on the template's mms body rather than adding to it, so a
+     * template can hold a default creative while a caller still sends something recipient-specific.
+     *
+     * Their presence is also what makes a message eligible for MMS on an auto-detect send: a
+     * message with nothing attached is delivered as SMS, because an MMS with no media is a more
+     * expensive text message.
+     *
+     * The recipient's carrier fetches each URL after the send is accepted, so it must stay publicly
+     * reachable — a link that expires, or one behind auth, arrives as a failed message.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun mediaUrls(): Optional<List<String>> = body.mediaUrls()
+
+    /**
+     * Optional future send time as an ISO-8601 timestamp with an explicit UTC offset, e.g.
+     * 2026-10-01T09:00:00+02:00 or 2026-10-01T07:00:00Z. A value without an offset is rejected
+     * (400) rather than read in the server's zone. The offset only fixes the instant: it is stored
+     * and echoed in UTC as scheduled_at. Omit to send now. Must be at least one minute ahead and at
+     * most 30 days ahead. Accepted messages report SCHEDULED and are released for delivery at this
+     * time. Quiet hours, balance and template approval are evaluated at release, not at acceptance:
+     * a message whose time falls inside a recipient's protected quiet-hours window is moved to the
+     * next allowed time and a second message.scheduled webhook reports the new scheduled_at.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun scheduledAt(): Optional<OffsetDateTime> = body.scheduledAt()
+
+    /**
+     * Subject line for this send, overriding the template's. MMS only; ignored on every other
+     * channel. Most handsets render it above the body, some ignore it entirely.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun subject(): Optional<String> = body.subject()
 
     /**
      * SDK-style template reference: resolve by ID or by name, with optional parameters.
@@ -100,6 +153,27 @@ private constructor(
      * Unlike [channel], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _channel(): JsonField<List<String>> = body._channel()
+
+    /**
+     * Returns the raw JSON value of [mediaUrls].
+     *
+     * Unlike [mediaUrls], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _mediaUrls(): JsonField<List<String>> = body._mediaUrls()
+
+    /**
+     * Returns the raw JSON value of [scheduledAt].
+     *
+     * Unlike [scheduledAt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _scheduledAt(): JsonField<OffsetDateTime> = body._scheduledAt()
+
+    /**
+     * Returns the raw JSON value of [subject].
+     *
+     * Unlike [subject], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _subject(): JsonField<String> = body._subject()
 
     /**
      * Returns the raw JSON value of [template].
@@ -176,9 +250,9 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [sandbox]
          * - [channel]
-         * - [template]
-         * - [text]
-         * - [to]
+         * - [mediaUrls]
+         * - [scheduledAt]
+         * - [subject]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -222,6 +296,88 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addChannel(channel: String) = apply { body.addChannel(channel) }
+
+        /**
+         * Attachments for this send, as publicly fetchable https URLs. Used by the MMS channel and
+         * ignored by every other one.
+         *
+         * Supplying these replaces the media on the template's mms body rather than adding to it,
+         * so a template can hold a default creative while a caller still sends something
+         * recipient-specific.
+         *
+         * Their presence is also what makes a message eligible for MMS on an auto-detect send: a
+         * message with nothing attached is delivered as SMS, because an MMS with no media is a more
+         * expensive text message.
+         *
+         * The recipient's carrier fetches each URL after the send is accepted, so it must stay
+         * publicly reachable — a link that expires, or one behind auth, arrives as a failed
+         * message.
+         */
+        fun mediaUrls(mediaUrls: List<String>?) = apply { body.mediaUrls(mediaUrls) }
+
+        /** Alias for calling [Builder.mediaUrls] with `mediaUrls.orElse(null)`. */
+        fun mediaUrls(mediaUrls: Optional<List<String>>) = mediaUrls(mediaUrls.getOrNull())
+
+        /**
+         * Sets [Builder.mediaUrls] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.mediaUrls] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun mediaUrls(mediaUrls: JsonField<List<String>>) = apply { body.mediaUrls(mediaUrls) }
+
+        /**
+         * Adds a single [String] to [mediaUrls].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addMediaUrl(mediaUrl: String) = apply { body.addMediaUrl(mediaUrl) }
+
+        /**
+         * Optional future send time as an ISO-8601 timestamp with an explicit UTC offset, e.g.
+         * 2026-10-01T09:00:00+02:00 or 2026-10-01T07:00:00Z. A value without an offset is rejected
+         * (400) rather than read in the server's zone. The offset only fixes the instant: it is
+         * stored and echoed in UTC as scheduled_at. Omit to send now. Must be at least one minute
+         * ahead and at most 30 days ahead. Accepted messages report SCHEDULED and are released for
+         * delivery at this time. Quiet hours, balance and template approval are evaluated at
+         * release, not at acceptance: a message whose time falls inside a recipient's protected
+         * quiet-hours window is moved to the next allowed time and a second message.scheduled
+         * webhook reports the new scheduled_at.
+         */
+        fun scheduledAt(scheduledAt: OffsetDateTime?) = apply { body.scheduledAt(scheduledAt) }
+
+        /** Alias for calling [Builder.scheduledAt] with `scheduledAt.orElse(null)`. */
+        fun scheduledAt(scheduledAt: Optional<OffsetDateTime>) =
+            scheduledAt(scheduledAt.getOrNull())
+
+        /**
+         * Sets [Builder.scheduledAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.scheduledAt] with a well-typed [OffsetDateTime] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun scheduledAt(scheduledAt: JsonField<OffsetDateTime>) = apply {
+            body.scheduledAt(scheduledAt)
+        }
+
+        /**
+         * Subject line for this send, overriding the template's. MMS only; ignored on every other
+         * channel. Most handsets render it above the body, some ignore it entirely.
+         */
+        fun subject(subject: String?) = apply { body.subject(subject) }
+
+        /** Alias for calling [Builder.subject] with `subject.orElse(null)`. */
+        fun subject(subject: Optional<String>) = subject(subject.getOrNull())
+
+        /**
+         * Sets [Builder.subject] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.subject] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun subject(subject: JsonField<String>) = apply { body.subject(subject) }
 
         /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
         fun template(template: Template?) = apply { body.template(template) }
@@ -421,6 +577,9 @@ private constructor(
     private constructor(
         private val sandbox: JsonField<Boolean>,
         private val channel: JsonField<List<String>>,
+        private val mediaUrls: JsonField<List<String>>,
+        private val scheduledAt: JsonField<OffsetDateTime>,
+        private val subject: JsonField<String>,
         private val template: JsonField<Template>,
         private val text: JsonField<String>,
         private val to: JsonField<List<String>>,
@@ -433,12 +592,29 @@ private constructor(
             @JsonProperty("channel")
             @ExcludeMissing
             channel: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("media_urls")
+            @ExcludeMissing
+            mediaUrls: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("scheduled_at")
+            @ExcludeMissing
+            scheduledAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("subject") @ExcludeMissing subject: JsonField<String> = JsonMissing.of(),
             @JsonProperty("template")
             @ExcludeMissing
             template: JsonField<Template> = JsonMissing.of(),
             @JsonProperty("text") @ExcludeMissing text: JsonField<String> = JsonMissing.of(),
             @JsonProperty("to") @ExcludeMissing to: JsonField<List<String>> = JsonMissing.of(),
-        ) : this(sandbox, channel, template, text, to, mutableMapOf())
+        ) : this(
+            sandbox,
+            channel,
+            mediaUrls,
+            scheduledAt,
+            subject,
+            template,
+            text,
+            to,
+            mutableMapOf(),
+        )
 
         fun toMutationRequest(): MutationRequest =
             MutationRequest.builder().sandbox(sandbox).build()
@@ -461,6 +637,52 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun channel(): Optional<List<String>> = channel.getOptional("channel")
+
+        /**
+         * Attachments for this send, as publicly fetchable https URLs. Used by the MMS channel and
+         * ignored by every other one.
+         *
+         * Supplying these replaces the media on the template's mms body rather than adding to it,
+         * so a template can hold a default creative while a caller still sends something
+         * recipient-specific.
+         *
+         * Their presence is also what makes a message eligible for MMS on an auto-detect send: a
+         * message with nothing attached is delivered as SMS, because an MMS with no media is a more
+         * expensive text message.
+         *
+         * The recipient's carrier fetches each URL after the send is accepted, so it must stay
+         * publicly reachable — a link that expires, or one behind auth, arrives as a failed
+         * message.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun mediaUrls(): Optional<List<String>> = mediaUrls.getOptional("media_urls")
+
+        /**
+         * Optional future send time as an ISO-8601 timestamp with an explicit UTC offset, e.g.
+         * 2026-10-01T09:00:00+02:00 or 2026-10-01T07:00:00Z. A value without an offset is rejected
+         * (400) rather than read in the server's zone. The offset only fixes the instant: it is
+         * stored and echoed in UTC as scheduled_at. Omit to send now. Must be at least one minute
+         * ahead and at most 30 days ahead. Accepted messages report SCHEDULED and are released for
+         * delivery at this time. Quiet hours, balance and template approval are evaluated at
+         * release, not at acceptance: a message whose time falls inside a recipient's protected
+         * quiet-hours window is moved to the next allowed time and a second message.scheduled
+         * webhook reports the new scheduled_at.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun scheduledAt(): Optional<OffsetDateTime> = scheduledAt.getOptional("scheduled_at")
+
+        /**
+         * Subject line for this send, overriding the template's. MMS only; ignored on every other
+         * channel. Most handsets render it above the body, some ignore it entirely.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun subject(): Optional<String> = subject.getOptional("subject")
 
         /**
          * SDK-style template reference: resolve by ID or by name, with optional parameters.
@@ -499,6 +721,31 @@ private constructor(
          * Unlike [channel], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("channel") @ExcludeMissing fun _channel(): JsonField<List<String>> = channel
+
+        /**
+         * Returns the raw JSON value of [mediaUrls].
+         *
+         * Unlike [mediaUrls], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("media_urls")
+        @ExcludeMissing
+        fun _mediaUrls(): JsonField<List<String>> = mediaUrls
+
+        /**
+         * Returns the raw JSON value of [scheduledAt].
+         *
+         * Unlike [scheduledAt], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("scheduled_at")
+        @ExcludeMissing
+        fun _scheduledAt(): JsonField<OffsetDateTime> = scheduledAt
+
+        /**
+         * Returns the raw JSON value of [subject].
+         *
+         * Unlike [subject], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("subject") @ExcludeMissing fun _subject(): JsonField<String> = subject
 
         /**
          * Returns the raw JSON value of [template].
@@ -544,6 +791,9 @@ private constructor(
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var channel: JsonField<MutableList<String>>? = null
+            private var mediaUrls: JsonField<MutableList<String>>? = null
+            private var scheduledAt: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var subject: JsonField<String> = JsonMissing.of()
             private var template: JsonField<Template> = JsonMissing.of()
             private var text: JsonField<String> = JsonMissing.of()
             private var to: JsonField<MutableList<String>>? = null
@@ -553,6 +803,9 @@ private constructor(
             internal fun from(body: Body) = apply {
                 sandbox = body.sandbox
                 channel = body.channel.map { it.toMutableList() }
+                mediaUrls = body.mediaUrls.map { it.toMutableList() }
+                scheduledAt = body.scheduledAt
+                subject = body.subject
                 template = body.template
                 text = body.text
                 to = body.to.map { it.toMutableList() }
@@ -606,6 +859,97 @@ private constructor(
                         checkKnown("channel", it).add(channel)
                     }
             }
+
+            /**
+             * Attachments for this send, as publicly fetchable https URLs. Used by the MMS channel
+             * and ignored by every other one.
+             *
+             * Supplying these replaces the media on the template's mms body rather than adding to
+             * it, so a template can hold a default creative while a caller still sends something
+             * recipient-specific.
+             *
+             * Their presence is also what makes a message eligible for MMS on an auto-detect send:
+             * a message with nothing attached is delivered as SMS, because an MMS with no media is
+             * a more expensive text message.
+             *
+             * The recipient's carrier fetches each URL after the send is accepted, so it must stay
+             * publicly reachable — a link that expires, or one behind auth, arrives as a failed
+             * message.
+             */
+            fun mediaUrls(mediaUrls: List<String>?) = mediaUrls(JsonField.ofNullable(mediaUrls))
+
+            /** Alias for calling [Builder.mediaUrls] with `mediaUrls.orElse(null)`. */
+            fun mediaUrls(mediaUrls: Optional<List<String>>) = mediaUrls(mediaUrls.getOrNull())
+
+            /**
+             * Sets [Builder.mediaUrls] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.mediaUrls] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun mediaUrls(mediaUrls: JsonField<List<String>>) = apply {
+                this.mediaUrls = mediaUrls.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [mediaUrls].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addMediaUrl(mediaUrl: String) = apply {
+                mediaUrls =
+                    (mediaUrls ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("mediaUrls", it).add(mediaUrl)
+                    }
+            }
+
+            /**
+             * Optional future send time as an ISO-8601 timestamp with an explicit UTC offset, e.g.
+             * 2026-10-01T09:00:00+02:00 or 2026-10-01T07:00:00Z. A value without an offset is
+             * rejected (400) rather than read in the server's zone. The offset only fixes the
+             * instant: it is stored and echoed in UTC as scheduled_at. Omit to send now. Must be at
+             * least one minute ahead and at most 30 days ahead. Accepted messages report SCHEDULED
+             * and are released for delivery at this time. Quiet hours, balance and template
+             * approval are evaluated at release, not at acceptance: a message whose time falls
+             * inside a recipient's protected quiet-hours window is moved to the next allowed time
+             * and a second message.scheduled webhook reports the new scheduled_at.
+             */
+            fun scheduledAt(scheduledAt: OffsetDateTime?) =
+                scheduledAt(JsonField.ofNullable(scheduledAt))
+
+            /** Alias for calling [Builder.scheduledAt] with `scheduledAt.orElse(null)`. */
+            fun scheduledAt(scheduledAt: Optional<OffsetDateTime>) =
+                scheduledAt(scheduledAt.getOrNull())
+
+            /**
+             * Sets [Builder.scheduledAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.scheduledAt] with a well-typed [OffsetDateTime]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun scheduledAt(scheduledAt: JsonField<OffsetDateTime>) = apply {
+                this.scheduledAt = scheduledAt
+            }
+
+            /**
+             * Subject line for this send, overriding the template's. MMS only; ignored on every
+             * other channel. Most handsets render it above the body, some ignore it entirely.
+             */
+            fun subject(subject: String?) = subject(JsonField.ofNullable(subject))
+
+            /** Alias for calling [Builder.subject] with `subject.orElse(null)`. */
+            fun subject(subject: Optional<String>) = subject(subject.getOrNull())
+
+            /**
+             * Sets [Builder.subject] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.subject] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun subject(subject: JsonField<String>) = apply { this.subject = subject }
 
             /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
             fun template(template: Template?) = template(JsonField.ofNullable(template))
@@ -687,6 +1031,9 @@ private constructor(
                 Body(
                     sandbox,
                     (channel ?: JsonMissing.of()).map { it.toImmutable() },
+                    (mediaUrls ?: JsonMissing.of()).map { it.toImmutable() },
+                    scheduledAt,
+                    subject,
                     template,
                     text,
                     (to ?: JsonMissing.of()).map { it.toImmutable() },
@@ -712,6 +1059,9 @@ private constructor(
 
             sandbox()
             channel()
+            mediaUrls()
+            scheduledAt()
+            subject()
             template().ifPresent { it.validate() }
             text()
             to()
@@ -736,6 +1086,9 @@ private constructor(
         internal fun validity(): Int =
             (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (channel.asKnown().getOrNull()?.size ?: 0) +
+                (mediaUrls.asKnown().getOrNull()?.size ?: 0) +
+                (if (scheduledAt.asKnown().isPresent) 1 else 0) +
+                (if (subject.asKnown().isPresent) 1 else 0) +
                 (template.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (text.asKnown().isPresent) 1 else 0) +
                 (to.asKnown().getOrNull()?.size ?: 0)
@@ -748,6 +1101,9 @@ private constructor(
             return other is Body &&
                 sandbox == other.sandbox &&
                 channel == other.channel &&
+                mediaUrls == other.mediaUrls &&
+                scheduledAt == other.scheduledAt &&
+                subject == other.subject &&
                 template == other.template &&
                 text == other.text &&
                 to == other.to &&
@@ -755,13 +1111,23 @@ private constructor(
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(sandbox, channel, template, text, to, additionalProperties)
+            Objects.hash(
+                sandbox,
+                channel,
+                mediaUrls,
+                scheduledAt,
+                subject,
+                template,
+                text,
+                to,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, channel=$channel, template=$template, text=$text, to=$to, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, channel=$channel, mediaUrls=$mediaUrls, scheduledAt=$scheduledAt, subject=$subject, template=$template, text=$text, to=$to, additionalProperties=$additionalProperties}"
     }
 
     /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
@@ -800,7 +1166,20 @@ private constructor(
         fun name(): Optional<String> = name.getOptional("name")
 
         /**
-         * Template variable parameters for personalization
+         * Template variable parameters for personalization, keyed by variable name.
+         *
+         * Every variable the template declares is required; GET /v3/templates/{id} lists them.
+         * Supplying a key the template does not declare is ignored.
+         *
+         * Media headers. A template whose header is an image (designed in WhatsApp Manager and
+         * imported into Sent) declares a reserved header_image key. Its value is a publicly
+         * reachable https URL that Meta fetches at send time — Sent does not host the asset, and
+         * the sample approved with the template is not reused. The key is derived from the header's
+         * media type, so header_video and header_document follow the same shape when those formats
+         * ship.
+         *
+         * "parameters": { "header_image": "https://cdn.example.com/banner.jpg", "name": "John Doe"
+         * }
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -894,7 +1273,22 @@ private constructor(
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
 
-            /** Template variable parameters for personalization */
+            /**
+             * Template variable parameters for personalization, keyed by variable name.
+             *
+             * Every variable the template declares is required; GET /v3/templates/{id} lists them.
+             * Supplying a key the template does not declare is ignored.
+             *
+             * Media headers. A template whose header is an image (designed in WhatsApp Manager and
+             * imported into Sent) declares a reserved header_image key. Its value is a publicly
+             * reachable https URL that Meta fetches at send time — Sent does not host the asset,
+             * and the sample approved with the template is not reused. The key is derived from the
+             * header's media type, so header_video and header_document follow the same shape when
+             * those formats ship.
+             *
+             * "parameters": { "header_image": "https://cdn.example.com/banner.jpg", "name": "John
+             * Doe" }
+             */
             fun parameters(parameters: Parameters?) = parameters(JsonField.ofNullable(parameters))
 
             /** Alias for calling [Builder.parameters] with `parameters.orElse(null)`. */
@@ -981,7 +1375,22 @@ private constructor(
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (parameters.asKnown().getOrNull()?.validity() ?: 0)
 
-        /** Template variable parameters for personalization */
+        /**
+         * Template variable parameters for personalization, keyed by variable name.
+         *
+         * Every variable the template declares is required; GET /v3/templates/{id} lists them.
+         * Supplying a key the template does not declare is ignored.
+         *
+         * Media headers. A template whose header is an image (designed in WhatsApp Manager and
+         * imported into Sent) declares a reserved header_image key. Its value is a publicly
+         * reachable https URL that Meta fetches at send time — Sent does not host the asset, and
+         * the sample approved with the template is not reused. The key is derived from the header's
+         * media type, so header_video and header_document follow the same shape when those formats
+         * ship.
+         *
+         * "parameters": { "header_image": "https://cdn.example.com/banner.jpg", "name": "John Doe"
+         * }
+         */
         class Parameters
         @JsonCreator
         private constructor(
