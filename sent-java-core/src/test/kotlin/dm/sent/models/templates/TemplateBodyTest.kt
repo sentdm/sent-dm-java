@@ -13,6 +13,37 @@ internal class TemplateBodyTest {
     fun create() {
         val templateBody =
             TemplateBody.builder()
+                .mms(
+                    TemplateBody.Mms.builder()
+                        .template("template")
+                        .type("type")
+                        .addVariable(
+                            TemplateVariable.builder()
+                                .name("x")
+                                .props(
+                                    TemplateVariable.Props.builder()
+                                        .mediaType("x")
+                                        .sample("x")
+                                        .url("x")
+                                        .variableType("x")
+                                        .alt("alt")
+                                        .regex("regex")
+                                        .shortUrl("shortUrl")
+                                        .build()
+                                )
+                                .type("x")
+                                .id(0)
+                                .build()
+                        )
+                        .addMedia(
+                            TemplateBody.Mms.Media.builder()
+                                .mediaType("mediaType")
+                                .url("url")
+                                .build()
+                        )
+                        .subject("subject")
+                        .build()
+                )
                 .multiChannel(
                     TemplateBodyContent.builder()
                         .template("template")
@@ -111,6 +142,35 @@ internal class TemplateBodyTest {
                 )
                 .build()
 
+        assertThat(templateBody.mms())
+            .contains(
+                TemplateBody.Mms.builder()
+                    .template("template")
+                    .type("type")
+                    .addVariable(
+                        TemplateVariable.builder()
+                            .name("x")
+                            .props(
+                                TemplateVariable.Props.builder()
+                                    .mediaType("x")
+                                    .sample("x")
+                                    .url("x")
+                                    .variableType("x")
+                                    .alt("alt")
+                                    .regex("regex")
+                                    .shortUrl("shortUrl")
+                                    .build()
+                            )
+                            .type("x")
+                            .id(0)
+                            .build()
+                    )
+                    .addMedia(
+                        TemplateBody.Mms.Media.builder().mediaType("mediaType").url("url").build()
+                    )
+                    .subject("subject")
+                    .build()
+            )
         assertThat(templateBody.multiChannel())
             .contains(
                 TemplateBodyContent.builder()
@@ -218,6 +278,37 @@ internal class TemplateBodyTest {
         val jsonMapper = jsonMapper()
         val templateBody =
             TemplateBody.builder()
+                .mms(
+                    TemplateBody.Mms.builder()
+                        .template("template")
+                        .type("type")
+                        .addVariable(
+                            TemplateVariable.builder()
+                                .name("x")
+                                .props(
+                                    TemplateVariable.Props.builder()
+                                        .mediaType("x")
+                                        .sample("x")
+                                        .url("x")
+                                        .variableType("x")
+                                        .alt("alt")
+                                        .regex("regex")
+                                        .shortUrl("shortUrl")
+                                        .build()
+                                )
+                                .type("x")
+                                .id(0)
+                                .build()
+                        )
+                        .addMedia(
+                            TemplateBody.Mms.Media.builder()
+                                .mediaType("mediaType")
+                                .url("url")
+                                .build()
+                        )
+                        .subject("subject")
+                        .build()
+                )
                 .multiChannel(
                     TemplateBodyContent.builder()
                         .template("template")
