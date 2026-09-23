@@ -57,6 +57,14 @@ internal class ApiResponseOfConversationMessagesListTest {
                                                 .url("url")
                                                 .build()
                                         )
+                                        .addMedia(
+                                            ConversationMessagesList.Message.MessageBody.Media
+                                                .builder()
+                                                .mediaType("mediaType")
+                                                .url("url")
+                                                .build()
+                                        )
+                                        .subject("subject")
                                         .build()
                                 )
                                 .phone("phone")
@@ -148,6 +156,13 @@ internal class ApiResponseOfConversationMessagesListTest {
                                             .url("url")
                                             .build()
                                     )
+                                    .addMedia(
+                                        ConversationMessagesList.Message.MessageBody.Media.builder()
+                                            .mediaType("mediaType")
+                                            .url("url")
+                                            .build()
+                                    )
+                                    .subject("subject")
                                     .build()
                             )
                             .phone("phone")
@@ -245,6 +260,14 @@ internal class ApiResponseOfConversationMessagesListTest {
                                                 .url("url")
                                                 .build()
                                         )
+                                        .addMedia(
+                                            ConversationMessagesList.Message.MessageBody.Media
+                                                .builder()
+                                                .mediaType("mediaType")
+                                                .url("url")
+                                                .build()
+                                        )
+                                        .subject("subject")
                                         .build()
                                 )
                                 .phone("phone")

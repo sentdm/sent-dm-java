@@ -11,7 +11,9 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Retrieves the activity log for a specific message. Activities track the message lifecycle
- * including acceptance, processing, sending, delivery, and any errors.
+ * including acceptance, processing, sending, delivery, and any errors. A SCHEDULED entry carries
+ * scheduled_at, the release instant in UTC as it stood at that moment. Other entries have no
+ * scheduled_at key.
  */
 class MessageRetrieveActivitiesParams
 private constructor(
