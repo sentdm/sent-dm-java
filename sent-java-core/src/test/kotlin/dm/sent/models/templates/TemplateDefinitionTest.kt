@@ -219,6 +219,16 @@ internal class TemplateDefinitionTest {
                 .header(
                     TemplateHeader.builder()
                         .template("template")
+                        .exampleUrl("example_url")
+                        .location(
+                            TemplateHeader.Location.builder()
+                                .address("x")
+                                .latitude("x")
+                                .longitude("x")
+                                .name("x")
+                                .build()
+                        )
+                        .staticResource(true)
                         .type("type")
                         .addVariable(
                             TemplateVariable.builder()
@@ -452,6 +462,16 @@ internal class TemplateDefinitionTest {
             .contains(
                 TemplateHeader.builder()
                     .template("template")
+                    .exampleUrl("example_url")
+                    .location(
+                        TemplateHeader.Location.builder()
+                            .address("x")
+                            .latitude("x")
+                            .longitude("x")
+                            .name("x")
+                            .build()
+                    )
+                    .staticResource(true)
                     .type("type")
                     .addVariable(
                         TemplateVariable.builder()
@@ -685,6 +705,16 @@ internal class TemplateDefinitionTest {
                 .header(
                     TemplateHeader.builder()
                         .template("template")
+                        .exampleUrl("example_url")
+                        .location(
+                            TemplateHeader.Location.builder()
+                                .address("x")
+                                .latitude("x")
+                                .longitude("x")
+                                .name("x")
+                                .build()
+                        )
+                        .staticResource(true)
                         .type("type")
                         .addVariable(
                             TemplateVariable.builder()
