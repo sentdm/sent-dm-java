@@ -15,6 +15,16 @@ internal class TemplateHeaderTest {
         val templateHeader =
             TemplateHeader.builder()
                 .template("template")
+                .exampleUrl("example_url")
+                .location(
+                    TemplateHeader.Location.builder()
+                        .address("x")
+                        .latitude("x")
+                        .longitude("x")
+                        .name("x")
+                        .build()
+                )
+                .staticResource(true)
                 .type("type")
                 .addVariable(
                     TemplateVariable.builder()
@@ -37,6 +47,17 @@ internal class TemplateHeaderTest {
                 .build()
 
         assertThat(templateHeader.template()).isEqualTo("template")
+        assertThat(templateHeader.exampleUrl()).contains("example_url")
+        assertThat(templateHeader.location())
+            .contains(
+                TemplateHeader.Location.builder()
+                    .address("x")
+                    .latitude("x")
+                    .longitude("x")
+                    .name("x")
+                    .build()
+            )
+        assertThat(templateHeader.staticResource()).contains(true)
         assertThat(templateHeader.type()).contains("type")
         assertThat(templateHeader.variables().getOrNull())
             .containsExactly(
@@ -65,6 +86,16 @@ internal class TemplateHeaderTest {
         val templateHeader =
             TemplateHeader.builder()
                 .template("template")
+                .exampleUrl("example_url")
+                .location(
+                    TemplateHeader.Location.builder()
+                        .address("x")
+                        .latitude("x")
+                        .longitude("x")
+                        .name("x")
+                        .build()
+                )
+                .staticResource(true)
                 .type("type")
                 .addVariable(
                     TemplateVariable.builder()
