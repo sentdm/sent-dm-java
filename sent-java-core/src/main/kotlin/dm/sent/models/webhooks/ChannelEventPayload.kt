@@ -48,6 +48,7 @@ private constructor(
     private val compliance: JsonField<Compliance>,
     private val numberType: JsonField<String>,
     private val reason: JsonField<String>,
+    private val reasonCode: JsonField<String>,
     private val senderValue: JsonField<String>,
     private val status: JsonField<String>,
     private val updatedAt: JsonField<String>,
@@ -66,6 +67,9 @@ private constructor(
         @ExcludeMissing
         numberType: JsonField<String> = JsonMissing.of(),
         @JsonProperty("reason") @ExcludeMissing reason: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("reason_code")
+        @ExcludeMissing
+        reasonCode: JsonField<String> = JsonMissing.of(),
         @JsonProperty("sender_value")
         @ExcludeMissing
         senderValue: JsonField<String> = JsonMissing.of(),
@@ -78,6 +82,7 @@ private constructor(
         compliance,
         numberType,
         reason,
+        reasonCode,
         senderValue,
         status,
         updatedAt,
@@ -149,14 +154,25 @@ private constructor(
     fun numberType(): Optional<String> = numberType.getOptional("number_type")
 
     /**
-     * Why the market reached this state, when a reason was given — a correction explained, or a
-     * campaign lapse. Free text, passed through from the registry or carrier that wrote it, so
-     * treat it as a message to show a human rather than a value to branch on.
+     * Why the market reached this state, as a sentence to show a person: the specific explanation
+     * when one was given (a correction explained, a campaign lapse), otherwise what reason_code
+     * means for this market. Not a value to branch on.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
     fun reason(): Optional<String> = reason.getOptional("reason")
+
+    /**
+     * Why the market is not ACTIVE, as a stable code: an ErrorCodes CHANNEL_xxx value such as
+     * CHANNEL_001 (something you owe) or CHANNEL_002 (a correction was requested). The same code
+     * the channels resource reports for the market. Switch on this rather than on reason. Omitted
+     * while ACTIVE.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun reasonCode(): Optional<String> = reasonCode.getOptional("reason_code")
 
     /**
      * The sender itself — a number in E.164, or an alphanumeric sender ID.
@@ -245,6 +261,13 @@ private constructor(
     @JsonProperty("reason") @ExcludeMissing fun _reason(): JsonField<String> = reason
 
     /**
+     * Returns the raw JSON value of [reasonCode].
+     *
+     * Unlike [reasonCode], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("reason_code") @ExcludeMissing fun _reasonCode(): JsonField<String> = reasonCode
+
+    /**
      * Returns the raw JSON value of [senderValue].
      *
      * Unlike [senderValue], this method doesn't throw if the JSON field has an unexpected type.
@@ -301,6 +324,7 @@ private constructor(
         private var compliance: JsonField<Compliance> = JsonMissing.of()
         private var numberType: JsonField<String> = JsonMissing.of()
         private var reason: JsonField<String> = JsonMissing.of()
+        private var reasonCode: JsonField<String> = JsonMissing.of()
         private var senderValue: JsonField<String> = JsonMissing.of()
         private var status: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<String> = JsonMissing.of()
@@ -314,6 +338,7 @@ private constructor(
             compliance = channelEventPayload.compliance
             numberType = channelEventPayload.numberType
             reason = channelEventPayload.reason
+            reasonCode = channelEventPayload.reasonCode
             senderValue = channelEventPayload.senderValue
             status = channelEventPayload.status
             updatedAt = channelEventPayload.updatedAt
@@ -419,9 +444,9 @@ private constructor(
         fun numberType(numberType: JsonField<String>) = apply { this.numberType = numberType }
 
         /**
-         * Why the market reached this state, when a reason was given — a correction explained, or a
-         * campaign lapse. Free text, passed through from the registry or carrier that wrote it, so
-         * treat it as a message to show a human rather than a value to branch on.
+         * Why the market reached this state, as a sentence to show a person: the specific
+         * explanation when one was given (a correction explained, a campaign lapse), otherwise what
+         * reason_code means for this market. Not a value to branch on.
          */
         fun reason(reason: String?) = reason(JsonField.ofNullable(reason))
 
@@ -435,6 +460,26 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun reason(reason: JsonField<String>) = apply { this.reason = reason }
+
+        /**
+         * Why the market is not ACTIVE, as a stable code: an ErrorCodes CHANNEL_xxx value such as
+         * CHANNEL_001 (something you owe) or CHANNEL_002 (a correction was requested). The same
+         * code the channels resource reports for the market. Switch on this rather than on reason.
+         * Omitted while ACTIVE.
+         */
+        fun reasonCode(reasonCode: String?) = reasonCode(JsonField.ofNullable(reasonCode))
+
+        /** Alias for calling [Builder.reasonCode] with `reasonCode.orElse(null)`. */
+        fun reasonCode(reasonCode: Optional<String>) = reasonCode(reasonCode.getOrNull())
+
+        /**
+         * Sets [Builder.reasonCode] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.reasonCode] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun reasonCode(reasonCode: JsonField<String>) = apply { this.reasonCode = reasonCode }
 
         /**
          * The sender itself — a number in E.164, or an alphanumeric sender ID.
@@ -535,6 +580,7 @@ private constructor(
                 compliance,
                 numberType,
                 reason,
+                reasonCode,
                 senderValue,
                 status,
                 updatedAt,
@@ -563,6 +609,7 @@ private constructor(
         compliance().ifPresent { it.validate() }
         numberType()
         reason()
+        reasonCode()
         senderValue()
         status()
         updatedAt()
@@ -590,6 +637,7 @@ private constructor(
             (compliance.asKnown().getOrNull()?.validity() ?: 0) +
             (if (numberType.asKnown().isPresent) 1 else 0) +
             (if (reason.asKnown().isPresent) 1 else 0) +
+            (if (reasonCode.asKnown().isPresent) 1 else 0) +
             (if (senderValue.asKnown().isPresent) 1 else 0) +
             (if (status.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
@@ -1439,6 +1487,7 @@ private constructor(
             compliance == other.compliance &&
             numberType == other.numberType &&
             reason == other.reason &&
+            reasonCode == other.reasonCode &&
             senderValue == other.senderValue &&
             status == other.status &&
             updatedAt == other.updatedAt &&
@@ -1453,6 +1502,7 @@ private constructor(
             compliance,
             numberType,
             reason,
+            reasonCode,
             senderValue,
             status,
             updatedAt,
@@ -1463,5 +1513,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ChannelEventPayload{country=$country, accountId=$accountId, channel=$channel, compliance=$compliance, numberType=$numberType, reason=$reason, senderValue=$senderValue, status=$status, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "ChannelEventPayload{country=$country, accountId=$accountId, channel=$channel, compliance=$compliance, numberType=$numberType, reason=$reason, reasonCode=$reasonCode, senderValue=$senderValue, status=$status, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

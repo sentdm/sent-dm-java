@@ -515,6 +515,8 @@ private constructor(
             private val description: JsonField<String>,
             private val from: JsonField<String>,
             private val price: JsonField<String>,
+            private val reason: JsonField<String>,
+            private val reasonCode: JsonField<String>,
             private val scheduledAt: JsonField<OffsetDateTime>,
             private val status: JsonField<String>,
             private val timestamp: JsonField<OffsetDateTime>,
@@ -531,6 +533,12 @@ private constructor(
                 description: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("from") @ExcludeMissing from: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("price") @ExcludeMissing price: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("reason")
+                @ExcludeMissing
+                reason: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("reason_code")
+                @ExcludeMissing
+                reasonCode: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("scheduled_at")
                 @ExcludeMissing
                 scheduledAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -545,6 +553,8 @@ private constructor(
                 description,
                 from,
                 price,
+                reason,
+                reasonCode,
                 scheduledAt,
                 status,
                 timestamp,
@@ -586,6 +596,27 @@ private constructor(
              *   the server responded with an unexpected value).
              */
             fun price(): Optional<String> = price.getOptional("price")
+
+            /**
+             * A human-readable sentence for reason_code, for example "The recipient is not
+             * registered on this channel" Omitted whenever reason_code is.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun reason(): Optional<String> = reason.getOptional("reason")
+
+            /**
+             * Why the message reached this status, as a stable platform code such as DELIVERY_007
+             * or BUSINESS_003. Present on FAILED, FILTERED and BLOCKED activities; omitted on every
+             * status that needs no explanation. Switch on this rather than on reason: the code is
+             * stable, the wording may be improved. Same wire name and vocabulary as on the message
+             * and the webhook.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun reasonCode(): Optional<String> = reasonCode.getOptional("reason_code")
 
             /**
              * SCHEDULED activities only: when the held message will be released for delivery, in
@@ -650,6 +681,23 @@ private constructor(
             @JsonProperty("price") @ExcludeMissing fun _price(): JsonField<String> = price
 
             /**
+             * Returns the raw JSON value of [reason].
+             *
+             * Unlike [reason], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("reason") @ExcludeMissing fun _reason(): JsonField<String> = reason
+
+            /**
+             * Returns the raw JSON value of [reasonCode].
+             *
+             * Unlike [reasonCode], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("reason_code")
+            @ExcludeMissing
+            fun _reasonCode(): JsonField<String> = reasonCode
+
+            /**
              * Returns the raw JSON value of [scheduledAt].
              *
              * Unlike [scheduledAt], this method doesn't throw if the JSON field has an unexpected
@@ -701,6 +749,8 @@ private constructor(
                 private var description: JsonField<String> = JsonMissing.of()
                 private var from: JsonField<String> = JsonMissing.of()
                 private var price: JsonField<String> = JsonMissing.of()
+                private var reason: JsonField<String> = JsonMissing.of()
+                private var reasonCode: JsonField<String> = JsonMissing.of()
                 private var scheduledAt: JsonField<OffsetDateTime> = JsonMissing.of()
                 private var status: JsonField<String> = JsonMissing.of()
                 private var timestamp: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -712,6 +762,8 @@ private constructor(
                     description = activity.description
                     from = activity.from
                     price = activity.price
+                    reason = activity.reason
+                    reasonCode = activity.reasonCode
                     scheduledAt = activity.scheduledAt
                     status = activity.status
                     timestamp = activity.timestamp
@@ -793,6 +845,47 @@ private constructor(
                  * supported value.
                  */
                 fun price(price: JsonField<String>) = apply { this.price = price }
+
+                /**
+                 * A human-readable sentence for reason_code, for example "The recipient is not
+                 * registered on this channel" Omitted whenever reason_code is.
+                 */
+                fun reason(reason: String?) = reason(JsonField.ofNullable(reason))
+
+                /** Alias for calling [Builder.reason] with `reason.orElse(null)`. */
+                fun reason(reason: Optional<String>) = reason(reason.getOrNull())
+
+                /**
+                 * Sets [Builder.reason] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.reason] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun reason(reason: JsonField<String>) = apply { this.reason = reason }
+
+                /**
+                 * Why the message reached this status, as a stable platform code such as
+                 * DELIVERY_007 or BUSINESS_003. Present on FAILED, FILTERED and BLOCKED activities;
+                 * omitted on every status that needs no explanation. Switch on this rather than on
+                 * reason: the code is stable, the wording may be improved. Same wire name and
+                 * vocabulary as on the message and the webhook.
+                 */
+                fun reasonCode(reasonCode: String?) = reasonCode(JsonField.ofNullable(reasonCode))
+
+                /** Alias for calling [Builder.reasonCode] with `reasonCode.orElse(null)`. */
+                fun reasonCode(reasonCode: Optional<String>) = reasonCode(reasonCode.getOrNull())
+
+                /**
+                 * Sets [Builder.reasonCode] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.reasonCode] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun reasonCode(reasonCode: JsonField<String>) = apply {
+                    this.reasonCode = reasonCode
+                }
 
                 /**
                  * SCHEDULED activities only: when the held message will be released for delivery,
@@ -880,6 +973,8 @@ private constructor(
                         description,
                         from,
                         price,
+                        reason,
+                        reasonCode,
                         scheduledAt,
                         status,
                         timestamp,
@@ -908,6 +1003,8 @@ private constructor(
                 description()
                 from()
                 price()
+                reason()
+                reasonCode()
                 scheduledAt()
                 status()
                 timestamp()
@@ -934,6 +1031,8 @@ private constructor(
                     (if (description.asKnown().isPresent) 1 else 0) +
                     (if (from.asKnown().isPresent) 1 else 0) +
                     (if (price.asKnown().isPresent) 1 else 0) +
+                    (if (reason.asKnown().isPresent) 1 else 0) +
+                    (if (reasonCode.asKnown().isPresent) 1 else 0) +
                     (if (scheduledAt.asKnown().isPresent) 1 else 0) +
                     (if (status.asKnown().isPresent) 1 else 0) +
                     (if (timestamp.asKnown().isPresent) 1 else 0)
@@ -948,6 +1047,8 @@ private constructor(
                     description == other.description &&
                     from == other.from &&
                     price == other.price &&
+                    reason == other.reason &&
+                    reasonCode == other.reasonCode &&
                     scheduledAt == other.scheduledAt &&
                     status == other.status &&
                     timestamp == other.timestamp &&
@@ -960,6 +1061,8 @@ private constructor(
                     description,
                     from,
                     price,
+                    reason,
+                    reasonCode,
                     scheduledAt,
                     status,
                     timestamp,
@@ -970,7 +1073,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Activity{activeContactPrice=$activeContactPrice, description=$description, from=$from, price=$price, scheduledAt=$scheduledAt, status=$status, timestamp=$timestamp, additionalProperties=$additionalProperties}"
+                "Activity{activeContactPrice=$activeContactPrice, description=$description, from=$from, price=$price, reason=$reason, reasonCode=$reasonCode, scheduledAt=$scheduledAt, status=$status, timestamp=$timestamp, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {

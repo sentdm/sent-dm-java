@@ -31,6 +31,8 @@ private constructor(
     private val channel: JsonField<String>,
     private val messageId: JsonField<String>,
     private val outboundNumber: JsonField<String>,
+    private val reason: JsonField<String>,
+    private val reasonCode: JsonField<String>,
     private val scheduleReason: JsonField<String>,
     private val scheduledAt: JsonField<String>,
     private val templateId: JsonField<String>,
@@ -52,6 +54,10 @@ private constructor(
         @JsonProperty("outbound_number")
         @ExcludeMissing
         outboundNumber: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("reason") @ExcludeMissing reason: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("reason_code")
+        @ExcludeMissing
+        reasonCode: JsonField<String> = JsonMissing.of(),
         @JsonProperty("schedule_reason")
         @ExcludeMissing
         scheduleReason: JsonField<String> = JsonMissing.of(),
@@ -73,6 +79,8 @@ private constructor(
         channel,
         messageId,
         outboundNumber,
+        reason,
+        reasonCode,
         scheduleReason,
         scheduledAt,
         templateId,
@@ -141,6 +149,27 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun outboundNumber(): Optional<String> = outboundNumber.getOptional("outbound_number")
+
+    /**
+     * A human-readable sentence for ReasonCode, for example "The recipient is not registered on
+     * this channel". Omitted whenever reason_code is.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun reason(): Optional<String> = reason.getOptional("reason")
+
+    /**
+     * Why the message reached this status, as a stable platform code such as DELIVERY_007 or
+     * BUSINESS_003. Present on message.failed, message.filtered and message.blocked; omitted on
+     * every status that needs no explanation. Switch on this rather than on Reason: the code is
+     * stable, the wording may be improved. It is the platform's classification of the outcome and
+     * never a carrier or vendor code.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun reasonCode(): Optional<String> = reasonCode.getOptional("reason_code")
 
     /**
      * message.scheduled only: why the message is held, either because you scheduled it or because
@@ -239,6 +268,20 @@ private constructor(
     fun _outboundNumber(): JsonField<String> = outboundNumber
 
     /**
+     * Returns the raw JSON value of [reason].
+     *
+     * Unlike [reason], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("reason") @ExcludeMissing fun _reason(): JsonField<String> = reason
+
+    /**
+     * Returns the raw JSON value of [reasonCode].
+     *
+     * Unlike [reasonCode], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("reason_code") @ExcludeMissing fun _reasonCode(): JsonField<String> = reasonCode
+
+    /**
      * Returns the raw JSON value of [scheduleReason].
      *
      * Unlike [scheduleReason], this method doesn't throw if the JSON field has an unexpected type.
@@ -314,6 +357,8 @@ private constructor(
         private var channel: JsonField<String> = JsonMissing.of()
         private var messageId: JsonField<String> = JsonMissing.of()
         private var outboundNumber: JsonField<String> = JsonMissing.of()
+        private var reason: JsonField<String> = JsonMissing.of()
+        private var reasonCode: JsonField<String> = JsonMissing.of()
         private var scheduleReason: JsonField<String> = JsonMissing.of()
         private var scheduledAt: JsonField<String> = JsonMissing.of()
         private var templateId: JsonField<String> = JsonMissing.of()
@@ -330,6 +375,8 @@ private constructor(
             channel = messageEventPayload.channel
             messageId = messageEventPayload.messageId
             outboundNumber = messageEventPayload.outboundNumber
+            reason = messageEventPayload.reason
+            reasonCode = messageEventPayload.reasonCode
             scheduleReason = messageEventPayload.scheduleReason
             scheduledAt = messageEventPayload.scheduledAt
             templateId = messageEventPayload.templateId
@@ -441,6 +488,44 @@ private constructor(
         fun outboundNumber(outboundNumber: JsonField<String>) = apply {
             this.outboundNumber = outboundNumber
         }
+
+        /**
+         * A human-readable sentence for ReasonCode, for example "The recipient is not registered on
+         * this channel". Omitted whenever reason_code is.
+         */
+        fun reason(reason: String?) = reason(JsonField.ofNullable(reason))
+
+        /** Alias for calling [Builder.reason] with `reason.orElse(null)`. */
+        fun reason(reason: Optional<String>) = reason(reason.getOrNull())
+
+        /**
+         * Sets [Builder.reason] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.reason] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun reason(reason: JsonField<String>) = apply { this.reason = reason }
+
+        /**
+         * Why the message reached this status, as a stable platform code such as DELIVERY_007 or
+         * BUSINESS_003. Present on message.failed, message.filtered and message.blocked; omitted on
+         * every status that needs no explanation. Switch on this rather than on Reason: the code is
+         * stable, the wording may be improved. It is the platform's classification of the outcome
+         * and never a carrier or vendor code.
+         */
+        fun reasonCode(reasonCode: String?) = reasonCode(JsonField.ofNullable(reasonCode))
+
+        /** Alias for calling [Builder.reasonCode] with `reasonCode.orElse(null)`. */
+        fun reasonCode(reasonCode: Optional<String>) = reasonCode(reasonCode.getOrNull())
+
+        /**
+         * Sets [Builder.reasonCode] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.reasonCode] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun reasonCode(reasonCode: JsonField<String>) = apply { this.reasonCode = reasonCode }
 
         /**
          * message.scheduled only: why the message is held, either because you scheduled it or
@@ -570,6 +655,8 @@ private constructor(
                 channel,
                 messageId,
                 outboundNumber,
+                reason,
+                reasonCode,
                 scheduleReason,
                 scheduledAt,
                 templateId,
@@ -601,6 +688,8 @@ private constructor(
         channel()
         messageId()
         outboundNumber()
+        reason()
+        reasonCode()
         scheduleReason()
         scheduledAt()
         templateId()
@@ -631,6 +720,8 @@ private constructor(
             (if (channel.asKnown().isPresent) 1 else 0) +
             (if (messageId.asKnown().isPresent) 1 else 0) +
             (if (outboundNumber.asKnown().isPresent) 1 else 0) +
+            (if (reason.asKnown().isPresent) 1 else 0) +
+            (if (reasonCode.asKnown().isPresent) 1 else 0) +
             (if (scheduleReason.asKnown().isPresent) 1 else 0) +
             (if (scheduledAt.asKnown().isPresent) 1 else 0) +
             (if (templateId.asKnown().isPresent) 1 else 0) +
@@ -650,6 +741,8 @@ private constructor(
             channel == other.channel &&
             messageId == other.messageId &&
             outboundNumber == other.outboundNumber &&
+            reason == other.reason &&
+            reasonCode == other.reasonCode &&
             scheduleReason == other.scheduleReason &&
             scheduledAt == other.scheduledAt &&
             templateId == other.templateId &&
@@ -667,6 +760,8 @@ private constructor(
             channel,
             messageId,
             outboundNumber,
+            reason,
+            reasonCode,
             scheduleReason,
             scheduledAt,
             templateId,
@@ -679,5 +774,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "MessageEventPayload{messageStatus=$messageStatus, accountId=$accountId, agentId=$agentId, body=$body, channel=$channel, messageId=$messageId, outboundNumber=$outboundNumber, scheduleReason=$scheduleReason, scheduledAt=$scheduledAt, templateId=$templateId, templateName=$templateName, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "MessageEventPayload{messageStatus=$messageStatus, accountId=$accountId, agentId=$agentId, body=$body, channel=$channel, messageId=$messageId, outboundNumber=$outboundNumber, reason=$reason, reasonCode=$reasonCode, scheduleReason=$scheduleReason, scheduledAt=$scheduledAt, templateId=$templateId, templateName=$templateName, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }
