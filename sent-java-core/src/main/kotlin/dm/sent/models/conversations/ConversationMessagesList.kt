@@ -236,6 +236,8 @@ private constructor(
         private val phone: JsonField<String>,
         private val phoneInternational: JsonField<String>,
         private val price: JsonField<Double>,
+        private val reason: JsonField<String>,
+        private val reasonCode: JsonField<String>,
         private val regionCode: JsonField<String>,
         private val status: JsonField<String>,
         private val templateCategory: JsonField<String>,
@@ -274,6 +276,10 @@ private constructor(
             @ExcludeMissing
             phoneInternational: JsonField<String> = JsonMissing.of(),
             @JsonProperty("price") @ExcludeMissing price: JsonField<Double> = JsonMissing.of(),
+            @JsonProperty("reason") @ExcludeMissing reason: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("reason_code")
+            @ExcludeMissing
+            reasonCode: JsonField<String> = JsonMissing.of(),
             @JsonProperty("region_code")
             @ExcludeMissing
             regionCode: JsonField<String> = JsonMissing.of(),
@@ -300,6 +306,8 @@ private constructor(
             phone,
             phoneInternational,
             price,
+            reason,
+            reasonCode,
             regionCode,
             status,
             templateCategory,
@@ -390,6 +398,27 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun price(): Optional<Double> = price.getOptional("price")
+
+        /**
+         * A human-readable sentence for reason_code, for example "Insufficient balance". Omitted
+         * whenever reason_code is.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun reason(): Optional<String> = reason.getOptional("reason")
+
+        /**
+         * Why the message is at its current status, as a stable platform code such as DELIVERY_007,
+         * BUSINESS_003 or DELIVERY_003. Present when the current status is FAILED, FILTERED or
+         * BLOCKED and the lifecycle was loaded; omitted otherwise. Switch on this rather than on
+         * reason: the code is stable, the wording may be improved. It is the platform's
+         * classification of the outcome, never a carrier or vendor code.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun reasonCode(): Optional<String> = reasonCode.getOptional("reason_code")
 
         /**
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -518,6 +547,22 @@ private constructor(
         @JsonProperty("price") @ExcludeMissing fun _price(): JsonField<Double> = price
 
         /**
+         * Returns the raw JSON value of [reason].
+         *
+         * Unlike [reason], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("reason") @ExcludeMissing fun _reason(): JsonField<String> = reason
+
+        /**
+         * Returns the raw JSON value of [reasonCode].
+         *
+         * Unlike [reasonCode], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("reason_code")
+        @ExcludeMissing
+        fun _reasonCode(): JsonField<String> = reasonCode
+
+        /**
          * Returns the raw JSON value of [regionCode].
          *
          * Unlike [regionCode], this method doesn't throw if the JSON field has an unexpected type.
@@ -595,6 +640,8 @@ private constructor(
             private var phone: JsonField<String> = JsonMissing.of()
             private var phoneInternational: JsonField<String> = JsonMissing.of()
             private var price: JsonField<Double> = JsonMissing.of()
+            private var reason: JsonField<String> = JsonMissing.of()
+            private var reasonCode: JsonField<String> = JsonMissing.of()
             private var regionCode: JsonField<String> = JsonMissing.of()
             private var status: JsonField<String> = JsonMissing.of()
             private var templateCategory: JsonField<String> = JsonMissing.of()
@@ -616,6 +663,8 @@ private constructor(
                 phone = message.phone
                 phoneInternational = message.phoneInternational
                 price = message.price
+                reason = message.reason
+                reasonCode = message.reasonCode
                 regionCode = message.regionCode
                 status = message.status
                 templateCategory = message.templateCategory
@@ -824,6 +873,45 @@ private constructor(
              */
             fun price(price: JsonField<Double>) = apply { this.price = price }
 
+            /**
+             * A human-readable sentence for reason_code, for example "Insufficient balance".
+             * Omitted whenever reason_code is.
+             */
+            fun reason(reason: String?) = reason(JsonField.ofNullable(reason))
+
+            /** Alias for calling [Builder.reason] with `reason.orElse(null)`. */
+            fun reason(reason: Optional<String>) = reason(reason.getOrNull())
+
+            /**
+             * Sets [Builder.reason] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.reason] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun reason(reason: JsonField<String>) = apply { this.reason = reason }
+
+            /**
+             * Why the message is at its current status, as a stable platform code such as
+             * DELIVERY_007, BUSINESS_003 or DELIVERY_003. Present when the current status is
+             * FAILED, FILTERED or BLOCKED and the lifecycle was loaded; omitted otherwise. Switch
+             * on this rather than on reason: the code is stable, the wording may be improved. It is
+             * the platform's classification of the outcome, never a carrier or vendor code.
+             */
+            fun reasonCode(reasonCode: String?) = reasonCode(JsonField.ofNullable(reasonCode))
+
+            /** Alias for calling [Builder.reasonCode] with `reasonCode.orElse(null)`. */
+            fun reasonCode(reasonCode: Optional<String>) = reasonCode(reasonCode.getOrNull())
+
+            /**
+             * Sets [Builder.reasonCode] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.reasonCode] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun reasonCode(reasonCode: JsonField<String>) = apply { this.reasonCode = reasonCode }
+
             fun regionCode(regionCode: String) = regionCode(JsonField.of(regionCode))
 
             /**
@@ -936,6 +1024,8 @@ private constructor(
                     phone,
                     phoneInternational,
                     price,
+                    reason,
+                    reasonCode,
                     regionCode,
                     status,
                     templateCategory,
@@ -973,6 +1063,8 @@ private constructor(
             phone()
             phoneInternational()
             price()
+            reason()
+            reasonCode()
             regionCode()
             status()
             templateCategory()
@@ -1009,6 +1101,8 @@ private constructor(
                 (if (phone.asKnown().isPresent) 1 else 0) +
                 (if (phoneInternational.asKnown().isPresent) 1 else 0) +
                 (if (price.asKnown().isPresent) 1 else 0) +
+                (if (reason.asKnown().isPresent) 1 else 0) +
+                (if (reasonCode.asKnown().isPresent) 1 else 0) +
                 (if (regionCode.asKnown().isPresent) 1 else 0) +
                 (if (status.asKnown().isPresent) 1 else 0) +
                 (if (templateCategory.asKnown().isPresent) 1 else 0) +
@@ -1022,6 +1116,8 @@ private constructor(
             private val status: JsonField<String>,
             private val timestamp: JsonField<OffsetDateTime>,
             private val description: JsonField<String>,
+            private val reason: JsonField<String>,
+            private val reasonCode: JsonField<String>,
             private val additionalProperties: MutableMap<String, JsonValue>,
         ) {
 
@@ -1036,7 +1132,13 @@ private constructor(
                 @JsonProperty("description")
                 @ExcludeMissing
                 description: JsonField<String> = JsonMissing.of(),
-            ) : this(status, timestamp, description, mutableMapOf())
+                @JsonProperty("reason")
+                @ExcludeMissing
+                reason: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("reason_code")
+                @ExcludeMissing
+                reasonCode: JsonField<String> = JsonMissing.of(),
+            ) : this(status, timestamp, description, reason, reasonCode, mutableMapOf())
 
             /**
              * @throws SentInvalidDataException if the JSON field has an unexpected type or is
@@ -1057,6 +1159,24 @@ private constructor(
              *   the server responded with an unexpected value).
              */
             fun description(): Optional<String> = description.getOptional("description")
+
+            /**
+             * A human-readable sentence for reason_code. Omitted whenever reason_code is.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun reason(): Optional<String> = reason.getOptional("reason")
+
+            /**
+             * Why the message reached this status, as a stable platform code such as DELIVERY_007.
+             * Present on FAILED, FILTERED and BLOCKED events; omitted on every status that needs no
+             * explanation. Same wire name and vocabulary as on the activities list and the webhook.
+             *
+             * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
+             *   the server responded with an unexpected value).
+             */
+            fun reasonCode(): Optional<String> = reasonCode.getOptional("reason_code")
 
             /**
              * Returns the raw JSON value of [status].
@@ -1084,6 +1204,23 @@ private constructor(
             @JsonProperty("description")
             @ExcludeMissing
             fun _description(): JsonField<String> = description
+
+            /**
+             * Returns the raw JSON value of [reason].
+             *
+             * Unlike [reason], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("reason") @ExcludeMissing fun _reason(): JsonField<String> = reason
+
+            /**
+             * Returns the raw JSON value of [reasonCode].
+             *
+             * Unlike [reasonCode], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("reason_code")
+            @ExcludeMissing
+            fun _reasonCode(): JsonField<String> = reasonCode
 
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -1117,6 +1254,8 @@ private constructor(
                 private var status: JsonField<String>? = null
                 private var timestamp: JsonField<OffsetDateTime>? = null
                 private var description: JsonField<String> = JsonMissing.of()
+                private var reason: JsonField<String> = JsonMissing.of()
+                private var reasonCode: JsonField<String> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                 @JvmSynthetic
@@ -1124,6 +1263,8 @@ private constructor(
                     status = event.status
                     timestamp = event.timestamp
                     description = event.description
+                    reason = event.reason
+                    reasonCode = event.reasonCode
                     additionalProperties = event.additionalProperties.toMutableMap()
                 }
 
@@ -1169,6 +1310,43 @@ private constructor(
                     this.description = description
                 }
 
+                /** A human-readable sentence for reason_code. Omitted whenever reason_code is. */
+                fun reason(reason: String?) = reason(JsonField.ofNullable(reason))
+
+                /** Alias for calling [Builder.reason] with `reason.orElse(null)`. */
+                fun reason(reason: Optional<String>) = reason(reason.getOrNull())
+
+                /**
+                 * Sets [Builder.reason] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.reason] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun reason(reason: JsonField<String>) = apply { this.reason = reason }
+
+                /**
+                 * Why the message reached this status, as a stable platform code such as
+                 * DELIVERY_007. Present on FAILED, FILTERED and BLOCKED events; omitted on every
+                 * status that needs no explanation. Same wire name and vocabulary as on the
+                 * activities list and the webhook.
+                 */
+                fun reasonCode(reasonCode: String?) = reasonCode(JsonField.ofNullable(reasonCode))
+
+                /** Alias for calling [Builder.reasonCode] with `reasonCode.orElse(null)`. */
+                fun reasonCode(reasonCode: Optional<String>) = reasonCode(reasonCode.getOrNull())
+
+                /**
+                 * Sets [Builder.reasonCode] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.reasonCode] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun reasonCode(reasonCode: JsonField<String>) = apply {
+                    this.reasonCode = reasonCode
+                }
+
                 fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                     this.additionalProperties.clear()
                     putAllAdditionalProperties(additionalProperties)
@@ -1209,6 +1387,8 @@ private constructor(
                         checkRequired("status", status),
                         checkRequired("timestamp", timestamp),
                         description,
+                        reason,
+                        reasonCode,
                         additionalProperties.toMutableMap(),
                     )
             }
@@ -1233,6 +1413,8 @@ private constructor(
                 status()
                 timestamp()
                 description()
+                reason()
+                reasonCode()
                 validated = true
             }
 
@@ -1254,7 +1436,9 @@ private constructor(
             internal fun validity(): Int =
                 (if (status.asKnown().isPresent) 1 else 0) +
                     (if (timestamp.asKnown().isPresent) 1 else 0) +
-                    (if (description.asKnown().isPresent) 1 else 0)
+                    (if (description.asKnown().isPresent) 1 else 0) +
+                    (if (reason.asKnown().isPresent) 1 else 0) +
+                    (if (reasonCode.asKnown().isPresent) 1 else 0)
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) {
@@ -1265,17 +1449,26 @@ private constructor(
                     status == other.status &&
                     timestamp == other.timestamp &&
                     description == other.description &&
+                    reason == other.reason &&
+                    reasonCode == other.reasonCode &&
                     additionalProperties == other.additionalProperties
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(status, timestamp, description, additionalProperties)
+                Objects.hash(
+                    status,
+                    timestamp,
+                    description,
+                    reason,
+                    reasonCode,
+                    additionalProperties,
+                )
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Event{status=$status, timestamp=$timestamp, description=$description, additionalProperties=$additionalProperties}"
+                "Event{status=$status, timestamp=$timestamp, description=$description, reason=$reason, reasonCode=$reasonCode, additionalProperties=$additionalProperties}"
         }
 
         /**
@@ -2182,17 +2375,30 @@ private constructor(
             }
 
             /**
-             * One attachment on a message: a customer-supplied public URL handed to the carrier
-             * as-is.
+             * One attachment on a message, in either direction — and in both, a URL somebody else
+             * hosts.
              *
-             *              A URL and nothing else. sent.dm never takes custody of MMS media — the customer hosts it and we
-             *              pass the link through at send time — so there is no storage key, size or expiry to record. If we ever
-             *              do host attachments, that belongs with the change that introduces the hosting, not here.
+             * Outbound: the customer supplied a public URL and we handed it to the carrier.
+             * Inbound: the carrier hosts the file and we record where. sent.dm never holds the
+             * bytes, so there is no key, no expiry bookkeeping and nothing minted per read — what
+             * is stored is what is served.
+             *
+             * An inbound link expires on the carrier's own schedule and is unauthenticated. That is
+             * the customer's to manage, and it is documented where they will see it rather than
+             * only here — a recipient who needs an attachment to outlive that window copies it on
+             * receipt.
+             *
+             * Storing a presigned URL is the specific mistake this shape still avoids:
+             * M260826130000 and M260826140000 exist because RCS assets were stored as signed URLs
+             * and went stale. Nothing here is signed.
              */
             class Media
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(
                 private val mediaType: JsonField<String>,
+                private val mimeType: JsonField<String>,
+                private val sizeBytes: JsonField<Long>,
+                private val sourceHashSha256: JsonField<String>,
                 private val url: JsonField<String>,
                 private val additionalProperties: MutableMap<String, JsonValue>,
             ) {
@@ -2202,12 +2408,21 @@ private constructor(
                     @JsonProperty("mediaType")
                     @ExcludeMissing
                     mediaType: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("mimeType")
+                    @ExcludeMissing
+                    mimeType: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("sizeBytes")
+                    @ExcludeMissing
+                    sizeBytes: JsonField<Long> = JsonMissing.of(),
+                    @JsonProperty("sourceHashSha256")
+                    @ExcludeMissing
+                    sourceHashSha256: JsonField<String> = JsonMissing.of(),
                     @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
-                ) : this(mediaType, url, mutableMapOf())
+                ) : this(mediaType, mimeType, sizeBytes, sourceHashSha256, url, mutableMapOf())
 
                 /**
-                 * One of Constants.MmsMediaTypes when known. Advisory — the carrier reads the
-                 * fetched object's Content-Type, not this.
+                 * One of MmsMediaTypes when the content type is known. Advisory — a reader should
+                 * trust the fetched object's own Content-Type.
                  *
                  * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
                  *   if the server responded with an unexpected value).
@@ -2215,6 +2430,38 @@ private constructor(
                 fun mediaType(): Optional<String> = mediaType.getOptional("mediaType")
 
                 /**
+                 * Content type as the provider declared it. Null when it declared none.
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun mimeType(): Optional<String> = mimeType.getOptional("mimeType")
+
+                /**
+                 * Size as the provider declared it. Never measured here — nothing downloads the
+                 * file.
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun sizeBytes(): Optional<Long> = sizeBytes.getOptional("sizeBytes")
+
+                /**
+                 * Inbound only: the SHA-256 the provider declared alongside the attachment, when it
+                 * declared one. Relayed to the customer so they can verify what they fetch matches
+                 * what the carrier said it sent. It is the only integrity signal available on an
+                 * attachment nobody here has read.
+                 *
+                 * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
+                 *   if the server responded with an unexpected value).
+                 */
+                fun sourceHashSha256(): Optional<String> =
+                    sourceHashSha256.getOptional("sourceHashSha256")
+
+                /**
+                 * Where the file lives. Outbound: the URL the customer gave us and the carrier
+                 * fetched. Inbound: the URL the carrier hosts it at, relayed unchanged.
+                 *
                  * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g.
                  *   if the server responded with an unexpected value).
                  */
@@ -2229,6 +2476,36 @@ private constructor(
                 @JsonProperty("mediaType")
                 @ExcludeMissing
                 fun _mediaType(): JsonField<String> = mediaType
+
+                /**
+                 * Returns the raw JSON value of [mimeType].
+                 *
+                 * Unlike [mimeType], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("mimeType")
+                @ExcludeMissing
+                fun _mimeType(): JsonField<String> = mimeType
+
+                /**
+                 * Returns the raw JSON value of [sizeBytes].
+                 *
+                 * Unlike [sizeBytes], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("sizeBytes")
+                @ExcludeMissing
+                fun _sizeBytes(): JsonField<Long> = sizeBytes
+
+                /**
+                 * Returns the raw JSON value of [sourceHashSha256].
+                 *
+                 * Unlike [sourceHashSha256], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("sourceHashSha256")
+                @ExcludeMissing
+                fun _sourceHashSha256(): JsonField<String> = sourceHashSha256
 
                 /**
                  * Returns the raw JSON value of [url].
@@ -2259,19 +2536,25 @@ private constructor(
                 class Builder internal constructor() {
 
                     private var mediaType: JsonField<String> = JsonMissing.of()
+                    private var mimeType: JsonField<String> = JsonMissing.of()
+                    private var sizeBytes: JsonField<Long> = JsonMissing.of()
+                    private var sourceHashSha256: JsonField<String> = JsonMissing.of()
                     private var url: JsonField<String> = JsonMissing.of()
                     private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                     @JvmSynthetic
                     internal fun from(media: Media) = apply {
                         mediaType = media.mediaType
+                        mimeType = media.mimeType
+                        sizeBytes = media.sizeBytes
+                        sourceHashSha256 = media.sourceHashSha256
                         url = media.url
                         additionalProperties = media.additionalProperties.toMutableMap()
                     }
 
                     /**
-                     * One of Constants.MmsMediaTypes when known. Advisory — the carrier reads the
-                     * fetched object's Content-Type, not this.
+                     * One of MmsMediaTypes when the content type is known. Advisory — a reader
+                     * should trust the fetched object's own Content-Type.
                      */
                     fun mediaType(mediaType: String?) = mediaType(JsonField.ofNullable(mediaType))
 
@@ -2289,7 +2572,81 @@ private constructor(
                         this.mediaType = mediaType
                     }
 
-                    fun url(url: String) = url(JsonField.of(url))
+                    /** Content type as the provider declared it. Null when it declared none. */
+                    fun mimeType(mimeType: String?) = mimeType(JsonField.ofNullable(mimeType))
+
+                    /** Alias for calling [Builder.mimeType] with `mimeType.orElse(null)`. */
+                    fun mimeType(mimeType: Optional<String>) = mimeType(mimeType.getOrNull())
+
+                    /**
+                     * Sets [Builder.mimeType] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.mimeType] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun mimeType(mimeType: JsonField<String>) = apply { this.mimeType = mimeType }
+
+                    /**
+                     * Size as the provider declared it. Never measured here — nothing downloads the
+                     * file.
+                     */
+                    fun sizeBytes(sizeBytes: Long?) = sizeBytes(JsonField.ofNullable(sizeBytes))
+
+                    /**
+                     * Alias for [Builder.sizeBytes].
+                     *
+                     * This unboxed primitive overload exists for backwards compatibility.
+                     */
+                    fun sizeBytes(sizeBytes: Long) = sizeBytes(sizeBytes as Long?)
+
+                    /** Alias for calling [Builder.sizeBytes] with `sizeBytes.orElse(null)`. */
+                    fun sizeBytes(sizeBytes: Optional<Long>) = sizeBytes(sizeBytes.getOrNull())
+
+                    /**
+                     * Sets [Builder.sizeBytes] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.sizeBytes] with a well-typed [Long] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun sizeBytes(sizeBytes: JsonField<Long>) = apply { this.sizeBytes = sizeBytes }
+
+                    /**
+                     * Inbound only: the SHA-256 the provider declared alongside the attachment,
+                     * when it declared one. Relayed to the customer so they can verify what they
+                     * fetch matches what the carrier said it sent. It is the only integrity signal
+                     * available on an attachment nobody here has read.
+                     */
+                    fun sourceHashSha256(sourceHashSha256: String?) =
+                        sourceHashSha256(JsonField.ofNullable(sourceHashSha256))
+
+                    /**
+                     * Alias for calling [Builder.sourceHashSha256] with
+                     * `sourceHashSha256.orElse(null)`.
+                     */
+                    fun sourceHashSha256(sourceHashSha256: Optional<String>) =
+                        sourceHashSha256(sourceHashSha256.getOrNull())
+
+                    /**
+                     * Sets [Builder.sourceHashSha256] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.sourceHashSha256] with a well-typed [String]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun sourceHashSha256(sourceHashSha256: JsonField<String>) = apply {
+                        this.sourceHashSha256 = sourceHashSha256
+                    }
+
+                    /**
+                     * Where the file lives. Outbound: the URL the customer gave us and the carrier
+                     * fetched. Inbound: the URL the carrier hosts it at, relayed unchanged.
+                     */
+                    fun url(url: String?) = url(JsonField.ofNullable(url))
+
+                    /** Alias for calling [Builder.url] with `url.orElse(null)`. */
+                    fun url(url: Optional<String>) = url(url.getOrNull())
 
                     /**
                      * Sets [Builder.url] to an arbitrary JSON value.
@@ -2327,7 +2684,15 @@ private constructor(
                      *
                      * Further updates to this [Builder] will not mutate the returned instance.
                      */
-                    fun build(): Media = Media(mediaType, url, additionalProperties.toMutableMap())
+                    fun build(): Media =
+                        Media(
+                            mediaType,
+                            mimeType,
+                            sizeBytes,
+                            sourceHashSha256,
+                            url,
+                            additionalProperties.toMutableMap(),
+                        )
                 }
 
                 private var validated: Boolean = false
@@ -2348,6 +2713,9 @@ private constructor(
                     }
 
                     mediaType()
+                    mimeType()
+                    sizeBytes()
+                    sourceHashSha256()
                     url()
                     validated = true
                 }
@@ -2369,6 +2737,9 @@ private constructor(
                 @JvmSynthetic
                 internal fun validity(): Int =
                     (if (mediaType.asKnown().isPresent) 1 else 0) +
+                        (if (mimeType.asKnown().isPresent) 1 else 0) +
+                        (if (sizeBytes.asKnown().isPresent) 1 else 0) +
+                        (if (sourceHashSha256.asKnown().isPresent) 1 else 0) +
                         (if (url.asKnown().isPresent) 1 else 0)
 
                 override fun equals(other: Any?): Boolean {
@@ -2378,18 +2749,28 @@ private constructor(
 
                     return other is Media &&
                         mediaType == other.mediaType &&
+                        mimeType == other.mimeType &&
+                        sizeBytes == other.sizeBytes &&
+                        sourceHashSha256 == other.sourceHashSha256 &&
                         url == other.url &&
                         additionalProperties == other.additionalProperties
                 }
 
                 private val hashCode: Int by lazy {
-                    Objects.hash(mediaType, url, additionalProperties)
+                    Objects.hash(
+                        mediaType,
+                        mimeType,
+                        sizeBytes,
+                        sourceHashSha256,
+                        url,
+                        additionalProperties,
+                    )
                 }
 
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "Media{mediaType=$mediaType, url=$url, additionalProperties=$additionalProperties}"
+                    "Media{mediaType=$mediaType, mimeType=$mimeType, sizeBytes=$sizeBytes, sourceHashSha256=$sourceHashSha256, url=$url, additionalProperties=$additionalProperties}"
             }
 
             override fun equals(other: Any?): Boolean {
@@ -2445,6 +2826,8 @@ private constructor(
                 phone == other.phone &&
                 phoneInternational == other.phoneInternational &&
                 price == other.price &&
+                reason == other.reason &&
+                reasonCode == other.reasonCode &&
                 regionCode == other.regionCode &&
                 status == other.status &&
                 templateCategory == other.templateCategory &&
@@ -2467,6 +2850,8 @@ private constructor(
                 phone,
                 phoneInternational,
                 price,
+                reason,
+                reasonCode,
                 regionCode,
                 status,
                 templateCategory,
@@ -2479,7 +2864,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Message{id=$id, activeContactPrice=$activeContactPrice, channel=$channel, contactId=$contactId, createdAt=$createdAt, customerId=$customerId, direction=$direction, events=$events, messageBody=$messageBody, phone=$phone, phoneInternational=$phoneInternational, price=$price, regionCode=$regionCode, status=$status, templateCategory=$templateCategory, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
+            "Message{id=$id, activeContactPrice=$activeContactPrice, channel=$channel, contactId=$contactId, createdAt=$createdAt, customerId=$customerId, direction=$direction, events=$events, messageBody=$messageBody, phone=$phone, phoneInternational=$phoneInternational, price=$price, reason=$reason, reasonCode=$reasonCode, regionCode=$regionCode, status=$status, templateCategory=$templateCategory, templateId=$templateId, templateName=$templateName, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
