@@ -49,6 +49,16 @@ private constructor(
     fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
+     * Create this template automatically on every sender profile of the organization, now and in
+     * future (default: false). Accepted only from an organization that has been enabled for it, and
+     * only at creation — it cannot be changed afterwards.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun autoCreateForSp(): Optional<Boolean> = body.autoCreateForSp()
+
+    /**
      * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
      * provided)
      *
@@ -95,6 +105,13 @@ private constructor(
      * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
+
+    /**
+     * Returns the raw JSON value of [autoCreateForSp].
+     *
+     * Unlike [autoCreateForSp], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _autoCreateForSp(): JsonField<Boolean> = body._autoCreateForSp()
 
     /**
      * Returns the raw JSON value of [category].
@@ -184,10 +201,10 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [sandbox]
+         * - [autoCreateForSp]
          * - [category]
          * - [creationSource]
          * - [definition]
-         * - [language]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -205,6 +222,26 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
+
+        /**
+         * Create this template automatically on every sender profile of the organization, now and
+         * in future (default: false). Accepted only from an organization that has been enabled for
+         * it, and only at creation — it cannot be changed afterwards.
+         */
+        fun autoCreateForSp(autoCreateForSp: Boolean) = apply {
+            body.autoCreateForSp(autoCreateForSp)
+        }
+
+        /**
+         * Sets [Builder.autoCreateForSp] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.autoCreateForSp] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun autoCreateForSp(autoCreateForSp: JsonField<Boolean>) = apply {
+            body.autoCreateForSp(autoCreateForSp)
+        }
 
         /**
          * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -435,6 +472,7 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val sandbox: JsonField<Boolean>,
+        private val autoCreateForSp: JsonField<Boolean>,
         private val category: JsonField<String>,
         private val creationSource: JsonField<String>,
         private val definition: JsonField<TemplateDefinition>,
@@ -446,6 +484,9 @@ private constructor(
         @JsonCreator
         private constructor(
             @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("auto_create_for_sp")
+            @ExcludeMissing
+            autoCreateForSp: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("category")
             @ExcludeMissing
             category: JsonField<String> = JsonMissing.of(),
@@ -463,6 +504,7 @@ private constructor(
             submitForReview: JsonField<Boolean> = JsonMissing.of(),
         ) : this(
             sandbox,
+            autoCreateForSp,
             category,
             creationSource,
             definition,
@@ -482,6 +524,16 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
+
+        /**
+         * Create this template automatically on every sender profile of the organization, now and
+         * in future (default: false). Accepted only from an organization that has been enabled for
+         * it, and only at creation — it cannot be changed afterwards.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun autoCreateForSp(): Optional<Boolean> = autoCreateForSp.getOptional("auto_create_for_sp")
 
         /**
          * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -530,6 +582,16 @@ private constructor(
          * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
+        /**
+         * Returns the raw JSON value of [autoCreateForSp].
+         *
+         * Unlike [autoCreateForSp], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("auto_create_for_sp")
+        @ExcludeMissing
+        fun _autoCreateForSp(): JsonField<Boolean> = autoCreateForSp
 
         /**
          * Returns the raw JSON value of [category].
@@ -596,6 +658,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
+            private var autoCreateForSp: JsonField<Boolean> = JsonMissing.of()
             private var category: JsonField<String> = JsonMissing.of()
             private var creationSource: JsonField<String> = JsonMissing.of()
             private var definition: JsonField<TemplateDefinition> = JsonMissing.of()
@@ -606,6 +669,7 @@ private constructor(
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 sandbox = body.sandbox
+                autoCreateForSp = body.autoCreateForSp
                 category = body.category
                 creationSource = body.creationSource
                 definition = body.definition
@@ -628,6 +692,25 @@ private constructor(
              * supported value.
              */
             fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
+            /**
+             * Create this template automatically on every sender profile of the organization, now
+             * and in future (default: false). Accepted only from an organization that has been
+             * enabled for it, and only at creation — it cannot be changed afterwards.
+             */
+            fun autoCreateForSp(autoCreateForSp: Boolean) =
+                autoCreateForSp(JsonField.of(autoCreateForSp))
+
+            /**
+             * Sets [Builder.autoCreateForSp] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.autoCreateForSp] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun autoCreateForSp(autoCreateForSp: JsonField<Boolean>) = apply {
+                this.autoCreateForSp = autoCreateForSp
+            }
 
             /**
              * Template category: MARKETING, UTILITY, AUTHENTICATION (optional, auto-detected if not
@@ -739,6 +822,7 @@ private constructor(
             fun build(): Body =
                 Body(
                     sandbox,
+                    autoCreateForSp,
                     category,
                     creationSource,
                     definition,
@@ -765,6 +849,7 @@ private constructor(
             }
 
             sandbox()
+            autoCreateForSp()
             category()
             creationSource()
             definition().ifPresent { it.validate() }
@@ -790,6 +875,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (sandbox.asKnown().isPresent) 1 else 0) +
+                (if (autoCreateForSp.asKnown().isPresent) 1 else 0) +
                 (if (category.asKnown().isPresent) 1 else 0) +
                 (if (creationSource.asKnown().isPresent) 1 else 0) +
                 (definition.asKnown().getOrNull()?.validity() ?: 0) +
@@ -803,6 +889,7 @@ private constructor(
 
             return other is Body &&
                 sandbox == other.sandbox &&
+                autoCreateForSp == other.autoCreateForSp &&
                 category == other.category &&
                 creationSource == other.creationSource &&
                 definition == other.definition &&
@@ -814,6 +901,7 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 sandbox,
+                autoCreateForSp,
                 category,
                 creationSource,
                 definition,
@@ -826,7 +914,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, category=$category, creationSource=$creationSource, definition=$definition, language=$language, submitForReview=$submitForReview, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, autoCreateForSp=$autoCreateForSp, category=$category, creationSource=$creationSource, definition=$definition, language=$language, submitForReview=$submitForReview, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

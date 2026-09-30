@@ -206,7 +206,11 @@ interface WebhookServiceAsync {
     ): CompletableFuture<WebhookListEventTypesResponse> =
         listEventTypes(WebhookListEventTypesParams.none(), requestOptions)
 
-    /** Retrieves a paginated list of delivery events for the specified webhook. */
+    /**
+     * Retrieves a paginated list of delivery events for the specified webhook. If the webhook is
+     * cloned onto your sender profiles, the list includes what those clones received; read
+     * payload.account_id to tell whose event it is.
+     */
     fun listEvents(id: String): CompletableFuture<WebhookListEventsPageAsync> =
         listEvents(id, WebhookListEventsParams.none())
 

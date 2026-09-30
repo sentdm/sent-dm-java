@@ -276,6 +276,7 @@ private constructor(
         private val createdAt: JsonField<OffsetDateTime>,
         private val description: JsonField<String>,
         private val email: JsonField<String>,
+        private val enableTemplateAutoCreationForSp: JsonField<Boolean>,
         private val icon: JsonField<String>,
         private val name: JsonField<String>,
         private val organizationId: JsonField<String>,
@@ -302,6 +303,9 @@ private constructor(
             @ExcludeMissing
             description: JsonField<String> = JsonMissing.of(),
             @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("enable_template_auto_creation_for_sp")
+            @ExcludeMissing
+            enableTemplateAutoCreationForSp: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("icon") @ExcludeMissing icon: JsonField<String> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("organization_id")
@@ -330,6 +334,7 @@ private constructor(
             createdAt,
             description,
             email,
+            enableTemplateAutoCreationForSp,
             icon,
             name,
             organizationId,
@@ -383,6 +388,27 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun email(): Optional<String> = email.getOptional("email")
+
+        /**
+         * Whether this account may mark a template for automatic creation on its sender profiles.
+         * Granted by Sent per account and off by default, so it is what a template-create form
+         * reads to decide whether to offer the option at all — marking a template without it does
+         * nothing.
+         *
+         * Top-level rather than inside settings, which is written for type: "profile" only and so
+         * would never carry it to the account type that can act on it.
+         *
+         * This is the capability, not the stored flag: a profile reports false whatever its own row
+         * holds. A sender profile owns no sender profiles, so a template it marked would have
+         * nothing to be created on and the fan-out would never read the flag. The admin GET
+         * /customers/{id} reports the stored value instead, because that is the one an operator
+         * granted.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun enableTemplateAutoCreationForSp(): Optional<Boolean> =
+            enableTemplateAutoCreationForSp.getOptional("enable_template_auto_creation_for_sp")
 
         /**
          * Account icon URL
@@ -519,6 +545,16 @@ private constructor(
         @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<String> = email
 
         /**
+         * Returns the raw JSON value of [enableTemplateAutoCreationForSp].
+         *
+         * Unlike [enableTemplateAutoCreationForSp], this method doesn't throw if the JSON field has
+         * an unexpected type.
+         */
+        @JsonProperty("enable_template_auto_creation_for_sp")
+        @ExcludeMissing
+        fun _enableTemplateAutoCreationForSp(): JsonField<Boolean> = enableTemplateAutoCreationForSp
+
+        /**
          * Returns the raw JSON value of [icon].
          *
          * Unlike [icon], this method doesn't throw if the JSON field has an unexpected type.
@@ -627,6 +663,7 @@ private constructor(
             private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
             private var email: JsonField<String> = JsonMissing.of()
+            private var enableTemplateAutoCreationForSp: JsonField<Boolean> = JsonMissing.of()
             private var icon: JsonField<String> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
             private var organizationId: JsonField<String> = JsonMissing.of()
@@ -646,6 +683,7 @@ private constructor(
                 createdAt = data.createdAt
                 description = data.description
                 email = data.email
+                enableTemplateAutoCreationForSp = data.enableTemplateAutoCreationForSp
                 icon = data.icon
                 name = data.name
                 organizationId = data.organizationId
@@ -731,6 +769,35 @@ private constructor(
              * supported value.
              */
             fun email(email: JsonField<String>) = apply { this.email = email }
+
+            /**
+             * Whether this account may mark a template for automatic creation on its sender
+             * profiles. Granted by Sent per account and off by default, so it is what a
+             * template-create form reads to decide whether to offer the option at all — marking a
+             * template without it does nothing.
+             *
+             * Top-level rather than inside settings, which is written for type: "profile" only and
+             * so would never carry it to the account type that can act on it.
+             *
+             * This is the capability, not the stored flag: a profile reports false whatever its own
+             * row holds. A sender profile owns no sender profiles, so a template it marked would
+             * have nothing to be created on and the fan-out would never read the flag. The admin
+             * GET /customers/{id} reports the stored value instead, because that is the one an
+             * operator granted.
+             */
+            fun enableTemplateAutoCreationForSp(enableTemplateAutoCreationForSp: Boolean) =
+                enableTemplateAutoCreationForSp(JsonField.of(enableTemplateAutoCreationForSp))
+
+            /**
+             * Sets [Builder.enableTemplateAutoCreationForSp] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.enableTemplateAutoCreationForSp] with a well-typed
+             * [Boolean] value instead. This method is primarily for setting the field to an
+             * undocumented or not yet supported value.
+             */
+            fun enableTemplateAutoCreationForSp(
+                enableTemplateAutoCreationForSp: JsonField<Boolean>
+            ) = apply { this.enableTemplateAutoCreationForSp = enableTemplateAutoCreationForSp }
 
             /** Account icon URL */
             fun icon(icon: String?) = icon(JsonField.ofNullable(icon))
@@ -960,6 +1027,7 @@ private constructor(
                     createdAt,
                     description,
                     email,
+                    enableTemplateAutoCreationForSp,
                     icon,
                     name,
                     organizationId,
@@ -995,6 +1063,7 @@ private constructor(
             createdAt()
             description()
             email()
+            enableTemplateAutoCreationForSp()
             icon()
             name()
             organizationId()
@@ -1029,6 +1098,7 @@ private constructor(
                 (if (createdAt.asKnown().isPresent) 1 else 0) +
                 (if (description.asKnown().isPresent) 1 else 0) +
                 (if (email.asKnown().isPresent) 1 else 0) +
+                (if (enableTemplateAutoCreationForSp.asKnown().isPresent) 1 else 0) +
                 (if (icon.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (if (organizationId.asKnown().isPresent) 1 else 0) +
@@ -2500,6 +2570,7 @@ private constructor(
                 createdAt == other.createdAt &&
                 description == other.description &&
                 email == other.email &&
+                enableTemplateAutoCreationForSp == other.enableTemplateAutoCreationForSp &&
                 icon == other.icon &&
                 name == other.name &&
                 organizationId == other.organizationId &&
@@ -2520,6 +2591,7 @@ private constructor(
                 createdAt,
                 description,
                 email,
+                enableTemplateAutoCreationForSp,
                 icon,
                 name,
                 organizationId,
@@ -2537,7 +2609,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Data{id=$id, channels=$channels, createdAt=$createdAt, description=$description, email=$email, icon=$icon, name=$name, organizationId=$organizationId, profiles=$profiles, sendingPhoneNumber=$sendingPhoneNumber, sendingPhoneNumberProfileId=$sendingPhoneNumberProfileId, settings=$settings, shortName=$shortName, status=$status, type=$type, additionalProperties=$additionalProperties}"
+            "Data{id=$id, channels=$channels, createdAt=$createdAt, description=$description, email=$email, enableTemplateAutoCreationForSp=$enableTemplateAutoCreationForSp, icon=$icon, name=$name, organizationId=$organizationId, profiles=$profiles, sendingPhoneNumber=$sendingPhoneNumber, sendingPhoneNumberProfileId=$sendingPhoneNumberProfileId, settings=$settings, shortName=$shortName, status=$status, type=$type, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

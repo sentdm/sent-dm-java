@@ -46,6 +46,16 @@ internal class WebhookServiceAsyncTest {
                     )
                     .eventTypes(listOf("contact", "message", "templates"))
                     .retryCount(3)
+                    .senderProfile(
+                        WebhookCreateParams.SenderProfile.builder()
+                            .eventFilters(
+                                WebhookCreateParams.SenderProfile.EventFilters.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                                    .build()
+                            )
+                            .addEventType("string")
+                            .build()
+                    )
                     .timeoutSeconds(30)
                     .build()
             )
@@ -97,6 +107,16 @@ internal class WebhookServiceAsyncTest {
                     )
                     .eventTypes(listOf("contact", "message", "templates"))
                     .retryCount(5)
+                    .senderProfile(
+                        WebhookUpdateParams.SenderProfile.builder()
+                            .eventFilters(
+                                WebhookUpdateParams.SenderProfile.EventFilters.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                                    .build()
+                            )
+                            .addEventType("string")
+                            .build()
+                    )
                     .timeoutSeconds(60)
                     .build()
             )

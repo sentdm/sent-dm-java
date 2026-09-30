@@ -77,6 +77,8 @@ internal class ProGuardCompatibilityTest {
                                 .description("description")
                                 .from("from")
                                 .price("price")
+                                .reason("reason")
+                                .reasonCode("reason_code")
                                 .scheduledAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .status("status")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))

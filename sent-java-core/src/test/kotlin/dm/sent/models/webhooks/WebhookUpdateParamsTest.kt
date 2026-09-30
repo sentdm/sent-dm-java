@@ -26,6 +26,16 @@ internal class WebhookUpdateParamsTest {
             )
             .eventTypes(listOf("contact", "message", "templates"))
             .retryCount(5)
+            .senderProfile(
+                WebhookUpdateParams.SenderProfile.builder()
+                    .eventFilters(
+                        WebhookUpdateParams.SenderProfile.EventFilters.builder()
+                            .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                            .build()
+                    )
+                    .addEventType("string")
+                    .build()
+            )
             .timeoutSeconds(60)
             .build()
     }
@@ -60,6 +70,16 @@ internal class WebhookUpdateParamsTest {
                 )
                 .eventTypes(listOf("contact", "message", "templates"))
                 .retryCount(5)
+                .senderProfile(
+                    WebhookUpdateParams.SenderProfile.builder()
+                        .eventFilters(
+                            WebhookUpdateParams.SenderProfile.EventFilters.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                                .build()
+                        )
+                        .addEventType("string")
+                        .build()
+                )
                 .timeoutSeconds(60)
                 .build()
 
@@ -104,6 +124,16 @@ internal class WebhookUpdateParamsTest {
                 )
                 .eventTypes(listOf("contact", "message", "templates"))
                 .retryCount(5)
+                .senderProfile(
+                    WebhookUpdateParams.SenderProfile.builder()
+                        .eventFilters(
+                            WebhookUpdateParams.SenderProfile.EventFilters.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                                .build()
+                        )
+                        .addEventType("string")
+                        .build()
+                )
                 .timeoutSeconds(60)
                 .build()
 
@@ -120,6 +150,17 @@ internal class WebhookUpdateParamsTest {
             )
         assertThat(body.eventTypes().getOrNull()).containsExactly("contact", "message", "templates")
         assertThat(body.retryCount()).contains(5)
+        assertThat(body.senderProfile())
+            .contains(
+                WebhookUpdateParams.SenderProfile.builder()
+                    .eventFilters(
+                        WebhookUpdateParams.SenderProfile.EventFilters.builder()
+                            .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                            .build()
+                    )
+                    .addEventType("string")
+                    .build()
+            )
         assertThat(body.timeoutSeconds()).contains(60)
     }
 
