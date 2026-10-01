@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.0](https://github.com/sentdm/sent-dm-java/compare/v0.40.0...v0.41.0) (2026-10-01)
+
+
+### Features
+
+* **api:** add voice and calls endpoints to the SDKs ([9c539b7](https://github.com/sentdm/sent-dm-java/commit/9c539b70de987fa95579b4485ab45bfb494287be))
+
 ## [0.40.0](https://github.com/sentdm/sent-dm-java/compare/v0.39.0...v0.40.0) (2026-09-30)
 
 
