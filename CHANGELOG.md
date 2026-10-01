@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.40.0](https://github.com/sentdm/sent-dm-java/compare/v0.39.0...v0.40.0) (2026-09-30)
+
+
+### Features
+
+* **api:** sync OpenAPI spec from production ([6d4ea72](https://github.com/sentdm/sent-dm-java/commit/6d4ea72f66473e81c294ea489a9e8183a86b0b7c))
+
 ## [0.39.0](https://github.com/sentdm/sent-dm-java/compare/v0.38.0...v0.39.0) (2026-09-30)
 
 
