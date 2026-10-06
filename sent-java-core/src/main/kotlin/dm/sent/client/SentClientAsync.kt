@@ -3,6 +3,8 @@
 package dm.sent.client
 
 import dm.sent.core.ClientOptions
+import dm.sent.services.async.CallServiceAsync
+import dm.sent.services.async.ChannelServiceAsync
 import dm.sent.services.async.ContactServiceAsync
 import dm.sent.services.async.ConversationServiceAsync
 import dm.sent.services.async.MeServiceAsync
@@ -119,6 +121,10 @@ interface SentClientAsync {
      * message — typically one BLOCKED for insufficient balance — back through the send pipeline. It
      * is a new attempt, not a free retry: every policy runs again, the message is billed again, and
      * its status webhooks fire again. A FILTERED message is never resendable.
+     *
+     * **A scheduled message can be called off.** `POST /v3/messages/{id}/cancel` cancels a send you
+     * scheduled with `scheduled_at`, as long as it has not been released yet. Cancelling is free,
+     * fires `message.cancelled`, and is final — a cancelled message cannot be resent.
      */
     fun messages(): MessageServiceAsync
 
@@ -143,6 +149,27 @@ interface SentClientAsync {
      * Read-only. Sending is **Messages**; a reply arrives here and through your webhooks.
      */
     fun conversations(): ConversationServiceAsync
+
+    /**
+     * Phone calls from the numbers you hold, driven by your own callback URL.
+     *
+     * `POST /v3/channels/voice` enables a number for calls, with the callback URL Sent asks what to
+     * do with each call on it, and `POST /v3/channels/voice/tokens` mints a short-lived token that
+     * lets a user of your app place and receive calls as that number. When a call arrives or a
+     * caller presses a key, a signed question is POSTed to the callback URL and the answer decides
+     * the call; `POST /v3/channels/voice/{number}/test` checks the URL answers the way we need
+     * before a real call reaches it, and `POST /v3/channels/voice/{number}/rotate-secret` replaces
+     * the signing secret. The call events themselves (`call.completed` and the rest) arrive through
+     * your webhooks.
+     *
+     * Every call is a record under `/v3/calls`: read it, list its recordings once one is ready,
+     * hang it up, start or stop recording, and add, mute or remove conference participants while it
+     * is live. A leg to a phone number runs for at most what your balance affords at the
+     * destination's rate.
+     */
+    fun calls(): CallServiceAsync
+
+    fun channels(): ChannelServiceAsync
 
     /**
      * Who the current key is.
@@ -246,6 +273,10 @@ interface SentClientAsync {
          * message — typically one BLOCKED for insufficient balance — back through the send
          * pipeline. It is a new attempt, not a free retry: every policy runs again, the message is
          * billed again, and its status webhooks fire again. A FILTERED message is never resendable.
+         *
+         * **A scheduled message can be called off.** `POST /v3/messages/{id}/cancel` cancels a send
+         * you scheduled with `scheduled_at`, as long as it has not been released yet. Cancelling is
+         * free, fires `message.cancelled`, and is final — a cancelled message cannot be resent.
          */
         fun messages(): MessageServiceAsync.WithRawResponse
 
@@ -271,6 +302,27 @@ interface SentClientAsync {
          * Read-only. Sending is **Messages**; a reply arrives here and through your webhooks.
          */
         fun conversations(): ConversationServiceAsync.WithRawResponse
+
+        /**
+         * Phone calls from the numbers you hold, driven by your own callback URL.
+         *
+         * `POST /v3/channels/voice` enables a number for calls, with the callback URL Sent asks
+         * what to do with each call on it, and `POST /v3/channels/voice/tokens` mints a short-lived
+         * token that lets a user of your app place and receive calls as that number. When a call
+         * arrives or a caller presses a key, a signed question is POSTed to the callback URL and
+         * the answer decides the call; `POST /v3/channels/voice/{number}/test` checks the URL
+         * answers the way we need before a real call reaches it, and `POST
+         * /v3/channels/voice/{number}/rotate-secret` replaces the signing secret. The call events
+         * themselves (`call.completed` and the rest) arrive through your webhooks.
+         *
+         * Every call is a record under `/v3/calls`: read it, list its recordings once one is ready,
+         * hang it up, start or stop recording, and add, mute or remove conference participants
+         * while it is live. A leg to a phone number runs for at most what your balance affords at
+         * the destination's rate.
+         */
+        fun calls(): CallServiceAsync.WithRawResponse
+
+        fun channels(): ChannelServiceAsync.WithRawResponse
 
         /**
          * Who the current key is.

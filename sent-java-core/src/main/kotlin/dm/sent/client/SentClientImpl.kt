@@ -4,6 +4,10 @@ package dm.sent.client
 
 import dm.sent.core.ClientOptions
 import dm.sent.core.getPackageVersion
+import dm.sent.services.blocking.CallService
+import dm.sent.services.blocking.CallServiceImpl
+import dm.sent.services.blocking.ChannelService
+import dm.sent.services.blocking.ChannelServiceImpl
 import dm.sent.services.blocking.ContactService
 import dm.sent.services.blocking.ContactServiceImpl
 import dm.sent.services.blocking.ConversationService
@@ -60,6 +64,10 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
     private val conversations: ConversationService by lazy {
         ConversationServiceImpl(clientOptionsWithUserAgent)
     }
+
+    private val calls: CallService by lazy { CallServiceImpl(clientOptionsWithUserAgent) }
+
+    private val channels: ChannelService by lazy { ChannelServiceImpl(clientOptionsWithUserAgent) }
 
     private val me: MeService by lazy { MeServiceImpl(clientOptionsWithUserAgent) }
 
@@ -139,6 +147,10 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
      * message — typically one BLOCKED for insufficient balance — back through the send pipeline. It
      * is a new attempt, not a free retry: every policy runs again, the message is billed again, and
      * its status webhooks fire again. A FILTERED message is never resendable.
+     *
+     * **A scheduled message can be called off.** `POST /v3/messages/{id}/cancel` cancels a send you
+     * scheduled with `scheduled_at`, as long as it has not been released yet. Cancelling is free,
+     * fires `message.cancelled`, and is final — a cancelled message cannot be resent.
      */
     override fun messages(): MessageService = messages
 
@@ -163,6 +175,27 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
      * Read-only. Sending is **Messages**; a reply arrives here and through your webhooks.
      */
     override fun conversations(): ConversationService = conversations
+
+    /**
+     * Phone calls from the numbers you hold, driven by your own callback URL.
+     *
+     * `POST /v3/channels/voice` enables a number for calls, with the callback URL Sent asks what to
+     * do with each call on it, and `POST /v3/channels/voice/tokens` mints a short-lived token that
+     * lets a user of your app place and receive calls as that number. When a call arrives or a
+     * caller presses a key, a signed question is POSTed to the callback URL and the answer decides
+     * the call; `POST /v3/channels/voice/{number}/test` checks the URL answers the way we need
+     * before a real call reaches it, and `POST /v3/channels/voice/{number}/rotate-secret` replaces
+     * the signing secret. The call events themselves (`call.completed` and the rest) arrive through
+     * your webhooks.
+     *
+     * Every call is a record under `/v3/calls`: read it, list its recordings once one is ready,
+     * hang it up, start or stop recording, and add, mute or remove conference participants while it
+     * is live. A leg to a phone number runs for at most what your balance affords at the
+     * destination's rate.
+     */
+    override fun calls(): CallService = calls
+
+    override fun channels(): ChannelService = channels
 
     /**
      * Who the current key is.
@@ -208,6 +241,14 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
 
         private val conversations: ConversationService.WithRawResponse by lazy {
             ConversationServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val calls: CallService.WithRawResponse by lazy {
+            CallServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val channels: ChannelService.WithRawResponse by lazy {
+            ChannelServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val me: MeService.WithRawResponse by lazy {
@@ -291,6 +332,10 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
          * message — typically one BLOCKED for insufficient balance — back through the send
          * pipeline. It is a new attempt, not a free retry: every policy runs again, the message is
          * billed again, and its status webhooks fire again. A FILTERED message is never resendable.
+         *
+         * **A scheduled message can be called off.** `POST /v3/messages/{id}/cancel` cancels a send
+         * you scheduled with `scheduled_at`, as long as it has not been released yet. Cancelling is
+         * free, fires `message.cancelled`, and is final — a cancelled message cannot be resent.
          */
         override fun messages(): MessageService.WithRawResponse = messages
 
@@ -316,6 +361,27 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
          * Read-only. Sending is **Messages**; a reply arrives here and through your webhooks.
          */
         override fun conversations(): ConversationService.WithRawResponse = conversations
+
+        /**
+         * Phone calls from the numbers you hold, driven by your own callback URL.
+         *
+         * `POST /v3/channels/voice` enables a number for calls, with the callback URL Sent asks
+         * what to do with each call on it, and `POST /v3/channels/voice/tokens` mints a short-lived
+         * token that lets a user of your app place and receive calls as that number. When a call
+         * arrives or a caller presses a key, a signed question is POSTed to the callback URL and
+         * the answer decides the call; `POST /v3/channels/voice/{number}/test` checks the URL
+         * answers the way we need before a real call reaches it, and `POST
+         * /v3/channels/voice/{number}/rotate-secret` replaces the signing secret. The call events
+         * themselves (`call.completed` and the rest) arrive through your webhooks.
+         *
+         * Every call is a record under `/v3/calls`: read it, list its recordings once one is ready,
+         * hang it up, start or stop recording, and add, mute or remove conference participants
+         * while it is live. A leg to a phone number runs for at most what your balance affords at
+         * the destination's rate.
+         */
+        override fun calls(): CallService.WithRawResponse = calls
+
+        override fun channels(): ChannelService.WithRawResponse = channels
 
         /**
          * Who the current key is.
