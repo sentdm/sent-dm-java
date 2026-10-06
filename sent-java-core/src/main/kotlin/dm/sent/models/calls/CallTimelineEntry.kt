@@ -34,7 +34,7 @@ private constructor(
     ) : this(status, timestamp, mutableMapOf())
 
     /**
-     * initiated, ringing, answered, completed, failed, no_answer or rejected
+     * INITIATED, RINGING, ANSWERED, COMPLETED, FAILED, NO_ANSWER or REJECTED
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -97,7 +97,7 @@ private constructor(
             additionalProperties = callTimelineEntry.additionalProperties.toMutableMap()
         }
 
-        /** initiated, ringing, answered, completed, failed, no_answer or rejected */
+        /** INITIATED, RINGING, ANSWERED, COMPLETED, FAILED, NO_ANSWER or REJECTED */
         fun status(status: String) = status(JsonField.of(status))
 
         /**

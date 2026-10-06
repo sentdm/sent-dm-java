@@ -30,6 +30,10 @@ import java.util.function.Consumer
  * typically one BLOCKED for insufficient balance — back through the send pipeline. It is a new
  * attempt, not a free retry: every policy runs again, the message is billed again, and its status
  * webhooks fire again. A FILTERED message is never resendable.
+ *
+ * **A scheduled message can be called off.** `POST /v3/messages/{id}/cancel` cancels a send you
+ * scheduled with `scheduled_at`, as long as it has not been released yet. Cancelling is free, fires
+ * `message.cancelled`, and is final — a cancelled message cannot be resent.
  */
 interface MessageService {
 
@@ -89,9 +93,10 @@ interface MessageService {
     /**
      * Retrieves the current status and details of a message by ID. Includes delivery status,
      * timestamps, and error information if applicable. A message that is or was held for a later
-     * time (a send you scheduled with scheduled_at, or a quiet-hours hold) is returned as a
-     * ScheduledMessageResponse: the same fields plus scheduled_at, the release instant in UTC. A
-     * message sent immediately has no scheduled_at key.
+     * time (a send you scheduled with scheduled_at, a quiet-hours hold, or a message you cancelled
+     * while it was held) is returned as a ScheduledMessageResponse: the same fields plus
+     * scheduled_at, the instant it is held for in UTC — or, on a CANCELLED message, the instant
+     * that was called off. A message sent immediately has no scheduled_at key.
      */
     fun retrieveStatus(id: String): MessageRetrieveStatusResponse =
         retrieveStatus(id, MessageRetrieveStatusParams.none())
