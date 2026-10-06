@@ -619,10 +619,11 @@ private constructor(
             fun reasonCode(): Optional<String> = reasonCode.getOptional("reason_code")
 
             /**
-             * SCHEDULED activities only: when the held message will be released for delivery, in
-             * UTC. Same wire name as on the send response, the message and the webhook. Omitted on
-             * every other activity. A message that quiet hours moved at release has two SCHEDULED
-             * entries, each carrying the instant as it stood at that moment.
+             * SCHEDULED and CANCELLED activities only, in UTC: on a SCHEDULED entry, when the held
+             * message will be released for delivery; on a CANCELLED entry, the instant that was
+             * called off. Same wire name as on the send response, the message and the webhook.
+             * Omitted on every other activity. A message that quiet hours moved at release has two
+             * SCHEDULED entries, each carrying the instant as it stood at that moment.
              *
              * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if
              *   the server responded with an unexpected value).
@@ -888,10 +889,12 @@ private constructor(
                 }
 
                 /**
-                 * SCHEDULED activities only: when the held message will be released for delivery,
-                 * in UTC. Same wire name as on the send response, the message and the webhook.
-                 * Omitted on every other activity. A message that quiet hours moved at release has
-                 * two SCHEDULED entries, each carrying the instant as it stood at that moment.
+                 * SCHEDULED and CANCELLED activities only, in UTC: on a SCHEDULED entry, when the
+                 * held message will be released for delivery; on a CANCELLED entry, the instant
+                 * that was called off. Same wire name as on the send response, the message and the
+                 * webhook. Omitted on every other activity. A message that quiet hours moved at
+                 * release has two SCHEDULED entries, each carrying the instant as it stood at that
+                 * moment.
                  */
                 fun scheduledAt(scheduledAt: OffsetDateTime?) =
                     scheduledAt(JsonField.ofNullable(scheduledAt))

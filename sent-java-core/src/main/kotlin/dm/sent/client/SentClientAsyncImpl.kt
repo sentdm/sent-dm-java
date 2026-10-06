@@ -159,6 +159,10 @@ class SentClientAsyncImpl(private val clientOptions: ClientOptions) : SentClient
      * message — typically one BLOCKED for insufficient balance — back through the send pipeline. It
      * is a new attempt, not a free retry: every policy runs again, the message is billed again, and
      * its status webhooks fire again. A FILTERED message is never resendable.
+     *
+     * **A scheduled message can be called off.** `POST /v3/messages/{id}/cancel` cancels a send you
+     * scheduled with `scheduled_at`, as long as it has not been released yet. Cancelling is free,
+     * fires `message.cancelled`, and is final — a cancelled message cannot be resent.
      */
     override fun messages(): MessageServiceAsync = messages
 
@@ -340,6 +344,10 @@ class SentClientAsyncImpl(private val clientOptions: ClientOptions) : SentClient
          * message — typically one BLOCKED for insufficient balance — back through the send
          * pipeline. It is a new attempt, not a free retry: every policy runs again, the message is
          * billed again, and its status webhooks fire again. A FILTERED message is never resendable.
+         *
+         * **A scheduled message can be called off.** `POST /v3/messages/{id}/cancel` cancels a send
+         * you scheduled with `scheduled_at`, as long as it has not been released yet. Cancelling is
+         * free, fires `message.cancelled`, and is final — a cancelled message cannot be resent.
          */
         override fun messages(): MessageServiceAsync.WithRawResponse = messages
 
