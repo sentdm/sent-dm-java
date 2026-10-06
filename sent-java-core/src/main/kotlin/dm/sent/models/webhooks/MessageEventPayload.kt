@@ -173,7 +173,9 @@ private constructor(
 
     /**
      * message.scheduled only: why the message is held, either because you scheduled it or because
-     * the recipient is inside a protected quiet-hours window. Omitted on every other event.
+     * the recipient is inside a protected quiet-hours window. Omitted on every other event,
+     * including message.cancelled — that is a property of the hold, not of the cancellation, and
+     * repeating it there would read as "why was this cancelled", which it does not answer.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -181,8 +183,11 @@ private constructor(
     fun scheduleReason(): Optional<String> = scheduleReason.getOptional("schedule_reason")
 
     /**
-     * message.scheduled only: when the held message will be released for delivery, in UTC
-     * (yyyy-MM-ddTHH:mm:ssZ). Omitted on every other event.
+     * message.scheduled and message.cancelled only, in UTC (yyyy-MM-ddTHH:mm:ssZ): on
+     * message.scheduled it is when the held message will be released for delivery, on
+     * message.cancelled the release instant that was called off — the same instant, before and
+     * after. A consumer that recorded a future send from the first event has what it needs to
+     * un-record it from the second. Omitted on every other event.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -530,7 +535,9 @@ private constructor(
         /**
          * message.scheduled only: why the message is held, either because you scheduled it or
          * because the recipient is inside a protected quiet-hours window. Omitted on every other
-         * event.
+         * event, including message.cancelled — that is a property of the hold, not of the
+         * cancellation, and repeating it there would read as "why was this cancelled", which it
+         * does not answer.
          */
         fun scheduleReason(scheduleReason: String?) =
             scheduleReason(JsonField.ofNullable(scheduleReason))
@@ -551,8 +558,11 @@ private constructor(
         }
 
         /**
-         * message.scheduled only: when the held message will be released for delivery, in UTC
-         * (yyyy-MM-ddTHH:mm:ssZ). Omitted on every other event.
+         * message.scheduled and message.cancelled only, in UTC (yyyy-MM-ddTHH:mm:ssZ): on
+         * message.scheduled it is when the held message will be released for delivery, on
+         * message.cancelled the release instant that was called off — the same instant, before and
+         * after. A consumer that recorded a future send from the first event has what it needs to
+         * un-record it from the second. Omitted on every other event.
          */
         fun scheduledAt(scheduledAt: String?) = scheduledAt(JsonField.ofNullable(scheduledAt))
 
