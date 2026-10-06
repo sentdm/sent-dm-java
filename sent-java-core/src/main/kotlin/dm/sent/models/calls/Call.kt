@@ -131,8 +131,8 @@ private constructor(
 
     /**
      * Why the call did not complete: callback_timeout, invalid_answer, insufficient_balance,
-     * destination_blocked, rejected or no_answer. Null while the call is live, when it completed,
-     * and when it failed without a recorded reason
+     * destination_blocked, callback_not_configured, rejected or no_answer. Null while the call is
+     * live, when it completed, and when it failed without a recorded reason
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -182,7 +182,7 @@ private constructor(
     fun startedAt(): Optional<OffsetDateTime> = startedAt.getOptional("started_at")
 
     /**
-     * initiated, ringing, answered, completed, failed, no_answer or rejected
+     * INITIATED, RINGING, ANSWERED, COMPLETED, FAILED, NO_ANSWER or REJECTED
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -458,8 +458,8 @@ private constructor(
 
         /**
          * Why the call did not complete: callback_timeout, invalid_answer, insufficient_balance,
-         * destination_blocked, rejected or no_answer. Null while the call is live, when it
-         * completed, and when it failed without a recorded reason
+         * destination_blocked, callback_not_configured, rejected or no_answer. Null while the call
+         * is live, when it completed, and when it failed without a recorded reason
          */
         fun failureReason(failureReason: String?) =
             failureReason(JsonField.ofNullable(failureReason))
@@ -552,7 +552,7 @@ private constructor(
          */
         fun startedAt(startedAt: JsonField<OffsetDateTime>) = apply { this.startedAt = startedAt }
 
-        /** initiated, ringing, answered, completed, failed, no_answer or rejected */
+        /** INITIATED, RINGING, ANSWERED, COMPLETED, FAILED, NO_ANSWER or REJECTED */
         fun status(status: String) = status(JsonField.of(status))
 
         /**
