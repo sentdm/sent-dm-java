@@ -15,7 +15,6 @@ internal class WebhookCreateParamsTest {
         WebhookCreateParams.builder()
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .apiKey("sntdm_test_xxxxxxxxxxxx")
             .sandbox(false)
             .displayName("Order Notifications")
             .endpointUrl("https://example.com/webhooks/orders")
@@ -50,7 +49,6 @@ internal class WebhookCreateParamsTest {
             WebhookCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .displayName("Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders")
@@ -107,7 +105,6 @@ internal class WebhookCreateParamsTest {
             WebhookCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .displayName("Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders")
@@ -140,7 +137,6 @@ internal class WebhookCreateParamsTest {
 
         val body = params._body()
 
-        assertThat(body.apiKey()).contains("sntdm_test_xxxxxxxxxxxx")
         assertThat(body.sandbox()).contains(false)
         assertThat(body.displayName()).contains("Order Notifications")
         assertThat(body.endpointUrl()).contains("https://example.com/webhooks/orders")

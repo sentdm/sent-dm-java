@@ -32,7 +32,6 @@ internal class TemplateServiceAsyncTest {
                 TemplateCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .apiKey("sntdm_test_xxxxxxxxxxxx")
                     .sandbox(false)
                     .autoCreateForSp(false)
                     .category("MARKETING")
@@ -336,7 +335,6 @@ internal class TemplateServiceAsyncTest {
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .apiKey("sntdm_test_xxxxxxxxxxxx")
                     .sandbox(false)
                     .category("MARKETING")
                     .definition(
@@ -612,7 +610,6 @@ internal class TemplateServiceAsyncTest {
                 TemplateDeleteParams.builder()
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .apiKey("sntdm_test_xxxxxxxxxxxx")
                     .sandbox(false)
                     .deleteFromMeta(false)
                     .build()

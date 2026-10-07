@@ -27,7 +27,6 @@ internal class ParticipantServiceTest {
                 .participantId("call_9f2ab000-0000-4000-8000-000000000002")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .muted(true)
                 .build()
@@ -63,7 +62,6 @@ internal class ParticipantServiceTest {
                     .id("call_9f2ab000-0000-4000-8000-000000000001")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .apiKey("sntdm_test_xxxxxxxxxxxx")
                     .sandbox(false)
                     .callerId("+12025550123")
                     .to(
@@ -86,12 +84,7 @@ internal class ParticipantServiceTest {
                 .id("call_9f2ab000-0000-4000-8000-000000000001")
                 .participantId("call_9f2ab000-0000-4000-8000-000000000002")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(
-                    MutationRequest.builder()
-                        .apiKey("sntdm_test_xxxxxxxxxxxx")
-                        .sandbox(false)
-                        .build()
-                )
+                .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
         )
     }
@@ -106,12 +99,7 @@ internal class ParticipantServiceTest {
             ParticipantRemoveAllParams.builder()
                 .id("call_9f2ab000-0000-4000-8000-000000000001")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(
-                    MutationRequest.builder()
-                        .apiKey("sntdm_test_xxxxxxxxxxxx")
-                        .sandbox(false)
-                        .build()
-                )
+                .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
         )
     }

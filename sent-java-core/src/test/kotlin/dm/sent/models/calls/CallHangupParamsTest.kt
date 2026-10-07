@@ -15,9 +15,7 @@ internal class CallHangupParamsTest {
             .id("call_9f2ab000-0000-4000-8000-000000000001")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .mutationRequest(
-                MutationRequest.builder().apiKey("sntdm_test_xxxxxxxxxxxx").sandbox(false).build()
-            )
+            .mutationRequest(MutationRequest.builder().sandbox(false).build())
             .build()
     }
 
@@ -41,12 +39,7 @@ internal class CallHangupParamsTest {
                 .id("call_9f2ab000-0000-4000-8000-000000000001")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(
-                    MutationRequest.builder()
-                        .apiKey("sntdm_test_xxxxxxxxxxxx")
-                        .sandbox(false)
-                        .build()
-                )
+                .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
 
         val headers = params._headers()
@@ -80,20 +73,12 @@ internal class CallHangupParamsTest {
                 .id("call_9f2ab000-0000-4000-8000-000000000001")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(
-                    MutationRequest.builder()
-                        .apiKey("sntdm_test_xxxxxxxxxxxx")
-                        .sandbox(false)
-                        .build()
-                )
+                .mutationRequest(MutationRequest.builder().sandbox(false).build())
                 .build()
 
         val body = params._body()
 
-        assertThat(body)
-            .isEqualTo(
-                MutationRequest.builder().apiKey("sntdm_test_xxxxxxxxxxxx").sandbox(false).build()
-            )
+        assertThat(body).isEqualTo(MutationRequest.builder().sandbox(false).build())
     }
 
     @Test

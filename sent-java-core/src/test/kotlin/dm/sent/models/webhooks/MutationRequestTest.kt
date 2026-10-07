@@ -11,18 +11,15 @@ internal class MutationRequestTest {
 
     @Test
     fun create() {
-        val mutationRequest =
-            MutationRequest.builder().apiKey("sntdm_test_xxxxxxxxxxxx").sandbox(false).build()
+        val mutationRequest = MutationRequest.builder().sandbox(false).build()
 
-        assertThat(mutationRequest.apiKey()).contains("sntdm_test_xxxxxxxxxxxx")
         assertThat(mutationRequest.sandbox()).contains(false)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val mutationRequest =
-            MutationRequest.builder().apiKey("sntdm_test_xxxxxxxxxxxx").sandbox(false).build()
+        val mutationRequest = MutationRequest.builder().sandbox(false).build()
 
         val roundtrippedMutationRequest =
             jsonMapper.readValue(

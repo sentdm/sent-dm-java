@@ -13,7 +13,6 @@ internal class WebhookDeleteParamsTest {
         WebhookDeleteParams.builder()
             .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .apiKey("sntdm_test_xxxxxxxxxxxx")
             .build()
     }
 
@@ -33,7 +32,6 @@ internal class WebhookDeleteParamsTest {
             WebhookDeleteParams.builder()
                 .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .build()
 
         val headers = params._headers()
@@ -54,27 +52,5 @@ internal class WebhookDeleteParamsTest {
         val headers = params._headers()
 
         assertThat(headers).isEqualTo(Headers.builder().build())
-    }
-
-    @Test
-    fun body() {
-        val params =
-            WebhookDeleteParams.builder()
-                .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
-                .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .apiKey("sntdm_test_xxxxxxxxxxxx")
-                .build()
-
-        val body = params._body()
-
-        assertThat(body.apiKey()).contains("sntdm_test_xxxxxxxxxxxx")
-    }
-
-    @Test
-    fun bodyWithoutOptionalFields() {
-        val params =
-            WebhookDeleteParams.builder().id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8").build()
-
-        val body = params._body()
     }
 }
