@@ -14,6 +14,7 @@ internal class TemplateUpdateParamsTest {
             .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .apiKey("sntdm_test_xxxxxxxxxxxx")
             .sandbox(false)
             .category("MARKETING")
             .definition(
@@ -279,6 +280,7 @@ internal class TemplateUpdateParamsTest {
                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .category("MARKETING")
                 .definition(
@@ -554,6 +556,7 @@ internal class TemplateUpdateParamsTest {
                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .category("MARKETING")
                 .definition(
@@ -803,6 +806,7 @@ internal class TemplateUpdateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.apiKey()).contains("sntdm_test_xxxxxxxxxxxx")
         assertThat(body.sandbox()).contains(false)
         assertThat(body.category()).contains("MARKETING")
         assertThat(body.definition())

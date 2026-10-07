@@ -15,6 +15,7 @@ internal class ParticipantUpdateParamsTest {
             .participantId("call_9f2ab000-0000-4000-8000-000000000002")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .apiKey("sntdm_test_xxxxxxxxxxxx")
             .sandbox(false)
             .muted(true)
             .build()
@@ -42,6 +43,7 @@ internal class ParticipantUpdateParamsTest {
                 .participantId("call_9f2ab000-0000-4000-8000-000000000002")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .muted(true)
                 .build()
@@ -78,12 +80,14 @@ internal class ParticipantUpdateParamsTest {
                 .participantId("call_9f2ab000-0000-4000-8000-000000000002")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .muted(true)
                 .build()
 
         val body = params._body()
 
+        assertThat(body.apiKey()).contains("sntdm_test_xxxxxxxxxxxx")
         assertThat(body.sandbox()).contains(false)
         assertThat(body.muted()).contains(true)
     }

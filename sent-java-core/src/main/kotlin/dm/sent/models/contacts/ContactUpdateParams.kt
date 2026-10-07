@@ -38,6 +38,20 @@ private constructor(
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
     /**
+     * API key from the x-api-key header, or empty when the caller sent it as Authorization: Bearer
+     * instead.
+     *
+     * Optional on purpose. CustomerV3AuthenticationHandler accepts the key in either header, and
+     * [FromHeader] is required by default, so a Bearer-only request would authenticate and then be
+     * refused with a 400 for a header it never needed. Endpoints read the customer from the
+     * CustomerId claim, not from this value.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun apiKey(): Optional<String> = body.apiKey()
+
+    /**
      * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
      * integrations without actual execution
      *
@@ -62,6 +76,13 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun optOut(): Optional<Boolean> = body.optOut()
+
+    /**
+     * Returns the raw JSON value of [apiKey].
+     *
+     * Unlike [apiKey], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _apiKey(): JsonField<String> = body._apiKey()
 
     /**
      * Returns the raw JSON value of [sandbox].
@@ -143,11 +164,31 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [apiKey]
          * - [sandbox]
          * - [defaultChannel]
          * - [optOut]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        /**
+         * API key from the x-api-key header, or empty when the caller sent it as Authorization:
+         * Bearer instead.
+         *
+         * Optional on purpose. CustomerV3AuthenticationHandler accepts the key in either header,
+         * and [FromHeader] is required by default, so a Bearer-only request would authenticate and
+         * then be refused with a 400 for a header it never needed. Endpoints read the customer from
+         * the CustomerId claim, not from this value.
+         */
+        fun apiKey(apiKey: String) = apply { body.apiKey(apiKey) }
+
+        /**
+         * Sets [Builder.apiKey] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.apiKey] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun apiKey(apiKey: JsonField<String>) = apply { body.apiKey(apiKey) }
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -361,6 +402,7 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val apiKey: JsonField<String>,
         private val sandbox: JsonField<Boolean>,
         private val defaultChannel: JsonField<String>,
         private val optOut: JsonField<Boolean>,
@@ -369,15 +411,30 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("apiKey") @ExcludeMissing apiKey: JsonField<String> = JsonMissing.of(),
             @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("default_channel")
             @ExcludeMissing
             defaultChannel: JsonField<String> = JsonMissing.of(),
             @JsonProperty("opt_out") @ExcludeMissing optOut: JsonField<Boolean> = JsonMissing.of(),
-        ) : this(sandbox, defaultChannel, optOut, mutableMapOf())
+        ) : this(apiKey, sandbox, defaultChannel, optOut, mutableMapOf())
 
         fun toMutationRequest(): MutationRequest =
-            MutationRequest.builder().sandbox(sandbox).build()
+            MutationRequest.builder().apiKey(apiKey).sandbox(sandbox).build()
+
+        /**
+         * API key from the x-api-key header, or empty when the caller sent it as Authorization:
+         * Bearer instead.
+         *
+         * Optional on purpose. CustomerV3AuthenticationHandler accepts the key in either header,
+         * and [FromHeader] is required by default, so a Bearer-only request would authenticate and
+         * then be refused with a 400 for a header it never needed. Endpoints read the customer from
+         * the CustomerId claim, not from this value.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun apiKey(): Optional<String> = apiKey.getOptional("apiKey")
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -404,6 +461,13 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun optOut(): Optional<Boolean> = optOut.getOptional("opt_out")
+
+        /**
+         * Returns the raw JSON value of [apiKey].
+         *
+         * Unlike [apiKey], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("apiKey") @ExcludeMissing fun _apiKey(): JsonField<String> = apiKey
 
         /**
          * Returns the raw JSON value of [sandbox].
@@ -450,6 +514,7 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var apiKey: JsonField<String> = JsonMissing.of()
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var defaultChannel: JsonField<String> = JsonMissing.of()
             private var optOut: JsonField<Boolean> = JsonMissing.of()
@@ -457,11 +522,32 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                apiKey = body.apiKey
                 sandbox = body.sandbox
                 defaultChannel = body.defaultChannel
                 optOut = body.optOut
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
+
+            /**
+             * API key from the x-api-key header, or empty when the caller sent it as Authorization:
+             * Bearer instead.
+             *
+             * Optional on purpose. CustomerV3AuthenticationHandler accepts the key in either
+             * header, and [FromHeader] is required by default, so a Bearer-only request would
+             * authenticate and then be refused with a 400 for a header it never needed. Endpoints
+             * read the customer from the CustomerId claim, not from this value.
+             */
+            fun apiKey(apiKey: String) = apiKey(JsonField.of(apiKey))
+
+            /**
+             * Sets [Builder.apiKey] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.apiKey] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun apiKey(apiKey: JsonField<String>) = apply { this.apiKey = apiKey }
 
             /**
              * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -547,7 +633,7 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              */
             fun build(): Body =
-                Body(sandbox, defaultChannel, optOut, additionalProperties.toMutableMap())
+                Body(apiKey, sandbox, defaultChannel, optOut, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -566,6 +652,7 @@ private constructor(
                 return@apply
             }
 
+            apiKey()
             sandbox()
             defaultChannel()
             optOut()
@@ -588,7 +675,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (sandbox.asKnown().isPresent) 1 else 0) +
+            (if (apiKey.asKnown().isPresent) 1 else 0) +
+                (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (if (defaultChannel.asKnown().isPresent) 1 else 0) +
                 (if (optOut.asKnown().isPresent) 1 else 0)
 
@@ -598,6 +686,7 @@ private constructor(
             }
 
             return other is Body &&
+                apiKey == other.apiKey &&
                 sandbox == other.sandbox &&
                 defaultChannel == other.defaultChannel &&
                 optOut == other.optOut &&
@@ -605,13 +694,13 @@ private constructor(
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(sandbox, defaultChannel, optOut, additionalProperties)
+            Objects.hash(apiKey, sandbox, defaultChannel, optOut, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, defaultChannel=$defaultChannel, optOut=$optOut, additionalProperties=$additionalProperties}"
+            "Body{apiKey=$apiKey, sandbox=$sandbox, defaultChannel=$defaultChannel, optOut=$optOut, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

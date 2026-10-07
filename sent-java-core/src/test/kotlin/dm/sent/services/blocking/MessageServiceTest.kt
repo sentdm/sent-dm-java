@@ -57,6 +57,7 @@ internal class MessageServiceTest {
                 MessageSendParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .apiKey("sntdm_test_xxxxxxxxxxxx")
                     .sandbox(false)
                     .addChannel("sms")
                     .addChannel("whatsapp")
