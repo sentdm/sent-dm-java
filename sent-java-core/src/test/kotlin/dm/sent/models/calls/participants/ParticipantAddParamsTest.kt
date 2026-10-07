@@ -14,6 +14,7 @@ internal class ParticipantAddParamsTest {
             .id("call_9f2ab000-0000-4000-8000-000000000001")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .apiKey("sntdm_test_xxxxxxxxxxxx")
             .sandbox(false)
             .callerId("+12025550123")
             .to(CallParticipantTarget.builder().kind("number").value("+14155551234").build())
@@ -37,6 +38,7 @@ internal class ParticipantAddParamsTest {
                 .id("call_9f2ab000-0000-4000-8000-000000000001")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .callerId("+12025550123")
                 .to(CallParticipantTarget.builder().kind("number").value("+14155551234").build())
@@ -70,6 +72,7 @@ internal class ParticipantAddParamsTest {
                 .id("call_9f2ab000-0000-4000-8000-000000000001")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .callerId("+12025550123")
                 .to(CallParticipantTarget.builder().kind("number").value("+14155551234").build())
@@ -77,6 +80,7 @@ internal class ParticipantAddParamsTest {
 
         val body = params._body()
 
+        assertThat(body.apiKey()).contains("sntdm_test_xxxxxxxxxxxx")
         assertThat(body.sandbox()).contains(false)
         assertThat(body.callerId()).contains("+12025550123")
         assertThat(body.to())

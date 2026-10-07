@@ -15,6 +15,7 @@ internal class CampaignUpdateParamsTest {
             .campaignId("b2c3d4e5-f6a7-8901-bcde-f12345678901")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .apiKey("sntdm_test_xxxxxxxxxxxx")
             .sandbox(false)
             .campaign(
                 CampaignData.builder()
@@ -89,6 +90,7 @@ internal class CampaignUpdateParamsTest {
                 .campaignId("b2c3d4e5-f6a7-8901-bcde-f12345678901")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .campaign(
                     CampaignData.builder()
@@ -172,6 +174,7 @@ internal class CampaignUpdateParamsTest {
                 .campaignId("b2c3d4e5-f6a7-8901-bcde-f12345678901")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .apiKey("sntdm_test_xxxxxxxxxxxx")
                 .sandbox(false)
                 .campaign(
                     CampaignData.builder()
@@ -207,6 +210,7 @@ internal class CampaignUpdateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.apiKey()).contains("sntdm_test_xxxxxxxxxxxx")
         assertThat(body.sandbox()).contains(false)
         assertThat(body.campaign())
             .isEqualTo(

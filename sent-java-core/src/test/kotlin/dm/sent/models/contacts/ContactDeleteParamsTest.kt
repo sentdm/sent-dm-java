@@ -14,7 +14,9 @@ internal class ContactDeleteParamsTest {
         ContactDeleteParams.builder()
             .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .mutationRequest(MutationRequest.builder().sandbox(false).build())
+            .mutationRequest(
+                MutationRequest.builder().apiKey("sntdm_test_xxxxxxxxxxxx").sandbox(false).build()
+            )
             .build()
     }
 
@@ -37,7 +39,12 @@ internal class ContactDeleteParamsTest {
             ContactDeleteParams.builder()
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                .mutationRequest(
+                    MutationRequest.builder()
+                        .apiKey("sntdm_test_xxxxxxxxxxxx")
+                        .sandbox(false)
+                        .build()
+                )
                 .build()
 
         val headers = params._headers()
@@ -69,12 +76,20 @@ internal class ContactDeleteParamsTest {
             ContactDeleteParams.builder()
                 .id("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                .mutationRequest(
+                    MutationRequest.builder()
+                        .apiKey("sntdm_test_xxxxxxxxxxxx")
+                        .sandbox(false)
+                        .build()
+                )
                 .build()
 
         val body = params._body()
 
-        assertThat(body).isEqualTo(MutationRequest.builder().sandbox(false).build())
+        assertThat(body)
+            .isEqualTo(
+                MutationRequest.builder().apiKey("sntdm_test_xxxxxxxxxxxx").sandbox(false).build()
+            )
     }
 
     @Test
