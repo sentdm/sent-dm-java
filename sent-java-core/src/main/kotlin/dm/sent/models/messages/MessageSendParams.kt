@@ -26,21 +26,32 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Sends a message to one or more recipients using a template. Supports multi-channel broadcast —
  * when multiple channels are specified (e.g. ["sms", "whatsapp"]), a separate message is created
- * for each (recipient, channel) pair. Returns immediately with per-recipient message IDs for async
- * tracking via webhooks or the GET /messages/{id} endpoint. Sends gated before any delivery attempt
- * do not reject the request — an account-level precondition such as insufficient balance, a
- * template not approved for sending, or free-form content with no open conversation with the
- * contact. The send is accepted with 202 and the affected messages are reported as BLOCKED on GET
- * /messages/{id} and the message.blocked webhook. To send later, set scheduled_at (ISO-8601 with an
- * explicit UTC offset; a value without one is rejected) between 1 minute and 30 days ahead: the
- * response is a ScheduledSendMessageResponse (the same fields plus scheduled_at; status is still
- * QUEUED), each message then moves to SCHEDULED, is held and released at that time (within a few
- * minutes), and a message.scheduled webhook fires once it is held. Balance and template approval
- * are evaluated at release, not at acceptance. Quiet hours are not checked when the request is
- * accepted: if the time falls inside a legally protected quiet-hours window for a recipient, that
- * message is moved to the next allowed time at release and a second message.scheduled webhook
- * reports the new scheduled_at. An account may hold at most 1,000,000 scheduled messages at once
- * (429 LIMIT_001).
+ * for each (recipient, channel) pair. To choose which of your own numbers a send goes out from, use
+ * 'channels': {"sms": [{"from": ["+12125550000", "+14155550000"]}]}. Each channel holds a list of
+ * entries, each with 'from' and optionally 'country' and 'strategy'; 'country' and 'strategy' are
+ * stored but not acted on yet, so every entry's numbers apply to every recipient on that channel.
+ * Every number listed must be an active sender on your account. Like the other account-level
+ * preconditions below, that is checked per message rather than when the request is received: the
+ * request is still accepted with 202, and each affected message is reported as BLOCKED with error
+ * code BUSINESS_029 on GET /messages/{id} and the message.blocked webhook. Each channel's numbers
+ * restrict which numbers that channel may use; it does not choose channels — 'channel' does, and
+ * the two can be combined. With 'channel' left at auto-detect, a recipient best served by a channel
+ * you listed no numbers for still goes out on it. Where several of the listed numbers could serve a
+ * recipient, routing prefers the one whose area code matches theirs. Keys: sms, whatsapp, rcs, mms.
+ * Returns immediately with per-recipient message IDs for async tracking via webhooks or the GET
+ * /messages/{id} endpoint. Sends gated before any delivery attempt do not reject the request — an
+ * account-level precondition such as insufficient balance, a template not approved for sending, or
+ * free-form content with no open conversation with the contact. The send is accepted with 202 and
+ * the affected messages are reported as BLOCKED on GET /messages/{id} and the message.blocked
+ * webhook. To send later, set scheduled_at (ISO-8601 with an explicit UTC offset; a value without
+ * one is rejected) between 1 minute and 30 days ahead: the response is a
+ * ScheduledSendMessageResponse (the same fields plus scheduled_at; status is still QUEUED), each
+ * message then moves to SCHEDULED, is held and released at that time (within a few minutes), and a
+ * message.scheduled webhook fires once it is held. Balance and template approval are evaluated at
+ * release, not at acceptance. Quiet hours are not checked when the request is accepted: if the time
+ * falls inside a legally protected quiet-hours window for a recipient, that message is moved to the
+ * next allowed time at release and a second message.scheduled webhook reports the new scheduled_at.
+ * An account may hold at most 1,000,000 scheduled messages at once (429 LIMIT_001).
  */
 class MessageSendParams
 private constructor(
@@ -72,6 +83,29 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun channel(): Optional<List<String>> = body.channel()
+
+    /**
+     * Which of your own numbers to send from, keyed by channel, each channel holding a list of
+     * entries: {"sms": [{"country": "US", "from": ["+12125550000", "+14155550000"]}, {"from":
+     * ["+447700800001"]}]}. Any real channel may be a key; sent, which is auto-detect rather than a
+     * channel, is rejected. country and strategy are accepted and stored but not acted on yet:
+     * every entry's numbers apply to every recipient on that channel.
+     *
+     * This does not choose channels — Channel does, and the two combine: "channel": ["sms"] with an
+     * sms list sends on SMS from those numbers. Each list only narrows which of its own channel's
+     * routes may win, so with Channel left at auto-detect a recipient best served by a channel with
+     * no list still goes out on it. Routing itself is unchanged: the same rules are scored and
+     * ranked the same way, with routes pinned to numbers you did not list removed from the running.
+     *
+     * Every number must be an active sender on your account. The request itself is still accepted
+     * (202) if one is not — like every other send-time rule, that is decided per message, so each
+     * affected message is recorded BLOCKED with error code BUSINESS_029 and reported on GET
+     * /v3/messages and the status webhook.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun channels(): Optional<Channels> = body.channels()
 
     /**
      * Attachments for this send, as publicly fetchable https URLs. Used by the MMS channel and
@@ -153,6 +187,13 @@ private constructor(
      * Unlike [channel], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _channel(): JsonField<List<String>> = body._channel()
+
+    /**
+     * Returns the raw JSON value of [channels].
+     *
+     * Unlike [channels], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _channels(): JsonField<Channels> = body._channels()
 
     /**
      * Returns the raw JSON value of [mediaUrls].
@@ -250,9 +291,9 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [sandbox]
          * - [channel]
+         * - [channels]
          * - [mediaUrls]
          * - [scheduledAt]
-         * - [subject]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -296,6 +337,39 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addChannel(channel: String) = apply { body.addChannel(channel) }
+
+        /**
+         * Which of your own numbers to send from, keyed by channel, each channel holding a list of
+         * entries: {"sms": [{"country": "US", "from": ["+12125550000", "+14155550000"]}, {"from":
+         * ["+447700800001"]}]}. Any real channel may be a key; sent, which is auto-detect rather
+         * than a channel, is rejected. country and strategy are accepted and stored but not acted
+         * on yet: every entry's numbers apply to every recipient on that channel.
+         *
+         * This does not choose channels — Channel does, and the two combine: "channel": ["sms"]
+         * with an sms list sends on SMS from those numbers. Each list only narrows which of its own
+         * channel's routes may win, so with Channel left at auto-detect a recipient best served by
+         * a channel with no list still goes out on it. Routing itself is unchanged: the same rules
+         * are scored and ranked the same way, with routes pinned to numbers you did not list
+         * removed from the running.
+         *
+         * Every number must be an active sender on your account. The request itself is still
+         * accepted (202) if one is not — like every other send-time rule, that is decided per
+         * message, so each affected message is recorded BLOCKED with error code BUSINESS_029 and
+         * reported on GET /v3/messages and the status webhook.
+         */
+        fun channels(channels: Channels?) = apply { body.channels(channels) }
+
+        /** Alias for calling [Builder.channels] with `channels.orElse(null)`. */
+        fun channels(channels: Optional<Channels>) = channels(channels.getOrNull())
+
+        /**
+         * Sets [Builder.channels] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.channels] with a well-typed [Channels] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun channels(channels: JsonField<Channels>) = apply { body.channels(channels) }
 
         /**
          * Attachments for this send, as publicly fetchable https URLs. Used by the MMS channel and
@@ -577,6 +651,7 @@ private constructor(
     private constructor(
         private val sandbox: JsonField<Boolean>,
         private val channel: JsonField<List<String>>,
+        private val channels: JsonField<Channels>,
         private val mediaUrls: JsonField<List<String>>,
         private val scheduledAt: JsonField<OffsetDateTime>,
         private val subject: JsonField<String>,
@@ -592,6 +667,9 @@ private constructor(
             @JsonProperty("channel")
             @ExcludeMissing
             channel: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("channels")
+            @ExcludeMissing
+            channels: JsonField<Channels> = JsonMissing.of(),
             @JsonProperty("media_urls")
             @ExcludeMissing
             mediaUrls: JsonField<List<String>> = JsonMissing.of(),
@@ -607,6 +685,7 @@ private constructor(
         ) : this(
             sandbox,
             channel,
+            channels,
             mediaUrls,
             scheduledAt,
             subject,
@@ -637,6 +716,30 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun channel(): Optional<List<String>> = channel.getOptional("channel")
+
+        /**
+         * Which of your own numbers to send from, keyed by channel, each channel holding a list of
+         * entries: {"sms": [{"country": "US", "from": ["+12125550000", "+14155550000"]}, {"from":
+         * ["+447700800001"]}]}. Any real channel may be a key; sent, which is auto-detect rather
+         * than a channel, is rejected. country and strategy are accepted and stored but not acted
+         * on yet: every entry's numbers apply to every recipient on that channel.
+         *
+         * This does not choose channels — Channel does, and the two combine: "channel": ["sms"]
+         * with an sms list sends on SMS from those numbers. Each list only narrows which of its own
+         * channel's routes may win, so with Channel left at auto-detect a recipient best served by
+         * a channel with no list still goes out on it. Routing itself is unchanged: the same rules
+         * are scored and ranked the same way, with routes pinned to numbers you did not list
+         * removed from the running.
+         *
+         * Every number must be an active sender on your account. The request itself is still
+         * accepted (202) if one is not — like every other send-time rule, that is decided per
+         * message, so each affected message is recorded BLOCKED with error code BUSINESS_029 and
+         * reported on GET /v3/messages and the status webhook.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun channels(): Optional<Channels> = channels.getOptional("channels")
 
         /**
          * Attachments for this send, as publicly fetchable https URLs. Used by the MMS channel and
@@ -723,6 +826,13 @@ private constructor(
         @JsonProperty("channel") @ExcludeMissing fun _channel(): JsonField<List<String>> = channel
 
         /**
+         * Returns the raw JSON value of [channels].
+         *
+         * Unlike [channels], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("channels") @ExcludeMissing fun _channels(): JsonField<Channels> = channels
+
+        /**
          * Returns the raw JSON value of [mediaUrls].
          *
          * Unlike [mediaUrls], this method doesn't throw if the JSON field has an unexpected type.
@@ -791,6 +901,7 @@ private constructor(
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var channel: JsonField<MutableList<String>>? = null
+            private var channels: JsonField<Channels> = JsonMissing.of()
             private var mediaUrls: JsonField<MutableList<String>>? = null
             private var scheduledAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var subject: JsonField<String> = JsonMissing.of()
@@ -803,6 +914,7 @@ private constructor(
             internal fun from(body: Body) = apply {
                 sandbox = body.sandbox
                 channel = body.channel.map { it.toMutableList() }
+                channels = body.channels
                 mediaUrls = body.mediaUrls.map { it.toMutableList() }
                 scheduledAt = body.scheduledAt
                 subject = body.subject
@@ -859,6 +971,40 @@ private constructor(
                         checkKnown("channel", it).add(channel)
                     }
             }
+
+            /**
+             * Which of your own numbers to send from, keyed by channel, each channel holding a list
+             * of entries: {"sms": [{"country": "US", "from": ["+12125550000", "+14155550000"]},
+             * {"from": ["+447700800001"]}]}. Any real channel may be a key; sent, which is
+             * auto-detect rather than a channel, is rejected. country and strategy are accepted and
+             * stored but not acted on yet: every entry's numbers apply to every recipient on that
+             * channel.
+             *
+             * This does not choose channels — Channel does, and the two combine: "channel": ["sms"]
+             * with an sms list sends on SMS from those numbers. Each list only narrows which of its
+             * own channel's routes may win, so with Channel left at auto-detect a recipient best
+             * served by a channel with no list still goes out on it. Routing itself is unchanged:
+             * the same rules are scored and ranked the same way, with routes pinned to numbers you
+             * did not list removed from the running.
+             *
+             * Every number must be an active sender on your account. The request itself is still
+             * accepted (202) if one is not — like every other send-time rule, that is decided per
+             * message, so each affected message is recorded BLOCKED with error code BUSINESS_029
+             * and reported on GET /v3/messages and the status webhook.
+             */
+            fun channels(channels: Channels?) = channels(JsonField.ofNullable(channels))
+
+            /** Alias for calling [Builder.channels] with `channels.orElse(null)`. */
+            fun channels(channels: Optional<Channels>) = channels(channels.getOrNull())
+
+            /**
+             * Sets [Builder.channels] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.channels] with a well-typed [Channels] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun channels(channels: JsonField<Channels>) = apply { this.channels = channels }
 
             /**
              * Attachments for this send, as publicly fetchable https URLs. Used by the MMS channel
@@ -1031,6 +1177,7 @@ private constructor(
                 Body(
                     sandbox,
                     (channel ?: JsonMissing.of()).map { it.toImmutable() },
+                    channels,
                     (mediaUrls ?: JsonMissing.of()).map { it.toImmutable() },
                     scheduledAt,
                     subject,
@@ -1059,6 +1206,7 @@ private constructor(
 
             sandbox()
             channel()
+            channels().ifPresent { it.validate() }
             mediaUrls()
             scheduledAt()
             subject()
@@ -1086,6 +1234,7 @@ private constructor(
         internal fun validity(): Int =
             (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (channel.asKnown().getOrNull()?.size ?: 0) +
+                (channels.asKnown().getOrNull()?.validity() ?: 0) +
                 (mediaUrls.asKnown().getOrNull()?.size ?: 0) +
                 (if (scheduledAt.asKnown().isPresent) 1 else 0) +
                 (if (subject.asKnown().isPresent) 1 else 0) +
@@ -1101,6 +1250,7 @@ private constructor(
             return other is Body &&
                 sandbox == other.sandbox &&
                 channel == other.channel &&
+                channels == other.channels &&
                 mediaUrls == other.mediaUrls &&
                 scheduledAt == other.scheduledAt &&
                 subject == other.subject &&
@@ -1114,6 +1264,7 @@ private constructor(
             Objects.hash(
                 sandbox,
                 channel,
+                channels,
                 mediaUrls,
                 scheduledAt,
                 subject,
@@ -1127,7 +1278,133 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, channel=$channel, mediaUrls=$mediaUrls, scheduledAt=$scheduledAt, subject=$subject, template=$template, text=$text, to=$to, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, channel=$channel, channels=$channels, mediaUrls=$mediaUrls, scheduledAt=$scheduledAt, subject=$subject, template=$template, text=$text, to=$to, additionalProperties=$additionalProperties}"
+    }
+
+    /**
+     * Which of your own numbers to send from, keyed by channel, each channel holding a list of
+     * entries: {"sms": [{"country": "US", "from": ["+12125550000", "+14155550000"]}, {"from":
+     * ["+447700800001"]}]}. Any real channel may be a key; sent, which is auto-detect rather than a
+     * channel, is rejected. country and strategy are accepted and stored but not acted on yet:
+     * every entry's numbers apply to every recipient on that channel.
+     *
+     * This does not choose channels — Channel does, and the two combine: "channel": ["sms"] with an
+     * sms list sends on SMS from those numbers. Each list only narrows which of its own channel's
+     * routes may win, so with Channel left at auto-detect a recipient best served by a channel with
+     * no list still goes out on it. Routing itself is unchanged: the same rules are scored and
+     * ranked the same way, with routes pinned to numbers you did not list removed from the running.
+     *
+     * Every number must be an active sender on your account. The request itself is still accepted
+     * (202) if one is not — like every other send-time rule, that is decided per message, so each
+     * affected message is recorded BLOCKED with error code BUSINESS_029 and reported on GET
+     * /v3/messages and the status webhook.
+     */
+    class Channels
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Channels]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Channels]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(channels: Channels) = apply {
+                additionalProperties = channels.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Channels].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Channels = Channels(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws SentInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Channels = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Channels && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Channels{additionalProperties=$additionalProperties}"
     }
 
     /** SDK-style template reference: resolve by ID or by name, with optional parameters. */

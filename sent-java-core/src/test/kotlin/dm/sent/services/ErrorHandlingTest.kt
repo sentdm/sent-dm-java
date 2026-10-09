@@ -77,6 +77,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -123,6 +139,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -169,6 +201,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -215,6 +263,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -261,6 +325,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -307,6 +387,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -353,6 +449,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -399,6 +511,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -445,6 +573,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -491,6 +635,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -537,6 +697,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -583,6 +759,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -629,6 +821,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -675,6 +883,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -721,6 +945,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -767,6 +1007,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
@@ -811,6 +1067,22 @@ internal class ErrorHandlingTest {
                         .sandbox(false)
                         .addChannel("sms")
                         .addChannel("whatsapp")
+                        .channels(
+                            MessageSendParams.Channels.builder()
+                                .putAdditionalProperty(
+                                    "foo",
+                                    JsonValue.from(
+                                        listOf(
+                                            mapOf(
+                                                "country" to "country",
+                                                "from" to listOf("string"),
+                                                "strategy" to "strategy",
+                                            )
+                                        )
+                                    ),
+                                )
+                                .build()
+                        )
                         .addMediaUrl("string")
                         .scheduledAt(null)
                         .subject(null)
