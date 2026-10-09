@@ -18,6 +18,22 @@ internal class MessageSendParamsTest {
             .sandbox(false)
             .addChannel("sms")
             .addChannel("whatsapp")
+            .channels(
+                MessageSendParams.Channels.builder()
+                    .putAdditionalProperty(
+                        "foo",
+                        JsonValue.from(
+                            listOf(
+                                mapOf(
+                                    "country" to "country",
+                                    "from" to listOf("string"),
+                                    "strategy" to "strategy",
+                                )
+                            )
+                        ),
+                    )
+                    .build()
+            )
             .addMediaUrl("string")
             .scheduledAt(null)
             .subject(null)
@@ -48,6 +64,22 @@ internal class MessageSendParamsTest {
                 .sandbox(false)
                 .addChannel("sms")
                 .addChannel("whatsapp")
+                .channels(
+                    MessageSendParams.Channels.builder()
+                        .putAdditionalProperty(
+                            "foo",
+                            JsonValue.from(
+                                listOf(
+                                    mapOf(
+                                        "country" to "country",
+                                        "from" to listOf("string"),
+                                        "strategy" to "strategy",
+                                    )
+                                )
+                            ),
+                        )
+                        .build()
+                )
                 .addMediaUrl("string")
                 .scheduledAt(null)
                 .subject(null)
@@ -97,6 +129,22 @@ internal class MessageSendParamsTest {
                 .sandbox(false)
                 .addChannel("sms")
                 .addChannel("whatsapp")
+                .channels(
+                    MessageSendParams.Channels.builder()
+                        .putAdditionalProperty(
+                            "foo",
+                            JsonValue.from(
+                                listOf(
+                                    mapOf(
+                                        "country" to "country",
+                                        "from" to listOf("string"),
+                                        "strategy" to "strategy",
+                                    )
+                                )
+                            ),
+                        )
+                        .build()
+                )
                 .addMediaUrl("string")
                 .scheduledAt(null)
                 .subject(null)
@@ -121,6 +169,23 @@ internal class MessageSendParamsTest {
 
         assertThat(body.sandbox()).contains(false)
         assertThat(body.channel().getOrNull()).containsExactly("sms", "whatsapp")
+        assertThat(body.channels())
+            .contains(
+                MessageSendParams.Channels.builder()
+                    .putAdditionalProperty(
+                        "foo",
+                        JsonValue.from(
+                            listOf(
+                                mapOf(
+                                    "country" to "country",
+                                    "from" to listOf("string"),
+                                    "strategy" to "strategy",
+                                )
+                            )
+                        ),
+                    )
+                    .build()
+            )
         assertThat(body.mediaUrls().getOrNull()).containsExactly("string")
         assertThat(body.scheduledAt()).isEmpty
         assertThat(body.subject()).isEmpty
