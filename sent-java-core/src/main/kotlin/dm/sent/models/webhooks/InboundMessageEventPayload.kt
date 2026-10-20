@@ -30,6 +30,7 @@ private constructor(
     private val media: JsonField<List<Media>>,
     private val messageId: JsonField<String>,
     private val outboundNumber: JsonField<String>,
+    private val referral: JsonValue,
     private val text: JsonField<String>,
     private val updatedAt: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -50,6 +51,7 @@ private constructor(
         @JsonProperty("outbound_number")
         @ExcludeMissing
         outboundNumber: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("referral") @ExcludeMissing referral: JsonValue = JsonMissing.of(),
         @JsonProperty("text") @ExcludeMissing text: JsonField<String> = JsonMissing.of(),
         @JsonProperty("updated_at") @ExcludeMissing updatedAt: JsonField<String> = JsonMissing.of(),
     ) : this(
@@ -60,6 +62,7 @@ private constructor(
         media,
         messageId,
         outboundNumber,
+        referral,
         text,
         updatedAt,
         mutableMapOf(),
@@ -128,6 +131,23 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun outboundNumber(): Optional<String> = outboundNumber.getOptional("outbound_number")
+
+    /**
+     * The ad the contact tapped to start the conversation, present only on whatsapp messages sent
+     * from a Click to WhatsApp ad and omitted entirely otherwise.
+     *
+     * This is Meta's referral object passed through unchanged, with Meta's field names and nesting:
+     * source_url, source_id, source_type, headline, body, media_type, image_url (image ads),
+     * video_url and thumbnail_url (video ads), ctwa_clid and welcome_message.text. Which fields
+     * appear is Meta's decision: ctwa_clid in particular is not sent for ads shown in WhatsApp
+     * Status, so treat every field as optional.
+     *
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = inboundMessageEventPayload.referral().convert(MyClass.class);
+     * ```
+     */
+    @JsonProperty("referral") @ExcludeMissing fun _referral(): JsonValue = referral
 
     /**
      * The message body. Sent as null when the inbound message carried no text, for example a
@@ -251,6 +271,7 @@ private constructor(
         private var media: JsonField<MutableList<Media>>? = null
         private var messageId: JsonField<String> = JsonMissing.of()
         private var outboundNumber: JsonField<String> = JsonMissing.of()
+        private var referral: JsonValue = JsonMissing.of()
         private var text: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -264,6 +285,7 @@ private constructor(
             media = inboundMessageEventPayload.media.map { it.toMutableList() }
             messageId = inboundMessageEventPayload.messageId
             outboundNumber = inboundMessageEventPayload.outboundNumber
+            referral = inboundMessageEventPayload.referral
             text = inboundMessageEventPayload.text
             updatedAt = inboundMessageEventPayload.updatedAt
             additionalProperties = inboundMessageEventPayload.additionalProperties.toMutableMap()
@@ -384,6 +406,18 @@ private constructor(
         }
 
         /**
+         * The ad the contact tapped to start the conversation, present only on whatsapp messages
+         * sent from a Click to WhatsApp ad and omitted entirely otherwise.
+         *
+         * This is Meta's referral object passed through unchanged, with Meta's field names and
+         * nesting: source_url, source_id, source_type, headline, body, media_type, image_url (image
+         * ads), video_url and thumbnail_url (video ads), ctwa_clid and welcome_message.text. Which
+         * fields appear is Meta's decision: ctwa_clid in particular is not sent for ads shown in
+         * WhatsApp Status, so treat every field as optional.
+         */
+        fun referral(referral: JsonValue) = apply { this.referral = referral }
+
+        /**
          * The message body. Sent as null when the inbound message carried no text, for example a
          * media-only message. The field is always present, so read it and check for null rather
          * than checking whether the key exists.
@@ -457,6 +491,7 @@ private constructor(
                 (media ?: JsonMissing.of()).map { it.toImmutable() },
                 messageId,
                 outboundNumber,
+                referral,
                 text,
                 updatedAt,
                 additionalProperties.toMutableMap(),
@@ -833,6 +868,7 @@ private constructor(
             media == other.media &&
             messageId == other.messageId &&
             outboundNumber == other.outboundNumber &&
+            referral == other.referral &&
             text == other.text &&
             updatedAt == other.updatedAt &&
             additionalProperties == other.additionalProperties
@@ -847,6 +883,7 @@ private constructor(
             media,
             messageId,
             outboundNumber,
+            referral,
             text,
             updatedAt,
             additionalProperties,
@@ -856,5 +893,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InboundMessageEventPayload{inboundNumber=$inboundNumber, receivedAt=$receivedAt, accountId=$accountId, channel=$channel, media=$media, messageId=$messageId, outboundNumber=$outboundNumber, text=$text, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "InboundMessageEventPayload{inboundNumber=$inboundNumber, receivedAt=$receivedAt, accountId=$accountId, channel=$channel, media=$media, messageId=$messageId, outboundNumber=$outboundNumber, referral=$referral, text=$text, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

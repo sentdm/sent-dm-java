@@ -278,6 +278,12 @@ interface ProfileServiceAsync {
      * Anything it still held is released first: phone numbers return to our inventory and can go to
      * whoever asks next, its own WhatsApp account is deregistered, and its routing rules stop being
      * used. Requires admin role in the organization.
+     *
+     * A number it holds that your WhatsApp Business Account still carries refuses the delete with a
+     * `409 CONFLICT_012`, and nothing is deleted: the number would return to our shared inventory
+     * while Meta still routes WhatsApp to it, and only you can take it off the account — deregister
+     * **and** delete it in WhatsApp Manager, then try again. A `409 CONFLICT_013` means the account
+     * could not be read, so we cannot tell.
      */
     @Deprecated("deprecated")
     fun delete(profileId: String, params: ProfileDeleteParams): CompletableFuture<Void?> =
