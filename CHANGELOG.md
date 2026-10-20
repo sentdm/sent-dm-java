@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.44.0](https://github.com/sentdm/sent-dm-java/compare/v0.43.0...v0.44.0) (2026-10-20)
+
+
+### Features
+
+* **api:** sync generated SDKs from the committed spec ([bac07a3](https://github.com/sentdm/sent-dm-java/commit/bac07a38c4d609078289289637f31354b55e849b))
+
 ## [0.43.0](https://github.com/sentdm/sent-dm-java/compare/v0.42.0...v0.43.0) (2026-10-09)
 
 
