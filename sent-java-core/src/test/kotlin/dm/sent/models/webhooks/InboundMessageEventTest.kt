@@ -3,6 +3,7 @@
 package dm.sent.models.webhooks
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -31,6 +32,7 @@ internal class InboundMessageEventTest {
                         )
                         .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .outboundNumber("outbound_number")
+                        .referral(JsonValue.from(mapOf<String, Any>()))
                         .text("text")
                         .updatedAt("updated_at")
                         .build()
@@ -58,6 +60,7 @@ internal class InboundMessageEventTest {
                     )
                     .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .outboundNumber("outbound_number")
+                    .referral(JsonValue.from(mapOf<String, Any>()))
                     .text("text")
                     .updatedAt("updated_at")
                     .build()
@@ -89,6 +92,7 @@ internal class InboundMessageEventTest {
                         )
                         .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .outboundNumber("outbound_number")
+                        .referral(JsonValue.from(mapOf<String, Any>()))
                         .text("text")
                         .updatedAt("updated_at")
                         .build()
