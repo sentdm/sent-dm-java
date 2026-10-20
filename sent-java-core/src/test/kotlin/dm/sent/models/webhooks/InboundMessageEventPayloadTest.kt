@@ -3,6 +3,7 @@
 package dm.sent.models.webhooks
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -28,6 +29,7 @@ internal class InboundMessageEventPayloadTest {
                 )
                 .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .outboundNumber("outbound_number")
+                .referral(JsonValue.from(mapOf<String, Any>()))
                 .text("text")
                 .updatedAt("updated_at")
                 .build()
@@ -49,6 +51,8 @@ internal class InboundMessageEventPayloadTest {
         assertThat(inboundMessageEventPayload.messageId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(inboundMessageEventPayload.outboundNumber()).contains("outbound_number")
+        assertThat(inboundMessageEventPayload._referral())
+            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
         assertThat(inboundMessageEventPayload.text()).contains("text")
         assertThat(inboundMessageEventPayload.updatedAt()).contains("updated_at")
     }
@@ -72,6 +76,7 @@ internal class InboundMessageEventPayloadTest {
                 )
                 .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .outboundNumber("outbound_number")
+                .referral(JsonValue.from(mapOf<String, Any>()))
                 .text("text")
                 .updatedAt("updated_at")
                 .build()
