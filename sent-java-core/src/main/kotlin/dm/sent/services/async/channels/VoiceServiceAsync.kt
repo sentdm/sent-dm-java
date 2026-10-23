@@ -10,9 +10,7 @@ import dm.sent.models.channels.voice.ApiResponseOfVoiceCallbackTest
 import dm.sent.models.channels.voice.ApiResponseOfVoiceNumber
 import dm.sent.models.channels.voice.ApiResponseOfVoiceNumberCreated
 import dm.sent.models.channels.voice.ApiResponseOfVoiceSecret
-import dm.sent.models.channels.voice.ApiResponseOfVoiceToken
 import dm.sent.models.channels.voice.VoiceCreateParams
-import dm.sent.models.channels.voice.VoiceCreateTokenParams
 import dm.sent.models.channels.voice.VoiceListParams
 import dm.sent.models.channels.voice.VoiceRetrieveParams
 import dm.sent.models.channels.voice.VoiceRotateSecretParams
@@ -29,9 +27,9 @@ import java.util.function.Consumer
  * country alone. **WhatsApp and RCS are single**: a customer has one business account and one
  * agent. **Voice is per number**: each number you hold can carry phone calls on its own (`POST
  * /v3/channels/voice`), each with the callback URL Sent asks what to do with its calls, one of them
- * is the default line for calls placed from your app, and voice tokens are minted under `POST
- * /v3/channels/voice/tokens`. Read your voice numbers with `GET /v3/channels/voice` and change one
- * with `PATCH /v3/channels/voice/{number}`.
+ * is the default line for calls placed from your app, and voice tokens are minted with `POST
+ * /v3/voice/tokens`. Read your voice numbers with `GET /v3/channels/voice` and change one with
+ * `PATCH /v3/channels/voice/{number}`.
  *
  * ## Compliance lives on the market
  *
@@ -142,17 +140,20 @@ interface VoiceServiceAsync {
      * on this path returns, so what comes back can be sent back.
      *
      * ## What it changes
-     * |Body                                         |Effect                                                                                                                                                    |
-     * |---------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-     * |`"status": "ACTIVE"`                         |turns calls on again for a number you turned off; the callback URL and the secret it had are kept                                                         |
-     * |`"status": "INACTIVE"`                       |turns calls off; the callback URL and the secret stay on the number                                                                                       |
-     * |`"default_for_app_calls": true`              |makes this the line app-originated calls are placed from when a voice token names no number                                                               |
-     * |`"callback_url": "https://example.com/voice"`|replaces where Sent asks what to do with each call on the number; the signing secret is kept, and a number that was waiting for its first URL is turned on|
-     * |key omitted                                  |left exactly as it is                                                                                                                                     |
+     * |Body                                         |Effect                                                                                                      |
+     * |---------------------------------------------|------------------------------------------------------------------------------------------------------------|
+     * |`"status": "ACTIVE"`                         |turns calls on again for a number you turned off; the callback URL and the secret it had are kept           |
+     * |`"status": "INACTIVE"`                       |turns calls off; the callback URL and the secret stay on the number                                         |
+     * |`"default_for_app_calls": true`              |makes this the line app-originated calls are placed from when a voice token names no number                 |
+     * |`"callback_url": "https://example.com/voice"`|replaces where Sent asks what to do with each call on the number; the signing secret and the status are kept|
+     * |key omitted                                  |left exactly as it is                                                                                       |
      *
      * `status` is matched ignoring case. Any combination is accepted: `status: "ACTIVE"` with
      * `default_for_app_calls: true` turns a number on as the new default, and a `callback_url` sent
      * with either status is written too. A body that names none of the three is refused.
+     *
+     * A number can be on without a callback URL: calls placed from your app then connect straight
+     * to the number or user they dial, and calls to the number are declined.
      *
      * ## What it will refuse
      *
@@ -164,10 +165,6 @@ interface VoiceServiceAsync {
      * phone calls off.
      *
      * **Making an inactive number the default is `400`.** Send `status: "ACTIVE"` in the same call.
-     *
-     * A number added without a `callback_url` is `INACTIVE` for that one reason, so sending it a
-     * `callback_url` turns it on by itself, and it becomes your default line if you have no other
-     * active voice number. A number you turned off while it had a URL stays off.
      *
      * **A number you never turned voice on for is `404`.** Add it with `POST /v3/channels/voice`.
      *
@@ -236,31 +233,6 @@ interface VoiceServiceAsync {
     /** @see list */
     fun list(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfListOfVoiceNumber> =
         list(VoiceListParams.none(), requestOptions)
-
-    /**
-     * Mints a short-lived token for one of your app users. Call this from your backend and return
-     * the token to your app, which passes it to the voice client SDK to register. The identity is
-     * bound to the given number, or to your default app-call number when omitted, and calls placed
-     * by that identity are routed through the bound number. Minting again re-binds the identity, so
-     * an identity can move between numbers.
-     */
-    fun createToken(): CompletableFuture<ApiResponseOfVoiceToken> =
-        createToken(VoiceCreateTokenParams.none())
-
-    /** @see createToken */
-    fun createToken(
-        params: VoiceCreateTokenParams = VoiceCreateTokenParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfVoiceToken>
-
-    /** @see createToken */
-    fun createToken(
-        params: VoiceCreateTokenParams = VoiceCreateTokenParams.none()
-    ): CompletableFuture<ApiResponseOfVoiceToken> = createToken(params, RequestOptions.none())
-
-    /** @see createToken */
-    fun createToken(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfVoiceToken> =
-        createToken(VoiceCreateTokenParams.none(), requestOptions)
 
     /**
      * Generates a new signing secret for the questions Sent sends to this number's callback URL and
@@ -464,31 +436,6 @@ interface VoiceServiceAsync {
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<ApiResponseOfListOfVoiceNumber>> =
             list(VoiceListParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `post /v3/channels/voice/tokens`, but is otherwise the
-         * same as [VoiceServiceAsync.createToken].
-         */
-        fun createToken(): CompletableFuture<HttpResponseFor<ApiResponseOfVoiceToken>> =
-            createToken(VoiceCreateTokenParams.none())
-
-        /** @see createToken */
-        fun createToken(
-            params: VoiceCreateTokenParams = VoiceCreateTokenParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfVoiceToken>>
-
-        /** @see createToken */
-        fun createToken(
-            params: VoiceCreateTokenParams = VoiceCreateTokenParams.none()
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfVoiceToken>> =
-            createToken(params, RequestOptions.none())
-
-        /** @see createToken */
-        fun createToken(
-            requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfVoiceToken>> =
-            createToken(VoiceCreateTokenParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /v3/channels/voice/{number}/rotate-secret`, but is

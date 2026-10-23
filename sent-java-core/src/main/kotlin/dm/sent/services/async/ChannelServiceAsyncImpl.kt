@@ -29,9 +29,9 @@ class ChannelServiceAsyncImpl internal constructor(private val clientOptions: Cl
      * country alone. **WhatsApp and RCS are single**: a customer has one business account and one
      * agent. **Voice is per number**: each number you hold can carry phone calls on its own (`POST
      * /v3/channels/voice`), each with the callback URL Sent asks what to do with its calls, one of
-     * them is the default line for calls placed from your app, and voice tokens are minted under
-     * `POST /v3/channels/voice/tokens`. Read your voice numbers with `GET /v3/channels/voice` and
-     * change one with `PATCH /v3/channels/voice/{number}`.
+     * them is the default line for calls placed from your app, and voice tokens are minted with
+     * `POST /v3/voice/tokens`. Read your voice numbers with `GET /v3/channels/voice` and change one
+     * with `PATCH /v3/channels/voice/{number}`.
      *
      * ## Compliance lives on the market
      *
@@ -72,9 +72,8 @@ class ChannelServiceAsyncImpl internal constructor(private val clientOptions: Cl
          * business account and one agent. **Voice is per number**: each number you hold can carry
          * phone calls on its own (`POST /v3/channels/voice`), each with the callback URL Sent asks
          * what to do with its calls, one of them is the default line for calls placed from your
-         * app, and voice tokens are minted under `POST /v3/channels/voice/tokens`. Read your voice
-         * numbers with `GET /v3/channels/voice` and change one with `PATCH
-         * /v3/channels/voice/{number}`.
+         * app, and voice tokens are minted with `POST /v3/voice/tokens`. Read your voice numbers
+         * with `GET /v3/channels/voice` and change one with `PATCH /v3/channels/voice/{number}`.
          *
          * ## Compliance lives on the market
          *

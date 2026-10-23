@@ -18,9 +18,9 @@ internal class ApiResponseOfCallRecordingsTest {
         val apiResponseOfCallRecordings =
             ApiResponseOfCallRecordings.builder()
                 .data(
-                    CallRecordings.builder()
+                    ApiResponseOfCallRecordings.Data.builder()
                         .addRecording(
-                            CallRecording.builder()
+                            ApiResponseOfCallRecordings.Data.Recording.builder()
                                 .downloadUrl("download_url")
                                 .recordingId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .urlExpiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -52,9 +52,9 @@ internal class ApiResponseOfCallRecordingsTest {
 
         assertThat(apiResponseOfCallRecordings.data())
             .contains(
-                CallRecordings.builder()
+                ApiResponseOfCallRecordings.Data.builder()
                     .addRecording(
-                        CallRecording.builder()
+                        ApiResponseOfCallRecordings.Data.Recording.builder()
                             .downloadUrl("download_url")
                             .recordingId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .urlExpiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -92,9 +92,9 @@ internal class ApiResponseOfCallRecordingsTest {
         val apiResponseOfCallRecordings =
             ApiResponseOfCallRecordings.builder()
                 .data(
-                    CallRecordings.builder()
+                    ApiResponseOfCallRecordings.Data.builder()
                         .addRecording(
-                            CallRecording.builder()
+                            ApiResponseOfCallRecordings.Data.Recording.builder()
                                 .downloadUrl("download_url")
                                 .recordingId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .urlExpiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
