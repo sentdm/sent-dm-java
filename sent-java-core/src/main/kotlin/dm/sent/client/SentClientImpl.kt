@@ -4,8 +4,6 @@ package dm.sent.client
 
 import dm.sent.core.ClientOptions
 import dm.sent.core.getPackageVersion
-import dm.sent.services.blocking.CallService
-import dm.sent.services.blocking.CallServiceImpl
 import dm.sent.services.blocking.ChannelService
 import dm.sent.services.blocking.ChannelServiceImpl
 import dm.sent.services.blocking.ContactService
@@ -24,6 +22,8 @@ import dm.sent.services.blocking.TemplateService
 import dm.sent.services.blocking.TemplateServiceImpl
 import dm.sent.services.blocking.UserService
 import dm.sent.services.blocking.UserServiceImpl
+import dm.sent.services.blocking.VoiceService
+import dm.sent.services.blocking.VoiceServiceImpl
 import dm.sent.services.blocking.WebhookService
 import dm.sent.services.blocking.WebhookServiceImpl
 import java.util.function.Consumer
@@ -65,7 +65,7 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
         ConversationServiceImpl(clientOptionsWithUserAgent)
     }
 
-    private val calls: CallService by lazy { CallServiceImpl(clientOptionsWithUserAgent) }
+    private val voice: VoiceService by lazy { VoiceServiceImpl(clientOptionsWithUserAgent) }
 
     private val channels: ChannelService by lazy { ChannelServiceImpl(clientOptionsWithUserAgent) }
 
@@ -176,24 +176,7 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
      */
     override fun conversations(): ConversationService = conversations
 
-    /**
-     * Phone calls from the numbers you hold, driven by your own callback URL.
-     *
-     * `POST /v3/channels/voice` enables a number for calls, with the callback URL Sent asks what to
-     * do with each call on it, and `POST /v3/channels/voice/tokens` mints a short-lived token that
-     * lets a user of your app place and receive calls as that number. When a call arrives or a
-     * caller presses a key, a signed question is POSTed to the callback URL and the answer decides
-     * the call; `POST /v3/channels/voice/{number}/test` checks the URL answers the way we need
-     * before a real call reaches it, and `POST /v3/channels/voice/{number}/rotate-secret` replaces
-     * the signing secret. The call events themselves (`call.completed` and the rest) arrive through
-     * your webhooks.
-     *
-     * Every call is a record under `/v3/calls`: read it, list its recordings once one is ready,
-     * hang it up, start or stop recording, and add, mute or remove conference participants while it
-     * is live. A leg to a phone number runs for at most what your balance affords at the
-     * destination's rate.
-     */
-    override fun calls(): CallService = calls
+    override fun voice(): VoiceService = voice
 
     override fun channels(): ChannelService = channels
 
@@ -243,8 +226,8 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
             ConversationServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val calls: CallService.WithRawResponse by lazy {
-            CallServiceImpl.WithRawResponseImpl(clientOptions)
+        private val voice: VoiceService.WithRawResponse by lazy {
+            VoiceServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val channels: ChannelService.WithRawResponse by lazy {
@@ -362,24 +345,7 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
          */
         override fun conversations(): ConversationService.WithRawResponse = conversations
 
-        /**
-         * Phone calls from the numbers you hold, driven by your own callback URL.
-         *
-         * `POST /v3/channels/voice` enables a number for calls, with the callback URL Sent asks
-         * what to do with each call on it, and `POST /v3/channels/voice/tokens` mints a short-lived
-         * token that lets a user of your app place and receive calls as that number. When a call
-         * arrives or a caller presses a key, a signed question is POSTed to the callback URL and
-         * the answer decides the call; `POST /v3/channels/voice/{number}/test` checks the URL
-         * answers the way we need before a real call reaches it, and `POST
-         * /v3/channels/voice/{number}/rotate-secret` replaces the signing secret. The call events
-         * themselves (`call.completed` and the rest) arrive through your webhooks.
-         *
-         * Every call is a record under `/v3/calls`: read it, list its recordings once one is ready,
-         * hang it up, start or stop recording, and add, mute or remove conference participants
-         * while it is live. A leg to a phone number runs for at most what your balance affords at
-         * the destination's rate.
-         */
-        override fun calls(): CallService.WithRawResponse = calls
+        override fun voice(): VoiceService.WithRawResponse = voice
 
         override fun channels(): ChannelService.WithRawResponse = channels
 
