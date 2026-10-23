@@ -133,7 +133,7 @@ private constructor(
     fun reason(): Optional<String> = reason.getOptional("reason")
 
     /**
-     * The recording that became available, the same id GET /v3/calls/{id}/recordings lists it
+     * The recording that became available, the same id GET /v3/voice/calls/{id}/recordings lists it
      * under. Only on call.recording_ready, which is sent once per recording.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -385,8 +385,8 @@ private constructor(
         fun reason(reason: JsonField<String>) = apply { this.reason = reason }
 
         /**
-         * The recording that became available, the same id GET /v3/calls/{id}/recordings lists it
-         * under. Only on call.recording_ready, which is sent once per recording.
+         * The recording that became available, the same id GET /v3/voice/calls/{id}/recordings
+         * lists it under. Only on call.recording_ready, which is sent once per recording.
          */
         fun recordingId(recordingId: String?) = recordingId(JsonField.ofNullable(recordingId))
 

@@ -19,7 +19,7 @@ internal class ApiResponseOfListOfCallParticipantTest {
         val apiResponseOfListOfCallParticipant =
             ApiResponseOfListOfCallParticipant.builder()
                 .addData(
-                    CallParticipant.builder()
+                    ApiResponseOfListOfCallParticipant.Data.builder()
                         .id("id")
                         .durationSeconds(0)
                         .kind("kind")
@@ -51,7 +51,7 @@ internal class ApiResponseOfListOfCallParticipantTest {
 
         assertThat(apiResponseOfListOfCallParticipant.data().getOrNull())
             .containsExactly(
-                CallParticipant.builder()
+                ApiResponseOfListOfCallParticipant.Data.builder()
                     .id("id")
                     .durationSeconds(0)
                     .kind("kind")
@@ -89,7 +89,7 @@ internal class ApiResponseOfListOfCallParticipantTest {
         val apiResponseOfListOfCallParticipant =
             ApiResponseOfListOfCallParticipant.builder()
                 .addData(
-                    CallParticipant.builder()
+                    ApiResponseOfListOfCallParticipant.Data.builder()
                         .id("id")
                         .durationSeconds(0)
                         .kind("kind")

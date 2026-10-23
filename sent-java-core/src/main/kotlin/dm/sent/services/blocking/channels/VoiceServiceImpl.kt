@@ -21,9 +21,7 @@ import dm.sent.models.channels.voice.ApiResponseOfVoiceCallbackTest
 import dm.sent.models.channels.voice.ApiResponseOfVoiceNumber
 import dm.sent.models.channels.voice.ApiResponseOfVoiceNumberCreated
 import dm.sent.models.channels.voice.ApiResponseOfVoiceSecret
-import dm.sent.models.channels.voice.ApiResponseOfVoiceToken
 import dm.sent.models.channels.voice.VoiceCreateParams
-import dm.sent.models.channels.voice.VoiceCreateTokenParams
 import dm.sent.models.channels.voice.VoiceListParams
 import dm.sent.models.channels.voice.VoiceRetrieveParams
 import dm.sent.models.channels.voice.VoiceRotateSecretParams
@@ -40,9 +38,9 @@ import kotlin.jvm.optionals.getOrNull
  * country alone. **WhatsApp and RCS are single**: a customer has one business account and one
  * agent. **Voice is per number**: each number you hold can carry phone calls on its own (`POST
  * /v3/channels/voice`), each with the callback URL Sent asks what to do with its calls, one of them
- * is the default line for calls placed from your app, and voice tokens are minted under `POST
- * /v3/channels/voice/tokens`. Read your voice numbers with `GET /v3/channels/voice` and change one
- * with `PATCH /v3/channels/voice/{number}`.
+ * is the default line for calls placed from your app, and voice tokens are minted with `POST
+ * /v3/voice/tokens`. Read your voice numbers with `GET /v3/channels/voice` and change one with
+ * `PATCH /v3/channels/voice/{number}`.
  *
  * ## Compliance lives on the market
  *
@@ -97,13 +95,6 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
     ): ApiResponseOfListOfVoiceNumber =
         // get /v3/channels/voice
         withRawResponse().list(params, requestOptions).parse()
-
-    override fun createToken(
-        params: VoiceCreateTokenParams,
-        requestOptions: RequestOptions,
-    ): ApiResponseOfVoiceToken =
-        // post /v3/channels/voice/tokens
-        withRawResponse().createToken(params, requestOptions).parse()
 
     override fun rotateSecret(
         params: VoiceRotateSecretParams,
@@ -240,34 +231,6 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
             return errorHandler.handle(response).parseable {
                 response
                     .use { listHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val createTokenHandler: Handler<ApiResponseOfVoiceToken> =
-            jsonHandler<ApiResponseOfVoiceToken>(clientOptions.jsonMapper)
-
-        override fun createToken(
-            params: VoiceCreateTokenParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfVoiceToken> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v3", "channels", "voice", "tokens")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { createTokenHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

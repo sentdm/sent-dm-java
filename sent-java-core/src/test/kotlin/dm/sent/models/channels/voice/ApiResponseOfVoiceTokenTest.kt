@@ -18,7 +18,7 @@ internal class ApiResponseOfVoiceTokenTest {
         val apiResponseOfVoiceToken =
             ApiResponseOfVoiceToken.builder()
                 .data(
-                    VoiceToken.builder()
+                    ApiResponseOfVoiceToken.Data.builder()
                         .token("token")
                         .expiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .identity("identity")
@@ -49,7 +49,7 @@ internal class ApiResponseOfVoiceTokenTest {
 
         assertThat(apiResponseOfVoiceToken.data())
             .contains(
-                VoiceToken.builder()
+                ApiResponseOfVoiceToken.Data.builder()
                     .token("token")
                     .expiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .identity("identity")
@@ -86,7 +86,7 @@ internal class ApiResponseOfVoiceTokenTest {
         val apiResponseOfVoiceToken =
             ApiResponseOfVoiceToken.builder()
                 .data(
-                    VoiceToken.builder()
+                    ApiResponseOfVoiceToken.Data.builder()
                         .token("token")
                         .expiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .identity("identity")
