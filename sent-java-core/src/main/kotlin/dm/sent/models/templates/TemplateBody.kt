@@ -58,9 +58,9 @@ private constructor(
      * MMS-specific content — subject, text and attachments.
      *
      * Like Rcs, an override that cannot stand on its own: a template still needs a MultiChannel
-     * body or the Sms + Whatsapp pair to be deliverable at all. Unlike Rcs, it has no fallback at
-     * send time — MMS with no media is a more expensive SMS, so a template without this slot is
-     * deliberately not MMS-capable and never produces an MMS route candidate.
+     * body or the Sms + Whatsapp pair to be deliverable at all. Without this slot MMS renders the
+     * shared or SMS body, so it is only needed for MMS-specific copy, a subject or attachments.
+     * When present it replaces that body on MMS rather than adding to it.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -182,9 +182,9 @@ private constructor(
          * MMS-specific content — subject, text and attachments.
          *
          * Like Rcs, an override that cannot stand on its own: a template still needs a MultiChannel
-         * body or the Sms + Whatsapp pair to be deliverable at all. Unlike Rcs, it has no fallback
-         * at send time — MMS with no media is a more expensive SMS, so a template without this slot
-         * is deliberately not MMS-capable and never produces an MMS route candidate.
+         * body or the Sms + Whatsapp pair to be deliverable at all. Without this slot MMS renders
+         * the shared or SMS body, so it is only needed for MMS-specific copy, a subject or
+         * attachments. When present it replaces that body on MMS rather than adding to it.
          */
         fun mms(mms: Mms?) = mms(JsonField.ofNullable(mms))
 
@@ -343,9 +343,9 @@ private constructor(
      * MMS-specific content — subject, text and attachments.
      *
      * Like Rcs, an override that cannot stand on its own: a template still needs a MultiChannel
-     * body or the Sms + Whatsapp pair to be deliverable at all. Unlike Rcs, it has no fallback at
-     * send time — MMS with no media is a more expensive SMS, so a template without this slot is
-     * deliberately not MMS-capable and never produces an MMS route candidate.
+     * body or the Sms + Whatsapp pair to be deliverable at all. Without this slot MMS renders the
+     * shared or SMS body, so it is only needed for MMS-specific copy, a subject or attachments.
+     * When present it replaces that body on MMS rather than adding to it.
      */
     class Mms
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
