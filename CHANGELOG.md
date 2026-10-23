@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.45.0](https://github.com/sentdm/sent-dm-java/compare/v0.44.0...v0.45.0) (2026-10-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** move calls and voice tokens under the voice resource
+
+### Features
+
+* **api:** move calls and voice tokens under the voice resource ([11dce53](https://github.com/sentdm/sent-dm-java/commit/11dce53eee07626f476cfb5e1c388360db05e697))
+
 ## [0.44.0](https://github.com/sentdm/sent-dm-java/compare/v0.43.0...v0.44.0) (2026-10-20)
 
 
