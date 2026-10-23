@@ -1,0 +1,102 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package dm.sent.services.async.voice
+
+import dm.sent.core.ClientOptions
+import dm.sent.core.RequestOptions
+import dm.sent.core.handlers.errorBodyHandler
+import dm.sent.core.handlers.errorHandler
+import dm.sent.core.handlers.jsonHandler
+import dm.sent.core.http.HttpMethod
+import dm.sent.core.http.HttpRequest
+import dm.sent.core.http.HttpResponse
+import dm.sent.core.http.HttpResponse.Handler
+import dm.sent.core.http.HttpResponseFor
+import dm.sent.core.http.json
+import dm.sent.core.http.parseable
+import dm.sent.core.prepareAsync
+import dm.sent.models.voice.tokens.ApiResponseOfVoiceToken
+import dm.sent.models.voice.tokens.TokenCreateParams
+import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
+
+/**
+ * Phone calls from the numbers you hold, driven by your own callback URL.
+ *
+ * `POST /v3/channels/voice` enables a number for calls, with the callback URL Sent asks what to do
+ * with each call on it, and `POST /v3/voice/tokens` mints a short-lived token that lets a user of
+ * your app place and receive calls as that number. When a call arrives or a caller presses a key, a
+ * signed question is POSTed to the callback URL and the answer decides the call; `POST
+ * /v3/channels/voice/{number}/test` checks the URL answers the way we need before a real call
+ * reaches it, and `POST /v3/channels/voice/{number}/rotate-secret` replaces the signing secret. The
+ * call events themselves (`call.completed` and the rest) arrive through your webhooks.
+ *
+ * Every call is a record under `/v3/voice/calls`: read it, list its recordings once one is ready,
+ * hang it up, start or stop recording, and add, mute or remove conference participants while it is
+ * live. A leg to a phone number runs for at most what your balance affords at the destination's
+ * rate.
+ */
+class TokenServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
+    TokenServiceAsync {
+
+    private val withRawResponse: TokenServiceAsync.WithRawResponse by lazy {
+        WithRawResponseImpl(clientOptions)
+    }
+
+    override fun withRawResponse(): TokenServiceAsync.WithRawResponse = withRawResponse
+
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): TokenServiceAsync =
+        TokenServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun create(
+        params: TokenCreateParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ApiResponseOfVoiceToken> =
+        // post /v3/voice/tokens
+        withRawResponse().create(params, requestOptions).thenApply { it.parse() }
+
+    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
+        TokenServiceAsync.WithRawResponse {
+
+        private val errorHandler: Handler<HttpResponse> =
+            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        override fun withOptions(
+            modifier: Consumer<ClientOptions.Builder>
+        ): TokenServiceAsync.WithRawResponse =
+            TokenServiceAsyncImpl.WithRawResponseImpl(
+                clientOptions.toBuilder().apply(modifier::accept).build()
+            )
+
+        private val createHandler: Handler<ApiResponseOfVoiceToken> =
+            jsonHandler<ApiResponseOfVoiceToken>(clientOptions.jsonMapper)
+
+        override fun create(
+            params: TokenCreateParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfVoiceToken>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v3", "voice", "tokens")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { createHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+    }
+}
