@@ -3,10 +3,16 @@
 package dm.sent.services.blocking
 
 import dm.sent.core.ClientOptions
+import dm.sent.services.blocking.VoiceService
+import dm.sent.services.blocking.VoiceServiceImpl
+import dm.sent.services.blocking.voice.AgentService
+import dm.sent.services.blocking.voice.AgentServiceImpl
 import dm.sent.services.blocking.voice.CallService
 import dm.sent.services.blocking.voice.CallServiceImpl
 import dm.sent.services.blocking.voice.TokenService
 import dm.sent.services.blocking.voice.TokenServiceImpl
+import dm.sent.services.blocking.voice.VoiceService
+import dm.sent.services.blocking.voice.VoiceServiceImpl
 import java.util.function.Consumer
 
 class VoiceServiceImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -19,6 +25,10 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
     private val calls: CallService by lazy { CallServiceImpl(clientOptions) }
 
     private val tokens: TokenService by lazy { TokenServiceImpl(clientOptions) }
+
+    private val agents: AgentService by lazy { AgentServiceImpl(clientOptions) }
+
+    private val voices: VoiceService by lazy { VoiceServiceImpl(clientOptions) }
 
     override fun withRawResponse(): VoiceService.WithRawResponse = withRawResponse
 
@@ -63,6 +73,10 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
      */
     override fun tokens(): TokenService = tokens
 
+    override fun agents(): AgentService = agents
+
+    override fun voices(): VoiceService = voices
+
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         VoiceService.WithRawResponse {
 
@@ -72,6 +86,14 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
 
         private val tokens: TokenService.WithRawResponse by lazy {
             TokenServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val agents: AgentService.WithRawResponse by lazy {
+            AgentServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val voices: VoiceService.WithRawResponse by lazy {
+            VoiceServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         override fun withOptions(
@@ -118,5 +140,9 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
          * affords at the destination's rate.
          */
         override fun tokens(): TokenService.WithRawResponse = tokens
+
+        override fun agents(): AgentService.WithRawResponse = agents
+
+        override fun voices(): VoiceService.WithRawResponse = voices
     }
 }
