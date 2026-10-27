@@ -3,10 +3,16 @@
 package dm.sent.services.async
 
 import dm.sent.core.ClientOptions
+import dm.sent.services.async.VoiceServiceAsync
+import dm.sent.services.async.VoiceServiceAsyncImpl
+import dm.sent.services.async.voice.AgentServiceAsync
+import dm.sent.services.async.voice.AgentServiceAsyncImpl
 import dm.sent.services.async.voice.CallServiceAsync
 import dm.sent.services.async.voice.CallServiceAsyncImpl
 import dm.sent.services.async.voice.TokenServiceAsync
 import dm.sent.services.async.voice.TokenServiceAsyncImpl
+import dm.sent.services.async.voice.VoiceServiceAsync
+import dm.sent.services.async.voice.VoiceServiceAsyncImpl
 import java.util.function.Consumer
 
 class VoiceServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -19,6 +25,10 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
     private val calls: CallServiceAsync by lazy { CallServiceAsyncImpl(clientOptions) }
 
     private val tokens: TokenServiceAsync by lazy { TokenServiceAsyncImpl(clientOptions) }
+
+    private val agents: AgentServiceAsync by lazy { AgentServiceAsyncImpl(clientOptions) }
+
+    private val voices: VoiceServiceAsync by lazy { VoiceServiceAsyncImpl(clientOptions) }
 
     override fun withRawResponse(): VoiceServiceAsync.WithRawResponse = withRawResponse
 
@@ -63,6 +73,10 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
      */
     override fun tokens(): TokenServiceAsync = tokens
 
+    override fun agents(): AgentServiceAsync = agents
+
+    override fun voices(): VoiceServiceAsync = voices
+
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         VoiceServiceAsync.WithRawResponse {
 
@@ -72,6 +86,14 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
 
         private val tokens: TokenServiceAsync.WithRawResponse by lazy {
             TokenServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val agents: AgentServiceAsync.WithRawResponse by lazy {
+            AgentServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val voices: VoiceServiceAsync.WithRawResponse by lazy {
+            VoiceServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         override fun withOptions(
@@ -118,5 +140,9 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
          * affords at the destination's rate.
          */
         override fun tokens(): TokenServiceAsync.WithRawResponse = tokens
+
+        override fun agents(): AgentServiceAsync.WithRawResponse = agents
+
+        override fun voices(): VoiceServiceAsync.WithRawResponse = voices
     }
 }
