@@ -3,8 +3,11 @@
 package dm.sent.services.blocking
 
 import dm.sent.core.ClientOptions
+import dm.sent.services.blocking.VoiceService
+import dm.sent.services.blocking.voice.AgentService
 import dm.sent.services.blocking.voice.CallService
 import dm.sent.services.blocking.voice.TokenService
+import dm.sent.services.blocking.voice.VoiceService
 import java.util.function.Consumer
 
 interface VoiceService {
@@ -59,6 +62,10 @@ interface VoiceService {
      */
     fun tokens(): TokenService
 
+    fun agents(): AgentService
+
+    fun voices(): VoiceService
+
     /** A view of [VoiceService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -106,5 +113,9 @@ interface VoiceService {
          * affords at the destination's rate.
          */
         fun tokens(): TokenService.WithRawResponse
+
+        fun agents(): AgentService.WithRawResponse
+
+        fun voices(): VoiceService.WithRawResponse
     }
 }

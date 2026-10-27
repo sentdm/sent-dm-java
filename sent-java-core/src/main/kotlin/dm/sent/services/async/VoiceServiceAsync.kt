@@ -3,8 +3,11 @@
 package dm.sent.services.async
 
 import dm.sent.core.ClientOptions
+import dm.sent.services.async.VoiceServiceAsync
+import dm.sent.services.async.voice.AgentServiceAsync
 import dm.sent.services.async.voice.CallServiceAsync
 import dm.sent.services.async.voice.TokenServiceAsync
+import dm.sent.services.async.voice.VoiceServiceAsync
 import java.util.function.Consumer
 
 interface VoiceServiceAsync {
@@ -59,6 +62,10 @@ interface VoiceServiceAsync {
      */
     fun tokens(): TokenServiceAsync
 
+    fun agents(): AgentServiceAsync
+
+    fun voices(): VoiceServiceAsync
+
     /** A view of [VoiceServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -108,5 +115,9 @@ interface VoiceServiceAsync {
          * affords at the destination's rate.
          */
         fun tokens(): TokenServiceAsync.WithRawResponse
+
+        fun agents(): AgentServiceAsync.WithRawResponse
+
+        fun voices(): VoiceServiceAsync.WithRawResponse
     }
 }
