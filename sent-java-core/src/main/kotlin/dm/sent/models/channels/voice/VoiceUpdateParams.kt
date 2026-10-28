@@ -26,17 +26,22 @@ import kotlin.jvm.optionals.getOrNull
  * this path returns, so what comes back can be sent back.
  *
  * ## What it changes
- * |Body                                         |Effect                                                                                                      |
- * |---------------------------------------------|------------------------------------------------------------------------------------------------------------|
- * |`"status": "ACTIVE"`                         |turns calls on again for a number you turned off; the callback URL and the secret it had are kept           |
- * |`"status": "INACTIVE"`                       |turns calls off; the callback URL and the secret stay on the number                                         |
- * |`"default_for_app_calls": true`              |makes this the line app-originated calls are placed from when a voice token names no number                 |
- * |`"callback_url": "https://example.com/voice"`|replaces where Sent asks what to do with each call on the number; the signing secret and the status are kept|
- * |key omitted                                  |left exactly as it is                                                                                       |
+ * |Body                                         |Effect                                                                                                                                                                                                                                                                                                                                                                                                    |
+ * |---------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+ * |`"status": "ACTIVE"`                         |turns calls on again for a number you turned off; the callback URL and the secret it had are kept                                                                                                                                                                                                                                                                                                         |
+ * |`"status": "INACTIVE"`                       |turns calls off; the callback URL and the secret stay on the number                                                                                                                                                                                                                                                                                                                                       |
+ * |`"default_for_app_calls": true`              |makes this the line app-originated calls are placed from when a voice token names no number                                                                                                                                                                                                                                                                                                               |
+ * |`"callback_url": "https://example.com/voice"`|replaces where Sent asks what to do with each call on the number; the signing secret and the status are kept                                                                                                                                                                                                                                                                                              |
+ * |`"agent_id": "agent_…"`                      |one of your voice agents answers calls to the number, within about an hour of the change (the provider applies the move on its own clock, and `routes_to` reads `agent` as soon as it has recorded it); it wins over `callback_url` for calls to the number, and calls your app places from it still follow your app. `routes_to` reads `agent_pending` while the number is still being moved to the agent|
+ * |`"agent_id": null`                           |unbinds the agent, so `callback_url` answers calls to the number again                                                                                                                                                                                                                                                                                                                                    |
+ * |key omitted                                  |left exactly as it is                                                                                                                                                                                                                                                                                                                                                                                     |
  *
  * `status` is matched ignoring case. Any combination is accepted: `status: "ACTIVE"` with
  * `default_for_app_calls: true` turns a number on as the new default, and a `callback_url` sent
- * with either status is written too. A body that names none of the three is refused.
+ * with either status is written too. `agent_id` is applied first, so a refusal to move the number
+ * to or from the agent leaves everything as it was, and the `409` and `400` refusals below are
+ * decided before anything is written, so they leave everything as it was too. A body that names
+ * none of them is refused.
  *
  * A number can be on without a callback URL: calls placed from your app then connect straight to
  * the number or user they dial, and calls to the number are declined.
@@ -52,7 +57,11 @@ import kotlin.jvm.optionals.getOrNull
  *
  * **Making an inactive number the default is `400`.** Send `status: "ACTIVE"` in the same call.
  *
- * **A number you never turned voice on for is `404`.** Add it with `POST /v3/channels/voice`.
+ * **A number you never turned voice on for is `404`**, and so is an `agent_id` that is not one of
+ * your agents. Add the number with `POST /v3/channels/voice`.
+ *
+ * **`502` means the number could not be moved to or from the agent**, or an `agent_id` was sent
+ * while numbers cannot be bound to agents; nothing was written.
  *
  * The number is the E.164 value in the path with the plus sign URL-encoded (`%2B`).
  *
@@ -83,6 +92,17 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun sandbox(): Optional<Boolean> = body.sandbox()
+
+    /**
+     * One of your voice agents, such as agent_9f2ab000-0000-4000-8000-000000000001, to answer calls
+     * to the number, or null to unbind it so the callback URL answers them again. The agent wins
+     * over callback_url for calls to the number; calls your app places from it still follow your
+     * app.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun agentId(): Optional<String> = body.agentId()
 
     /**
      * A new callback URL for the number, active or not: an absolute HTTP or HTTPS URL on a public
@@ -118,6 +138,13 @@ private constructor(
      * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
+
+    /**
+     * Returns the raw JSON value of [agentId].
+     *
+     * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _agentId(): JsonField<String> = body._agentId()
 
     /**
      * Returns the raw JSON value of [callbackUrl].
@@ -201,9 +228,11 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [sandbox]
+         * - [agentId]
          * - [callbackUrl]
          * - [defaultForAppCalls]
          * - [status]
+         * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -220,6 +249,25 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
+
+        /**
+         * One of your voice agents, such as agent_9f2ab000-0000-4000-8000-000000000001, to answer
+         * calls to the number, or null to unbind it so the callback URL answers them again. The
+         * agent wins over callback_url for calls to the number; calls your app places from it still
+         * follow your app.
+         */
+        fun agentId(agentId: String?) = apply { body.agentId(agentId) }
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+        /**
+         * Sets [Builder.agentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun agentId(agentId: JsonField<String>) = apply { body.agentId(agentId) }
 
         /**
          * A new callback URL for the number, active or not: an absolute HTTP or HTTPS URL on a
@@ -444,16 +492,17 @@ private constructor(
 
     /**
      * Changes one of your voice numbers: turns it on or off, makes it the default line for app
-     * calls, or replaces its callback URL.
+     * calls, replaces its callback URL, or binds it to one of your voice agents.
      *
      * Partial. An omitted field is left alone, so one field can be corrected without restating the
-     * others. A body that names none of the three is refused rather than answered 200 for a write
-     * that did not happen.
+     * others. A body that names none of them is refused rather than answered 200 for a write that
+     * did not happen.
      */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val sandbox: JsonField<Boolean>,
+        private val agentId: JsonField<String>,
         private val callbackUrl: JsonField<String>,
         private val defaultForAppCalls: JsonField<Boolean>,
         private val status: JsonField<Status>,
@@ -463,6 +512,7 @@ private constructor(
         @JsonCreator
         private constructor(
             @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("callback_url")
             @ExcludeMissing
             callbackUrl: JsonField<String> = JsonMissing.of(),
@@ -470,7 +520,7 @@ private constructor(
             @ExcludeMissing
             defaultForAppCalls: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("status") @ExcludeMissing status: JsonField<Status> = JsonMissing.of(),
-        ) : this(sandbox, callbackUrl, defaultForAppCalls, status, mutableMapOf())
+        ) : this(sandbox, agentId, callbackUrl, defaultForAppCalls, status, mutableMapOf())
 
         fun toMutationRequest(): MutationRequest =
             MutationRequest.builder().sandbox(sandbox).build()
@@ -483,6 +533,17 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
+
+        /**
+         * One of your voice agents, such as agent_9f2ab000-0000-4000-8000-000000000001, to answer
+         * calls to the number, or null to unbind it so the callback URL answers them again. The
+         * agent wins over callback_url for calls to the number; calls your app places from it still
+         * follow your app.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun agentId(): Optional<String> = agentId.getOptional("agent_id")
 
         /**
          * A new callback URL for the number, active or not: an absolute HTTP or HTTPS URL on a
@@ -519,6 +580,13 @@ private constructor(
          * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
+        /**
+         * Returns the raw JSON value of [agentId].
+         *
+         * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
 
         /**
          * Returns the raw JSON value of [callbackUrl].
@@ -568,6 +636,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
+            private var agentId: JsonField<String> = JsonMissing.of()
             private var callbackUrl: JsonField<String> = JsonMissing.of()
             private var defaultForAppCalls: JsonField<Boolean> = JsonMissing.of()
             private var status: JsonField<Status> = JsonMissing.of()
@@ -576,6 +645,7 @@ private constructor(
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 sandbox = body.sandbox
+                agentId = body.agentId
                 callbackUrl = body.callbackUrl
                 defaultForAppCalls = body.defaultForAppCalls
                 status = body.status
@@ -596,6 +666,26 @@ private constructor(
              * supported value.
              */
             fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
+            /**
+             * One of your voice agents, such as agent_9f2ab000-0000-4000-8000-000000000001, to
+             * answer calls to the number, or null to unbind it so the callback URL answers them
+             * again. The agent wins over callback_url for calls to the number; calls your app
+             * places from it still follow your app.
+             */
+            fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
+
+            /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+            fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+            /**
+             * Sets [Builder.agentId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.agentId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
 
             /**
              * A new callback URL for the number, active or not: an absolute HTTP or HTTPS URL on a
@@ -697,6 +787,7 @@ private constructor(
             fun build(): Body =
                 Body(
                     sandbox,
+                    agentId,
                     callbackUrl,
                     defaultForAppCalls,
                     status,
@@ -721,6 +812,7 @@ private constructor(
             }
 
             sandbox()
+            agentId()
             callbackUrl()
             defaultForAppCalls()
             status().ifPresent { it.validate() }
@@ -744,6 +836,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (sandbox.asKnown().isPresent) 1 else 0) +
+                (if (agentId.asKnown().isPresent) 1 else 0) +
                 (if (callbackUrl.asKnown().isPresent) 1 else 0) +
                 (if (defaultForAppCalls.asKnown().isPresent) 1 else 0) +
                 (status.asKnown().getOrNull()?.validity() ?: 0)
@@ -755,6 +848,7 @@ private constructor(
 
             return other is Body &&
                 sandbox == other.sandbox &&
+                agentId == other.agentId &&
                 callbackUrl == other.callbackUrl &&
                 defaultForAppCalls == other.defaultForAppCalls &&
                 status == other.status &&
@@ -762,13 +856,20 @@ private constructor(
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(sandbox, callbackUrl, defaultForAppCalls, status, additionalProperties)
+            Objects.hash(
+                sandbox,
+                agentId,
+                callbackUrl,
+                defaultForAppCalls,
+                status,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, callbackUrl=$callbackUrl, defaultForAppCalls=$defaultForAppCalls, status=$status, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, agentId=$agentId, callbackUrl=$callbackUrl, defaultForAppCalls=$defaultForAppCalls, status=$status, additionalProperties=$additionalProperties}"
     }
 
     /**

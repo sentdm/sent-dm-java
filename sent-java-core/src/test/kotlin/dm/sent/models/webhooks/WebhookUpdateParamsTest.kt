@@ -25,6 +25,7 @@ internal class WebhookUpdateParamsTest {
                     .build()
             )
             .eventTypes(listOf("contact", "message", "templates"))
+            .isInheritable(null)
             .retryCount(5)
             .senderProfile(
                 WebhookUpdateParams.SenderProfile.builder()
@@ -69,6 +70,7 @@ internal class WebhookUpdateParamsTest {
                         .build()
                 )
                 .eventTypes(listOf("contact", "message", "templates"))
+                .isInheritable(null)
                 .retryCount(5)
                 .senderProfile(
                     WebhookUpdateParams.SenderProfile.builder()
@@ -123,6 +125,7 @@ internal class WebhookUpdateParamsTest {
                         .build()
                 )
                 .eventTypes(listOf("contact", "message", "templates"))
+                .isInheritable(null)
                 .retryCount(5)
                 .senderProfile(
                     WebhookUpdateParams.SenderProfile.builder()
@@ -149,6 +152,7 @@ internal class WebhookUpdateParamsTest {
                     .build()
             )
         assertThat(body.eventTypes().getOrNull()).containsExactly("contact", "message", "templates")
+        assertThat(body.isInheritable()).isEmpty
         assertThat(body.retryCount()).contains(5)
         assertThat(body.senderProfile())
             .contains(

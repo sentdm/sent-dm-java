@@ -45,6 +45,7 @@ internal class WebhookServiceAsyncTest {
                             .build()
                     )
                     .eventTypes(listOf("contact", "message", "templates"))
+                    .isInheritable(false)
                     .retryCount(3)
                     .senderProfile(
                         WebhookCreateParams.SenderProfile.builder()
@@ -57,6 +58,7 @@ internal class WebhookServiceAsyncTest {
                             .build()
                     )
                     .timeoutSeconds(30)
+                    .webhookVersion(null)
                     .build()
             )
 
@@ -106,6 +108,7 @@ internal class WebhookServiceAsyncTest {
                             .build()
                     )
                     .eventTypes(listOf("contact", "message", "templates"))
+                    .isInheritable(null)
                     .retryCount(5)
                     .senderProfile(
                         WebhookUpdateParams.SenderProfile.builder()
