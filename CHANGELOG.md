@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.46.0](https://github.com/sentdm/sent-dm-java/compare/v0.45.0...v0.46.0) (2026-10-28)
+
+
+### Features
+
+* **api:** add voice agents, the voice catalogue and agent_id ([7b4cd82](https://github.com/sentdm/sent-dm-java/commit/7b4cd82af17d4fce8edeec32364a96b62b03e352))
+* **api:** sync OpenAPI spec from production ([568171f](https://github.com/sentdm/sent-dm-java/commit/568171f2a49d61cdaffda6d64fe9e3238cd4a814))
+
 ## [0.45.0](https://github.com/sentdm/sent-dm-java/compare/v0.44.0...v0.45.0) (2026-10-23)
 
 
