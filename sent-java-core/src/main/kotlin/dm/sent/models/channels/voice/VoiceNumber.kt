@@ -21,10 +21,12 @@ import kotlin.jvm.optionals.getOrNull
 class VoiceNumber
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val agentId: JsonField<String>,
     private val callbackUrl: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val defaultForAppCalls: JsonField<Boolean>,
     private val number: JsonField<String>,
+    private val routesTo: JsonField<String>,
     private val status: JsonField<String>,
     private val updatedAt: JsonField<OffsetDateTime>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -32,6 +34,7 @@ private constructor(
 
     @JsonCreator
     private constructor(
+        @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("callback_url")
         @ExcludeMissing
         callbackUrl: JsonField<String> = JsonMissing.of(),
@@ -42,11 +45,33 @@ private constructor(
         @ExcludeMissing
         defaultForAppCalls: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("number") @ExcludeMissing number: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("routes_to") @ExcludeMissing routesTo: JsonField<String> = JsonMissing.of(),
         @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
         @JsonProperty("updated_at")
         @ExcludeMissing
         updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
-    ) : this(callbackUrl, createdAt, defaultForAppCalls, number, status, updatedAt, mutableMapOf())
+    ) : this(
+        agentId,
+        callbackUrl,
+        createdAt,
+        defaultForAppCalls,
+        number,
+        routesTo,
+        status,
+        updatedAt,
+        mutableMapOf(),
+    )
+
+    /**
+     * The voice agent calls to this number go to, such as
+     * agent_9f2ab000-0000-4000-8000-000000000001. It wins over callback_url for calls to the
+     * number; calls your app places from the number still follow your app. Null when no agent
+     * answers the number.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun agentId(): Optional<String> = agentId.getOptional("agent_id")
 
     /**
      * Where Sent asks what to do with each call on this number: a signed question is POSTed here
@@ -83,6 +108,16 @@ private constructor(
     fun number(): Optional<String> = number.getOptional("number")
 
     /**
+     * Who answers calls to this number: agent, the voice agent in agent_id; agent_pending, that
+     * agent once the number has finished moving to it, with calls possibly unanswered until then;
+     * callback, your callback_url; or none, in which case calls to it are declined.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun routesTo(): Optional<String> = routesTo.getOptional("routes_to")
+
+    /**
      * ACTIVE while the number carries calls, INACTIVE once it was turned off. Nothing provisions: a
      * number the customer holds can carry calls the moment voice is turned on for it.
      *
@@ -96,6 +131,13 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun updatedAt(): Optional<OffsetDateTime> = updatedAt.getOptional("updated_at")
+
+    /**
+     * Returns the raw JSON value of [agentId].
+     *
+     * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
 
     /**
      * Returns the raw JSON value of [callbackUrl].
@@ -131,6 +173,13 @@ private constructor(
      * Unlike [number], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("number") @ExcludeMissing fun _number(): JsonField<String> = number
+
+    /**
+     * Returns the raw JSON value of [routesTo].
+     *
+     * Unlike [routesTo], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("routes_to") @ExcludeMissing fun _routesTo(): JsonField<String> = routesTo
 
     /**
      * Returns the raw JSON value of [status].
@@ -169,24 +218,47 @@ private constructor(
     /** A builder for [VoiceNumber]. */
     class Builder internal constructor() {
 
+        private var agentId: JsonField<String> = JsonMissing.of()
         private var callbackUrl: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var defaultForAppCalls: JsonField<Boolean> = JsonMissing.of()
         private var number: JsonField<String> = JsonMissing.of()
+        private var routesTo: JsonField<String> = JsonMissing.of()
         private var status: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(voiceNumber: VoiceNumber) = apply {
+            agentId = voiceNumber.agentId
             callbackUrl = voiceNumber.callbackUrl
             createdAt = voiceNumber.createdAt
             defaultForAppCalls = voiceNumber.defaultForAppCalls
             number = voiceNumber.number
+            routesTo = voiceNumber.routesTo
             status = voiceNumber.status
             updatedAt = voiceNumber.updatedAt
             additionalProperties = voiceNumber.additionalProperties.toMutableMap()
         }
+
+        /**
+         * The voice agent calls to this number go to, such as
+         * agent_9f2ab000-0000-4000-8000-000000000001. It wins over callback_url for calls to the
+         * number; calls your app places from the number still follow your app. Null when no agent
+         * answers the number.
+         */
+        fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+        /**
+         * Sets [Builder.agentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
 
         /**
          * Where Sent asks what to do with each call on this number: a signed question is POSTed
@@ -249,6 +321,21 @@ private constructor(
         fun number(number: JsonField<String>) = apply { this.number = number }
 
         /**
+         * Who answers calls to this number: agent, the voice agent in agent_id; agent_pending, that
+         * agent once the number has finished moving to it, with calls possibly unanswered until
+         * then; callback, your callback_url; or none, in which case calls to it are declined.
+         */
+        fun routesTo(routesTo: String) = routesTo(JsonField.of(routesTo))
+
+        /**
+         * Sets [Builder.routesTo] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.routesTo] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun routesTo(routesTo: JsonField<String>) = apply { this.routesTo = routesTo }
+
+        /**
          * ACTIVE while the number carries calls, INACTIVE once it was turned off. Nothing
          * provisions: a number the customer holds can carry calls the moment voice is turned on for
          * it.
@@ -300,10 +387,12 @@ private constructor(
          */
         fun build(): VoiceNumber =
             VoiceNumber(
+                agentId,
                 callbackUrl,
                 createdAt,
                 defaultForAppCalls,
                 number,
+                routesTo,
                 status,
                 updatedAt,
                 additionalProperties.toMutableMap(),
@@ -325,10 +414,12 @@ private constructor(
             return@apply
         }
 
+        agentId()
         callbackUrl()
         createdAt()
         defaultForAppCalls()
         number()
+        routesTo()
         status()
         updatedAt()
         validated = true
@@ -349,10 +440,12 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (callbackUrl.asKnown().isPresent) 1 else 0) +
+        (if (agentId.asKnown().isPresent) 1 else 0) +
+            (if (callbackUrl.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (defaultForAppCalls.asKnown().isPresent) 1 else 0) +
             (if (number.asKnown().isPresent) 1 else 0) +
+            (if (routesTo.asKnown().isPresent) 1 else 0) +
             (if (status.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
 
@@ -362,10 +455,12 @@ private constructor(
         }
 
         return other is VoiceNumber &&
+            agentId == other.agentId &&
             callbackUrl == other.callbackUrl &&
             createdAt == other.createdAt &&
             defaultForAppCalls == other.defaultForAppCalls &&
             number == other.number &&
+            routesTo == other.routesTo &&
             status == other.status &&
             updatedAt == other.updatedAt &&
             additionalProperties == other.additionalProperties
@@ -373,10 +468,12 @@ private constructor(
 
     private val hashCode: Int by lazy {
         Objects.hash(
+            agentId,
             callbackUrl,
             createdAt,
             defaultForAppCalls,
             number,
+            routesTo,
             status,
             updatedAt,
             additionalProperties,
@@ -386,5 +483,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "VoiceNumber{callbackUrl=$callbackUrl, createdAt=$createdAt, defaultForAppCalls=$defaultForAppCalls, number=$number, status=$status, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "VoiceNumber{agentId=$agentId, callbackUrl=$callbackUrl, createdAt=$createdAt, defaultForAppCalls=$defaultForAppCalls, number=$number, routesTo=$routesTo, status=$status, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

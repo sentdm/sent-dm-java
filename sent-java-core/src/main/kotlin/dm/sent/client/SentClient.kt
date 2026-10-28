@@ -3,7 +3,6 @@
 package dm.sent.client
 
 import dm.sent.core.ClientOptions
-import dm.sent.services.blocking.CallService
 import dm.sent.services.blocking.ChannelService
 import dm.sent.services.blocking.ContactService
 import dm.sent.services.blocking.ConversationService
@@ -13,6 +12,7 @@ import dm.sent.services.blocking.NumberService
 import dm.sent.services.blocking.ProfileService
 import dm.sent.services.blocking.TemplateService
 import dm.sent.services.blocking.UserService
+import dm.sent.services.blocking.VoiceService
 import dm.sent.services.blocking.WebhookService
 import java.util.function.Consumer
 
@@ -150,7 +150,7 @@ interface SentClient {
      */
     fun conversations(): ConversationService
 
-    fun calls(): CallService
+    fun voice(): VoiceService
 
     fun channels(): ChannelService
 
@@ -286,7 +286,7 @@ interface SentClient {
          */
         fun conversations(): ConversationService.WithRawResponse
 
-        fun calls(): CallService.WithRawResponse
+        fun voice(): VoiceService.WithRawResponse
 
         fun channels(): ChannelService.WithRawResponse
 

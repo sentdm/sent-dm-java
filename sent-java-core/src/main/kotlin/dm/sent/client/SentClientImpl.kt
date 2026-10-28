@@ -4,8 +4,6 @@ package dm.sent.client
 
 import dm.sent.core.ClientOptions
 import dm.sent.core.getPackageVersion
-import dm.sent.services.blocking.CallService
-import dm.sent.services.blocking.CallServiceImpl
 import dm.sent.services.blocking.ChannelService
 import dm.sent.services.blocking.ChannelServiceImpl
 import dm.sent.services.blocking.ContactService
@@ -24,6 +22,8 @@ import dm.sent.services.blocking.TemplateService
 import dm.sent.services.blocking.TemplateServiceImpl
 import dm.sent.services.blocking.UserService
 import dm.sent.services.blocking.UserServiceImpl
+import dm.sent.services.blocking.VoiceService
+import dm.sent.services.blocking.VoiceServiceImpl
 import dm.sent.services.blocking.WebhookService
 import dm.sent.services.blocking.WebhookServiceImpl
 import java.util.function.Consumer
@@ -65,7 +65,7 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
         ConversationServiceImpl(clientOptionsWithUserAgent)
     }
 
-    private val calls: CallService by lazy { CallServiceImpl(clientOptionsWithUserAgent) }
+    private val voice: VoiceService by lazy { VoiceServiceImpl(clientOptionsWithUserAgent) }
 
     private val channels: ChannelService by lazy { ChannelServiceImpl(clientOptionsWithUserAgent) }
 
@@ -176,7 +176,7 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
      */
     override fun conversations(): ConversationService = conversations
 
-    override fun calls(): CallService = calls
+    override fun voice(): VoiceService = voice
 
     override fun channels(): ChannelService = channels
 
@@ -226,8 +226,8 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
             ConversationServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val calls: CallService.WithRawResponse by lazy {
-            CallServiceImpl.WithRawResponseImpl(clientOptions)
+        private val voice: VoiceService.WithRawResponse by lazy {
+            VoiceServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val channels: ChannelService.WithRawResponse by lazy {
@@ -345,7 +345,7 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
          */
         override fun conversations(): ConversationService.WithRawResponse = conversations
 
-        override fun calls(): CallService.WithRawResponse = calls
+        override fun voice(): VoiceService.WithRawResponse = voice
 
         override fun channels(): ChannelService.WithRawResponse = channels
 

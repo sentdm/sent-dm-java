@@ -3,7 +3,6 @@
 package dm.sent.client
 
 import dm.sent.core.ClientOptions
-import dm.sent.services.async.CallServiceAsync
 import dm.sent.services.async.ChannelServiceAsync
 import dm.sent.services.async.ContactServiceAsync
 import dm.sent.services.async.ConversationServiceAsync
@@ -13,6 +12,7 @@ import dm.sent.services.async.NumberServiceAsync
 import dm.sent.services.async.ProfileServiceAsync
 import dm.sent.services.async.TemplateServiceAsync
 import dm.sent.services.async.UserServiceAsync
+import dm.sent.services.async.VoiceServiceAsync
 import dm.sent.services.async.WebhookServiceAsync
 import java.util.function.Consumer
 
@@ -150,7 +150,7 @@ interface SentClientAsync {
      */
     fun conversations(): ConversationServiceAsync
 
-    fun calls(): CallServiceAsync
+    fun voice(): VoiceServiceAsync
 
     fun channels(): ChannelServiceAsync
 
@@ -286,7 +286,7 @@ interface SentClientAsync {
          */
         fun conversations(): ConversationServiceAsync.WithRawResponse
 
-        fun calls(): CallServiceAsync.WithRawResponse
+        fun voice(): VoiceServiceAsync.WithRawResponse
 
         fun channels(): ChannelServiceAsync.WithRawResponse
 

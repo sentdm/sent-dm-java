@@ -61,12 +61,13 @@ private constructor(
     fun field(): Optional<String> = field.getOptional("field")
 
     /**
-     * Body of a call.initiated, call.answered, call.completed, call.failed or call.recording_ready
-     * event. Which of them occurred is the envelope's event.
+     * Body of a call.initiated, call.answered, call.agent_connected, call.completed, call.failed or
+     * call.recording_ready event. Which of them occurred is the envelope's event.
      *
      * Shaped like the message, inbound, template and channel payloads: account_id names the account
      * the event is about, channel names the channel, and updated_at is when the change happened on
-     * the call, in the same yyyy-MM-ddTHH:mm:ssZ form. duration_seconds and price are added on
+     * the call, in the same yyyy-MM-ddTHH:mm:ssZ form. Every event says how the call is handled in
+     * mode, and an agent call names its agent in agent_id. duration_seconds and price are added on
      * call.completed, reason on call.failed and recording_id on call.recording_ready; each is
      * omitted rather than sent as null when it does not apply.
      *
@@ -201,13 +202,15 @@ private constructor(
         fun field(field: JsonField<String>) = apply { this.field = field }
 
         /**
-         * Body of a call.initiated, call.answered, call.completed, call.failed or
-         * call.recording_ready event. Which of them occurred is the envelope's event.
+         * Body of a call.initiated, call.answered, call.agent_connected, call.completed,
+         * call.failed or call.recording_ready event. Which of them occurred is the envelope's
+         * event.
          *
          * Shaped like the message, inbound, template and channel payloads: account_id names the
          * account the event is about, channel names the channel, and updated_at is when the change
-         * happened on the call, in the same yyyy-MM-ddTHH:mm:ssZ form. duration_seconds and price
-         * are added on call.completed, reason on call.failed and recording_id on
+         * happened on the call, in the same yyyy-MM-ddTHH:mm:ssZ form. Every event says how the
+         * call is handled in mode, and an agent call names its agent in agent_id. duration_seconds
+         * and price are added on call.completed, reason on call.failed and recording_id on
          * call.recording_ready; each is omitted rather than sent as null when it does not apply.
          *
          * Casing is snake_case because these ride the same webhook stream customers already parse

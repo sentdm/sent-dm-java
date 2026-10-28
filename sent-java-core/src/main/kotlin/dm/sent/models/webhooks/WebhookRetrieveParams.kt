@@ -9,7 +9,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Retrieves a single webhook by ID for the authenticated customer. */
+/**
+ * Retrieves a single webhook by ID for the authenticated customer. A version 1 webhook includes its
+ * sender_profile selection.
+ */
 class WebhookRetrieveParams
 private constructor(
     private val id: String?,

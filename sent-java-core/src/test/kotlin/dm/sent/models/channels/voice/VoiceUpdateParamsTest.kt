@@ -11,11 +11,12 @@ internal class VoiceUpdateParamsTest {
     @Test
     fun create() {
         VoiceUpdateParams.builder()
-            .number("+12125550100")
+            .number("number")
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .sandbox(false)
-            .callbackUrl("https://example.com/voice")
+            .agentId("agent_id")
+            .callbackUrl("callback_url")
             .defaultForAppCalls(true)
             .status(VoiceUpdateParams.Status.ACTIVE)
             .build()
@@ -23,9 +24,9 @@ internal class VoiceUpdateParamsTest {
 
     @Test
     fun pathParams() {
-        val params = VoiceUpdateParams.builder().number("+12125550100").build()
+        val params = VoiceUpdateParams.builder().number("number").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("+12125550100")
+        assertThat(params._pathParam(0)).isEqualTo("number")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
@@ -34,11 +35,12 @@ internal class VoiceUpdateParamsTest {
     fun headers() {
         val params =
             VoiceUpdateParams.builder()
-                .number("+12125550100")
+                .number("number")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sandbox(false)
-                .callbackUrl("https://example.com/voice")
+                .agentId("agent_id")
+                .callbackUrl("callback_url")
                 .defaultForAppCalls(true)
                 .status(VoiceUpdateParams.Status.ACTIVE)
                 .build()
@@ -56,7 +58,7 @@ internal class VoiceUpdateParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = VoiceUpdateParams.builder().number("+12125550100").build()
+        val params = VoiceUpdateParams.builder().number("number").build()
 
         val headers = params._headers()
 
@@ -67,11 +69,12 @@ internal class VoiceUpdateParamsTest {
     fun body() {
         val params =
             VoiceUpdateParams.builder()
-                .number("+12125550100")
+                .number("number")
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sandbox(false)
-                .callbackUrl("https://example.com/voice")
+                .agentId("agent_id")
+                .callbackUrl("callback_url")
                 .defaultForAppCalls(true)
                 .status(VoiceUpdateParams.Status.ACTIVE)
                 .build()
@@ -79,14 +82,15 @@ internal class VoiceUpdateParamsTest {
         val body = params._body()
 
         assertThat(body.sandbox()).contains(false)
-        assertThat(body.callbackUrl()).contains("https://example.com/voice")
+        assertThat(body.agentId()).contains("agent_id")
+        assertThat(body.callbackUrl()).contains("callback_url")
         assertThat(body.defaultForAppCalls()).contains(true)
         assertThat(body.status()).contains(VoiceUpdateParams.Status.ACTIVE)
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = VoiceUpdateParams.builder().number("+12125550100").build()
+        val params = VoiceUpdateParams.builder().number("number").build()
 
         val body = params._body()
     }
