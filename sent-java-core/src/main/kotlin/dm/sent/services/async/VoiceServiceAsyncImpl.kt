@@ -41,6 +41,15 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
      * ready, hang it up, start or stop recording, and add, mute or remove conference participants
      * while it is live. A leg to a phone number runs for at most what your balance affords at the
      * destination's rate.
+     *
+     * **Voice agents.** `POST /v3/voice/agents` creates an agent that answers calls through the
+     * Sent Voice Gateway: `session_type` says whether Sent carries the call as text (speech
+     * recognised and spoken for the agent) or as audio, `websocket_url` is where the gateway dials
+     * the agent for each call (leave it out and the agent dials in with your API key), and `tools`,
+     * `transfer_targets`, `fallback` and `limits` say what it may do on a call. The agent's
+     * `signing_secret` is shown on create and on `POST /v3/voice/agents/{id}/rotate-secret` only.
+     * Voices and languages for text sessions come from `GET /v3/voice/voices`. A number takes calls
+     * to an agent once it is bound to it on `/v3/channels/voice`.
      */
     override fun calls(): CallServiceAsync = calls
 
@@ -60,6 +69,15 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
      * ready, hang it up, start or stop recording, and add, mute or remove conference participants
      * while it is live. A leg to a phone number runs for at most what your balance affords at the
      * destination's rate.
+     *
+     * **Voice agents.** `POST /v3/voice/agents` creates an agent that answers calls through the
+     * Sent Voice Gateway: `session_type` says whether Sent carries the call as text (speech
+     * recognised and spoken for the agent) or as audio, `websocket_url` is where the gateway dials
+     * the agent for each call (leave it out and the agent dials in with your API key), and `tools`,
+     * `transfer_targets`, `fallback` and `limits` say what it may do on a call. The agent's
+     * `signing_secret` is shown on create and on `POST /v3/voice/agents/{id}/rotate-secret` only.
+     * Voices and languages for text sessions come from `GET /v3/voice/voices`. A number takes calls
+     * to an agent once it is bound to it on `/v3/channels/voice`.
      */
     override fun tokens(): TokenServiceAsync = tokens
 
@@ -97,6 +115,16 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
          * ready, hang it up, start or stop recording, and add, mute or remove conference
          * participants while it is live. A leg to a phone number runs for at most what your balance
          * affords at the destination's rate.
+         *
+         * **Voice agents.** `POST /v3/voice/agents` creates an agent that answers calls through the
+         * Sent Voice Gateway: `session_type` says whether Sent carries the call as text (speech
+         * recognised and spoken for the agent) or as audio, `websocket_url` is where the gateway
+         * dials the agent for each call (leave it out and the agent dials in with your API key),
+         * and `tools`, `transfer_targets`, `fallback` and `limits` say what it may do on a call.
+         * The agent's `signing_secret` is shown on create and on `POST
+         * /v3/voice/agents/{id}/rotate-secret` only. Voices and languages for text sessions come
+         * from `GET /v3/voice/voices`. A number takes calls to an agent once it is bound to it on
+         * `/v3/channels/voice`.
          */
         override fun calls(): CallServiceAsync.WithRawResponse = calls
 
@@ -116,6 +144,16 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
          * ready, hang it up, start or stop recording, and add, mute or remove conference
          * participants while it is live. A leg to a phone number runs for at most what your balance
          * affords at the destination's rate.
+         *
+         * **Voice agents.** `POST /v3/voice/agents` creates an agent that answers calls through the
+         * Sent Voice Gateway: `session_type` says whether Sent carries the call as text (speech
+         * recognised and spoken for the agent) or as audio, `websocket_url` is where the gateway
+         * dials the agent for each call (leave it out and the agent dials in with your API key),
+         * and `tools`, `transfer_targets`, `fallback` and `limits` say what it may do on a call.
+         * The agent's `signing_secret` is shown on create and on `POST
+         * /v3/voice/agents/{id}/rotate-secret` only. Voices and languages for text sessions come
+         * from `GET /v3/voice/voices`. A number takes calls to an agent once it is bound to it on
+         * `/v3/channels/voice`.
          */
         override fun tokens(): TokenServiceAsync.WithRawResponse = tokens
     }

@@ -13,8 +13,10 @@ internal class CallListParamsTest {
     @Test
     fun create() {
         CallListParams.builder()
+            .agentId("agent_id")
             .direction("direction")
             .from(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+            .mode("mode")
             .number("number")
             .page(0)
             .pageSize(0)
@@ -28,8 +30,10 @@ internal class CallListParamsTest {
     fun headers() {
         val params =
             CallListParams.builder()
+                .agentId("agent_id")
                 .direction("direction")
                 .from(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .mode("mode")
                 .number("number")
                 .page(0)
                 .pageSize(0)
@@ -61,8 +65,10 @@ internal class CallListParamsTest {
     fun queryParams() {
         val params =
             CallListParams.builder()
+                .agentId("agent_id")
                 .direction("direction")
                 .from(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .mode("mode")
                 .number("number")
                 .page(0)
                 .pageSize(0)
@@ -76,8 +82,10 @@ internal class CallListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
+                    .put("agent_id", "agent_id")
                     .put("direction", "direction")
                     .put("from", "2019-12-27T18:11:19.117Z")
+                    .put("mode", "mode")
                     .put("number", "number")
                     .put("page", "0")
                     .put("page_size", "0")

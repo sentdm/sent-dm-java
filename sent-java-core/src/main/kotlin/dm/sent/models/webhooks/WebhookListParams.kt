@@ -9,7 +9,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Retrieves a paginated list of webhooks for the authenticated customer. */
+/**
+ * Retrieves a paginated list of webhooks for the authenticated customer. Each version 1 webhook
+ * includes its sender_profile selection.
+ */
 class WebhookListParams
 private constructor(
     private val isActive: Boolean?,

@@ -10,9 +10,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Retrieves one of your calls by id: the parties, the owning number, the current status with its
- * failure reason, duration, price, recording availability, and a timeline of when the call entered
- * each status.
+ * Retrieves one of your calls by id: the parties, the owning number, the phone number the call was
+ * connected to and the caller id it showed, the current status with its failure reason, duration,
+ * price with the billed legs and what each cost, recording availability, and a timeline of when the
+ * call entered each status.
  */
 class CallRetrieveParams
 private constructor(

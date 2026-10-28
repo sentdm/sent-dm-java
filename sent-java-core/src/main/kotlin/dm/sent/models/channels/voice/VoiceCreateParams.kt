@@ -11,7 +11,6 @@ import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.core.Params
-import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.errors.SentInvalidDataException
@@ -32,6 +31,14 @@ import kotlin.jvm.optionals.getOrNull
  * response carries the `callback_secret` the questions are signed with, the one time it is shown
  * without rotating; verify a question the way you verify a webhook. `POST
  * /v3/channels/voice/{number}/test` sends a test question and reports the verdict.
+ *
+ * Send `agent_id` instead of `callback_url`, or with it, to have one of your voice agents (`GET
+ * /v3/voice/agents`) answer calls to the number. The agent wins over the callback URL for calls to
+ * the number; calls your app places from it still follow your app. `routes_to` in the response says
+ * which answers, and reads `agent_pending` while the number is still being moved to the agent.
+ * Calls follow the move within about an hour, as the provider applies it on its own clock. While
+ * numbers cannot be bound to agents, a request with `agent_id` is refused with `502` before any
+ * number is obtained or anything is written; send `callback_url` instead.
  *
  * Your first voice number becomes the line app-originated calls are placed from when a voice token
  * names no number; send `default_for_app_calls: true` to give that role to another number. A number
@@ -67,16 +74,16 @@ private constructor(
     fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
-     * Where Sent asks what to do with each call on this number: an absolute HTTP or HTTPS URL on a
-     * public host. A signed question is POSTed here when a call arrives or a caller presses a key,
-     * and the answer decides the call. Every question is signed with the callback_secret the
-     * response returns, the same way your webhooks are signed. Turning the number on again with a
-     * different URL replaces it and keeps the secret.
+     * One of your voice agents (GET /v3/voice/agents), such as
+     * agent_9f2ab000-0000-4000-8000-000000000001, to answer calls to this number. It wins over
+     * callback_url for calls to the number, and both may be sent; calls your app places from the
+     * number still follow your app. Send it instead of callback_url for a number only an agent
+     * answers.
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
-     *   missing or null (e.g. if the server responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
      */
-    fun callbackUrl(): String = body.callbackUrl()
+    fun agentId(): Optional<String> = body.agentId()
 
     /**
      * The US area code a new number should be in, as 212. Only for a request that leaves number out
@@ -87,6 +94,18 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun areaCode(): Optional<String> = body.areaCode()
+
+    /**
+     * Where Sent asks what to do with each call on this number: an absolute HTTP or HTTPS URL on a
+     * public host. A signed question is POSTed here when a call arrives or a caller presses a key,
+     * and the answer decides the call. Every question is signed with the callback_secret the
+     * response returns, the same way your webhooks are signed. Turning the number on again with a
+     * different URL replaces it and keeps the secret. Required unless agent_id is sent.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun callbackUrl(): Optional<String> = body.callbackUrl()
 
     /**
      * Make this the line app-originated calls are placed from when a voice token names no number.
@@ -114,11 +133,11 @@ private constructor(
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
-     * Returns the raw JSON value of [callbackUrl].
+     * Returns the raw JSON value of [agentId].
      *
-     * Unlike [callbackUrl], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _callbackUrl(): JsonField<String> = body._callbackUrl()
+    fun _agentId(): JsonField<String> = body._agentId()
 
     /**
      * Returns the raw JSON value of [areaCode].
@@ -126,6 +145,13 @@ private constructor(
      * Unlike [areaCode], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _areaCode(): JsonField<String> = body._areaCode()
+
+    /**
+     * Returns the raw JSON value of [callbackUrl].
+     *
+     * Unlike [callbackUrl], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _callbackUrl(): JsonField<String> = body._callbackUrl()
 
     /**
      * Returns the raw JSON value of [defaultForAppCalls].
@@ -154,14 +180,9 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [VoiceCreateParams].
-         *
-         * The following fields are required:
-         * ```java
-         * .callbackUrl()
-         * ```
-         */
+        @JvmStatic fun none(): VoiceCreateParams = builder().build()
+
+        /** Returns a mutable builder for constructing an instance of [VoiceCreateParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
@@ -200,10 +221,10 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [sandbox]
-         * - [callbackUrl]
+         * - [agentId]
          * - [areaCode]
+         * - [callbackUrl]
          * - [defaultForAppCalls]
-         * - [number]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -223,22 +244,24 @@ private constructor(
         fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /**
-         * Where Sent asks what to do with each call on this number: an absolute HTTP or HTTPS URL
-         * on a public host. A signed question is POSTed here when a call arrives or a caller
-         * presses a key, and the answer decides the call. Every question is signed with the
-         * callback_secret the response returns, the same way your webhooks are signed. Turning the
-         * number on again with a different URL replaces it and keeps the secret.
+         * One of your voice agents (GET /v3/voice/agents), such as
+         * agent_9f2ab000-0000-4000-8000-000000000001, to answer calls to this number. It wins over
+         * callback_url for calls to the number, and both may be sent; calls your app places from
+         * the number still follow your app. Send it instead of callback_url for a number only an
+         * agent answers.
          */
-        fun callbackUrl(callbackUrl: String) = apply { body.callbackUrl(callbackUrl) }
+        fun agentId(agentId: String?) = apply { body.agentId(agentId) }
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
 
         /**
-         * Sets [Builder.callbackUrl] to an arbitrary JSON value.
+         * Sets [Builder.agentId] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.callbackUrl] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.agentId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun callbackUrl(callbackUrl: JsonField<String>) = apply { body.callbackUrl(callbackUrl) }
+        fun agentId(agentId: JsonField<String>) = apply { body.agentId(agentId) }
 
         /**
          * The US area code a new number should be in, as 212. Only for a request that leaves number
@@ -257,6 +280,28 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun areaCode(areaCode: JsonField<String>) = apply { body.areaCode(areaCode) }
+
+        /**
+         * Where Sent asks what to do with each call on this number: an absolute HTTP or HTTPS URL
+         * on a public host. A signed question is POSTed here when a call arrives or a caller
+         * presses a key, and the answer decides the call. Every question is signed with the
+         * callback_secret the response returns, the same way your webhooks are signed. Turning the
+         * number on again with a different URL replaces it and keeps the secret. Required unless
+         * agent_id is sent.
+         */
+        fun callbackUrl(callbackUrl: String?) = apply { body.callbackUrl(callbackUrl) }
+
+        /** Alias for calling [Builder.callbackUrl] with `callbackUrl.orElse(null)`. */
+        fun callbackUrl(callbackUrl: Optional<String>) = callbackUrl(callbackUrl.getOrNull())
+
+        /**
+         * Sets [Builder.callbackUrl] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.callbackUrl] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun callbackUrl(callbackUrl: JsonField<String>) = apply { body.callbackUrl(callbackUrl) }
 
         /**
          * Make this the line app-originated calls are placed from when a voice token names no
@@ -431,13 +476,6 @@ private constructor(
          * Returns an immutable instance of [VoiceCreateParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .callbackUrl()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): VoiceCreateParams =
             VoiceCreateParams(
@@ -466,9 +504,9 @@ private constructor(
      * Turns phone calls on for a number: one you already hold, or a new one.
      *
      * Voice is per number the way SMS is per market: each number you hold can carry calls on its
-     * own, and each has its own callback URL, where Sent asks what to do with every call on it. The
-     * first number you turn voice on for becomes the line app-originated calls are placed from when
-     * a voice token names no number.
+     * own, and each has its own callback URL, where Sent asks what to do with every call on it, or
+     * a voice agent that answers calls to it. The first number you turn voice on for becomes the
+     * line app-originated calls are placed from when a voice token names no number.
      *
      * Send number to add calls to a number you already hold, or leave it out to be given a new US
      * number — optionally in a particular area_code. The two are alternatives, not a pair.
@@ -477,8 +515,9 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val sandbox: JsonField<Boolean>,
-        private val callbackUrl: JsonField<String>,
+        private val agentId: JsonField<String>,
         private val areaCode: JsonField<String>,
+        private val callbackUrl: JsonField<String>,
         private val defaultForAppCalls: JsonField<Boolean>,
         private val number: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -487,17 +526,26 @@ private constructor(
         @JsonCreator
         private constructor(
             @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
-            @JsonProperty("callback_url")
-            @ExcludeMissing
-            callbackUrl: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("area_code")
             @ExcludeMissing
             areaCode: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("callback_url")
+            @ExcludeMissing
+            callbackUrl: JsonField<String> = JsonMissing.of(),
             @JsonProperty("default_for_app_calls")
             @ExcludeMissing
             defaultForAppCalls: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("number") @ExcludeMissing number: JsonField<String> = JsonMissing.of(),
-        ) : this(sandbox, callbackUrl, areaCode, defaultForAppCalls, number, mutableMapOf())
+        ) : this(
+            sandbox,
+            agentId,
+            areaCode,
+            callbackUrl,
+            defaultForAppCalls,
+            number,
+            mutableMapOf(),
+        )
 
         fun toMutationRequest(): MutationRequest =
             MutationRequest.builder().sandbox(sandbox).build()
@@ -512,16 +560,16 @@ private constructor(
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
-         * Where Sent asks what to do with each call on this number: an absolute HTTP or HTTPS URL
-         * on a public host. A signed question is POSTed here when a call arrives or a caller
-         * presses a key, and the answer decides the call. Every question is signed with the
-         * callback_secret the response returns, the same way your webhooks are signed. Turning the
-         * number on again with a different URL replaces it and keeps the secret.
+         * One of your voice agents (GET /v3/voice/agents), such as
+         * agent_9f2ab000-0000-4000-8000-000000000001, to answer calls to this number. It wins over
+         * callback_url for calls to the number, and both may be sent; calls your app places from
+         * the number still follow your app. Send it instead of callback_url for a number only an
+         * agent answers.
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
          */
-        fun callbackUrl(): String = callbackUrl.getRequired("callback_url")
+        fun agentId(): Optional<String> = agentId.getOptional("agent_id")
 
         /**
          * The US area code a new number should be in, as 212. Only for a request that leaves number
@@ -532,6 +580,19 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun areaCode(): Optional<String> = areaCode.getOptional("area_code")
+
+        /**
+         * Where Sent asks what to do with each call on this number: an absolute HTTP or HTTPS URL
+         * on a public host. A signed question is POSTed here when a call arrives or a caller
+         * presses a key, and the answer decides the call. Every question is signed with the
+         * callback_secret the response returns, the same way your webhooks are signed. Turning the
+         * number on again with a different URL replaces it and keeps the secret. Required unless
+         * agent_id is sent.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun callbackUrl(): Optional<String> = callbackUrl.getOptional("callback_url")
 
         /**
          * Make this the line app-originated calls are placed from when a voice token names no
@@ -562,13 +623,11 @@ private constructor(
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
-         * Returns the raw JSON value of [callbackUrl].
+         * Returns the raw JSON value of [agentId].
          *
-         * Unlike [callbackUrl], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("callback_url")
-        @ExcludeMissing
-        fun _callbackUrl(): JsonField<String> = callbackUrl
+        @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
 
         /**
          * Returns the raw JSON value of [areaCode].
@@ -576,6 +635,15 @@ private constructor(
          * Unlike [areaCode], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("area_code") @ExcludeMissing fun _areaCode(): JsonField<String> = areaCode
+
+        /**
+         * Returns the raw JSON value of [callbackUrl].
+         *
+         * Unlike [callbackUrl], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("callback_url")
+        @ExcludeMissing
+        fun _callbackUrl(): JsonField<String> = callbackUrl
 
         /**
          * Returns the raw JSON value of [defaultForAppCalls].
@@ -608,14 +676,7 @@ private constructor(
 
         companion object {
 
-            /**
-             * Returns a mutable builder for constructing an instance of [Body].
-             *
-             * The following fields are required:
-             * ```java
-             * .callbackUrl()
-             * ```
-             */
+            /** Returns a mutable builder for constructing an instance of [Body]. */
             @JvmStatic fun builder() = Builder()
         }
 
@@ -623,8 +684,9 @@ private constructor(
         class Builder internal constructor() {
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
-            private var callbackUrl: JsonField<String>? = null
+            private var agentId: JsonField<String> = JsonMissing.of()
             private var areaCode: JsonField<String> = JsonMissing.of()
+            private var callbackUrl: JsonField<String> = JsonMissing.of()
             private var defaultForAppCalls: JsonField<Boolean> = JsonMissing.of()
             private var number: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -632,8 +694,9 @@ private constructor(
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 sandbox = body.sandbox
-                callbackUrl = body.callbackUrl
+                agentId = body.agentId
                 areaCode = body.areaCode
+                callbackUrl = body.callbackUrl
                 defaultForAppCalls = body.defaultForAppCalls
                 number = body.number
                 additionalProperties = body.additionalProperties.toMutableMap()
@@ -655,24 +718,25 @@ private constructor(
             fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /**
-             * Where Sent asks what to do with each call on this number: an absolute HTTP or HTTPS
-             * URL on a public host. A signed question is POSTed here when a call arrives or a
-             * caller presses a key, and the answer decides the call. Every question is signed with
-             * the callback_secret the response returns, the same way your webhooks are signed.
-             * Turning the number on again with a different URL replaces it and keeps the secret.
+             * One of your voice agents (GET /v3/voice/agents), such as
+             * agent_9f2ab000-0000-4000-8000-000000000001, to answer calls to this number. It wins
+             * over callback_url for calls to the number, and both may be sent; calls your app
+             * places from the number still follow your app. Send it instead of callback_url for a
+             * number only an agent answers.
              */
-            fun callbackUrl(callbackUrl: String) = callbackUrl(JsonField.of(callbackUrl))
+            fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
+
+            /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+            fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
 
             /**
-             * Sets [Builder.callbackUrl] to an arbitrary JSON value.
+             * Sets [Builder.agentId] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.callbackUrl] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.agentId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun callbackUrl(callbackUrl: JsonField<String>) = apply {
-                this.callbackUrl = callbackUrl
-            }
+            fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
 
             /**
              * The US area code a new number should be in, as 212. Only for a request that leaves
@@ -692,6 +756,30 @@ private constructor(
              * supported value.
              */
             fun areaCode(areaCode: JsonField<String>) = apply { this.areaCode = areaCode }
+
+            /**
+             * Where Sent asks what to do with each call on this number: an absolute HTTP or HTTPS
+             * URL on a public host. A signed question is POSTed here when a call arrives or a
+             * caller presses a key, and the answer decides the call. Every question is signed with
+             * the callback_secret the response returns, the same way your webhooks are signed.
+             * Turning the number on again with a different URL replaces it and keeps the secret.
+             * Required unless agent_id is sent.
+             */
+            fun callbackUrl(callbackUrl: String?) = callbackUrl(JsonField.ofNullable(callbackUrl))
+
+            /** Alias for calling [Builder.callbackUrl] with `callbackUrl.orElse(null)`. */
+            fun callbackUrl(callbackUrl: Optional<String>) = callbackUrl(callbackUrl.getOrNull())
+
+            /**
+             * Sets [Builder.callbackUrl] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.callbackUrl] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun callbackUrl(callbackUrl: JsonField<String>) = apply {
+                this.callbackUrl = callbackUrl
+            }
 
             /**
              * Make this the line app-originated calls are placed from when a voice token names no
@@ -769,19 +857,13 @@ private constructor(
              * Returns an immutable instance of [Body].
              *
              * Further updates to this [Builder] will not mutate the returned instance.
-             *
-             * The following fields are required:
-             * ```java
-             * .callbackUrl()
-             * ```
-             *
-             * @throws IllegalStateException if any required field is unset.
              */
             fun build(): Body =
                 Body(
                     sandbox,
-                    checkRequired("callbackUrl", callbackUrl),
+                    agentId,
                     areaCode,
+                    callbackUrl,
                     defaultForAppCalls,
                     number,
                     additionalProperties.toMutableMap(),
@@ -805,8 +887,9 @@ private constructor(
             }
 
             sandbox()
-            callbackUrl()
+            agentId()
             areaCode()
+            callbackUrl()
             defaultForAppCalls()
             number()
             validated = true
@@ -829,8 +912,9 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (sandbox.asKnown().isPresent) 1 else 0) +
-                (if (callbackUrl.asKnown().isPresent) 1 else 0) +
+                (if (agentId.asKnown().isPresent) 1 else 0) +
                 (if (areaCode.asKnown().isPresent) 1 else 0) +
+                (if (callbackUrl.asKnown().isPresent) 1 else 0) +
                 (if (defaultForAppCalls.asKnown().isPresent) 1 else 0) +
                 (if (number.asKnown().isPresent) 1 else 0)
 
@@ -841,8 +925,9 @@ private constructor(
 
             return other is Body &&
                 sandbox == other.sandbox &&
-                callbackUrl == other.callbackUrl &&
+                agentId == other.agentId &&
                 areaCode == other.areaCode &&
+                callbackUrl == other.callbackUrl &&
                 defaultForAppCalls == other.defaultForAppCalls &&
                 number == other.number &&
                 additionalProperties == other.additionalProperties
@@ -851,8 +936,9 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 sandbox,
-                callbackUrl,
+                agentId,
                 areaCode,
+                callbackUrl,
                 defaultForAppCalls,
                 number,
                 additionalProperties,
@@ -862,7 +948,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, callbackUrl=$callbackUrl, areaCode=$areaCode, defaultForAppCalls=$defaultForAppCalls, number=$number, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, agentId=$agentId, areaCode=$areaCode, callbackUrl=$callbackUrl, defaultForAppCalls=$defaultForAppCalls, number=$number, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
