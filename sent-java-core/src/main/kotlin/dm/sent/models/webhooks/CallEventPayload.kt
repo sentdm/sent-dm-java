@@ -18,12 +18,13 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Body of a call.initiated, call.answered, call.completed, call.failed or call.recording_ready
- * event. Which of them occurred is the envelope's event.
+ * Body of a call.initiated, call.answered, call.agent_connected, call.completed, call.failed or
+ * call.recording_ready event. Which of them occurred is the envelope's event.
  *
  * Shaped like the message, inbound, template and channel payloads: account_id names the account the
  * event is about, channel names the channel, and updated_at is when the change happened on the
- * call, in the same yyyy-MM-ddTHH:mm:ssZ form. duration_seconds and price are added on
+ * call, in the same yyyy-MM-ddTHH:mm:ssZ form. Every event says how the call is handled in mode,
+ * and an agent call names its agent in agent_id. duration_seconds and price are added on
  * call.completed, reason on call.failed and recording_id on call.recording_ready; each is omitted
  * rather than sent as null when it does not apply.
  *
@@ -36,8 +37,10 @@ class CallEventPayload
 private constructor(
     private val callId: JsonField<String>,
     private val accountId: JsonField<String>,
+    private val agentId: JsonField<String>,
     private val channel: JsonField<String>,
     private val durationSeconds: JsonField<Int>,
+    private val mode: JsonField<String>,
     private val number: JsonField<String>,
     private val price: JsonField<Double>,
     private val reason: JsonField<String>,
@@ -50,10 +53,12 @@ private constructor(
     private constructor(
         @JsonProperty("call_id") @ExcludeMissing callId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("account_id") @ExcludeMissing accountId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("channel") @ExcludeMissing channel: JsonField<String> = JsonMissing.of(),
         @JsonProperty("duration_seconds")
         @ExcludeMissing
         durationSeconds: JsonField<Int> = JsonMissing.of(),
+        @JsonProperty("mode") @ExcludeMissing mode: JsonField<String> = JsonMissing.of(),
         @JsonProperty("number") @ExcludeMissing number: JsonField<String> = JsonMissing.of(),
         @JsonProperty("price") @ExcludeMissing price: JsonField<Double> = JsonMissing.of(),
         @JsonProperty("reason") @ExcludeMissing reason: JsonField<String> = JsonMissing.of(),
@@ -64,8 +69,10 @@ private constructor(
     ) : this(
         callId,
         accountId,
+        agentId,
         channel,
         durationSeconds,
+        mode,
         number,
         price,
         reason,
@@ -91,6 +98,14 @@ private constructor(
     fun accountId(): Optional<String> = accountId.getOptional("account_id")
 
     /**
+     * The voice agent that answers the call, agent_…. Only on an agent call.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun agentId(): Optional<String> = agentId.getOptional("agent_id")
+
+    /**
      * Always voice.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -105,6 +120,15 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun durationSeconds(): Optional<Int> = durationSeconds.getOptional("duration_seconds")
+
+    /**
+     * inapp, a call routed by the number's callback URL, or agent, a call one of the account's
+     * voice agents answers. The same value GET /v3/voice/calls returns.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun mode(): Optional<String> = mode.getOptional("mode")
 
     /**
      * The customer number that owns the call, in E.164 format.
@@ -164,6 +188,13 @@ private constructor(
     @JsonProperty("account_id") @ExcludeMissing fun _accountId(): JsonField<String> = accountId
 
     /**
+     * Returns the raw JSON value of [agentId].
+     *
+     * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
+
+    /**
      * Returns the raw JSON value of [channel].
      *
      * Unlike [channel], this method doesn't throw if the JSON field has an unexpected type.
@@ -178,6 +209,13 @@ private constructor(
     @JsonProperty("duration_seconds")
     @ExcludeMissing
     fun _durationSeconds(): JsonField<Int> = durationSeconds
+
+    /**
+     * Returns the raw JSON value of [mode].
+     *
+     * Unlike [mode], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("mode") @ExcludeMissing fun _mode(): JsonField<String> = mode
 
     /**
      * Returns the raw JSON value of [number].
@@ -246,8 +284,10 @@ private constructor(
 
         private var callId: JsonField<String>? = null
         private var accountId: JsonField<String> = JsonMissing.of()
+        private var agentId: JsonField<String> = JsonMissing.of()
         private var channel: JsonField<String> = JsonMissing.of()
         private var durationSeconds: JsonField<Int> = JsonMissing.of()
+        private var mode: JsonField<String> = JsonMissing.of()
         private var number: JsonField<String> = JsonMissing.of()
         private var price: JsonField<Double> = JsonMissing.of()
         private var reason: JsonField<String> = JsonMissing.of()
@@ -259,8 +299,10 @@ private constructor(
         internal fun from(callEventPayload: CallEventPayload) = apply {
             callId = callEventPayload.callId
             accountId = callEventPayload.accountId
+            agentId = callEventPayload.agentId
             channel = callEventPayload.channel
             durationSeconds = callEventPayload.durationSeconds
+            mode = callEventPayload.mode
             number = callEventPayload.number
             price = callEventPayload.price
             reason = callEventPayload.reason
@@ -294,6 +336,20 @@ private constructor(
          * value.
          */
         fun accountId(accountId: JsonField<String>) = apply { this.accountId = accountId }
+
+        /** The voice agent that answers the call, agent_…. Only on an agent call. */
+        fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+        /**
+         * Sets [Builder.agentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
 
         /** Always voice. */
         fun channel(channel: String) = channel(JsonField.of(channel))
@@ -331,6 +387,20 @@ private constructor(
         fun durationSeconds(durationSeconds: JsonField<Int>) = apply {
             this.durationSeconds = durationSeconds
         }
+
+        /**
+         * inapp, a call routed by the number's callback URL, or agent, a call one of the account's
+         * voice agents answers. The same value GET /v3/voice/calls returns.
+         */
+        fun mode(mode: String) = mode(JsonField.of(mode))
+
+        /**
+         * Sets [Builder.mode] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.mode] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun mode(mode: JsonField<String>) = apply { this.mode = mode }
 
         /** The customer number that owns the call, in E.164 format. */
         fun number(number: String) = number(JsonField.of(number))
@@ -449,8 +519,10 @@ private constructor(
             CallEventPayload(
                 checkRequired("callId", callId),
                 accountId,
+                agentId,
                 channel,
                 durationSeconds,
+                mode,
                 number,
                 price,
                 reason,
@@ -477,8 +549,10 @@ private constructor(
 
         callId()
         accountId()
+        agentId()
         channel()
         durationSeconds()
+        mode()
         number()
         price()
         reason()
@@ -504,8 +578,10 @@ private constructor(
     internal fun validity(): Int =
         (if (callId.asKnown().isPresent) 1 else 0) +
             (if (accountId.asKnown().isPresent) 1 else 0) +
+            (if (agentId.asKnown().isPresent) 1 else 0) +
             (if (channel.asKnown().isPresent) 1 else 0) +
             (if (durationSeconds.asKnown().isPresent) 1 else 0) +
+            (if (mode.asKnown().isPresent) 1 else 0) +
             (if (number.asKnown().isPresent) 1 else 0) +
             (if (price.asKnown().isPresent) 1 else 0) +
             (if (reason.asKnown().isPresent) 1 else 0) +
@@ -520,8 +596,10 @@ private constructor(
         return other is CallEventPayload &&
             callId == other.callId &&
             accountId == other.accountId &&
+            agentId == other.agentId &&
             channel == other.channel &&
             durationSeconds == other.durationSeconds &&
+            mode == other.mode &&
             number == other.number &&
             price == other.price &&
             reason == other.reason &&
@@ -534,8 +612,10 @@ private constructor(
         Objects.hash(
             callId,
             accountId,
+            agentId,
             channel,
             durationSeconds,
+            mode,
             number,
             price,
             reason,
@@ -548,5 +628,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CallEventPayload{callId=$callId, accountId=$accountId, channel=$channel, durationSeconds=$durationSeconds, number=$number, price=$price, reason=$reason, recordingId=$recordingId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "CallEventPayload{callId=$callId, accountId=$accountId, agentId=$agentId, channel=$channel, durationSeconds=$durationSeconds, mode=$mode, number=$number, price=$price, reason=$reason, recordingId=$recordingId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

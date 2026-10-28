@@ -50,6 +50,7 @@ internal class WebhookListPageResponseTest {
                                 )
                                 .addEventType("string")
                                 .isActive(true)
+                                .isInheritable(true)
                                 .lastDeliveryAttemptAt(
                                     OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                 )
@@ -57,9 +58,23 @@ internal class WebhookListPageResponseTest {
                                     OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                 )
                                 .retryCount(0)
+                                .senderProfile(
+                                    WebhookResponse.SenderProfile.builder()
+                                        .eventFilters(
+                                            WebhookResponse.SenderProfile.EventFilters.builder()
+                                                .putAdditionalProperty(
+                                                    "foo",
+                                                    JsonValue.from(listOf("string")),
+                                                )
+                                                .build()
+                                        )
+                                        .addEventType("string")
+                                        .build()
+                                )
                                 .signingSecret("signing_secret")
                                 .timeoutSeconds(0)
                                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .webhookVersion(0L)
                                 .build()
                         )
                         .build()
@@ -119,14 +134,29 @@ internal class WebhookListPageResponseTest {
                             )
                             .addEventType("string")
                             .isActive(true)
+                            .isInheritable(true)
                             .lastDeliveryAttemptAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .lastSuccessfulDeliveryAt(
                                 OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                             )
                             .retryCount(0)
+                            .senderProfile(
+                                WebhookResponse.SenderProfile.builder()
+                                    .eventFilters(
+                                        WebhookResponse.SenderProfile.EventFilters.builder()
+                                            .putAdditionalProperty(
+                                                "foo",
+                                                JsonValue.from(listOf("string")),
+                                            )
+                                            .build()
+                                    )
+                                    .addEventType("string")
+                                    .build()
+                            )
                             .signingSecret("signing_secret")
                             .timeoutSeconds(0)
                             .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .webhookVersion(0L)
                             .build()
                     )
                     .build()
@@ -195,6 +225,7 @@ internal class WebhookListPageResponseTest {
                                 )
                                 .addEventType("string")
                                 .isActive(true)
+                                .isInheritable(true)
                                 .lastDeliveryAttemptAt(
                                     OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                 )
@@ -202,9 +233,23 @@ internal class WebhookListPageResponseTest {
                                     OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                 )
                                 .retryCount(0)
+                                .senderProfile(
+                                    WebhookResponse.SenderProfile.builder()
+                                        .eventFilters(
+                                            WebhookResponse.SenderProfile.EventFilters.builder()
+                                                .putAdditionalProperty(
+                                                    "foo",
+                                                    JsonValue.from(listOf("string")),
+                                                )
+                                                .build()
+                                        )
+                                        .addEventType("string")
+                                        .build()
+                                )
                                 .signingSecret("signing_secret")
                                 .timeoutSeconds(0)
                                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .webhookVersion(0L)
                                 .build()
                         )
                         .build()
