@@ -24,12 +24,16 @@ class Call
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
+    private val agentId: JsonField<String>,
     private val answeredAt: JsonField<OffsetDateTime>,
+    private val callerIdUsed: JsonField<String>,
+    private val connectedNumber: JsonField<String>,
     private val direction: JsonField<String>,
     private val durationSeconds: JsonField<Int>,
     private val endedAt: JsonField<OffsetDateTime>,
     private val failureReason: JsonField<String>,
     private val from: JsonField<CallParty>,
+    private val legs: JsonField<List<Leg>>,
     private val mode: JsonField<String>,
     private val number: JsonField<String>,
     private val price: JsonField<Double>,
@@ -44,9 +48,16 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("answered_at")
         @ExcludeMissing
         answeredAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("caller_id_used")
+        @ExcludeMissing
+        callerIdUsed: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("connected_number")
+        @ExcludeMissing
+        connectedNumber: JsonField<String> = JsonMissing.of(),
         @JsonProperty("direction") @ExcludeMissing direction: JsonField<String> = JsonMissing.of(),
         @JsonProperty("duration_seconds")
         @ExcludeMissing
@@ -58,6 +69,7 @@ private constructor(
         @ExcludeMissing
         failureReason: JsonField<String> = JsonMissing.of(),
         @JsonProperty("from") @ExcludeMissing from: JsonField<CallParty> = JsonMissing.of(),
+        @JsonProperty("legs") @ExcludeMissing legs: JsonField<List<Leg>> = JsonMissing.of(),
         @JsonProperty("mode") @ExcludeMissing mode: JsonField<String> = JsonMissing.of(),
         @JsonProperty("number") @ExcludeMissing number: JsonField<String> = JsonMissing.of(),
         @JsonProperty("price") @ExcludeMissing price: JsonField<Double> = JsonMissing.of(),
@@ -74,12 +86,16 @@ private constructor(
         @JsonProperty("to") @ExcludeMissing to: JsonField<CallParty> = JsonMissing.of(),
     ) : this(
         id,
+        agentId,
         answeredAt,
+        callerIdUsed,
+        connectedNumber,
         direction,
         durationSeconds,
         endedAt,
         failureReason,
         from,
+        legs,
         mode,
         number,
         price,
@@ -100,6 +116,15 @@ private constructor(
     fun id(): Optional<String> = id.getOptional("id")
 
     /**
+     * The voice agent that answered the call, such as agent_9f2ab000-0000-4000-8000-000000000001.
+     * Null for an inapp call
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun agentId(): Optional<String> = agentId.getOptional("agent_id")
+
+    /**
      * When the call was answered (UTC). Null until then, and always null for a call between two of
      * your app users
      *
@@ -107,6 +132,25 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun answeredAt(): Optional<OffsetDateTime> = answeredAt.getOptional("answered_at")
+
+    /**
+     * The caller id shown on the phone leg, in E.164 format: the one your answer chose, or the
+     * owning number when it chose none. Null for a call with no phone leg
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun callerIdUsed(): Optional<String> = callerIdUsed.getOptional("caller_id_used")
+
+    /**
+     * The phone number the call was connected to, in E.164 format: the number your answer dialed,
+     * or the fallback number a call to one of your voice agents reached. Null when the call was not
+     * connected to a phone number
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun connectedNumber(): Optional<String> = connectedNumber.getOptional("connected_number")
 
     /**
      * outbound for a call placed from your app, inbound for a call to one of your numbers
@@ -134,8 +178,9 @@ private constructor(
 
     /**
      * Why the call did not complete: callback_timeout, invalid_answer, insufficient_balance,
-     * destination_blocked, callback_not_configured, rejected or no_answer. Null while the call is
-     * live, when it completed, and when it failed without a recorded reason
+     * destination_blocked, callback_not_configured, rejected, no_answer, or for an agent call
+     * agent_busy or agent_unreachable. Null while the call is live, when it completed, and when it
+     * failed without a recorded reason
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -151,8 +196,18 @@ private constructor(
     fun from(): Optional<CallParty> = from.getOptional("from")
 
     /**
+     * The legs the price covers, one entry per billed leg, each with its own cost: a call your
+     * answer connected to a phone number ran the caller's leg to your number and the leg to the
+     * connected number at once, and both are billed. Null until the call has been priced
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun legs(): Optional<List<Leg>> = legs.getOptional("legs")
+
+    /**
      * The calling mode: inapp for a call between people in your app and phone numbers, routed by
-     * your number's callback URL
+     * your number's callback URL; agent for a call one of your voice agents answered
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -225,6 +280,13 @@ private constructor(
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
 
     /**
+     * Returns the raw JSON value of [agentId].
+     *
+     * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
+
+    /**
      * Returns the raw JSON value of [answeredAt].
      *
      * Unlike [answeredAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -232,6 +294,24 @@ private constructor(
     @JsonProperty("answered_at")
     @ExcludeMissing
     fun _answeredAt(): JsonField<OffsetDateTime> = answeredAt
+
+    /**
+     * Returns the raw JSON value of [callerIdUsed].
+     *
+     * Unlike [callerIdUsed], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("caller_id_used")
+    @ExcludeMissing
+    fun _callerIdUsed(): JsonField<String> = callerIdUsed
+
+    /**
+     * Returns the raw JSON value of [connectedNumber].
+     *
+     * Unlike [connectedNumber], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("connected_number")
+    @ExcludeMissing
+    fun _connectedNumber(): JsonField<String> = connectedNumber
 
     /**
      * Returns the raw JSON value of [direction].
@@ -271,6 +351,13 @@ private constructor(
      * Unlike [from], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("from") @ExcludeMissing fun _from(): JsonField<CallParty> = from
+
+    /**
+     * Returns the raw JSON value of [legs].
+     *
+     * Unlike [legs], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("legs") @ExcludeMissing fun _legs(): JsonField<List<Leg>> = legs
 
     /**
      * Returns the raw JSON value of [mode].
@@ -357,12 +444,16 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
+        private var agentId: JsonField<String> = JsonMissing.of()
         private var answeredAt: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var callerIdUsed: JsonField<String> = JsonMissing.of()
+        private var connectedNumber: JsonField<String> = JsonMissing.of()
         private var direction: JsonField<String> = JsonMissing.of()
         private var durationSeconds: JsonField<Int> = JsonMissing.of()
         private var endedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var failureReason: JsonField<String> = JsonMissing.of()
         private var from: JsonField<CallParty> = JsonMissing.of()
+        private var legs: JsonField<MutableList<Leg>>? = null
         private var mode: JsonField<String> = JsonMissing.of()
         private var number: JsonField<String> = JsonMissing.of()
         private var price: JsonField<Double> = JsonMissing.of()
@@ -376,12 +467,16 @@ private constructor(
         @JvmSynthetic
         internal fun from(call: Call) = apply {
             id = call.id
+            agentId = call.agentId
             answeredAt = call.answeredAt
+            callerIdUsed = call.callerIdUsed
+            connectedNumber = call.connectedNumber
             direction = call.direction
             durationSeconds = call.durationSeconds
             endedAt = call.endedAt
             failureReason = call.failureReason
             from = call.from
+            legs = call.legs.map { it.toMutableList() }
             mode = call.mode
             number = call.number
             price = call.price
@@ -405,6 +500,23 @@ private constructor(
         fun id(id: JsonField<String>) = apply { this.id = id }
 
         /**
+         * The voice agent that answered the call, such as
+         * agent_9f2ab000-0000-4000-8000-000000000001. Null for an inapp call
+         */
+        fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+        /**
+         * Sets [Builder.agentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
+
+        /**
          * When the call was answered (UTC). Null until then, and always null for a call between two
          * of your app users
          */
@@ -422,6 +534,49 @@ private constructor(
          */
         fun answeredAt(answeredAt: JsonField<OffsetDateTime>) = apply {
             this.answeredAt = answeredAt
+        }
+
+        /**
+         * The caller id shown on the phone leg, in E.164 format: the one your answer chose, or the
+         * owning number when it chose none. Null for a call with no phone leg
+         */
+        fun callerIdUsed(callerIdUsed: String?) = callerIdUsed(JsonField.ofNullable(callerIdUsed))
+
+        /** Alias for calling [Builder.callerIdUsed] with `callerIdUsed.orElse(null)`. */
+        fun callerIdUsed(callerIdUsed: Optional<String>) = callerIdUsed(callerIdUsed.getOrNull())
+
+        /**
+         * Sets [Builder.callerIdUsed] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.callerIdUsed] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun callerIdUsed(callerIdUsed: JsonField<String>) = apply {
+            this.callerIdUsed = callerIdUsed
+        }
+
+        /**
+         * The phone number the call was connected to, in E.164 format: the number your answer
+         * dialed, or the fallback number a call to one of your voice agents reached. Null when the
+         * call was not connected to a phone number
+         */
+        fun connectedNumber(connectedNumber: String?) =
+            connectedNumber(JsonField.ofNullable(connectedNumber))
+
+        /** Alias for calling [Builder.connectedNumber] with `connectedNumber.orElse(null)`. */
+        fun connectedNumber(connectedNumber: Optional<String>) =
+            connectedNumber(connectedNumber.getOrNull())
+
+        /**
+         * Sets [Builder.connectedNumber] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.connectedNumber] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun connectedNumber(connectedNumber: JsonField<String>) = apply {
+            this.connectedNumber = connectedNumber
         }
 
         /** outbound for a call placed from your app, inbound for a call to one of your numbers */
@@ -479,8 +634,9 @@ private constructor(
 
         /**
          * Why the call did not complete: callback_timeout, invalid_answer, insufficient_balance,
-         * destination_blocked, callback_not_configured, rejected or no_answer. Null while the call
-         * is live, when it completed, and when it failed without a recorded reason
+         * destination_blocked, callback_not_configured, rejected, no_answer, or for an agent call
+         * agent_busy or agent_unreachable. Null while the call is live, when it completed, and when
+         * it failed without a recorded reason
          */
         fun failureReason(failureReason: String?) =
             failureReason(JsonField.ofNullable(failureReason))
@@ -512,8 +668,35 @@ private constructor(
         fun from(from: JsonField<CallParty>) = apply { this.from = from }
 
         /**
+         * The legs the price covers, one entry per billed leg, each with its own cost: a call your
+         * answer connected to a phone number ran the caller's leg to your number and the leg to the
+         * connected number at once, and both are billed. Null until the call has been priced
+         */
+        fun legs(legs: List<Leg>?) = legs(JsonField.ofNullable(legs))
+
+        /** Alias for calling [Builder.legs] with `legs.orElse(null)`. */
+        fun legs(legs: Optional<List<Leg>>) = legs(legs.getOrNull())
+
+        /**
+         * Sets [Builder.legs] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.legs] with a well-typed `List<Leg>` value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun legs(legs: JsonField<List<Leg>>) = apply { this.legs = legs.map { it.toMutableList() } }
+
+        /**
+         * Adds a single [Leg] to [legs].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addLeg(leg: Leg) = apply {
+            legs = (legs ?: JsonField.of(mutableListOf())).also { checkKnown("legs", it).add(leg) }
+        }
+
+        /**
          * The calling mode: inapp for a call between people in your app and phone numbers, routed
-         * by your number's callback URL
+         * by your number's callback URL; agent for a call one of your voice agents answered
          */
         fun mode(mode: String) = mode(JsonField.of(mode))
 
@@ -665,12 +848,16 @@ private constructor(
         fun build(): Call =
             Call(
                 id,
+                agentId,
                 answeredAt,
+                callerIdUsed,
+                connectedNumber,
                 direction,
                 durationSeconds,
                 endedAt,
                 failureReason,
                 from,
+                (legs ?: JsonMissing.of()).map { it.toImmutable() },
                 mode,
                 number,
                 price,
@@ -699,12 +886,16 @@ private constructor(
         }
 
         id()
+        agentId()
         answeredAt()
+        callerIdUsed()
+        connectedNumber()
         direction()
         durationSeconds()
         endedAt()
         failureReason()
         from().ifPresent { it.validate() }
+        legs().ifPresent { it.forEach { it.validate() } }
         mode()
         number()
         price()
@@ -732,12 +923,16 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
+            (if (agentId.asKnown().isPresent) 1 else 0) +
             (if (answeredAt.asKnown().isPresent) 1 else 0) +
+            (if (callerIdUsed.asKnown().isPresent) 1 else 0) +
+            (if (connectedNumber.asKnown().isPresent) 1 else 0) +
             (if (direction.asKnown().isPresent) 1 else 0) +
             (if (durationSeconds.asKnown().isPresent) 1 else 0) +
             (if (endedAt.asKnown().isPresent) 1 else 0) +
             (if (failureReason.asKnown().isPresent) 1 else 0) +
             (from.asKnown().getOrNull()?.validity() ?: 0) +
+            (legs.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (mode.asKnown().isPresent) 1 else 0) +
             (if (number.asKnown().isPresent) 1 else 0) +
             (if (price.asKnown().isPresent) 1 else 0) +
@@ -747,6 +942,326 @@ private constructor(
             (timeline.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (to.asKnown().getOrNull()?.validity() ?: 0)
 
+    /** One leg of a call the price covers */
+    class Leg
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val billedMinutes: JsonField<Int>,
+        private val cost: JsonField<Double>,
+        private val currency: JsonField<String>,
+        private val direction: JsonField<String>,
+        private val number: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("billed_minutes")
+            @ExcludeMissing
+            billedMinutes: JsonField<Int> = JsonMissing.of(),
+            @JsonProperty("cost") @ExcludeMissing cost: JsonField<Double> = JsonMissing.of(),
+            @JsonProperty("currency")
+            @ExcludeMissing
+            currency: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("direction")
+            @ExcludeMissing
+            direction: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("number") @ExcludeMissing number: JsonField<String> = JsonMissing.of(),
+        ) : this(billedMinutes, cost, currency, direction, number, mutableMapOf())
+
+        /**
+         * The whole minutes the leg was billed for
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun billedMinutes(): Optional<Int> = billedMinutes.getOptional("billed_minutes")
+
+        /**
+         * What the leg cost, in the same unit as the call's price
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun cost(): Optional<Double> = cost.getOptional("cost")
+
+        /**
+         * The currency of the cost: USD
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun currency(): Optional<String> = currency.getOptional("currency")
+
+        /**
+         * inbound for the caller's leg to your number, outbound for a leg placed on your behalf
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun direction(): Optional<String> = direction.getOptional("direction")
+
+        /**
+         * The phone number the leg reached, in E.164 format: your number for the inbound leg, the
+         * number dialed for an outbound one. Null for a leg to one of your app users or a room
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun number(): Optional<String> = number.getOptional("number")
+
+        /**
+         * Returns the raw JSON value of [billedMinutes].
+         *
+         * Unlike [billedMinutes], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("billed_minutes")
+        @ExcludeMissing
+        fun _billedMinutes(): JsonField<Int> = billedMinutes
+
+        /**
+         * Returns the raw JSON value of [cost].
+         *
+         * Unlike [cost], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("cost") @ExcludeMissing fun _cost(): JsonField<Double> = cost
+
+        /**
+         * Returns the raw JSON value of [currency].
+         *
+         * Unlike [currency], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("currency") @ExcludeMissing fun _currency(): JsonField<String> = currency
+
+        /**
+         * Returns the raw JSON value of [direction].
+         *
+         * Unlike [direction], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("direction") @ExcludeMissing fun _direction(): JsonField<String> = direction
+
+        /**
+         * Returns the raw JSON value of [number].
+         *
+         * Unlike [number], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("number") @ExcludeMissing fun _number(): JsonField<String> = number
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Leg]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Leg]. */
+        class Builder internal constructor() {
+
+            private var billedMinutes: JsonField<Int> = JsonMissing.of()
+            private var cost: JsonField<Double> = JsonMissing.of()
+            private var currency: JsonField<String> = JsonMissing.of()
+            private var direction: JsonField<String> = JsonMissing.of()
+            private var number: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(leg: Leg) = apply {
+                billedMinutes = leg.billedMinutes
+                cost = leg.cost
+                currency = leg.currency
+                direction = leg.direction
+                number = leg.number
+                additionalProperties = leg.additionalProperties.toMutableMap()
+            }
+
+            /** The whole minutes the leg was billed for */
+            fun billedMinutes(billedMinutes: Int) = billedMinutes(JsonField.of(billedMinutes))
+
+            /**
+             * Sets [Builder.billedMinutes] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.billedMinutes] with a well-typed [Int] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun billedMinutes(billedMinutes: JsonField<Int>) = apply {
+                this.billedMinutes = billedMinutes
+            }
+
+            /** What the leg cost, in the same unit as the call's price */
+            fun cost(cost: Double) = cost(JsonField.of(cost))
+
+            /**
+             * Sets [Builder.cost] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.cost] with a well-typed [Double] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun cost(cost: JsonField<Double>) = apply { this.cost = cost }
+
+            /** The currency of the cost: USD */
+            fun currency(currency: String) = currency(JsonField.of(currency))
+
+            /**
+             * Sets [Builder.currency] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.currency] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun currency(currency: JsonField<String>) = apply { this.currency = currency }
+
+            /**
+             * inbound for the caller's leg to your number, outbound for a leg placed on your behalf
+             */
+            fun direction(direction: String) = direction(JsonField.of(direction))
+
+            /**
+             * Sets [Builder.direction] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.direction] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun direction(direction: JsonField<String>) = apply { this.direction = direction }
+
+            /**
+             * The phone number the leg reached, in E.164 format: your number for the inbound leg,
+             * the number dialed for an outbound one. Null for a leg to one of your app users or a
+             * room
+             */
+            fun number(number: String?) = number(JsonField.ofNullable(number))
+
+            /** Alias for calling [Builder.number] with `number.orElse(null)`. */
+            fun number(number: Optional<String>) = number(number.getOrNull())
+
+            /**
+             * Sets [Builder.number] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.number] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun number(number: JsonField<String>) = apply { this.number = number }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Leg].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Leg =
+                Leg(
+                    billedMinutes,
+                    cost,
+                    currency,
+                    direction,
+                    number,
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws SentInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Leg = apply {
+            if (validated) {
+                return@apply
+            }
+
+            billedMinutes()
+            cost()
+            currency()
+            direction()
+            number()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (billedMinutes.asKnown().isPresent) 1 else 0) +
+                (if (cost.asKnown().isPresent) 1 else 0) +
+                (if (currency.asKnown().isPresent) 1 else 0) +
+                (if (direction.asKnown().isPresent) 1 else 0) +
+                (if (number.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Leg &&
+                billedMinutes == other.billedMinutes &&
+                cost == other.cost &&
+                currency == other.currency &&
+                direction == other.direction &&
+                number == other.number &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(billedMinutes, cost, currency, direction, number, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Leg{billedMinutes=$billedMinutes, cost=$cost, currency=$currency, direction=$direction, number=$number, additionalProperties=$additionalProperties}"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -754,12 +1269,16 @@ private constructor(
 
         return other is Call &&
             id == other.id &&
+            agentId == other.agentId &&
             answeredAt == other.answeredAt &&
+            callerIdUsed == other.callerIdUsed &&
+            connectedNumber == other.connectedNumber &&
             direction == other.direction &&
             durationSeconds == other.durationSeconds &&
             endedAt == other.endedAt &&
             failureReason == other.failureReason &&
             from == other.from &&
+            legs == other.legs &&
             mode == other.mode &&
             number == other.number &&
             price == other.price &&
@@ -774,12 +1293,16 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             id,
+            agentId,
             answeredAt,
+            callerIdUsed,
+            connectedNumber,
             direction,
             durationSeconds,
             endedAt,
             failureReason,
             from,
+            legs,
             mode,
             number,
             price,
@@ -795,5 +1318,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Call{id=$id, answeredAt=$answeredAt, direction=$direction, durationSeconds=$durationSeconds, endedAt=$endedAt, failureReason=$failureReason, from=$from, mode=$mode, number=$number, price=$price, recordingAvailable=$recordingAvailable, startedAt=$startedAt, status=$status, timeline=$timeline, to=$to, additionalProperties=$additionalProperties}"
+        "Call{id=$id, agentId=$agentId, answeredAt=$answeredAt, callerIdUsed=$callerIdUsed, connectedNumber=$connectedNumber, direction=$direction, durationSeconds=$durationSeconds, endedAt=$endedAt, failureReason=$failureReason, from=$from, legs=$legs, mode=$mode, number=$number, price=$price, recordingAvailable=$recordingAvailable, startedAt=$startedAt, status=$status, timeline=$timeline, to=$to, additionalProperties=$additionalProperties}"
 }

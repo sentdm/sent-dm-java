@@ -21,7 +21,15 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Creates a new webhook endpoint for the authenticated customer. */
+/**
+ * Creates a new webhook endpoint for the authenticated customer. A webhook is version 2 unless the
+ * request sets webhook_version to 1: Svix delivers it, signed with the webhook-id,
+ * webhook-timestamp and webhook-signature headers, and retries it on its own schedule, so
+ * retry_count and timeout_seconds apply to version 1 only. sender_profile applies to version 1 only
+ * and is ignored on version 2; is_inheritable applies to version 2 only. A version 1 webhook's
+ * response returns its sender_profile selection, with an empty event_types when it is not cloned
+ * onto sender profiles; a version 2 webhook's response leaves sender_profile out.
+ */
 class WebhookCreateParams
 private constructor(
     private val idempotencyKey: String?,
@@ -69,6 +77,20 @@ private constructor(
     fun eventTypes(): Optional<List<String>> = body.eventTypes()
 
     /**
+     * Also delivers every sender profile's events to this webhook, at the same URL and with the
+     * same signing secret, and lets each profile see the webhook and read the events about itself.
+     * Off by default: the organization's own events only. Only an organization's version 2 webhook
+     * can set it.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun isInheritable(): Optional<Boolean> = body.isInheritable()
+
+    /**
+     * Delivery retries. Applies to version 1 only: Svix retries a version 2 webhook on its own
+     * schedule.
+     *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
@@ -76,7 +98,8 @@ private constructor(
 
     /**
      * Request-only: the events an organization webhook's sender profile clones receive, one clone
-     * per existing and future profile. Responses never return it.
+     * per existing and future profile. A version 1 webhook's responses report it as
+     * WebhookSenderProfileV3Response.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -84,10 +107,22 @@ private constructor(
     fun senderProfile(): Optional<SenderProfile> = body.senderProfile()
 
     /**
+     * Delivery timeout. Applies to version 1 only.
+     *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
     fun timeoutSeconds(): Optional<Int> = body.timeoutSeconds()
+
+    /**
+     * Who delivers the webhook: 2, the default, is delivered by Svix and signed with the
+     * webhook-id, webhook-timestamp and webhook-signature headers; 1 is the older delivery, signed
+     * with the X-Webhook-* headers, which will be retired.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun webhookVersion(): Optional<Long> = body.webhookVersion()
 
     /**
      * Returns the raw JSON value of [sandbox].
@@ -125,6 +160,13 @@ private constructor(
     fun _eventTypes(): JsonField<List<String>> = body._eventTypes()
 
     /**
+     * Returns the raw JSON value of [isInheritable].
+     *
+     * Unlike [isInheritable], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _isInheritable(): JsonField<Boolean> = body._isInheritable()
+
+    /**
      * Returns the raw JSON value of [retryCount].
      *
      * Unlike [retryCount], this method doesn't throw if the JSON field has an unexpected type.
@@ -144,6 +186,13 @@ private constructor(
      * Unlike [timeoutSeconds], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _timeoutSeconds(): JsonField<Int> = body._timeoutSeconds()
+
+    /**
+     * Returns the raw JSON value of [webhookVersion].
+     *
+     * Unlike [webhookVersion], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _webhookVersion(): JsonField<Long> = body._webhookVersion()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -277,6 +326,29 @@ private constructor(
          */
         fun addEventType(eventType: String) = apply { body.addEventType(eventType) }
 
+        /**
+         * Also delivers every sender profile's events to this webhook, at the same URL and with the
+         * same signing secret, and lets each profile see the webhook and read the events about
+         * itself. Off by default: the organization's own events only. Only an organization's
+         * version 2 webhook can set it.
+         */
+        fun isInheritable(isInheritable: Boolean) = apply { body.isInheritable(isInheritable) }
+
+        /**
+         * Sets [Builder.isInheritable] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isInheritable] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun isInheritable(isInheritable: JsonField<Boolean>) = apply {
+            body.isInheritable(isInheritable)
+        }
+
+        /**
+         * Delivery retries. Applies to version 1 only: Svix retries a version 2 webhook on its own
+         * schedule.
+         */
         fun retryCount(retryCount: Int) = apply { body.retryCount(retryCount) }
 
         /**
@@ -289,7 +361,8 @@ private constructor(
 
         /**
          * Request-only: the events an organization webhook's sender profile clones receive, one
-         * clone per existing and future profile. Responses never return it.
+         * clone per existing and future profile. A version 1 webhook's responses report it as
+         * WebhookSenderProfileV3Response.
          */
         fun senderProfile(senderProfile: SenderProfile?) = apply {
             body.senderProfile(senderProfile)
@@ -310,6 +383,7 @@ private constructor(
             body.senderProfile(senderProfile)
         }
 
+        /** Delivery timeout. Applies to version 1 only. */
         fun timeoutSeconds(timeoutSeconds: Int) = apply { body.timeoutSeconds(timeoutSeconds) }
 
         /**
@@ -321,6 +395,35 @@ private constructor(
          */
         fun timeoutSeconds(timeoutSeconds: JsonField<Int>) = apply {
             body.timeoutSeconds(timeoutSeconds)
+        }
+
+        /**
+         * Who delivers the webhook: 2, the default, is delivered by Svix and signed with the
+         * webhook-id, webhook-timestamp and webhook-signature headers; 1 is the older delivery,
+         * signed with the X-Webhook-* headers, which will be retired.
+         */
+        fun webhookVersion(webhookVersion: Long?) = apply { body.webhookVersion(webhookVersion) }
+
+        /**
+         * Alias for [Builder.webhookVersion].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun webhookVersion(webhookVersion: Long) = webhookVersion(webhookVersion as Long?)
+
+        /** Alias for calling [Builder.webhookVersion] with `webhookVersion.orElse(null)`. */
+        fun webhookVersion(webhookVersion: Optional<Long>) =
+            webhookVersion(webhookVersion.getOrNull())
+
+        /**
+         * Sets [Builder.webhookVersion] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.webhookVersion] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun webhookVersion(webhookVersion: JsonField<Long>) = apply {
+            body.webhookVersion(webhookVersion)
         }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
@@ -476,9 +579,11 @@ private constructor(
         private val endpointUrl: JsonField<String>,
         private val eventFilters: JsonField<EventFilters>,
         private val eventTypes: JsonField<List<String>>,
+        private val isInheritable: JsonField<Boolean>,
         private val retryCount: JsonField<Int>,
         private val senderProfile: JsonField<SenderProfile>,
         private val timeoutSeconds: JsonField<Int>,
+        private val webhookVersion: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -497,6 +602,9 @@ private constructor(
             @JsonProperty("event_types")
             @ExcludeMissing
             eventTypes: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("is_inheritable")
+            @ExcludeMissing
+            isInheritable: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("retry_count")
             @ExcludeMissing
             retryCount: JsonField<Int> = JsonMissing.of(),
@@ -506,15 +614,20 @@ private constructor(
             @JsonProperty("timeout_seconds")
             @ExcludeMissing
             timeoutSeconds: JsonField<Int> = JsonMissing.of(),
+            @JsonProperty("webhook_version")
+            @ExcludeMissing
+            webhookVersion: JsonField<Long> = JsonMissing.of(),
         ) : this(
             sandbox,
             displayName,
             endpointUrl,
             eventFilters,
             eventTypes,
+            isInheritable,
             retryCount,
             senderProfile,
             timeoutSeconds,
+            webhookVersion,
             mutableMapOf(),
         )
 
@@ -555,6 +668,20 @@ private constructor(
         fun eventTypes(): Optional<List<String>> = eventTypes.getOptional("event_types")
 
         /**
+         * Also delivers every sender profile's events to this webhook, at the same URL and with the
+         * same signing secret, and lets each profile see the webhook and read the events about
+         * itself. Off by default: the organization's own events only. Only an organization's
+         * version 2 webhook can set it.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun isInheritable(): Optional<Boolean> = isInheritable.getOptional("is_inheritable")
+
+        /**
+         * Delivery retries. Applies to version 1 only: Svix retries a version 2 webhook on its own
+         * schedule.
+         *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
@@ -562,7 +689,8 @@ private constructor(
 
         /**
          * Request-only: the events an organization webhook's sender profile clones receive, one
-         * clone per existing and future profile. Responses never return it.
+         * clone per existing and future profile. A version 1 webhook's responses report it as
+         * WebhookSenderProfileV3Response.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -570,10 +698,22 @@ private constructor(
         fun senderProfile(): Optional<SenderProfile> = senderProfile.getOptional("sender_profile")
 
         /**
+         * Delivery timeout. Applies to version 1 only.
+         *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
         fun timeoutSeconds(): Optional<Int> = timeoutSeconds.getOptional("timeout_seconds")
+
+        /**
+         * Who delivers the webhook: 2, the default, is delivered by Svix and signed with the
+         * webhook-id, webhook-timestamp and webhook-signature headers; 1 is the older delivery,
+         * signed with the X-Webhook-* headers, which will be retired.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun webhookVersion(): Optional<Long> = webhookVersion.getOptional("webhook_version")
 
         /**
          * Returns the raw JSON value of [sandbox].
@@ -620,6 +760,16 @@ private constructor(
         fun _eventTypes(): JsonField<List<String>> = eventTypes
 
         /**
+         * Returns the raw JSON value of [isInheritable].
+         *
+         * Unlike [isInheritable], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("is_inheritable")
+        @ExcludeMissing
+        fun _isInheritable(): JsonField<Boolean> = isInheritable
+
+        /**
          * Returns the raw JSON value of [retryCount].
          *
          * Unlike [retryCount], this method doesn't throw if the JSON field has an unexpected type.
@@ -645,6 +795,16 @@ private constructor(
         @JsonProperty("timeout_seconds")
         @ExcludeMissing
         fun _timeoutSeconds(): JsonField<Int> = timeoutSeconds
+
+        /**
+         * Returns the raw JSON value of [webhookVersion].
+         *
+         * Unlike [webhookVersion], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("webhook_version")
+        @ExcludeMissing
+        fun _webhookVersion(): JsonField<Long> = webhookVersion
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -672,9 +832,11 @@ private constructor(
             private var endpointUrl: JsonField<String> = JsonMissing.of()
             private var eventFilters: JsonField<EventFilters> = JsonMissing.of()
             private var eventTypes: JsonField<MutableList<String>>? = null
+            private var isInheritable: JsonField<Boolean> = JsonMissing.of()
             private var retryCount: JsonField<Int> = JsonMissing.of()
             private var senderProfile: JsonField<SenderProfile> = JsonMissing.of()
             private var timeoutSeconds: JsonField<Int> = JsonMissing.of()
+            private var webhookVersion: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -684,9 +846,11 @@ private constructor(
                 endpointUrl = body.endpointUrl
                 eventFilters = body.eventFilters
                 eventTypes = body.eventTypes.map { it.toMutableList() }
+                isInheritable = body.isInheritable
                 retryCount = body.retryCount
                 senderProfile = body.senderProfile
                 timeoutSeconds = body.timeoutSeconds
+                webhookVersion = body.webhookVersion
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -774,6 +938,29 @@ private constructor(
                     }
             }
 
+            /**
+             * Also delivers every sender profile's events to this webhook, at the same URL and with
+             * the same signing secret, and lets each profile see the webhook and read the events
+             * about itself. Off by default: the organization's own events only. Only an
+             * organization's version 2 webhook can set it.
+             */
+            fun isInheritable(isInheritable: Boolean) = isInheritable(JsonField.of(isInheritable))
+
+            /**
+             * Sets [Builder.isInheritable] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.isInheritable] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun isInheritable(isInheritable: JsonField<Boolean>) = apply {
+                this.isInheritable = isInheritable
+            }
+
+            /**
+             * Delivery retries. Applies to version 1 only: Svix retries a version 2 webhook on its
+             * own schedule.
+             */
             fun retryCount(retryCount: Int) = retryCount(JsonField.of(retryCount))
 
             /**
@@ -787,7 +974,8 @@ private constructor(
 
             /**
              * Request-only: the events an organization webhook's sender profile clones receive, one
-             * clone per existing and future profile. Responses never return it.
+             * clone per existing and future profile. A version 1 webhook's responses report it as
+             * WebhookSenderProfileV3Response.
              */
             fun senderProfile(senderProfile: SenderProfile?) =
                 senderProfile(JsonField.ofNullable(senderProfile))
@@ -807,6 +995,7 @@ private constructor(
                 this.senderProfile = senderProfile
             }
 
+            /** Delivery timeout. Applies to version 1 only. */
             fun timeoutSeconds(timeoutSeconds: Int) = timeoutSeconds(JsonField.of(timeoutSeconds))
 
             /**
@@ -818,6 +1007,36 @@ private constructor(
              */
             fun timeoutSeconds(timeoutSeconds: JsonField<Int>) = apply {
                 this.timeoutSeconds = timeoutSeconds
+            }
+
+            /**
+             * Who delivers the webhook: 2, the default, is delivered by Svix and signed with the
+             * webhook-id, webhook-timestamp and webhook-signature headers; 1 is the older delivery,
+             * signed with the X-Webhook-* headers, which will be retired.
+             */
+            fun webhookVersion(webhookVersion: Long?) =
+                webhookVersion(JsonField.ofNullable(webhookVersion))
+
+            /**
+             * Alias for [Builder.webhookVersion].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun webhookVersion(webhookVersion: Long) = webhookVersion(webhookVersion as Long?)
+
+            /** Alias for calling [Builder.webhookVersion] with `webhookVersion.orElse(null)`. */
+            fun webhookVersion(webhookVersion: Optional<Long>) =
+                webhookVersion(webhookVersion.getOrNull())
+
+            /**
+             * Sets [Builder.webhookVersion] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.webhookVersion] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun webhookVersion(webhookVersion: JsonField<Long>) = apply {
+                this.webhookVersion = webhookVersion
             }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
@@ -851,9 +1070,11 @@ private constructor(
                     endpointUrl,
                     eventFilters,
                     (eventTypes ?: JsonMissing.of()).map { it.toImmutable() },
+                    isInheritable,
                     retryCount,
                     senderProfile,
                     timeoutSeconds,
+                    webhookVersion,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -879,9 +1100,11 @@ private constructor(
             endpointUrl()
             eventFilters().ifPresent { it.validate() }
             eventTypes()
+            isInheritable()
             retryCount()
             senderProfile().ifPresent { it.validate() }
             timeoutSeconds()
+            webhookVersion()
             validated = true
         }
 
@@ -906,9 +1129,11 @@ private constructor(
                 (if (endpointUrl.asKnown().isPresent) 1 else 0) +
                 (eventFilters.asKnown().getOrNull()?.validity() ?: 0) +
                 (eventTypes.asKnown().getOrNull()?.size ?: 0) +
+                (if (isInheritable.asKnown().isPresent) 1 else 0) +
                 (if (retryCount.asKnown().isPresent) 1 else 0) +
                 (senderProfile.asKnown().getOrNull()?.validity() ?: 0) +
-                (if (timeoutSeconds.asKnown().isPresent) 1 else 0)
+                (if (timeoutSeconds.asKnown().isPresent) 1 else 0) +
+                (if (webhookVersion.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -921,9 +1146,11 @@ private constructor(
                 endpointUrl == other.endpointUrl &&
                 eventFilters == other.eventFilters &&
                 eventTypes == other.eventTypes &&
+                isInheritable == other.isInheritable &&
                 retryCount == other.retryCount &&
                 senderProfile == other.senderProfile &&
                 timeoutSeconds == other.timeoutSeconds &&
+                webhookVersion == other.webhookVersion &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -934,9 +1161,11 @@ private constructor(
                 endpointUrl,
                 eventFilters,
                 eventTypes,
+                isInheritable,
                 retryCount,
                 senderProfile,
                 timeoutSeconds,
+                webhookVersion,
                 additionalProperties,
             )
         }
@@ -944,7 +1173,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, displayName=$displayName, endpointUrl=$endpointUrl, eventFilters=$eventFilters, eventTypes=$eventTypes, retryCount=$retryCount, senderProfile=$senderProfile, timeoutSeconds=$timeoutSeconds, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, displayName=$displayName, endpointUrl=$endpointUrl, eventFilters=$eventFilters, eventTypes=$eventTypes, isInheritable=$isInheritable, retryCount=$retryCount, senderProfile=$senderProfile, timeoutSeconds=$timeoutSeconds, webhookVersion=$webhookVersion, additionalProperties=$additionalProperties}"
     }
 
     class EventFilters
@@ -1057,7 +1286,8 @@ private constructor(
 
     /**
      * Request-only: the events an organization webhook's sender profile clones receive, one clone
-     * per existing and future profile. Responses never return it.
+     * per existing and future profile. A version 1 webhook's responses report it as
+     * WebhookSenderProfileV3Response.
      */
     class SenderProfile
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
