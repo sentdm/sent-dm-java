@@ -3,11 +3,10 @@
 package dm.sent.services.blocking
 
 import dm.sent.core.ClientOptions
-import dm.sent.services.blocking.VoiceService
 import dm.sent.services.blocking.voice.AgentService
 import dm.sent.services.blocking.voice.CallService
+import dm.sent.services.blocking.voice.CatalogueService
 import dm.sent.services.blocking.voice.TokenService
-import dm.sent.services.blocking.voice.VoiceService
 import java.util.function.Consumer
 
 interface VoiceService {
@@ -134,7 +133,7 @@ interface VoiceService {
      * Voices and languages for text sessions come from `GET /v3/voice/voices`. A number takes calls
      * to an agent once it is bound to it on `/v3/channels/voice`.
      */
-    fun voices(): VoiceService
+    fun catalogue(): CatalogueService
 
     /** A view of [VoiceService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -260,6 +259,6 @@ interface VoiceService {
          * from `GET /v3/voice/voices`. A number takes calls to an agent once it is bound to it on
          * `/v3/channels/voice`.
          */
-        fun voices(): VoiceService.WithRawResponse
+        fun catalogue(): CatalogueService.WithRawResponse
     }
 }

@@ -3,11 +3,10 @@
 package dm.sent.services.async
 
 import dm.sent.core.ClientOptions
-import dm.sent.services.async.VoiceServiceAsync
 import dm.sent.services.async.voice.AgentServiceAsync
 import dm.sent.services.async.voice.CallServiceAsync
+import dm.sent.services.async.voice.CatalogueServiceAsync
 import dm.sent.services.async.voice.TokenServiceAsync
-import dm.sent.services.async.voice.VoiceServiceAsync
 import java.util.function.Consumer
 
 interface VoiceServiceAsync {
@@ -134,7 +133,7 @@ interface VoiceServiceAsync {
      * Voices and languages for text sessions come from `GET /v3/voice/voices`. A number takes calls
      * to an agent once it is bound to it on `/v3/channels/voice`.
      */
-    fun voices(): VoiceServiceAsync
+    fun catalogue(): CatalogueServiceAsync
 
     /** A view of [VoiceServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -262,6 +261,6 @@ interface VoiceServiceAsync {
          * from `GET /v3/voice/voices`. A number takes calls to an agent once it is bound to it on
          * `/v3/channels/voice`.
          */
-        fun voices(): VoiceServiceAsync.WithRawResponse
+        fun catalogue(): CatalogueServiceAsync.WithRawResponse
     }
 }

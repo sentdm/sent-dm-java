@@ -6,8 +6,8 @@ import com.google.errorprone.annotations.MustBeClosed
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.voice.voices.ApiResponseOfVoiceCatalogue
-import dm.sent.models.voice.voices.VoiceListParams
+import dm.sent.models.voice.catalogue.ApiResponseOfVoiceCatalogue
+import dm.sent.models.voice.catalogue.CatalogueListParams
 import java.util.function.Consumer
 
 /**
@@ -35,7 +35,7 @@ import java.util.function.Consumer
  * sessions come from `GET /v3/voice/voices`. A number takes calls to an agent once it is bound to
  * it on `/v3/channels/voice`.
  */
-interface VoiceService {
+interface CatalogueService {
 
     /**
      * Returns a view of this service that provides access to raw HTTP responses for each method.
@@ -47,29 +47,30 @@ interface VoiceService {
      *
      * The original service is not modified.
      */
-    fun withOptions(modifier: Consumer<ClientOptions.Builder>): VoiceService
+    fun withOptions(modifier: Consumer<ClientOptions.Builder>): CatalogueService
 
     /**
      * The names a voice agent's `speech.voice` and `speech.language` accept, with the default
      * marked. The list grows as voices are added; a name is never removed without notice.
      */
-    fun list(): ApiResponseOfVoiceCatalogue = list(VoiceListParams.none())
+    fun list(): ApiResponseOfVoiceCatalogue = list(CatalogueListParams.none())
 
     /** @see list */
     fun list(
-        params: VoiceListParams = VoiceListParams.none(),
+        params: CatalogueListParams = CatalogueListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ApiResponseOfVoiceCatalogue
 
     /** @see list */
-    fun list(params: VoiceListParams = VoiceListParams.none()): ApiResponseOfVoiceCatalogue =
-        list(params, RequestOptions.none())
+    fun list(
+        params: CatalogueListParams = CatalogueListParams.none()
+    ): ApiResponseOfVoiceCatalogue = list(params, RequestOptions.none())
 
     /** @see list */
     fun list(requestOptions: RequestOptions): ApiResponseOfVoiceCatalogue =
-        list(VoiceListParams.none(), requestOptions)
+        list(CatalogueListParams.none(), requestOptions)
 
-    /** A view of [VoiceService] that provides access to raw HTTP responses for each method. */
+    /** A view of [CatalogueService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
         /**
@@ -77,31 +78,31 @@ interface VoiceService {
          *
          * The original service is not modified.
          */
-        fun withOptions(modifier: Consumer<ClientOptions.Builder>): VoiceService.WithRawResponse
+        fun withOptions(modifier: Consumer<ClientOptions.Builder>): CatalogueService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /v3/voice/voices`, but is otherwise the same as
-         * [VoiceService.list].
+         * [CatalogueService.list].
          */
         @MustBeClosed
-        fun list(): HttpResponseFor<ApiResponseOfVoiceCatalogue> = list(VoiceListParams.none())
+        fun list(): HttpResponseFor<ApiResponseOfVoiceCatalogue> = list(CatalogueListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
-            params: VoiceListParams = VoiceListParams.none(),
+            params: CatalogueListParams = CatalogueListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<ApiResponseOfVoiceCatalogue>
 
         /** @see list */
         @MustBeClosed
         fun list(
-            params: VoiceListParams = VoiceListParams.none()
+            params: CatalogueListParams = CatalogueListParams.none()
         ): HttpResponseFor<ApiResponseOfVoiceCatalogue> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
         fun list(requestOptions: RequestOptions): HttpResponseFor<ApiResponseOfVoiceCatalogue> =
-            list(VoiceListParams.none(), requestOptions)
+            list(CatalogueListParams.none(), requestOptions)
     }
 }

@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.voice.voices
+package dm.sent.models.voice.catalogue
 
 import dm.sent.core.Params
 import dm.sent.core.http.Headers
@@ -13,7 +13,7 @@ import kotlin.jvm.optionals.getOrNull
  * The names a voice agent's `speech.voice` and `speech.language` accept, with the default marked.
  * The list grows as voices are added; a name is never removed without notice.
  */
-class VoiceListParams
+class CatalogueListParams
 private constructor(
     private val xProfileId: String?,
     private val additionalHeaders: Headers,
@@ -32,13 +32,13 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): VoiceListParams = builder().build()
+        @JvmStatic fun none(): CatalogueListParams = builder().build()
 
-        /** Returns a mutable builder for constructing an instance of [VoiceListParams]. */
+        /** Returns a mutable builder for constructing an instance of [CatalogueListParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [VoiceListParams]. */
+    /** A builder for [CatalogueListParams]. */
     class Builder internal constructor() {
 
         private var xProfileId: String? = null
@@ -46,10 +46,10 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(voiceListParams: VoiceListParams) = apply {
-            xProfileId = voiceListParams.xProfileId
-            additionalHeaders = voiceListParams.additionalHeaders.toBuilder()
-            additionalQueryParams = voiceListParams.additionalQueryParams.toBuilder()
+        internal fun from(catalogueListParams: CatalogueListParams) = apply {
+            xProfileId = catalogueListParams.xProfileId
+            additionalHeaders = catalogueListParams.additionalHeaders.toBuilder()
+            additionalQueryParams = catalogueListParams.additionalQueryParams.toBuilder()
         }
 
         fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
@@ -156,12 +156,16 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [VoiceListParams].
+         * Returns an immutable instance of [CatalogueListParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): VoiceListParams =
-            VoiceListParams(xProfileId, additionalHeaders.build(), additionalQueryParams.build())
+        fun build(): CatalogueListParams =
+            CatalogueListParams(
+                xProfileId,
+                additionalHeaders.build(),
+                additionalQueryParams.build(),
+            )
     }
 
     override fun _headers(): Headers =
@@ -179,7 +183,7 @@ private constructor(
             return true
         }
 
-        return other is VoiceListParams &&
+        return other is CatalogueListParams &&
             xProfileId == other.xProfileId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -189,5 +193,5 @@ private constructor(
         Objects.hash(xProfileId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "VoiceListParams{xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "CatalogueListParams{xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

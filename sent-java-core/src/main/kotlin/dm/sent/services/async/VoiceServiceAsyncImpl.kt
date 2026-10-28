@@ -3,16 +3,14 @@
 package dm.sent.services.async
 
 import dm.sent.core.ClientOptions
-import dm.sent.services.async.VoiceServiceAsync
-import dm.sent.services.async.VoiceServiceAsyncImpl
 import dm.sent.services.async.voice.AgentServiceAsync
 import dm.sent.services.async.voice.AgentServiceAsyncImpl
 import dm.sent.services.async.voice.CallServiceAsync
 import dm.sent.services.async.voice.CallServiceAsyncImpl
+import dm.sent.services.async.voice.CatalogueServiceAsync
+import dm.sent.services.async.voice.CatalogueServiceAsyncImpl
 import dm.sent.services.async.voice.TokenServiceAsync
 import dm.sent.services.async.voice.TokenServiceAsyncImpl
-import dm.sent.services.async.voice.VoiceServiceAsync
-import dm.sent.services.async.voice.VoiceServiceAsyncImpl
 import java.util.function.Consumer
 
 class VoiceServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -28,7 +26,9 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
 
     private val agents: AgentServiceAsync by lazy { AgentServiceAsyncImpl(clientOptions) }
 
-    private val voices: VoiceServiceAsync by lazy { VoiceServiceAsyncImpl(clientOptions) }
+    private val catalogue: CatalogueServiceAsync by lazy {
+        CatalogueServiceAsyncImpl(clientOptions)
+    }
 
     override fun withRawResponse(): VoiceServiceAsync.WithRawResponse = withRawResponse
 
@@ -145,7 +145,7 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
      * Voices and languages for text sessions come from `GET /v3/voice/voices`. A number takes calls
      * to an agent once it is bound to it on `/v3/channels/voice`.
      */
-    override fun voices(): VoiceServiceAsync = voices
+    override fun catalogue(): CatalogueServiceAsync = catalogue
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         VoiceServiceAsync.WithRawResponse {
@@ -162,8 +162,8 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
             AgentServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val voices: VoiceServiceAsync.WithRawResponse by lazy {
-            VoiceServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        private val catalogue: CatalogueServiceAsync.WithRawResponse by lazy {
+            CatalogueServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         override fun withOptions(
@@ -287,6 +287,6 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
          * from `GET /v3/voice/voices`. A number takes calls to an agent once it is bound to it on
          * `/v3/channels/voice`.
          */
-        override fun voices(): VoiceServiceAsync.WithRawResponse = voices
+        override fun catalogue(): CatalogueServiceAsync.WithRawResponse = catalogue
     }
 }

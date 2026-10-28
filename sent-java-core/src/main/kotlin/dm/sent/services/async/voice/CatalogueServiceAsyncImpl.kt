@@ -14,8 +14,8 @@ import dm.sent.core.http.HttpResponse.Handler
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
-import dm.sent.models.voice.voices.ApiResponseOfVoiceCatalogue
-import dm.sent.models.voice.voices.VoiceListParams
+import dm.sent.models.voice.catalogue.ApiResponseOfVoiceCatalogue
+import dm.sent.models.voice.catalogue.CatalogueListParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -44,35 +44,35 @@ import java.util.function.Consumer
  * sessions come from `GET /v3/voice/voices`. A number takes calls to an agent once it is bound to
  * it on `/v3/channels/voice`.
  */
-class VoiceServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    VoiceServiceAsync {
+class CatalogueServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
+    CatalogueServiceAsync {
 
-    private val withRawResponse: VoiceServiceAsync.WithRawResponse by lazy {
+    private val withRawResponse: CatalogueServiceAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
     }
 
-    override fun withRawResponse(): VoiceServiceAsync.WithRawResponse = withRawResponse
+    override fun withRawResponse(): CatalogueServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): VoiceServiceAsync =
-        VoiceServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): CatalogueServiceAsync =
+        CatalogueServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun list(
-        params: VoiceListParams,
+        params: CatalogueListParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ApiResponseOfVoiceCatalogue> =
         // get /v3/voice/voices
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        VoiceServiceAsync.WithRawResponse {
+        CatalogueServiceAsync.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
-        ): VoiceServiceAsync.WithRawResponse =
-            VoiceServiceAsyncImpl.WithRawResponseImpl(
+        ): CatalogueServiceAsync.WithRawResponse =
+            CatalogueServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
@@ -80,7 +80,7 @@ class VoiceServiceAsyncImpl internal constructor(private val clientOptions: Clie
             jsonHandler<ApiResponseOfVoiceCatalogue>(clientOptions.jsonMapper)
 
         override fun list(
-            params: VoiceListParams,
+            params: CatalogueListParams,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<ApiResponseOfVoiceCatalogue>> {
             val request =

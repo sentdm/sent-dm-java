@@ -3,16 +3,14 @@
 package dm.sent.services.blocking
 
 import dm.sent.core.ClientOptions
-import dm.sent.services.blocking.VoiceService
-import dm.sent.services.blocking.VoiceServiceImpl
 import dm.sent.services.blocking.voice.AgentService
 import dm.sent.services.blocking.voice.AgentServiceImpl
 import dm.sent.services.blocking.voice.CallService
 import dm.sent.services.blocking.voice.CallServiceImpl
+import dm.sent.services.blocking.voice.CatalogueService
+import dm.sent.services.blocking.voice.CatalogueServiceImpl
 import dm.sent.services.blocking.voice.TokenService
 import dm.sent.services.blocking.voice.TokenServiceImpl
-import dm.sent.services.blocking.voice.VoiceService
-import dm.sent.services.blocking.voice.VoiceServiceImpl
 import java.util.function.Consumer
 
 class VoiceServiceImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -28,7 +26,7 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
 
     private val agents: AgentService by lazy { AgentServiceImpl(clientOptions) }
 
-    private val voices: VoiceService by lazy { VoiceServiceImpl(clientOptions) }
+    private val catalogue: CatalogueService by lazy { CatalogueServiceImpl(clientOptions) }
 
     override fun withRawResponse(): VoiceService.WithRawResponse = withRawResponse
 
@@ -145,7 +143,7 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
      * Voices and languages for text sessions come from `GET /v3/voice/voices`. A number takes calls
      * to an agent once it is bound to it on `/v3/channels/voice`.
      */
-    override fun voices(): VoiceService = voices
+    override fun catalogue(): CatalogueService = catalogue
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         VoiceService.WithRawResponse {
@@ -162,8 +160,8 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
             AgentServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val voices: VoiceService.WithRawResponse by lazy {
-            VoiceServiceImpl.WithRawResponseImpl(clientOptions)
+        private val catalogue: CatalogueService.WithRawResponse by lazy {
+            CatalogueServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         override fun withOptions(
@@ -287,6 +285,6 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
          * from `GET /v3/voice/voices`. A number takes calls to an agent once it is bound to it on
          * `/v3/channels/voice`.
          */
-        override fun voices(): VoiceService.WithRawResponse = voices
+        override fun catalogue(): CatalogueService.WithRawResponse = catalogue
     }
 }

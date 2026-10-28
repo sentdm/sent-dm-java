@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.voice.voices
+package dm.sent.models.voice.catalogue
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.jsonMapper

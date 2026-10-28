@@ -14,8 +14,8 @@ import dm.sent.core.http.HttpResponse.Handler
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
-import dm.sent.models.voice.voices.ApiResponseOfVoiceCatalogue
-import dm.sent.models.voice.voices.VoiceListParams
+import dm.sent.models.voice.catalogue.ApiResponseOfVoiceCatalogue
+import dm.sent.models.voice.catalogue.CatalogueListParams
 import java.util.function.Consumer
 
 /**
@@ -43,35 +43,35 @@ import java.util.function.Consumer
  * sessions come from `GET /v3/voice/voices`. A number takes calls to an agent once it is bound to
  * it on `/v3/channels/voice`.
  */
-class VoiceServiceImpl internal constructor(private val clientOptions: ClientOptions) :
-    VoiceService {
+class CatalogueServiceImpl internal constructor(private val clientOptions: ClientOptions) :
+    CatalogueService {
 
-    private val withRawResponse: VoiceService.WithRawResponse by lazy {
+    private val withRawResponse: CatalogueService.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
     }
 
-    override fun withRawResponse(): VoiceService.WithRawResponse = withRawResponse
+    override fun withRawResponse(): CatalogueService.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): VoiceService =
-        VoiceServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): CatalogueService =
+        CatalogueServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun list(
-        params: VoiceListParams,
+        params: CatalogueListParams,
         requestOptions: RequestOptions,
     ): ApiResponseOfVoiceCatalogue =
         // get /v3/voice/voices
         withRawResponse().list(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        VoiceService.WithRawResponse {
+        CatalogueService.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
-        ): VoiceService.WithRawResponse =
-            VoiceServiceImpl.WithRawResponseImpl(
+        ): CatalogueService.WithRawResponse =
+            CatalogueServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
@@ -79,7 +79,7 @@ class VoiceServiceImpl internal constructor(private val clientOptions: ClientOpt
             jsonHandler<ApiResponseOfVoiceCatalogue>(clientOptions.jsonMapper)
 
         override fun list(
-            params: VoiceListParams,
+            params: CatalogueListParams,
             requestOptions: RequestOptions,
         ): HttpResponseFor<ApiResponseOfVoiceCatalogue> {
             val request =

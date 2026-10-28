@@ -5,8 +5,8 @@ package dm.sent.services.async.voice
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.voice.voices.ApiResponseOfVoiceCatalogue
-import dm.sent.models.voice.voices.VoiceListParams
+import dm.sent.models.voice.catalogue.ApiResponseOfVoiceCatalogue
+import dm.sent.models.voice.catalogue.CatalogueListParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -35,7 +35,7 @@ import java.util.function.Consumer
  * sessions come from `GET /v3/voice/voices`. A number takes calls to an agent once it is bound to
  * it on `/v3/channels/voice`.
  */
-interface VoiceServiceAsync {
+interface CatalogueServiceAsync {
 
     /**
      * Returns a view of this service that provides access to raw HTTP responses for each method.
@@ -47,30 +47,32 @@ interface VoiceServiceAsync {
      *
      * The original service is not modified.
      */
-    fun withOptions(modifier: Consumer<ClientOptions.Builder>): VoiceServiceAsync
+    fun withOptions(modifier: Consumer<ClientOptions.Builder>): CatalogueServiceAsync
 
     /**
      * The names a voice agent's `speech.voice` and `speech.language` accept, with the default
      * marked. The list grows as voices are added; a name is never removed without notice.
      */
-    fun list(): CompletableFuture<ApiResponseOfVoiceCatalogue> = list(VoiceListParams.none())
+    fun list(): CompletableFuture<ApiResponseOfVoiceCatalogue> = list(CatalogueListParams.none())
 
     /** @see list */
     fun list(
-        params: VoiceListParams = VoiceListParams.none(),
+        params: CatalogueListParams = CatalogueListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ApiResponseOfVoiceCatalogue>
 
     /** @see list */
     fun list(
-        params: VoiceListParams = VoiceListParams.none()
+        params: CatalogueListParams = CatalogueListParams.none()
     ): CompletableFuture<ApiResponseOfVoiceCatalogue> = list(params, RequestOptions.none())
 
     /** @see list */
     fun list(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfVoiceCatalogue> =
-        list(VoiceListParams.none(), requestOptions)
+        list(CatalogueListParams.none(), requestOptions)
 
-    /** A view of [VoiceServiceAsync] that provides access to raw HTTP responses for each method. */
+    /**
+     * A view of [CatalogueServiceAsync] that provides access to raw HTTP responses for each method.
+     */
     interface WithRawResponse {
 
         /**
@@ -80,24 +82,24 @@ interface VoiceServiceAsync {
          */
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
-        ): VoiceServiceAsync.WithRawResponse
+        ): CatalogueServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /v3/voice/voices`, but is otherwise the same as
-         * [VoiceServiceAsync.list].
+         * [CatalogueServiceAsync.list].
          */
         fun list(): CompletableFuture<HttpResponseFor<ApiResponseOfVoiceCatalogue>> =
-            list(VoiceListParams.none())
+            list(CatalogueListParams.none())
 
         /** @see list */
         fun list(
-            params: VoiceListParams = VoiceListParams.none(),
+            params: CatalogueListParams = CatalogueListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<ApiResponseOfVoiceCatalogue>>
 
         /** @see list */
         fun list(
-            params: VoiceListParams = VoiceListParams.none()
+            params: CatalogueListParams = CatalogueListParams.none()
         ): CompletableFuture<HttpResponseFor<ApiResponseOfVoiceCatalogue>> =
             list(params, RequestOptions.none())
 
@@ -105,6 +107,6 @@ interface VoiceServiceAsync {
         fun list(
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<ApiResponseOfVoiceCatalogue>> =
-            list(VoiceListParams.none(), requestOptions)
+            list(CatalogueListParams.none(), requestOptions)
     }
 }
