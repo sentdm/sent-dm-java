@@ -14,8 +14,9 @@ internal class VoiceCreateParamsTest {
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .sandbox(false)
-            .callbackUrl("https://example.com/voice")
+            .agentId(null)
             .areaCode(null)
+            .callbackUrl("https://example.com/voice")
             .defaultForAppCalls(false)
             .number("+12125550100")
             .build()
@@ -28,8 +29,9 @@ internal class VoiceCreateParamsTest {
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sandbox(false)
-                .callbackUrl("https://example.com/voice")
+                .agentId(null)
                 .areaCode(null)
+                .callbackUrl("https://example.com/voice")
                 .defaultForAppCalls(false)
                 .number("+12125550100")
                 .build()
@@ -47,7 +49,7 @@ internal class VoiceCreateParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = VoiceCreateParams.builder().callbackUrl("https://example.com/voice").build()
+        val params = VoiceCreateParams.builder().build()
 
         val headers = params._headers()
 
@@ -61,8 +63,9 @@ internal class VoiceCreateParamsTest {
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sandbox(false)
-                .callbackUrl("https://example.com/voice")
+                .agentId(null)
                 .areaCode(null)
+                .callbackUrl("https://example.com/voice")
                 .defaultForAppCalls(false)
                 .number("+12125550100")
                 .build()
@@ -70,18 +73,17 @@ internal class VoiceCreateParamsTest {
         val body = params._body()
 
         assertThat(body.sandbox()).contains(false)
-        assertThat(body.callbackUrl()).isEqualTo("https://example.com/voice")
+        assertThat(body.agentId()).isEmpty
         assertThat(body.areaCode()).isEmpty
+        assertThat(body.callbackUrl()).contains("https://example.com/voice")
         assertThat(body.defaultForAppCalls()).contains(false)
         assertThat(body.number()).contains("+12125550100")
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = VoiceCreateParams.builder().callbackUrl("https://example.com/voice").build()
+        val params = VoiceCreateParams.builder().build()
 
         val body = params._body()
-
-        assertThat(body.callbackUrl()).isEqualTo("https://example.com/voice")
     }
 }

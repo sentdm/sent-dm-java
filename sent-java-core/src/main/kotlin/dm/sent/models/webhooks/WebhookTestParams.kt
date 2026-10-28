@@ -19,7 +19,11 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Sends a test event to the specified webhook endpoint to verify connectivity. */
+/**
+ * Sends a test event to the specified webhook endpoint to verify connectivity. A version 1 webhook
+ * is tested at once and the answer says whether it was delivered; a version 2 webhook's test is
+ * queued with Svix, which delivers it right after, and the answer says it was queued.
+ */
 class WebhookTestParams
 private constructor(
     private val id: String?,

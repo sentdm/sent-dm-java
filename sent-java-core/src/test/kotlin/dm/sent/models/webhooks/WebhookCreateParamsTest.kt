@@ -28,6 +28,7 @@ internal class WebhookCreateParamsTest {
                     .build()
             )
             .eventTypes(listOf("contact", "message", "templates"))
+            .isInheritable(false)
             .retryCount(3)
             .senderProfile(
                 WebhookCreateParams.SenderProfile.builder()
@@ -40,6 +41,7 @@ internal class WebhookCreateParamsTest {
                     .build()
             )
             .timeoutSeconds(30)
+            .webhookVersion(null)
             .build()
     }
 
@@ -65,6 +67,7 @@ internal class WebhookCreateParamsTest {
                         .build()
                 )
                 .eventTypes(listOf("contact", "message", "templates"))
+                .isInheritable(false)
                 .retryCount(3)
                 .senderProfile(
                     WebhookCreateParams.SenderProfile.builder()
@@ -77,6 +80,7 @@ internal class WebhookCreateParamsTest {
                         .build()
                 )
                 .timeoutSeconds(30)
+                .webhookVersion(null)
                 .build()
 
         val headers = params._headers()
@@ -121,6 +125,7 @@ internal class WebhookCreateParamsTest {
                         .build()
                 )
                 .eventTypes(listOf("contact", "message", "templates"))
+                .isInheritable(false)
                 .retryCount(3)
                 .senderProfile(
                     WebhookCreateParams.SenderProfile.builder()
@@ -133,6 +138,7 @@ internal class WebhookCreateParamsTest {
                         .build()
                 )
                 .timeoutSeconds(30)
+                .webhookVersion(null)
                 .build()
 
         val body = params._body()
@@ -151,6 +157,7 @@ internal class WebhookCreateParamsTest {
                     .build()
             )
         assertThat(body.eventTypes().getOrNull()).containsExactly("contact", "message", "templates")
+        assertThat(body.isInheritable()).contains(false)
         assertThat(body.retryCount()).contains(3)
         assertThat(body.senderProfile())
             .contains(
@@ -164,6 +171,7 @@ internal class WebhookCreateParamsTest {
                     .build()
             )
         assertThat(body.timeoutSeconds()).contains(30)
+        assertThat(body.webhookVersion()).isEmpty
     }
 
     @Test

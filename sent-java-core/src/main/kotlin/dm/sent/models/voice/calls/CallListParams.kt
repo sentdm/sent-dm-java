@@ -13,13 +13,17 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Retrieves a paginated list of your calls, most recent first. Filter by direction, status, the
- * owning number, and the time the call started (from and to are inclusive). Use the call webhooks
- * for real-time updates; this list is for looking calls up afterwards.
+ * owning number, the mode (inapp, or agent for calls your voice agents answered), the agent that
+ * answered, and the time the call started (from and to are inclusive). Each call carries the phone
+ * number it was connected to, the caller id it showed, and the billed legs with what each cost. Use
+ * the call webhooks for real-time updates; this list is for looking calls up afterwards.
  */
 class CallListParams
 private constructor(
+    private val agentId: String?,
     private val direction: String?,
     private val from: OffsetDateTime?,
+    private val mode: String?,
     private val number: String?,
     private val page: Int?,
     private val pageSize: Int?,
@@ -31,6 +35,12 @@ private constructor(
 ) : Params {
 
     /**
+     * Optional filter on the voice agent that answered the call, such as
+     * agent_9f2ab000-0000-4000-8000-000000000001
+     */
+    fun agentId(): Optional<String> = Optional.ofNullable(agentId)
+
+    /**
      * Optional direction filter: outbound for calls placed from your app, inbound for calls to one
      * of your numbers
      */
@@ -38,6 +48,12 @@ private constructor(
 
     /** Only calls started at or after this time (ISO 8601) */
     fun from(): Optional<OffsetDateTime> = Optional.ofNullable(from)
+
+    /**
+     * Optional mode filter: inapp for calls routed by your number's callback URL, agent for calls
+     * one of your voice agents answered
+     */
+    fun mode(): Optional<String> = Optional.ofNullable(mode)
 
     /**
      * Optional filter on the number that owns the call, one of your voice-enabled numbers in E.164
@@ -81,8 +97,10 @@ private constructor(
     /** A builder for [CallListParams]. */
     class Builder internal constructor() {
 
+        private var agentId: String? = null
         private var direction: String? = null
         private var from: OffsetDateTime? = null
+        private var mode: String? = null
         private var number: String? = null
         private var page: Int? = null
         private var pageSize: Int? = null
@@ -94,8 +112,10 @@ private constructor(
 
         @JvmSynthetic
         internal fun from(callListParams: CallListParams) = apply {
+            agentId = callListParams.agentId
             direction = callListParams.direction
             from = callListParams.from
+            mode = callListParams.mode
             number = callListParams.number
             page = callListParams.page
             pageSize = callListParams.pageSize
@@ -105,6 +125,15 @@ private constructor(
             additionalHeaders = callListParams.additionalHeaders.toBuilder()
             additionalQueryParams = callListParams.additionalQueryParams.toBuilder()
         }
+
+        /**
+         * Optional filter on the voice agent that answered the call, such as
+         * agent_9f2ab000-0000-4000-8000-000000000001
+         */
+        fun agentId(agentId: String?) = apply { this.agentId = agentId }
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
 
         /**
          * Optional direction filter: outbound for calls placed from your app, inbound for calls to
@@ -120,6 +149,15 @@ private constructor(
 
         /** Alias for calling [Builder.from] with `from.orElse(null)`. */
         fun from(from: Optional<OffsetDateTime>) = from(from.getOrNull())
+
+        /**
+         * Optional mode filter: inapp for calls routed by your number's callback URL, agent for
+         * calls one of your voice agents answered
+         */
+        fun mode(mode: String?) = apply { this.mode = mode }
+
+        /** Alias for calling [Builder.mode] with `mode.orElse(null)`. */
+        fun mode(mode: Optional<String>) = mode(mode.getOrNull())
 
         /**
          * Optional filter on the number that owns the call, one of your voice-enabled numbers in
@@ -281,8 +319,10 @@ private constructor(
          */
         fun build(): CallListParams =
             CallListParams(
+                agentId,
                 direction,
                 from,
+                mode,
                 number,
                 page,
                 pageSize,
@@ -305,8 +345,10 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
+                agentId?.let { put("agent_id", it) }
                 direction?.let { put("direction", it) }
                 from?.let { put("from", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it)) }
+                mode?.let { put("mode", it) }
                 number?.let { put("number", it) }
                 page?.let { put("page", it.toString()) }
                 pageSize?.let { put("page_size", it.toString()) }
@@ -322,8 +364,10 @@ private constructor(
         }
 
         return other is CallListParams &&
+            agentId == other.agentId &&
             direction == other.direction &&
             from == other.from &&
+            mode == other.mode &&
             number == other.number &&
             page == other.page &&
             pageSize == other.pageSize &&
@@ -336,8 +380,10 @@ private constructor(
 
     override fun hashCode(): Int =
         Objects.hash(
+            agentId,
             direction,
             from,
+            mode,
             number,
             page,
             pageSize,
@@ -349,5 +395,5 @@ private constructor(
         )
 
     override fun toString() =
-        "CallListParams{direction=$direction, from=$from, number=$number, page=$page, pageSize=$pageSize, status=$status, to=$to, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "CallListParams{agentId=$agentId, direction=$direction, from=$from, mode=$mode, number=$number, page=$page, pageSize=$pageSize, status=$status, to=$to, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

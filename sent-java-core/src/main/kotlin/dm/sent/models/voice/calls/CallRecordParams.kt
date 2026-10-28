@@ -23,8 +23,8 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Starts or stops recording one of your live calls. Use start to begin recording mid-call, or stop
  * to end a recording, whether it was started here or by a connect answer with record set. A call
- * that has already ended answers 409, and so does a call with no phone leg, such as one between two
- * app users, which can't be recorded.
+ * that has already ended answers 409, as do a call with no phone leg, such as one between two app
+ * users, and a call one of your voice agents answers, neither of which can be recorded this way.
  */
 class CallRecordParams
 private constructor(
