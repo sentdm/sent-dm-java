@@ -64,9 +64,9 @@ private constructor(
     fun template(): String = template.getRequired("template")
 
     /**
-     * The type of body content — send "text". It is dropped from the stored definition when null,
-     * so a body posted without it is saved with no type key at all and the template editor has
-     * nothing to render the block from.
+     * The type of body content. Defaults to "text" when omitted, which also fills it in when
+     * reading stored bodies saved without it; the template editor refuses to load a body with no
+     * type.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -178,9 +178,9 @@ private constructor(
         fun template(template: JsonField<String>) = apply { this.template = template }
 
         /**
-         * The type of body content — send "text". It is dropped from the stored definition when
-         * null, so a body posted without it is saved with no type key at all and the template
-         * editor has nothing to render the block from.
+         * The type of body content. Defaults to "text" when omitted, which also fills it in when
+         * reading stored bodies saved without it; the template editor refuses to load a body with
+         * no type.
          */
         fun type(type: String?) = type(JsonField.ofNullable(type))
 
