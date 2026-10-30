@@ -8,7 +8,6 @@ import dm.sent.services.blocking.ContactService
 import dm.sent.services.blocking.ConversationService
 import dm.sent.services.blocking.MeService
 import dm.sent.services.blocking.MessageService
-import dm.sent.services.blocking.NumberService
 import dm.sent.services.blocking.ProfileService
 import dm.sent.services.blocking.TemplateService
 import dm.sent.services.blocking.UserService
@@ -95,15 +94,6 @@ interface SentClient {
      * New integrations should not start here.
      */
     fun profiles(): ProfileService
-
-    /**
-     * What a phone number actually is, before you send to it.
-     *
-     * A lookup returns the number's country, line type and carrier, which is what decides whether
-     * it is reachable on a channel and what it costs. Worth doing on import rather than on send: a
-     * landline in a contact list is a message that can never be delivered.
-     */
-    fun numbers(): NumberService
 
     /**
      * Send a message and follow what happened to it.
@@ -230,15 +220,6 @@ interface SentClient {
          * New integrations should not start here.
          */
         fun profiles(): ProfileService.WithRawResponse
-
-        /**
-         * What a phone number actually is, before you send to it.
-         *
-         * A lookup returns the number's country, line type and carrier, which is what decides
-         * whether it is reachable on a channel and what it costs. Worth doing on import rather than
-         * on send: a landline in a contact list is a message that can never be delivered.
-         */
-        fun numbers(): NumberService.WithRawResponse
 
         /**
          * Send a message and follow what happened to it.
