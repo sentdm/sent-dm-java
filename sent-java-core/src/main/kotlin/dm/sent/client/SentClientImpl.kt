@@ -14,8 +14,6 @@ import dm.sent.services.blocking.MeService
 import dm.sent.services.blocking.MeServiceImpl
 import dm.sent.services.blocking.MessageService
 import dm.sent.services.blocking.MessageServiceImpl
-import dm.sent.services.blocking.NumberService
-import dm.sent.services.blocking.NumberServiceImpl
 import dm.sent.services.blocking.ProfileService
 import dm.sent.services.blocking.ProfileServiceImpl
 import dm.sent.services.blocking.TemplateService
@@ -54,8 +52,6 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
     }
 
     private val profiles: ProfileService by lazy { ProfileServiceImpl(clientOptionsWithUserAgent) }
-
-    private val numbers: NumberService by lazy { NumberServiceImpl(clientOptionsWithUserAgent) }
 
     private val messages: MessageService by lazy { MessageServiceImpl(clientOptionsWithUserAgent) }
 
@@ -121,15 +117,6 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
      * New integrations should not start here.
      */
     override fun profiles(): ProfileService = profiles
-
-    /**
-     * What a phone number actually is, before you send to it.
-     *
-     * A lookup returns the number's country, line type and carrier, which is what decides whether
-     * it is reachable on a channel and what it costs. Worth doing on import rather than on send: a
-     * landline in a contact list is a message that can never be delivered.
-     */
-    override fun numbers(): NumberService = numbers
 
     /**
      * Send a message and follow what happened to it.
@@ -210,10 +197,6 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
             ProfileServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val numbers: NumberService.WithRawResponse by lazy {
-            NumberServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val messages: MessageService.WithRawResponse by lazy {
             MessageServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -289,15 +272,6 @@ class SentClientImpl(private val clientOptions: ClientOptions) : SentClient {
          * New integrations should not start here.
          */
         override fun profiles(): ProfileService.WithRawResponse = profiles
-
-        /**
-         * What a phone number actually is, before you send to it.
-         *
-         * A lookup returns the number's country, line type and carrier, which is what decides
-         * whether it is reachable on a channel and what it costs. Worth doing on import rather than
-         * on send: a landline in a contact list is a message that can never be delivered.
-         */
-        override fun numbers(): NumberService.WithRawResponse = numbers
 
         /**
          * Send a message and follow what happened to it.
