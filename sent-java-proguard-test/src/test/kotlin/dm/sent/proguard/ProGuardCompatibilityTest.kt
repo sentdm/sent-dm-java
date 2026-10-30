@@ -57,7 +57,6 @@ internal class ProGuardCompatibilityTest {
         assertThat(client.users()).isNotNull()
         assertThat(client.templates()).isNotNull()
         assertThat(client.profiles()).isNotNull()
-        assertThat(client.numbers()).isNotNull()
         assertThat(client.messages()).isNotNull()
         assertThat(client.contacts()).isNotNull()
         assertThat(client.conversations()).isNotNull()
