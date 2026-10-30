@@ -14,8 +14,6 @@ import dm.sent.services.async.MeServiceAsync
 import dm.sent.services.async.MeServiceAsyncImpl
 import dm.sent.services.async.MessageServiceAsync
 import dm.sent.services.async.MessageServiceAsyncImpl
-import dm.sent.services.async.NumberServiceAsync
-import dm.sent.services.async.NumberServiceAsyncImpl
 import dm.sent.services.async.ProfileServiceAsync
 import dm.sent.services.async.ProfileServiceAsyncImpl
 import dm.sent.services.async.TemplateServiceAsync
@@ -57,10 +55,6 @@ class SentClientAsyncImpl(private val clientOptions: ClientOptions) : SentClient
 
     private val profiles: ProfileServiceAsync by lazy {
         ProfileServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
-    private val numbers: NumberServiceAsync by lazy {
-        NumberServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
     private val messages: MessageServiceAsync by lazy {
@@ -135,15 +129,6 @@ class SentClientAsyncImpl(private val clientOptions: ClientOptions) : SentClient
      * New integrations should not start here.
      */
     override fun profiles(): ProfileServiceAsync = profiles
-
-    /**
-     * What a phone number actually is, before you send to it.
-     *
-     * A lookup returns the number's country, line type and carrier, which is what decides whether
-     * it is reachable on a channel and what it costs. Worth doing on import rather than on send: a
-     * landline in a contact list is a message that can never be delivered.
-     */
-    override fun numbers(): NumberServiceAsync = numbers
 
     /**
      * Send a message and follow what happened to it.
@@ -224,10 +209,6 @@ class SentClientAsyncImpl(private val clientOptions: ClientOptions) : SentClient
             ProfileServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val numbers: NumberServiceAsync.WithRawResponse by lazy {
-            NumberServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val messages: MessageServiceAsync.WithRawResponse by lazy {
             MessageServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -303,15 +284,6 @@ class SentClientAsyncImpl(private val clientOptions: ClientOptions) : SentClient
          * New integrations should not start here.
          */
         override fun profiles(): ProfileServiceAsync.WithRawResponse = profiles
-
-        /**
-         * What a phone number actually is, before you send to it.
-         *
-         * A lookup returns the number's country, line type and carrier, which is what decides
-         * whether it is reachable on a channel and what it costs. Worth doing on import rather than
-         * on send: a landline in a contact list is a message that can never be delivered.
-         */
-        override fun numbers(): NumberServiceAsync.WithRawResponse = numbers
 
         /**
          * Send a message and follow what happened to it.
