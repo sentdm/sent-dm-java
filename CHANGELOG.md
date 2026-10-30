@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.46.1](https://github.com/sentdm/sent-dm-java/compare/v0.46.0...v0.46.1) (2026-10-30)
+
+
+### Chores
+
+* **repo:** add the contributor contract and review rubric ([373021e](https://github.com/sentdm/sent-dm-java/commit/373021e7e009906672ae32ea19c1c27e158ff10b))
+* **repo:** add the contributor contract and the review workflow ([d8b5e53](https://github.com/sentdm/sent-dm-java/commit/d8b5e535e32b70a61b140ecf46f181d7c712552a))
+* **repo:** rely on the managed Claude Code Review, drop the workflow ([9a83386](https://github.com/sentdm/sent-dm-java/commit/9a83386e0e37e29f8d43992ef738711b658745ae))
+
 ## [0.46.0](https://github.com/sentdm/sent-dm-java/compare/v0.45.0...v0.46.0) (2026-10-28)
 
 
