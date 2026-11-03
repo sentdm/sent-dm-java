@@ -4,9 +4,13 @@ package dm.sent.proguard
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.client.okhttp.SentOkHttpClient
+import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.messages.MessageResendResponseData
+import dm.sent.models.messages.MessageResendResponse
 import dm.sent.models.profiles.TcrBrandRelationship
+import dm.sent.models.webhooks.ApiMeta
+import dm.sent.models.webhooks.ErrorDetail
+import java.time.OffsetDateTime
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
 import org.assertj.core.api.Assertions.assertThat
@@ -62,30 +66,54 @@ internal class ProGuardCompatibilityTest {
     }
 
     @Test
-    fun messageResendResponseDataRoundtrip() {
+    fun messageResendResponseRoundtrip() {
         val jsonMapper = jsonMapper()
-        val messageResendResponseData =
-            MessageResendResponseData.builder()
-                .addRecipient(
-                    MessageResendResponseData.Recipient.builder()
-                        .body("body")
-                        .channel("channel")
-                        .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .to("to")
+        val messageResendResponse =
+            MessageResendResponse.builder()
+                .data(
+                    MessageResendResponse.Data.builder()
+                        .addRecipient(
+                            MessageResendResponse.Data.Recipient.builder()
+                                .body("body")
+                                .channel("channel")
+                                .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .to("to")
+                                .build()
+                        )
+                        .status("status")
+                        .templateId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .templateName("template_name")
                         .build()
                 )
-                .status("status")
-                .templateId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .templateName("template_name")
+                .error(
+                    ErrorDetail.builder()
+                        .code("code")
+                        .details(
+                            ErrorDetail.Details.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                                .build()
+                        )
+                        .docUrl("doc_url")
+                        .message("message")
+                        .build()
+                )
+                .meta(
+                    ApiMeta.builder()
+                        .requestId("request_id")
+                        .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .version("version")
+                        .build()
+                )
+                .success(true)
                 .build()
 
-        val roundtrippedMessageResendResponseData =
+        val roundtrippedMessageResendResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(messageResendResponseData),
-                jacksonTypeRef<MessageResendResponseData>(),
+                jsonMapper.writeValueAsString(messageResendResponse),
+                jacksonTypeRef<MessageResendResponse>(),
             )
 
-        assertThat(roundtrippedMessageResendResponseData).isEqualTo(messageResendResponseData)
+        assertThat(roundtrippedMessageResendResponse).isEqualTo(messageResendResponse)
     }
 
     @Test
