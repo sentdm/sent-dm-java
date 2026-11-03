@@ -18,9 +18,9 @@ internal class MessageResendResponseTest {
         val messageResendResponse =
             MessageResendResponse.builder()
                 .data(
-                    MessageResendResponse.Data.builder()
+                    MessageResendResponseData.builder()
                         .addRecipient(
-                            MessageResendResponse.Data.Recipient.builder()
+                            MessageResendResponseData.Recipient.builder()
                                 .body("body")
                                 .channel("channel")
                                 .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -56,9 +56,9 @@ internal class MessageResendResponseTest {
 
         assertThat(messageResendResponse.data())
             .contains(
-                MessageResendResponse.Data.builder()
+                MessageResendResponseData.builder()
                     .addRecipient(
-                        MessageResendResponse.Data.Recipient.builder()
+                        MessageResendResponseData.Recipient.builder()
                             .body("body")
                             .channel("channel")
                             .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -100,9 +100,9 @@ internal class MessageResendResponseTest {
         val messageResendResponse =
             MessageResendResponse.builder()
                 .data(
-                    MessageResendResponse.Data.builder()
+                    MessageResendResponseData.builder()
                         .addRecipient(
-                            MessageResendResponse.Data.Recipient.builder()
+                            MessageResendResponseData.Recipient.builder()
                                 .body("body")
                                 .channel("channel")
                                 .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
