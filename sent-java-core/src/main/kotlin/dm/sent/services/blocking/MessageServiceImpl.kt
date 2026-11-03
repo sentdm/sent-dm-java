@@ -17,7 +17,6 @@ import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
 import dm.sent.models.messages.MessageResendParams
-import dm.sent.models.messages.MessageResendResponse
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.messages.MessageRetrieveStatusParams
@@ -63,7 +62,7 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
     override fun resend(
         params: MessageResendParams,
         requestOptions: RequestOptions,
-    ): MessageResendResponse =
+    ): MessageSendResponse =
         // post /v3/messages/{id}/resend
         withRawResponse().resend(params, requestOptions).parse()
 
@@ -101,13 +100,13 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val resendHandler: Handler<MessageResendResponse> =
-            jsonHandler<MessageResendResponse>(clientOptions.jsonMapper)
+        private val resendHandler: Handler<MessageSendResponse> =
+            jsonHandler<MessageSendResponse>(clientOptions.jsonMapper)
 
         override fun resend(
             params: MessageResendParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<MessageResendResponse> {
+        ): HttpResponseFor<MessageSendResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

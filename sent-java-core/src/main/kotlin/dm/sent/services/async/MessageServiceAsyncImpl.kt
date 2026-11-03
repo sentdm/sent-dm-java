@@ -17,7 +17,6 @@ import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
 import dm.sent.models.messages.MessageResendParams
-import dm.sent.models.messages.MessageResendResponse
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.messages.MessageRetrieveStatusParams
@@ -64,7 +63,7 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun resend(
         params: MessageResendParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<MessageResendResponse> =
+    ): CompletableFuture<MessageSendResponse> =
         // post /v3/messages/{id}/resend
         withRawResponse().resend(params, requestOptions).thenApply { it.parse() }
 
@@ -102,13 +101,13 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val resendHandler: Handler<MessageResendResponse> =
-            jsonHandler<MessageResendResponse>(clientOptions.jsonMapper)
+        private val resendHandler: Handler<MessageSendResponse> =
+            jsonHandler<MessageSendResponse>(clientOptions.jsonMapper)
 
         override fun resend(
             params: MessageResendParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<MessageResendResponse>> {
+        ): CompletableFuture<HttpResponseFor<MessageSendResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

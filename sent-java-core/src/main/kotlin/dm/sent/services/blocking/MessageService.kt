@@ -7,7 +7,6 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.models.messages.MessageResendParams
-import dm.sent.models.messages.MessageResendResponse
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.messages.MessageRetrieveStatusParams
@@ -80,7 +79,7 @@ interface MessageService {
      * The response has the same shape as `POST /v3/messages`: `recipients` has a single entry whose
      * `message_id` is the id you resent.
      */
-    fun resend(id: String, params: MessageResendParams): MessageResendResponse =
+    fun resend(id: String, params: MessageResendParams): MessageSendResponse =
         resend(id, params, RequestOptions.none())
 
     /** @see resend */
@@ -88,17 +87,17 @@ interface MessageService {
         id: String,
         params: MessageResendParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageResendResponse = resend(params.toBuilder().id(id).build(), requestOptions)
+    ): MessageSendResponse = resend(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see resend */
-    fun resend(params: MessageResendParams): MessageResendResponse =
+    fun resend(params: MessageResendParams): MessageSendResponse =
         resend(params, RequestOptions.none())
 
     /** @see resend */
     fun resend(
         params: MessageResendParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageResendResponse
+    ): MessageSendResponse
 
     /**
      * Retrieves the activity log for a specific message. Activities track the message lifecycle
@@ -243,10 +242,8 @@ interface MessageService {
          * same as [MessageService.resend].
          */
         @MustBeClosed
-        fun resend(
-            id: String,
-            params: MessageResendParams,
-        ): HttpResponseFor<MessageResendResponse> = resend(id, params, RequestOptions.none())
+        fun resend(id: String, params: MessageResendParams): HttpResponseFor<MessageSendResponse> =
+            resend(id, params, RequestOptions.none())
 
         /** @see resend */
         @MustBeClosed
@@ -254,12 +251,12 @@ interface MessageService {
             id: String,
             params: MessageResendParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageResendResponse> =
+        ): HttpResponseFor<MessageSendResponse> =
             resend(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see resend */
         @MustBeClosed
-        fun resend(params: MessageResendParams): HttpResponseFor<MessageResendResponse> =
+        fun resend(params: MessageResendParams): HttpResponseFor<MessageSendResponse> =
             resend(params, RequestOptions.none())
 
         /** @see resend */
@@ -267,7 +264,7 @@ interface MessageService {
         fun resend(
             params: MessageResendParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageResendResponse>
+        ): HttpResponseFor<MessageSendResponse>
 
         /**
          * Returns a raw HTTP response for `get /v3/messages/{id}/activities`, but is otherwise the

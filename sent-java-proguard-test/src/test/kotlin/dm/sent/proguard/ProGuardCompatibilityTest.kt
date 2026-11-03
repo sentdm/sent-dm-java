@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.messages.MessageResendResponse
+import dm.sent.models.messages.MessageSendResponse
 import dm.sent.models.profiles.TcrBrandRelationship
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
@@ -66,14 +66,14 @@ internal class ProGuardCompatibilityTest {
     }
 
     @Test
-    fun messageResendResponseRoundtrip() {
+    fun messageSendResponseRoundtrip() {
         val jsonMapper = jsonMapper()
-        val messageResendResponse =
-            MessageResendResponse.builder()
+        val messageSendResponse =
+            MessageSendResponse.builder()
                 .data(
-                    MessageResendResponse.Data.builder()
+                    MessageSendResponse.Data.builder()
                         .addRecipient(
-                            MessageResendResponse.Data.Recipient.builder()
+                            MessageSendResponse.Data.Recipient.builder()
                                 .body("body")
                                 .channel("channel")
                                 .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -107,13 +107,13 @@ internal class ProGuardCompatibilityTest {
                 .success(true)
                 .build()
 
-        val roundtrippedMessageResendResponse =
+        val roundtrippedMessageSendResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(messageResendResponse),
-                jacksonTypeRef<MessageResendResponse>(),
+                jsonMapper.writeValueAsString(messageSendResponse),
+                jacksonTypeRef<MessageSendResponse>(),
             )
 
-        assertThat(roundtrippedMessageResendResponse).isEqualTo(messageResendResponse)
+        assertThat(roundtrippedMessageSendResponse).isEqualTo(messageSendResponse)
     }
 
     @Test

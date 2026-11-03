@@ -6,7 +6,6 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.models.messages.MessageResendParams
-import dm.sent.models.messages.MessageResendResponse
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.messages.MessageRetrieveStatusParams
@@ -80,7 +79,7 @@ interface MessageServiceAsync {
      * The response has the same shape as `POST /v3/messages`: `recipients` has a single entry whose
      * `message_id` is the id you resent.
      */
-    fun resend(id: String, params: MessageResendParams): CompletableFuture<MessageResendResponse> =
+    fun resend(id: String, params: MessageResendParams): CompletableFuture<MessageSendResponse> =
         resend(id, params, RequestOptions.none())
 
     /** @see resend */
@@ -88,18 +87,18 @@ interface MessageServiceAsync {
         id: String,
         params: MessageResendParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageResendResponse> =
+    ): CompletableFuture<MessageSendResponse> =
         resend(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see resend */
-    fun resend(params: MessageResendParams): CompletableFuture<MessageResendResponse> =
+    fun resend(params: MessageResendParams): CompletableFuture<MessageSendResponse> =
         resend(params, RequestOptions.none())
 
     /** @see resend */
     fun resend(
         params: MessageResendParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageResendResponse>
+    ): CompletableFuture<MessageSendResponse>
 
     /**
      * Retrieves the activity log for a specific message. Activities track the message lifecycle
@@ -259,7 +258,7 @@ interface MessageServiceAsync {
         fun resend(
             id: String,
             params: MessageResendParams,
-        ): CompletableFuture<HttpResponseFor<MessageResendResponse>> =
+        ): CompletableFuture<HttpResponseFor<MessageSendResponse>> =
             resend(id, params, RequestOptions.none())
 
         /** @see resend */
@@ -267,20 +266,20 @@ interface MessageServiceAsync {
             id: String,
             params: MessageResendParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageResendResponse>> =
+        ): CompletableFuture<HttpResponseFor<MessageSendResponse>> =
             resend(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see resend */
         fun resend(
             params: MessageResendParams
-        ): CompletableFuture<HttpResponseFor<MessageResendResponse>> =
+        ): CompletableFuture<HttpResponseFor<MessageSendResponse>> =
             resend(params, RequestOptions.none())
 
         /** @see resend */
         fun resend(
             params: MessageResendParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageResendResponse>>
+        ): CompletableFuture<HttpResponseFor<MessageSendResponse>>
 
         /**
          * Returns a raw HTTP response for `get /v3/messages/{id}/activities`, but is otherwise the

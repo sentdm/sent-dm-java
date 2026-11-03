@@ -20,7 +20,7 @@ internal class MessageServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val messageService = client.messages()
 
-        val response =
+        val messageSendResponse =
             messageService.resend(
                 MessageResendParams.builder()
                     .id("8ba7b830-9dad-11d1-80b4-00c04fd430c8")
@@ -30,7 +30,7 @@ internal class MessageServiceTest {
                     .build()
             )
 
-        response.validate()
+        messageSendResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -73,7 +73,7 @@ internal class MessageServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val messageService = client.messages()
 
-        val response =
+        val messageSendResponse =
             messageService.send(
                 MessageSendParams.builder()
                     .idempotencyKey("req_abc123_retry1")
@@ -118,6 +118,6 @@ internal class MessageServiceTest {
                     .build()
             )
 
-        response.validate()
+        messageSendResponse.validate()
     }
 }

@@ -20,7 +20,7 @@ internal class MessageServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val messageServiceAsync = client.messages()
 
-        val responseFuture =
+        val messageSendResponseFuture =
             messageServiceAsync.resend(
                 MessageResendParams.builder()
                     .id("8ba7b830-9dad-11d1-80b4-00c04fd430c8")
@@ -30,8 +30,8 @@ internal class MessageServiceAsyncTest {
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val messageSendResponse = messageSendResponseFuture.get()
+        messageSendResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -76,7 +76,7 @@ internal class MessageServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val messageServiceAsync = client.messages()
 
-        val responseFuture =
+        val messageSendResponseFuture =
             messageServiceAsync.send(
                 MessageSendParams.builder()
                     .idempotencyKey("req_abc123_retry1")
@@ -121,7 +121,7 @@ internal class MessageServiceAsyncTest {
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val messageSendResponse = messageSendResponseFuture.get()
+        messageSendResponse.validate()
     }
 }

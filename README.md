@@ -70,7 +70,7 @@ MessageSendParams params = MessageSendParams.builder()
     .addTo("+14155551234")
     .addTo("+14155555678")
     .build();
-MessageSendResponse response = client.messages().send(params);
+MessageSendResponse messageSendResponse = client.messages().send(params);
 ```
 
 ## Client configuration
@@ -183,7 +183,7 @@ MessageSendParams params = MessageSendParams.builder()
     .addTo("+14155551234")
     .addTo("+14155555678")
     .build();
-CompletableFuture<MessageSendResponse> response = client.async().messages().send(params);
+CompletableFuture<MessageSendResponse> messageSendResponse = client.async().messages().send(params);
 ```
 
 Or create an asynchronous client from the beginning:
@@ -214,7 +214,7 @@ MessageSendParams params = MessageSendParams.builder()
     .addTo("+14155551234")
     .addTo("+14155555678")
     .build();
-CompletableFuture<MessageSendResponse> response = client.messages().send(params);
+CompletableFuture<MessageSendResponse> messageSendResponse = client.messages().send(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
@@ -244,10 +244,10 @@ MessageSendParams params = MessageSendParams.builder()
         .build())
     .addTo("+14155551234")
     .build();
-HttpResponseFor<MessageSendResponse> response = client.messages().withRawResponse().send(params);
+HttpResponseFor<MessageSendResponse> messageSendResponse = client.messages().withRawResponse().send(params);
 
-int statusCode = response.statusCode();
-Headers headers = response.headers();
+int statusCode = messageSendResponse.statusCode();
+Headers headers = messageSendResponse.headers();
 ```
 
 You can still deserialize the response into an instance of a Java class if needed:
@@ -255,7 +255,7 @@ You can still deserialize the response into an instance of a Java class if neede
 ```java
 import dm.sent.models.messages.MessageSendResponse;
 
-MessageSendResponse parsedResponse = response.parse();
+MessageSendResponse parsedMessageSendResponse = messageSendResponse.parse();
 ```
 
 ## Error handling
@@ -466,7 +466,7 @@ To set a custom timeout, configure the method call using the `timeout` method:
 ```java
 import dm.sent.models.messages.MessageSendResponse;
 
-MessageSendResponse response = client.messages().send(RequestOptions.builder().timeout(Duration.ofSeconds(30)).build());
+MessageSendResponse messageSendResponse = client.messages().send(RequestOptions.builder().timeout(Duration.ofSeconds(30)).build());
 ```
 
 Or configure the default for all method calls at the client level:
@@ -770,7 +770,7 @@ If you would still prefer to check that the response is completely well-typed up
 ```java
 import dm.sent.models.messages.MessageSendResponse;
 
-MessageSendResponse response = client.messages().send(params).validate();
+MessageSendResponse messageSendResponse = client.messages().send(params).validate();
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:
@@ -778,7 +778,7 @@ Or configure the method call to validate the response using the `responseValidat
 ```java
 import dm.sent.models.messages.MessageSendResponse;
 
-MessageSendResponse response = client.messages().send(RequestOptions.builder().responseValidation(true).build());
+MessageSendResponse messageSendResponse = client.messages().send(RequestOptions.builder().responseValidation(true).build());
 ```
 
 Or configure the default for all method calls at the client level:
