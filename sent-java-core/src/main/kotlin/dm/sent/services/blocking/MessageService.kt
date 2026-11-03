@@ -6,6 +6,7 @@ import com.google.errorprone.annotations.MustBeClosed
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.messages.MessageResendParams
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.messages.MessageRetrieveStatusParams
@@ -48,6 +49,55 @@ interface MessageService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): MessageService
+
+    /**
+     * Resends a message you already sent, on the same message id, without rebuilding the request.
+     * The typical use is recovering a BLOCKED message — for example one refused for insufficient
+     * balance — after the account has been topped up.
+     *
+     * **A resend bills again.** Each accepted resend is a new delivery attempt and records a new
+     * charge against the same message id; a client that resends on every failure is charged on
+     * every loop.
+     *
+     * **Every policy runs again.** The resend goes back through the full send pipeline — consent,
+     * balance, KYC and channel quota, template approval, quiet hours and channel health — so it can
+     * land on BLOCKED, FILTERED or SCHEDULED again rather than being sent, exactly as a fresh send
+     * would. Status webhooks (message.sent, message.blocked, message.filtered, message.failed) fire
+     * again for the same message id, so consumers keyed on the id will see repeated transitions.
+     *
+     * **What can be resent.** A message in a terminal state — DELIVERED, FAILED, READ or BLOCKED —
+     * or one stuck at SENT for more than 15 minutes. A FILTERED message can never be resent: the
+     * recipient opted out or a routing rule refused the send. A message still in flight (QUEUED,
+     * PROCESSED, ROUTED), held for quiet hours (SCHEDULED), or SENT less than 15 minutes ago
+     * returns 409. Two concurrent resends of one id are serialised: one is accepted, the other
+     * gets 409.
+     *
+     * The resend keeps the channel the message was originally requested on; the channel cannot be
+     * changed on a resend — send a new message instead. `Idempotency-Key` is honoured, so a retried
+     * request replays the first accepted response instead of resending twice.
+     *
+     * The response has the same shape as `POST /v3/messages`: `recipients` has a single entry whose
+     * `message_id` is the id you resent.
+     */
+    fun resend(id: String, params: MessageResendParams): MessageSendResponse =
+        resend(id, params, RequestOptions.none())
+
+    /** @see resend */
+    fun resend(
+        id: String,
+        params: MessageResendParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): MessageSendResponse = resend(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see resend */
+    fun resend(params: MessageResendParams): MessageSendResponse =
+        resend(params, RequestOptions.none())
+
+    /** @see resend */
+    fun resend(
+        params: MessageResendParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): MessageSendResponse
 
     /**
      * Retrieves the activity log for a specific message. Activities track the message lifecycle
@@ -186,6 +236,35 @@ interface MessageService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): MessageService.WithRawResponse
+
+        /**
+         * Returns a raw HTTP response for `post /v3/messages/{id}/resend`, but is otherwise the
+         * same as [MessageService.resend].
+         */
+        @MustBeClosed
+        fun resend(id: String, params: MessageResendParams): HttpResponseFor<MessageSendResponse> =
+            resend(id, params, RequestOptions.none())
+
+        /** @see resend */
+        @MustBeClosed
+        fun resend(
+            id: String,
+            params: MessageResendParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<MessageSendResponse> =
+            resend(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see resend */
+        @MustBeClosed
+        fun resend(params: MessageResendParams): HttpResponseFor<MessageSendResponse> =
+            resend(params, RequestOptions.none())
+
+        /** @see resend */
+        @MustBeClosed
+        fun resend(
+            params: MessageResendParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<MessageSendResponse>
 
         /**
          * Returns a raw HTTP response for `get /v3/messages/{id}/activities`, but is otherwise the
