@@ -16,6 +16,7 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
+import dm.sent.models.messages.MessageResendParams
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.messages.MessageRetrieveStatusParams
@@ -58,6 +59,13 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): MessageService =
         MessageServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    override fun resend(
+        params: MessageResendParams,
+        requestOptions: RequestOptions,
+    ): MessageSendResponse =
+        // post /v3/messages/{id}/resend
+        withRawResponse().resend(params, requestOptions).parse()
+
     override fun retrieveActivities(
         params: MessageRetrieveActivitiesParams,
         requestOptions: RequestOptions,
@@ -91,6 +99,37 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
             MessageServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        private val resendHandler: Handler<MessageSendResponse> =
+            jsonHandler<MessageSendResponse>(clientOptions.jsonMapper)
+
+        override fun resend(
+            params: MessageResendParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<MessageSendResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v3", "messages", params._pathParam(0), "resend")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { resendHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
 
         private val retrieveActivitiesHandler: Handler<MessageRetrieveActivitiesResponse> =
             jsonHandler<MessageRetrieveActivitiesResponse>(clientOptions.jsonMapper)
