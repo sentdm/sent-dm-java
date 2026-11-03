@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.46.2](https://github.com/sentdm/sent-dm-java/compare/v0.46.1...v0.46.2) (2026-10-30)
+
+
+### Documentation
+
+* **api:** describe the default body type on template bodies ([3cc9d28](https://github.com/sentdm/sent-dm-java/commit/3cc9d288e1a03a235ab4397de8f9b797fac245f3))
+
 ## [0.46.1](https://github.com/sentdm/sent-dm-java/compare/v0.46.0...v0.46.1) (2026-10-30)
 
 
