@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.47.0](https://github.com/sentdm/sent-dm-java/compare/v0.46.2...v0.47.0) (2026-11-03)
+
+
+### Features
+
+* **api:** add messages.resend to resend a message on its id ([6220cc8](https://github.com/sentdm/sent-dm-java/commit/6220cc87d4cc5f74cffca1b3472a0a6940bf0bc9))
+
 ## [0.46.2](https://github.com/sentdm/sent-dm-java/compare/v0.46.1...v0.46.2) (2026-10-30)
 
 
