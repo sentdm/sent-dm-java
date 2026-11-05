@@ -297,6 +297,7 @@ internal class TemplateServiceAsyncTest {
                             .build()
                     )
                     .language("en_US")
+                    .name("Welcome Message")
                     .submitForReview(false)
                     .build()
             )
