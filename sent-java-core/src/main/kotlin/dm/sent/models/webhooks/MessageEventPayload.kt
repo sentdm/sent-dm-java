@@ -212,7 +212,7 @@ private constructor(
     fun templateName(): Optional<String> = templateName.getOptional("template_name")
 
     /**
-     * When the message reached MessageStatusEnum, in UTC (yyyy-MM-ddTHH:mm:ssZ).
+     * When the message reached the status this event reports, in UTC (yyyy-MM-ddTHH:mm:ssZ).
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -613,7 +613,9 @@ private constructor(
             this.templateName = templateName
         }
 
-        /** When the message reached MessageStatusEnum, in UTC (yyyy-MM-ddTHH:mm:ssZ). */
+        /**
+         * When the message reached the status this event reports, in UTC (yyyy-MM-ddTHH:mm:ssZ).
+         */
         fun updatedAt(updatedAt: String) = updatedAt(JsonField.of(updatedAt))
 
         /**

@@ -278,6 +278,7 @@ internal class TemplateCreateParamsTest {
                     .build()
             )
             .language("en_US")
+            .name("Welcome Message")
             .submitForReview(false)
             .build()
     }
@@ -553,6 +554,7 @@ internal class TemplateCreateParamsTest {
                         .build()
                 )
                 .language("en_US")
+                .name("Welcome Message")
                 .submitForReview(false)
                 .build()
 
@@ -847,6 +849,7 @@ internal class TemplateCreateParamsTest {
                         .build()
                 )
                 .language("en_US")
+                .name("Welcome Message")
                 .submitForReview(false)
                 .build()
 
@@ -1118,6 +1121,7 @@ internal class TemplateCreateParamsTest {
                     .build()
             )
         assertThat(body.language()).contains("en_US")
+        assertThat(body.name()).contains("Welcome Message")
         assertThat(body.submitForReview()).contains(false)
     }
 
