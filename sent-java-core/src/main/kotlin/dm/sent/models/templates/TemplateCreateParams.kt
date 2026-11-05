@@ -22,8 +22,8 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Creates a new message template with header, body, footer, and buttons. The template can be
- * submitted for review immediately or saved as draft for later submission. There is no `name` field
- * on create — the display name is derived from the template's content and can be changed afterwards
+ * submitted for review immediately or saved as draft for later submission. `name` is optional: when
+ * omitted or blank, a name is generated from the template's content. It can be changed afterwards
  * with `PUT /v3/templates/{id}`.
  */
 class TemplateCreateParams
@@ -92,6 +92,15 @@ private constructor(
     fun language(): Optional<String> = body.language()
 
     /**
+     * Template display name (optional). When omitted or blank, a name is generated from the
+     * template's content. It can be changed afterwards with PUT /v3/templates/{id}.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun name(): Optional<String> = body.name()
+
+    /**
      * Whether to submit the template for review after creation (default: false)
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -140,6 +149,13 @@ private constructor(
      * Unlike [language], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _language(): JsonField<String> = body._language()
+
+    /**
+     * Returns the raw JSON value of [name].
+     *
+     * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _name(): JsonField<String> = body._name()
 
     /**
      * Returns the raw JSON value of [submitForReview].
@@ -305,6 +321,23 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun language(language: JsonField<String>) = apply { body.language(language) }
+
+        /**
+         * Template display name (optional). When omitted or blank, a name is generated from the
+         * template's content. It can be changed afterwards with PUT /v3/templates/{id}.
+         */
+        fun name(name: String?) = apply { body.name(name) }
+
+        /** Alias for calling [Builder.name] with `name.orElse(null)`. */
+        fun name(name: Optional<String>) = name(name.getOrNull())
+
+        /**
+         * Sets [Builder.name] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.name] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun name(name: JsonField<String>) = apply { body.name(name) }
 
         /** Whether to submit the template for review after creation (default: false) */
         fun submitForReview(submitForReview: Boolean) = apply {
@@ -477,6 +510,7 @@ private constructor(
         private val creationSource: JsonField<String>,
         private val definition: JsonField<TemplateDefinition>,
         private val language: JsonField<String>,
+        private val name: JsonField<String>,
         private val submitForReview: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -499,6 +533,7 @@ private constructor(
             @JsonProperty("language")
             @ExcludeMissing
             language: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("submit_for_review")
             @ExcludeMissing
             submitForReview: JsonField<Boolean> = JsonMissing.of(),
@@ -509,6 +544,7 @@ private constructor(
             creationSource,
             definition,
             language,
+            name,
             submitForReview,
             mutableMapOf(),
         )
@@ -569,6 +605,15 @@ private constructor(
         fun language(): Optional<String> = language.getOptional("language")
 
         /**
+         * Template display name (optional). When omitted or blank, a name is generated from the
+         * template's content. It can be changed afterwards with PUT /v3/templates/{id}.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun name(): Optional<String> = name.getOptional("name")
+
+        /**
          * Whether to submit the template for review after creation (default: false)
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -627,6 +672,13 @@ private constructor(
         @JsonProperty("language") @ExcludeMissing fun _language(): JsonField<String> = language
 
         /**
+         * Returns the raw JSON value of [name].
+         *
+         * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+        /**
          * Returns the raw JSON value of [submitForReview].
          *
          * Unlike [submitForReview], this method doesn't throw if the JSON field has an unexpected
@@ -663,6 +715,7 @@ private constructor(
             private var creationSource: JsonField<String> = JsonMissing.of()
             private var definition: JsonField<TemplateDefinition> = JsonMissing.of()
             private var language: JsonField<String> = JsonMissing.of()
+            private var name: JsonField<String> = JsonMissing.of()
             private var submitForReview: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -674,6 +727,7 @@ private constructor(
                 creationSource = body.creationSource
                 definition = body.definition
                 language = body.language
+                name = body.name
                 submitForReview = body.submitForReview
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -780,6 +834,24 @@ private constructor(
              */
             fun language(language: JsonField<String>) = apply { this.language = language }
 
+            /**
+             * Template display name (optional). When omitted or blank, a name is generated from the
+             * template's content. It can be changed afterwards with PUT /v3/templates/{id}.
+             */
+            fun name(name: String?) = name(JsonField.ofNullable(name))
+
+            /** Alias for calling [Builder.name] with `name.orElse(null)`. */
+            fun name(name: Optional<String>) = name(name.getOrNull())
+
+            /**
+             * Sets [Builder.name] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.name] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun name(name: JsonField<String>) = apply { this.name = name }
+
             /** Whether to submit the template for review after creation (default: false) */
             fun submitForReview(submitForReview: Boolean) =
                 submitForReview(JsonField.of(submitForReview))
@@ -827,6 +899,7 @@ private constructor(
                     creationSource,
                     definition,
                     language,
+                    name,
                     submitForReview,
                     additionalProperties.toMutableMap(),
                 )
@@ -854,6 +927,7 @@ private constructor(
             creationSource()
             definition().ifPresent { it.validate() }
             language()
+            name()
             submitForReview()
             validated = true
         }
@@ -880,6 +954,7 @@ private constructor(
                 (if (creationSource.asKnown().isPresent) 1 else 0) +
                 (definition.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (language.asKnown().isPresent) 1 else 0) +
+                (if (name.asKnown().isPresent) 1 else 0) +
                 (if (submitForReview.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -894,6 +969,7 @@ private constructor(
                 creationSource == other.creationSource &&
                 definition == other.definition &&
                 language == other.language &&
+                name == other.name &&
                 submitForReview == other.submitForReview &&
                 additionalProperties == other.additionalProperties
         }
@@ -906,6 +982,7 @@ private constructor(
                 creationSource,
                 definition,
                 language,
+                name,
                 submitForReview,
                 additionalProperties,
             )
@@ -914,7 +991,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, autoCreateForSp=$autoCreateForSp, category=$category, creationSource=$creationSource, definition=$definition, language=$language, submitForReview=$submitForReview, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, autoCreateForSp=$autoCreateForSp, category=$category, creationSource=$creationSource, definition=$definition, language=$language, name=$name, submitForReview=$submitForReview, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
