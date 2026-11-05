@@ -6,11 +6,10 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.messages.MessageRetrieveActivitiesResponse
+import dm.sent.models.messages.MessageSendResponse
 import dm.sent.models.profiles.TcrBrandRelationship
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
-import dm.sent.models.webhooks.PaginationMeta
 import java.time.OffsetDateTime
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
@@ -67,41 +66,23 @@ internal class ProGuardCompatibilityTest {
     }
 
     @Test
-    fun messageRetrieveActivitiesResponseRoundtrip() {
+    fun messageSendResponseRoundtrip() {
         val jsonMapper = jsonMapper()
-        val messageRetrieveActivitiesResponse =
-            MessageRetrieveActivitiesResponse.builder()
+        val messageSendResponse =
+            MessageSendResponse.builder()
                 .data(
-                    MessageRetrieveActivitiesResponse.Data.builder()
-                        .addActivity(
-                            MessageRetrieveActivitiesResponse.Data.Activity.builder()
-                                .activeContactPrice("active_contact_price")
-                                .description("description")
-                                .from("from")
-                                .price("price")
-                                .reason("reason")
-                                .reasonCode("reason_code")
-                                .scheduledAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .status("status")
-                                .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    MessageSendResponse.Data.builder()
+                        .addRecipient(
+                            MessageSendResponse.Data.Recipient.builder()
+                                .body("body")
+                                .channel("channel")
+                                .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .to("to")
                                 .build()
                         )
-                        .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .pagination(
-                            PaginationMeta.builder()
-                                .cursors(
-                                    PaginationMeta.Cursors.builder()
-                                        .after("after")
-                                        .before("before")
-                                        .build()
-                                )
-                                .hasMore(true)
-                                .page(0)
-                                .pageSize(0)
-                                .totalCount(0)
-                                .totalPages(0)
-                                .build()
-                        )
+                        .status("status")
+                        .templateId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .templateName("template_name")
                         .build()
                 )
                 .error(
@@ -126,14 +107,13 @@ internal class ProGuardCompatibilityTest {
                 .success(true)
                 .build()
 
-        val roundtrippedMessageRetrieveActivitiesResponse =
+        val roundtrippedMessageSendResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(messageRetrieveActivitiesResponse),
-                jacksonTypeRef<MessageRetrieveActivitiesResponse>(),
+                jsonMapper.writeValueAsString(messageSendResponse),
+                jacksonTypeRef<MessageSendResponse>(),
             )
 
-        assertThat(roundtrippedMessageRetrieveActivitiesResponse)
-            .isEqualTo(messageRetrieveActivitiesResponse)
+        assertThat(roundtrippedMessageSendResponse).isEqualTo(messageSendResponse)
     }
 
     @Test

@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.46.2)
-[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.46.2/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java)
+[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.47.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.47.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java)
 
 <!-- x-release-please-end -->
 
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-java/0.46.2).
+The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-java/0.47.0).
 
 <!-- x-release-please-end -->
 
@@ -24,7 +24,7 @@ The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm).
 ### Gradle
 
 ```kotlin
-implementation("dm.sent:sent-java:0.46.2")
+implementation("dm.sent:sent-java:0.47.0")
 ```
 
 ### Maven
@@ -33,7 +33,7 @@ implementation("dm.sent:sent-java:0.46.2")
 <dependency>
   <groupId>dm.sent</groupId>
   <artifactId>sent-java</artifactId>
-  <version>0.46.2</version>
+  <version>0.47.0</version>
 </dependency>
 ```
 
@@ -70,7 +70,7 @@ MessageSendParams params = MessageSendParams.builder()
     .addTo("+14155551234")
     .addTo("+14155555678")
     .build();
-MessageSendResponse response = client.messages().send(params);
+MessageSendResponse messageSendResponse = client.messages().send(params);
 ```
 
 ## Client configuration
@@ -183,7 +183,7 @@ MessageSendParams params = MessageSendParams.builder()
     .addTo("+14155551234")
     .addTo("+14155555678")
     .build();
-CompletableFuture<MessageSendResponse> response = client.async().messages().send(params);
+CompletableFuture<MessageSendResponse> messageSendResponse = client.async().messages().send(params);
 ```
 
 Or create an asynchronous client from the beginning:
@@ -214,7 +214,7 @@ MessageSendParams params = MessageSendParams.builder()
     .addTo("+14155551234")
     .addTo("+14155555678")
     .build();
-CompletableFuture<MessageSendResponse> response = client.messages().send(params);
+CompletableFuture<MessageSendResponse> messageSendResponse = client.messages().send(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
@@ -244,10 +244,10 @@ MessageSendParams params = MessageSendParams.builder()
         .build())
     .addTo("+14155551234")
     .build();
-HttpResponseFor<MessageSendResponse> response = client.messages().withRawResponse().send(params);
+HttpResponseFor<MessageSendResponse> messageSendResponse = client.messages().withRawResponse().send(params);
 
-int statusCode = response.statusCode();
-Headers headers = response.headers();
+int statusCode = messageSendResponse.statusCode();
+Headers headers = messageSendResponse.headers();
 ```
 
 You can still deserialize the response into an instance of a Java class if needed:
@@ -255,7 +255,7 @@ You can still deserialize the response into an instance of a Java class if neede
 ```java
 import dm.sent.models.messages.MessageSendResponse;
 
-MessageSendResponse parsedResponse = response.parse();
+MessageSendResponse parsedMessageSendResponse = messageSendResponse.parse();
 ```
 
 ## Error handling
@@ -466,7 +466,7 @@ To set a custom timeout, configure the method call using the `timeout` method:
 ```java
 import dm.sent.models.messages.MessageSendResponse;
 
-MessageSendResponse response = client.messages().send(RequestOptions.builder().timeout(Duration.ofSeconds(30)).build());
+MessageSendResponse messageSendResponse = client.messages().send(RequestOptions.builder().timeout(Duration.ofSeconds(30)).build());
 ```
 
 Or configure the default for all method calls at the client level:
@@ -770,7 +770,7 @@ If you would still prefer to check that the response is completely well-typed up
 ```java
 import dm.sent.models.messages.MessageSendResponse;
 
-MessageSendResponse response = client.messages().send(params).validate();
+MessageSendResponse messageSendResponse = client.messages().send(params).validate();
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:
@@ -778,7 +778,7 @@ Or configure the method call to validate the response using the `responseValidat
 ```java
 import dm.sent.models.messages.MessageSendResponse;
 
-MessageSendResponse response = client.messages().send(RequestOptions.builder().responseValidation(true).build());
+MessageSendResponse messageSendResponse = client.messages().send(RequestOptions.builder().responseValidation(true).build());
 ```
 
 Or configure the default for all method calls at the client level:
