@@ -56,12 +56,14 @@ internal class ProGuardCompatibilityTest {
         assertThat(client.users()).isNotNull()
         assertThat(client.templates()).isNotNull()
         assertThat(client.profiles()).isNotNull()
+        assertThat(client.senderProfiles()).isNotNull()
         assertThat(client.numbers()).isNotNull()
         assertThat(client.messages()).isNotNull()
         assertThat(client.contacts()).isNotNull()
         assertThat(client.conversations()).isNotNull()
         assertThat(client.voice()).isNotNull()
         assertThat(client.channels()).isNotNull()
+        assertThat(client.compliance()).isNotNull()
         assertThat(client.me()).isNotNull()
     }
 

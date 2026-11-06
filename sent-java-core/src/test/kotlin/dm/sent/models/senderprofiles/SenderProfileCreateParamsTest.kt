@@ -1,0 +1,558 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package dm.sent.models.senderprofiles
+
+import dm.sent.core.JsonValue
+import dm.sent.core.MultipartField
+import dm.sent.core.http.Headers
+import dm.sent.models.channels.rcs.RcsAddress
+import dm.sent.models.channels.sms.MarketCompliance
+import dm.sent.models.channels.sms.SmsNumberRequest
+import java.io.InputStream
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+internal class SenderProfileCreateParamsTest {
+
+    @Test
+    fun create() {
+        SenderProfileCreateParams.builder()
+            .idempotencyKey("req_abc123_retry1")
+            .sandbox(false)
+            .billing(SenderProfileBillingRequest.builder().inherit(true).build())
+            .channels(
+                SenderProfileChannels.builder()
+                    .rcs(
+                        SenderProfileRcs.builder()
+                            .description("description")
+                            .agentUseCase("agent_use_case")
+                            .bannerUrl("banner_url")
+                            .billingCategory("billing_category")
+                            .brandColor("brand_color")
+                            .brandEmail("brand_email")
+                            .brandName("brand_name")
+                            .brandPhoneNumber("brand_phone_number")
+                            .briefCompanyDescription("brief_company_description")
+                            .companyEin("company_ein")
+                            .contactNameAndTitle("contact_name_and_title")
+                            .customerSupportEmail("customer_support_email")
+                            .customerSupportPhoneNumber("customer_support_phone_number")
+                            .displayName("display_name")
+                            .entityType("entity_type")
+                            .helpMessage("help_message")
+                            .hostingRegion("hosting_region")
+                            .logoUrl("logo_url")
+                            .officialAddress(
+                                RcsAddress.builder()
+                                    .city("city")
+                                    .country("country")
+                                    .postalCode("postal_code")
+                                    .state("state")
+                                    .street("street")
+                                    .build()
+                            )
+                            .optInProcessDescription("opt_in_process_description")
+                            .optInScreenshotUrl("opt_in_screenshot_url")
+                            .privacyPolicyUrl("privacy_policy_url")
+                            .addSampleMessage("string")
+                            .startMessage("start_message")
+                            .stopMessage("stop_message")
+                            .termsAndConditionsUrl("terms_and_conditions_url")
+                            .websiteUrl("website_url")
+                            .build()
+                    )
+                    .sms(
+                        SenderProfileSms.builder()
+                            .country("US")
+                            .addAreaCode("string")
+                            .numberType("TEN_DLC")
+                            .addNumber(
+                                SmsNumberRequest.builder().areaCode("area_code").quantity(0).build()
+                            )
+                            .senderValue("sender_value")
+                            .build()
+                    )
+                    .whatsapp(
+                        SenderProfileWhatsapp.builder()
+                            .phoneNumberId("phone_number_id")
+                            .wabaId("waba_id")
+                            .build()
+                    )
+                    .build()
+            )
+            .compliance(
+                MarketCompliance.builder()
+                    .brand(
+                        MarketCompliance.Brand.builder()
+                            .businessName("business_name")
+                            .city("city")
+                            .contactEmail("dev@stainless.com")
+                            .contactName("contact_name")
+                            .contactPhone("contact_phone")
+                            .country("country")
+                            .einIssuingCountry("ein_issuing_country")
+                            .entityType(MarketCompliance.Brand.EntityType.PRIVATE_PROFIT)
+                            .inherit(true)
+                            .legalName("legal_name")
+                            .postalCode("postal_code")
+                            .state("state")
+                            .street("street")
+                            .taxId("tax_id")
+                            .taxIdType("tax_id_type")
+                            .website("website")
+                            .build()
+                    )
+                    .campaign(
+                        MarketCompliance.Campaign.builder()
+                            .description("description")
+                            .helpKeywords("help_keywords")
+                            .helpMessage("help_message")
+                            .inherit(true)
+                            .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+                            .optInKeywords("opt_in_keywords")
+                            .optInMessage("opt_in_message")
+                            .optOutKeywords("opt_out_keywords")
+                            .optOutMessage("opt_out_message")
+                            .privacyPolicyLink("privacy_policy_link")
+                            .termsAndConditionsLink("terms_and_conditions_link")
+                            .addUseCase(
+                                MarketCompliance.Campaign.UseCase.builder()
+                                    .addSampleMessage(JsonValue.from(mapOf<String, Any>()))
+                                    .useCase(
+                                        MarketCompliance.Campaign.UseCase.InnerUseCase.MARKETING
+                                    )
+                                    .build()
+                            )
+                            .volume("volume")
+                            .build()
+                    )
+                    .build()
+            )
+            .description(null)
+            .name("Example Retail")
+            .notifications(null)
+            .shortName("Example")
+            .build()
+    }
+
+    @Test
+    fun headers() {
+        val params =
+            SenderProfileCreateParams.builder()
+                .idempotencyKey("req_abc123_retry1")
+                .sandbox(false)
+                .billing(SenderProfileBillingRequest.builder().inherit(true).build())
+                .channels(
+                    SenderProfileChannels.builder()
+                        .rcs(
+                            SenderProfileRcs.builder()
+                                .description("description")
+                                .agentUseCase("agent_use_case")
+                                .bannerUrl("banner_url")
+                                .billingCategory("billing_category")
+                                .brandColor("brand_color")
+                                .brandEmail("brand_email")
+                                .brandName("brand_name")
+                                .brandPhoneNumber("brand_phone_number")
+                                .briefCompanyDescription("brief_company_description")
+                                .companyEin("company_ein")
+                                .contactNameAndTitle("contact_name_and_title")
+                                .customerSupportEmail("customer_support_email")
+                                .customerSupportPhoneNumber("customer_support_phone_number")
+                                .displayName("display_name")
+                                .entityType("entity_type")
+                                .helpMessage("help_message")
+                                .hostingRegion("hosting_region")
+                                .logoUrl("logo_url")
+                                .officialAddress(
+                                    RcsAddress.builder()
+                                        .city("city")
+                                        .country("country")
+                                        .postalCode("postal_code")
+                                        .state("state")
+                                        .street("street")
+                                        .build()
+                                )
+                                .optInProcessDescription("opt_in_process_description")
+                                .optInScreenshotUrl("opt_in_screenshot_url")
+                                .privacyPolicyUrl("privacy_policy_url")
+                                .addSampleMessage("string")
+                                .startMessage("start_message")
+                                .stopMessage("stop_message")
+                                .termsAndConditionsUrl("terms_and_conditions_url")
+                                .websiteUrl("website_url")
+                                .build()
+                        )
+                        .sms(
+                            SenderProfileSms.builder()
+                                .country("US")
+                                .addAreaCode("string")
+                                .numberType("TEN_DLC")
+                                .addNumber(
+                                    SmsNumberRequest.builder()
+                                        .areaCode("area_code")
+                                        .quantity(0)
+                                        .build()
+                                )
+                                .senderValue("sender_value")
+                                .build()
+                        )
+                        .whatsapp(
+                            SenderProfileWhatsapp.builder()
+                                .phoneNumberId("phone_number_id")
+                                .wabaId("waba_id")
+                                .build()
+                        )
+                        .build()
+                )
+                .compliance(
+                    MarketCompliance.builder()
+                        .brand(
+                            MarketCompliance.Brand.builder()
+                                .businessName("business_name")
+                                .city("city")
+                                .contactEmail("dev@stainless.com")
+                                .contactName("contact_name")
+                                .contactPhone("contact_phone")
+                                .country("country")
+                                .einIssuingCountry("ein_issuing_country")
+                                .entityType(MarketCompliance.Brand.EntityType.PRIVATE_PROFIT)
+                                .inherit(true)
+                                .legalName("legal_name")
+                                .postalCode("postal_code")
+                                .state("state")
+                                .street("street")
+                                .taxId("tax_id")
+                                .taxIdType("tax_id_type")
+                                .website("website")
+                                .build()
+                        )
+                        .campaign(
+                            MarketCompliance.Campaign.builder()
+                                .description("description")
+                                .helpKeywords("help_keywords")
+                                .helpMessage("help_message")
+                                .inherit(true)
+                                .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+                                .optInKeywords("opt_in_keywords")
+                                .optInMessage("opt_in_message")
+                                .optOutKeywords("opt_out_keywords")
+                                .optOutMessage("opt_out_message")
+                                .privacyPolicyLink("privacy_policy_link")
+                                .termsAndConditionsLink("terms_and_conditions_link")
+                                .addUseCase(
+                                    MarketCompliance.Campaign.UseCase.builder()
+                                        .addSampleMessage(JsonValue.from(mapOf<String, Any>()))
+                                        .useCase(
+                                            MarketCompliance.Campaign.UseCase.InnerUseCase.MARKETING
+                                        )
+                                        .build()
+                                )
+                                .volume("volume")
+                                .build()
+                        )
+                        .build()
+                )
+                .description(null)
+                .name("Example Retail")
+                .notifications(null)
+                .shortName("Example")
+                .build()
+
+        val headers = params._headers()
+
+        assertThat(headers)
+            .isEqualTo(Headers.builder().put("Idempotency-Key", "req_abc123_retry1").build())
+    }
+
+    @Test
+    fun headersWithoutOptionalFields() {
+        val params = SenderProfileCreateParams.builder().build()
+
+        val headers = params._headers()
+
+        assertThat(headers).isEqualTo(Headers.builder().build())
+    }
+
+    @Test
+    fun body() {
+        val params =
+            SenderProfileCreateParams.builder()
+                .idempotencyKey("req_abc123_retry1")
+                .sandbox(false)
+                .billing(SenderProfileBillingRequest.builder().inherit(true).build())
+                .channels(
+                    SenderProfileChannels.builder()
+                        .rcs(
+                            SenderProfileRcs.builder()
+                                .description("description")
+                                .agentUseCase("agent_use_case")
+                                .bannerUrl("banner_url")
+                                .billingCategory("billing_category")
+                                .brandColor("brand_color")
+                                .brandEmail("brand_email")
+                                .brandName("brand_name")
+                                .brandPhoneNumber("brand_phone_number")
+                                .briefCompanyDescription("brief_company_description")
+                                .companyEin("company_ein")
+                                .contactNameAndTitle("contact_name_and_title")
+                                .customerSupportEmail("customer_support_email")
+                                .customerSupportPhoneNumber("customer_support_phone_number")
+                                .displayName("display_name")
+                                .entityType("entity_type")
+                                .helpMessage("help_message")
+                                .hostingRegion("hosting_region")
+                                .logoUrl("logo_url")
+                                .officialAddress(
+                                    RcsAddress.builder()
+                                        .city("city")
+                                        .country("country")
+                                        .postalCode("postal_code")
+                                        .state("state")
+                                        .street("street")
+                                        .build()
+                                )
+                                .optInProcessDescription("opt_in_process_description")
+                                .optInScreenshotUrl("opt_in_screenshot_url")
+                                .privacyPolicyUrl("privacy_policy_url")
+                                .addSampleMessage("string")
+                                .startMessage("start_message")
+                                .stopMessage("stop_message")
+                                .termsAndConditionsUrl("terms_and_conditions_url")
+                                .websiteUrl("website_url")
+                                .build()
+                        )
+                        .sms(
+                            SenderProfileSms.builder()
+                                .country("US")
+                                .addAreaCode("string")
+                                .numberType("TEN_DLC")
+                                .addNumber(
+                                    SmsNumberRequest.builder()
+                                        .areaCode("area_code")
+                                        .quantity(0)
+                                        .build()
+                                )
+                                .senderValue("sender_value")
+                                .build()
+                        )
+                        .whatsapp(
+                            SenderProfileWhatsapp.builder()
+                                .phoneNumberId("phone_number_id")
+                                .wabaId("waba_id")
+                                .build()
+                        )
+                        .build()
+                )
+                .compliance(
+                    MarketCompliance.builder()
+                        .brand(
+                            MarketCompliance.Brand.builder()
+                                .businessName("business_name")
+                                .city("city")
+                                .contactEmail("dev@stainless.com")
+                                .contactName("contact_name")
+                                .contactPhone("contact_phone")
+                                .country("country")
+                                .einIssuingCountry("ein_issuing_country")
+                                .entityType(MarketCompliance.Brand.EntityType.PRIVATE_PROFIT)
+                                .inherit(true)
+                                .legalName("legal_name")
+                                .postalCode("postal_code")
+                                .state("state")
+                                .street("street")
+                                .taxId("tax_id")
+                                .taxIdType("tax_id_type")
+                                .website("website")
+                                .build()
+                        )
+                        .campaign(
+                            MarketCompliance.Campaign.builder()
+                                .description("description")
+                                .helpKeywords("help_keywords")
+                                .helpMessage("help_message")
+                                .inherit(true)
+                                .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+                                .optInKeywords("opt_in_keywords")
+                                .optInMessage("opt_in_message")
+                                .optOutKeywords("opt_out_keywords")
+                                .optOutMessage("opt_out_message")
+                                .privacyPolicyLink("privacy_policy_link")
+                                .termsAndConditionsLink("terms_and_conditions_link")
+                                .addUseCase(
+                                    MarketCompliance.Campaign.UseCase.builder()
+                                        .addSampleMessage(JsonValue.from(mapOf<String, Any>()))
+                                        .useCase(
+                                            MarketCompliance.Campaign.UseCase.InnerUseCase.MARKETING
+                                        )
+                                        .build()
+                                )
+                                .volume("volume")
+                                .build()
+                        )
+                        .build()
+                )
+                .description(null)
+                .name("Example Retail")
+                .notifications(null)
+                .shortName("Example")
+                .build()
+
+        val body = params._body()
+
+        assertThat(body.filterValues { !it.value.isNull() })
+            .usingRecursiveComparison()
+            // TODO(AssertJ): Replace this and the `mapValues` below with:
+            // https://github.com/assertj/assertj/issues/3165
+            .withEqualsForType(
+                { a, b -> a.readBytes() contentEquals b.readBytes() },
+                InputStream::class.java,
+            )
+            .isEqualTo(
+                mapOf(
+                        "sandbox" to MultipartField.of(false),
+                        "billing" to
+                            MultipartField.of(
+                                SenderProfileBillingRequest.builder().inherit(true).build()
+                            ),
+                        "channels" to
+                            MultipartField.of(
+                                SenderProfileChannels.builder()
+                                    .rcs(
+                                        SenderProfileRcs.builder()
+                                            .description("description")
+                                            .agentUseCase("agent_use_case")
+                                            .bannerUrl("banner_url")
+                                            .billingCategory("billing_category")
+                                            .brandColor("brand_color")
+                                            .brandEmail("brand_email")
+                                            .brandName("brand_name")
+                                            .brandPhoneNumber("brand_phone_number")
+                                            .briefCompanyDescription("brief_company_description")
+                                            .companyEin("company_ein")
+                                            .contactNameAndTitle("contact_name_and_title")
+                                            .customerSupportEmail("customer_support_email")
+                                            .customerSupportPhoneNumber(
+                                                "customer_support_phone_number"
+                                            )
+                                            .displayName("display_name")
+                                            .entityType("entity_type")
+                                            .helpMessage("help_message")
+                                            .hostingRegion("hosting_region")
+                                            .logoUrl("logo_url")
+                                            .officialAddress(
+                                                RcsAddress.builder()
+                                                    .city("city")
+                                                    .country("country")
+                                                    .postalCode("postal_code")
+                                                    .state("state")
+                                                    .street("street")
+                                                    .build()
+                                            )
+                                            .optInProcessDescription("opt_in_process_description")
+                                            .optInScreenshotUrl("opt_in_screenshot_url")
+                                            .privacyPolicyUrl("privacy_policy_url")
+                                            .addSampleMessage("string")
+                                            .startMessage("start_message")
+                                            .stopMessage("stop_message")
+                                            .termsAndConditionsUrl("terms_and_conditions_url")
+                                            .websiteUrl("website_url")
+                                            .build()
+                                    )
+                                    .sms(
+                                        SenderProfileSms.builder()
+                                            .country("US")
+                                            .addAreaCode("string")
+                                            .numberType("TEN_DLC")
+                                            .addNumber(
+                                                SmsNumberRequest.builder()
+                                                    .areaCode("area_code")
+                                                    .quantity(0)
+                                                    .build()
+                                            )
+                                            .senderValue("sender_value")
+                                            .build()
+                                    )
+                                    .whatsapp(
+                                        SenderProfileWhatsapp.builder()
+                                            .phoneNumberId("phone_number_id")
+                                            .wabaId("waba_id")
+                                            .build()
+                                    )
+                                    .build()
+                            ),
+                        "compliance" to
+                            MultipartField.of(
+                                MarketCompliance.builder()
+                                    .brand(
+                                        MarketCompliance.Brand.builder()
+                                            .businessName("business_name")
+                                            .city("city")
+                                            .contactEmail("dev@stainless.com")
+                                            .contactName("contact_name")
+                                            .contactPhone("contact_phone")
+                                            .country("country")
+                                            .einIssuingCountry("ein_issuing_country")
+                                            .entityType(
+                                                MarketCompliance.Brand.EntityType.PRIVATE_PROFIT
+                                            )
+                                            .inherit(true)
+                                            .legalName("legal_name")
+                                            .postalCode("postal_code")
+                                            .state("state")
+                                            .street("street")
+                                            .taxId("tax_id")
+                                            .taxIdType("tax_id_type")
+                                            .website("website")
+                                            .build()
+                                    )
+                                    .campaign(
+                                        MarketCompliance.Campaign.builder()
+                                            .description("description")
+                                            .helpKeywords("help_keywords")
+                                            .helpMessage("help_message")
+                                            .inherit(true)
+                                            .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+                                            .optInKeywords("opt_in_keywords")
+                                            .optInMessage("opt_in_message")
+                                            .optOutKeywords("opt_out_keywords")
+                                            .optOutMessage("opt_out_message")
+                                            .privacyPolicyLink("privacy_policy_link")
+                                            .termsAndConditionsLink("terms_and_conditions_link")
+                                            .addUseCase(
+                                                MarketCompliance.Campaign.UseCase.builder()
+                                                    .addSampleMessage(
+                                                        JsonValue.from(mapOf<String, Any>())
+                                                    )
+                                                    .useCase(
+                                                        MarketCompliance.Campaign.UseCase
+                                                            .InnerUseCase
+                                                            .MARKETING
+                                                    )
+                                                    .build()
+                                            )
+                                            .volume("volume")
+                                            .build()
+                                    )
+                                    .build()
+                            ),
+                        "description" to MultipartField.of(null),
+                        "name" to MultipartField.of("Example Retail"),
+                        "notifications" to MultipartField.of(null),
+                        "short_name" to MultipartField.of("Example"),
+                    )
+                    .mapValues { (_, field) ->
+                        field.map { (it as? ByteArray)?.inputStream() ?: it }
+                    }
+            )
+    }
+
+    @Test
+    fun bodyWithoutOptionalFields() {
+        val params = SenderProfileCreateParams.builder().build()
+
+        val body = params._body()
+
+        assertThat(body.filterValues { !it.value.isNull() }).isEmpty()
+    }
+}
