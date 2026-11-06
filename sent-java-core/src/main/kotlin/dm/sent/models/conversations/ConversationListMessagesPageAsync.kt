@@ -5,6 +5,7 @@ package dm.sent.models.conversations
 import dm.sent.core.AutoPagerAsync
 import dm.sent.core.PageAsync
 import dm.sent.core.checkRequired
+import dm.sent.models.messages.Message
 import dm.sent.services.async.ConversationServiceAsync
 import java.util.Objects
 import java.util.Optional
@@ -20,7 +21,7 @@ private constructor(
     private val streamHandlerExecutor: Executor,
     private val params: ConversationListMessagesParams,
     private val response: ApiResponseOfConversationMessagesList,
-) : PageAsync<ConversationMessagesList.Message> {
+) : PageAsync<Message> {
 
     /**
      * Delegates to [ApiResponseOfConversationMessagesList], but gracefully handles missing data.
@@ -29,8 +30,7 @@ private constructor(
      */
     fun data(): Optional<ConversationMessagesList> = response._data().getOptional("data")
 
-    override fun items(): List<ConversationMessagesList.Message> =
-        response.messages().getOrNull() ?: emptyList()
+    override fun items(): List<Message> = response.messages().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 
@@ -42,8 +42,7 @@ private constructor(
     override fun nextPage(): CompletableFuture<ConversationListMessagesPageAsync> =
         service.listMessages(nextPageParams())
 
-    fun autoPager(): AutoPagerAsync<ConversationMessagesList.Message> =
-        AutoPagerAsync.from(this, streamHandlerExecutor)
+    fun autoPager(): AutoPagerAsync<Message> = AutoPagerAsync.from(this, streamHandlerExecutor)
 
     /** The parameters that were used to request this page. */
     fun params(): ConversationListMessagesParams = params

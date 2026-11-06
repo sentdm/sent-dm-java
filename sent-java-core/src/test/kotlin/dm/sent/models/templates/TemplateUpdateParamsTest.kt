@@ -21,14 +21,14 @@ internal class TemplateUpdateParamsTest {
                     .body(
                         TemplateBody.builder()
                             .mms(
-                                TemplateBody.Mms.builder()
+                                TemplateMmsBodyContent.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -43,7 +43,7 @@ internal class TemplateUpdateParamsTest {
                                             .build()
                                     )
                                     .addMedia(
-                                        TemplateBody.Mms.Media.builder()
+                                        TemplateMediaItem.builder()
                                             .mediaType("mediaType")
                                             .url("url")
                                             .build()
@@ -59,7 +59,7 @@ internal class TemplateUpdateParamsTest {
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -83,7 +83,7 @@ internal class TemplateUpdateParamsTest {
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -107,7 +107,7 @@ internal class TemplateUpdateParamsTest {
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -131,7 +131,7 @@ internal class TemplateUpdateParamsTest {
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -171,7 +171,7 @@ internal class TemplateUpdateParamsTest {
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -204,7 +204,7 @@ internal class TemplateUpdateParamsTest {
                                 TemplateVariable.builder()
                                     .name("x")
                                     .props(
-                                        TemplateVariable.Props.builder()
+                                        TemplateVariableProps.builder()
                                             .mediaType("x")
                                             .sample("x")
                                             .url("x")
@@ -225,7 +225,7 @@ internal class TemplateUpdateParamsTest {
                             .template("template")
                             .exampleUrl("example_url")
                             .location(
-                                TemplateHeader.Location.builder()
+                                TemplateHeaderLocation.builder()
                                     .address("x")
                                     .latitude("x")
                                     .longitude("x")
@@ -238,7 +238,7 @@ internal class TemplateUpdateParamsTest {
                                 TemplateVariable.builder()
                                     .name("x")
                                     .props(
-                                        TemplateVariable.Props.builder()
+                                        TemplateVariableProps.builder()
                                             .mediaType("x")
                                             .sample("x")
                                             .url("x")
@@ -286,14 +286,14 @@ internal class TemplateUpdateParamsTest {
                         .body(
                             TemplateBody.builder()
                                 .mms(
-                                    TemplateBody.Mms.builder()
+                                    TemplateMmsBodyContent.builder()
                                         .template("template")
                                         .type("type")
                                         .addVariable(
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -308,7 +308,7 @@ internal class TemplateUpdateParamsTest {
                                                 .build()
                                         )
                                         .addMedia(
-                                            TemplateBody.Mms.Media.builder()
+                                            TemplateMediaItem.builder()
                                                 .mediaType("mediaType")
                                                 .url("url")
                                                 .build()
@@ -324,7 +324,7 @@ internal class TemplateUpdateParamsTest {
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -348,7 +348,7 @@ internal class TemplateUpdateParamsTest {
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -372,7 +372,7 @@ internal class TemplateUpdateParamsTest {
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -396,7 +396,7 @@ internal class TemplateUpdateParamsTest {
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -436,7 +436,7 @@ internal class TemplateUpdateParamsTest {
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -469,7 +469,7 @@ internal class TemplateUpdateParamsTest {
                                     TemplateVariable.builder()
                                         .name("x")
                                         .props(
-                                            TemplateVariable.Props.builder()
+                                            TemplateVariableProps.builder()
                                                 .mediaType("x")
                                                 .sample("x")
                                                 .url("x")
@@ -490,7 +490,7 @@ internal class TemplateUpdateParamsTest {
                                 .template("template")
                                 .exampleUrl("example_url")
                                 .location(
-                                    TemplateHeader.Location.builder()
+                                    TemplateHeaderLocation.builder()
                                         .address("x")
                                         .latitude("x")
                                         .longitude("x")
@@ -503,7 +503,7 @@ internal class TemplateUpdateParamsTest {
                                     TemplateVariable.builder()
                                         .name("x")
                                         .props(
-                                            TemplateVariable.Props.builder()
+                                            TemplateVariableProps.builder()
                                                 .mediaType("x")
                                                 .sample("x")
                                                 .url("x")
@@ -561,14 +561,14 @@ internal class TemplateUpdateParamsTest {
                         .body(
                             TemplateBody.builder()
                                 .mms(
-                                    TemplateBody.Mms.builder()
+                                    TemplateMmsBodyContent.builder()
                                         .template("template")
                                         .type("type")
                                         .addVariable(
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -583,7 +583,7 @@ internal class TemplateUpdateParamsTest {
                                                 .build()
                                         )
                                         .addMedia(
-                                            TemplateBody.Mms.Media.builder()
+                                            TemplateMediaItem.builder()
                                                 .mediaType("mediaType")
                                                 .url("url")
                                                 .build()
@@ -599,7 +599,7 @@ internal class TemplateUpdateParamsTest {
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -623,7 +623,7 @@ internal class TemplateUpdateParamsTest {
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -647,7 +647,7 @@ internal class TemplateUpdateParamsTest {
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -671,7 +671,7 @@ internal class TemplateUpdateParamsTest {
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -711,7 +711,7 @@ internal class TemplateUpdateParamsTest {
                                             TemplateVariable.builder()
                                                 .name("x")
                                                 .props(
-                                                    TemplateVariable.Props.builder()
+                                                    TemplateVariableProps.builder()
                                                         .mediaType("x")
                                                         .sample("x")
                                                         .url("x")
@@ -744,7 +744,7 @@ internal class TemplateUpdateParamsTest {
                                     TemplateVariable.builder()
                                         .name("x")
                                         .props(
-                                            TemplateVariable.Props.builder()
+                                            TemplateVariableProps.builder()
                                                 .mediaType("x")
                                                 .sample("x")
                                                 .url("x")
@@ -765,7 +765,7 @@ internal class TemplateUpdateParamsTest {
                                 .template("template")
                                 .exampleUrl("example_url")
                                 .location(
-                                    TemplateHeader.Location.builder()
+                                    TemplateHeaderLocation.builder()
                                         .address("x")
                                         .latitude("x")
                                         .longitude("x")
@@ -778,7 +778,7 @@ internal class TemplateUpdateParamsTest {
                                     TemplateVariable.builder()
                                         .name("x")
                                         .props(
-                                            TemplateVariable.Props.builder()
+                                            TemplateVariableProps.builder()
                                                 .mediaType("x")
                                                 .sample("x")
                                                 .url("x")
@@ -811,14 +811,14 @@ internal class TemplateUpdateParamsTest {
                     .body(
                         TemplateBody.builder()
                             .mms(
-                                TemplateBody.Mms.builder()
+                                TemplateMmsBodyContent.builder()
                                     .template("template")
                                     .type("type")
                                     .addVariable(
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -833,7 +833,7 @@ internal class TemplateUpdateParamsTest {
                                             .build()
                                     )
                                     .addMedia(
-                                        TemplateBody.Mms.Media.builder()
+                                        TemplateMediaItem.builder()
                                             .mediaType("mediaType")
                                             .url("url")
                                             .build()
@@ -849,7 +849,7 @@ internal class TemplateUpdateParamsTest {
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -873,7 +873,7 @@ internal class TemplateUpdateParamsTest {
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -897,7 +897,7 @@ internal class TemplateUpdateParamsTest {
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -921,7 +921,7 @@ internal class TemplateUpdateParamsTest {
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -961,7 +961,7 @@ internal class TemplateUpdateParamsTest {
                                         TemplateVariable.builder()
                                             .name("x")
                                             .props(
-                                                TemplateVariable.Props.builder()
+                                                TemplateVariableProps.builder()
                                                     .mediaType("x")
                                                     .sample("x")
                                                     .url("x")
@@ -994,7 +994,7 @@ internal class TemplateUpdateParamsTest {
                                 TemplateVariable.builder()
                                     .name("x")
                                     .props(
-                                        TemplateVariable.Props.builder()
+                                        TemplateVariableProps.builder()
                                             .mediaType("x")
                                             .sample("x")
                                             .url("x")
@@ -1015,7 +1015,7 @@ internal class TemplateUpdateParamsTest {
                             .template("template")
                             .exampleUrl("example_url")
                             .location(
-                                TemplateHeader.Location.builder()
+                                TemplateHeaderLocation.builder()
                                     .address("x")
                                     .latitude("x")
                                     .longitude("x")
@@ -1028,7 +1028,7 @@ internal class TemplateUpdateParamsTest {
                                 TemplateVariable.builder()
                                     .name("x")
                                     .props(
-                                        TemplateVariable.Props.builder()
+                                        TemplateVariableProps.builder()
                                             .mediaType("x")
                                             .sample("x")
                                             .url("x")

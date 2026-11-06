@@ -5,6 +5,7 @@ package dm.sent.models.profiles.campaigns
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
+import dm.sent.models.profiles.TcrCampaignStatus
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
@@ -38,7 +39,7 @@ internal class ApiResponseOfBrandCampaignTest {
                         .optoutKeywords("optoutKeywords")
                         .optoutMessage("optoutMessage")
                         .privacyPolicyLink("privacyPolicyLink")
-                        .status(BrandCampaign.Status.SENT_CREATED)
+                        .status(TcrCampaignStatus.SENT_CREATED)
                         .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .submittedToTcr(true)
                         .tcrCampaignId("tcrCampaignId")
@@ -104,7 +105,7 @@ internal class ApiResponseOfBrandCampaignTest {
                     .optoutKeywords("optoutKeywords")
                     .optoutMessage("optoutMessage")
                     .privacyPolicyLink("privacyPolicyLink")
-                    .status(BrandCampaign.Status.SENT_CREATED)
+                    .status(TcrCampaignStatus.SENT_CREATED)
                     .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .submittedToTcr(true)
                     .tcrCampaignId("tcrCampaignId")
@@ -176,7 +177,7 @@ internal class ApiResponseOfBrandCampaignTest {
                         .optoutKeywords("optoutKeywords")
                         .optoutMessage("optoutMessage")
                         .privacyPolicyLink("privacyPolicyLink")
-                        .status(BrandCampaign.Status.SENT_CREATED)
+                        .status(TcrCampaignStatus.SENT_CREATED)
                         .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .submittedToTcr(true)
                         .tcrCampaignId("tcrCampaignId")

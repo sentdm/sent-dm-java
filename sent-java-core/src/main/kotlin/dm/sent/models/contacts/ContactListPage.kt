@@ -16,15 +16,15 @@ class ContactListPage
 private constructor(
     private val service: ContactService,
     private val params: ContactListParams,
-    private val response: ContactListPageResponse,
+    private val response: ApiResponseOfContactsList,
 ) : Page<ContactResponse> {
 
     /**
-     * Delegates to [ContactListPageResponse], but gracefully handles missing data.
+     * Delegates to [ApiResponseOfContactsList], but gracefully handles missing data.
      *
-     * @see ContactListPageResponse.data
+     * @see ApiResponseOfContactsList.data
      */
-    fun data(): Optional<ContactListPageResponse.Data> = response._data().getOptional("data")
+    fun data(): Optional<ContactsList> = response._data().getOptional("data")
 
     override fun items(): List<ContactResponse> = response.contacts().getOrNull() ?: emptyList()
 
@@ -43,7 +43,7 @@ private constructor(
     fun params(): ContactListParams = params
 
     /** The response that this page was parsed from. */
-    fun response(): ContactListPageResponse = response
+    fun response(): ApiResponseOfContactsList = response
 
     fun toBuilder() = Builder().from(this)
 
@@ -67,7 +67,7 @@ private constructor(
 
         private var service: ContactService? = null
         private var params: ContactListParams? = null
-        private var response: ContactListPageResponse? = null
+        private var response: ApiResponseOfContactsList? = null
 
         @JvmSynthetic
         internal fun from(contactListPage: ContactListPage) = apply {
@@ -82,7 +82,7 @@ private constructor(
         fun params(params: ContactListParams) = apply { this.params = params }
 
         /** The response that this page was parsed from. */
-        fun response(response: ContactListPageResponse) = apply { this.response = response }
+        fun response(response: ApiResponseOfContactsList) = apply { this.response = response }
 
         /**
          * Returns an immutable instance of [ContactListPage].

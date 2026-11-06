@@ -18,9 +18,9 @@ import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
 import dm.sent.models.users.ApiResponseOfUser
+import dm.sent.models.users.ApiResponseOfUsersList
 import dm.sent.models.users.UserInviteParams
 import dm.sent.models.users.UserListParams
-import dm.sent.models.users.UserListResponse
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserRetrieveParams
 import dm.sent.models.users.UserUpdateRoleParams
@@ -52,7 +52,10 @@ class UserServiceImpl internal constructor(private val clientOptions: ClientOpti
         // get /v3/users/{userId}
         withRawResponse().retrieve(params, requestOptions).parse()
 
-    override fun list(params: UserListParams, requestOptions: RequestOptions): UserListResponse =
+    override fun list(
+        params: UserListParams,
+        requestOptions: RequestOptions,
+    ): ApiResponseOfUsersList =
         // get /v3/users
         withRawResponse().list(params, requestOptions).parse()
 
@@ -118,13 +121,13 @@ class UserServiceImpl internal constructor(private val clientOptions: ClientOpti
             }
         }
 
-        private val listHandler: Handler<UserListResponse> =
-            jsonHandler<UserListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ApiResponseOfUsersList> =
+            jsonHandler<ApiResponseOfUsersList>(clientOptions.jsonMapper)
 
         override fun list(
             params: UserListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<UserListResponse> {
+        ): HttpResponseFor<ApiResponseOfUsersList> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)

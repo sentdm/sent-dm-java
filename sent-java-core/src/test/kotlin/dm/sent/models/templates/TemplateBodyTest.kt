@@ -14,14 +14,14 @@ internal class TemplateBodyTest {
         val templateBody =
             TemplateBody.builder()
                 .mms(
-                    TemplateBody.Mms.builder()
+                    TemplateMmsBodyContent.builder()
                         .template("template")
                         .type("type")
                         .addVariable(
                             TemplateVariable.builder()
                                 .name("x")
                                 .props(
-                                    TemplateVariable.Props.builder()
+                                    TemplateVariableProps.builder()
                                         .mediaType("x")
                                         .sample("x")
                                         .url("x")
@@ -36,10 +36,7 @@ internal class TemplateBodyTest {
                                 .build()
                         )
                         .addMedia(
-                            TemplateBody.Mms.Media.builder()
-                                .mediaType("mediaType")
-                                .url("url")
-                                .build()
+                            TemplateMediaItem.builder().mediaType("mediaType").url("url").build()
                         )
                         .subject("subject")
                         .build()
@@ -52,7 +49,7 @@ internal class TemplateBodyTest {
                             TemplateVariable.builder()
                                 .name("x")
                                 .props(
-                                    TemplateVariable.Props.builder()
+                                    TemplateVariableProps.builder()
                                         .mediaType("x")
                                         .sample("x")
                                         .url("x")
@@ -76,7 +73,7 @@ internal class TemplateBodyTest {
                             TemplateVariable.builder()
                                 .name("x")
                                 .props(
-                                    TemplateVariable.Props.builder()
+                                    TemplateVariableProps.builder()
                                         .mediaType("x")
                                         .sample("x")
                                         .url("x")
@@ -100,7 +97,7 @@ internal class TemplateBodyTest {
                             TemplateVariable.builder()
                                 .name("x")
                                 .props(
-                                    TemplateVariable.Props.builder()
+                                    TemplateVariableProps.builder()
                                         .mediaType("x")
                                         .sample("x")
                                         .url("x")
@@ -124,7 +121,7 @@ internal class TemplateBodyTest {
                             TemplateVariable.builder()
                                 .name("x")
                                 .props(
-                                    TemplateVariable.Props.builder()
+                                    TemplateVariableProps.builder()
                                         .mediaType("x")
                                         .sample("x")
                                         .url("x")
@@ -144,14 +141,14 @@ internal class TemplateBodyTest {
 
         assertThat(templateBody.mms())
             .contains(
-                TemplateBody.Mms.builder()
+                TemplateMmsBodyContent.builder()
                     .template("template")
                     .type("type")
                     .addVariable(
                         TemplateVariable.builder()
                             .name("x")
                             .props(
-                                TemplateVariable.Props.builder()
+                                TemplateVariableProps.builder()
                                     .mediaType("x")
                                     .sample("x")
                                     .url("x")
@@ -165,9 +162,7 @@ internal class TemplateBodyTest {
                             .id(0)
                             .build()
                     )
-                    .addMedia(
-                        TemplateBody.Mms.Media.builder().mediaType("mediaType").url("url").build()
-                    )
+                    .addMedia(TemplateMediaItem.builder().mediaType("mediaType").url("url").build())
                     .subject("subject")
                     .build()
             )
@@ -180,7 +175,7 @@ internal class TemplateBodyTest {
                         TemplateVariable.builder()
                             .name("x")
                             .props(
-                                TemplateVariable.Props.builder()
+                                TemplateVariableProps.builder()
                                     .mediaType("x")
                                     .sample("x")
                                     .url("x")
@@ -205,7 +200,7 @@ internal class TemplateBodyTest {
                         TemplateVariable.builder()
                             .name("x")
                             .props(
-                                TemplateVariable.Props.builder()
+                                TemplateVariableProps.builder()
                                     .mediaType("x")
                                     .sample("x")
                                     .url("x")
@@ -230,7 +225,7 @@ internal class TemplateBodyTest {
                         TemplateVariable.builder()
                             .name("x")
                             .props(
-                                TemplateVariable.Props.builder()
+                                TemplateVariableProps.builder()
                                     .mediaType("x")
                                     .sample("x")
                                     .url("x")
@@ -255,7 +250,7 @@ internal class TemplateBodyTest {
                         TemplateVariable.builder()
                             .name("x")
                             .props(
-                                TemplateVariable.Props.builder()
+                                TemplateVariableProps.builder()
                                     .mediaType("x")
                                     .sample("x")
                                     .url("x")
@@ -279,14 +274,14 @@ internal class TemplateBodyTest {
         val templateBody =
             TemplateBody.builder()
                 .mms(
-                    TemplateBody.Mms.builder()
+                    TemplateMmsBodyContent.builder()
                         .template("template")
                         .type("type")
                         .addVariable(
                             TemplateVariable.builder()
                                 .name("x")
                                 .props(
-                                    TemplateVariable.Props.builder()
+                                    TemplateVariableProps.builder()
                                         .mediaType("x")
                                         .sample("x")
                                         .url("x")
@@ -301,10 +296,7 @@ internal class TemplateBodyTest {
                                 .build()
                         )
                         .addMedia(
-                            TemplateBody.Mms.Media.builder()
-                                .mediaType("mediaType")
-                                .url("url")
-                                .build()
+                            TemplateMediaItem.builder().mediaType("mediaType").url("url").build()
                         )
                         .subject("subject")
                         .build()
@@ -317,7 +309,7 @@ internal class TemplateBodyTest {
                             TemplateVariable.builder()
                                 .name("x")
                                 .props(
-                                    TemplateVariable.Props.builder()
+                                    TemplateVariableProps.builder()
                                         .mediaType("x")
                                         .sample("x")
                                         .url("x")
@@ -341,7 +333,7 @@ internal class TemplateBodyTest {
                             TemplateVariable.builder()
                                 .name("x")
                                 .props(
-                                    TemplateVariable.Props.builder()
+                                    TemplateVariableProps.builder()
                                         .mediaType("x")
                                         .sample("x")
                                         .url("x")
@@ -365,7 +357,7 @@ internal class TemplateBodyTest {
                             TemplateVariable.builder()
                                 .name("x")
                                 .props(
-                                    TemplateVariable.Props.builder()
+                                    TemplateVariableProps.builder()
                                         .mediaType("x")
                                         .sample("x")
                                         .url("x")
@@ -389,7 +381,7 @@ internal class TemplateBodyTest {
                             TemplateVariable.builder()
                                 .name("x")
                                 .props(
-                                    TemplateVariable.Props.builder()
+                                    TemplateVariableProps.builder()
                                         .mediaType("x")
                                         .sample("x")
                                         .url("x")

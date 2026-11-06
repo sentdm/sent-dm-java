@@ -14,8 +14,8 @@ import dm.sent.core.http.HttpResponse.Handler
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
+import dm.sent.models.me.ApiResponseOfAccount
 import dm.sent.models.me.MeRetrieveParams
-import dm.sent.models.me.MeRetrieveResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -41,7 +41,7 @@ class MeServiceAsyncImpl internal constructor(private val clientOptions: ClientO
     override fun retrieve(
         params: MeRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<MeRetrieveResponse> =
+    ): CompletableFuture<ApiResponseOfAccount> =
         // get /v3/me
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
@@ -58,13 +58,13 @@ class MeServiceAsyncImpl internal constructor(private val clientOptions: ClientO
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val retrieveHandler: Handler<MeRetrieveResponse> =
-            jsonHandler<MeRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<ApiResponseOfAccount> =
+            jsonHandler<ApiResponseOfAccount>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: MeRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<MeRetrieveResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfAccount>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)

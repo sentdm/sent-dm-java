@@ -15,7 +15,7 @@ internal class TemplateVariableTest {
             TemplateVariable.builder()
                 .name("x")
                 .props(
-                    TemplateVariable.Props.builder()
+                    TemplateVariableProps.builder()
                         .mediaType("x")
                         .sample("x")
                         .url("x")
@@ -32,7 +32,7 @@ internal class TemplateVariableTest {
         assertThat(templateVariable.name()).isEqualTo("x")
         assertThat(templateVariable.props())
             .isEqualTo(
-                TemplateVariable.Props.builder()
+                TemplateVariableProps.builder()
                     .mediaType("x")
                     .sample("x")
                     .url("x")
@@ -53,7 +53,7 @@ internal class TemplateVariableTest {
             TemplateVariable.builder()
                 .name("x")
                 .props(
-                    TemplateVariable.Props.builder()
+                    TemplateVariableProps.builder()
                         .mediaType("x")
                         .sample("x")
                         .url("x")

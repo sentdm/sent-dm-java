@@ -1,0 +1,117 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package dm.sent.models.users
+
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import dm.sent.core.jsonMapper
+import dm.sent.models.webhooks.PaginationCursors
+import dm.sent.models.webhooks.PaginationMeta
+import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+internal class UsersListTest {
+
+    @Test
+    fun create() {
+        val usersList =
+            UsersList.builder()
+                .pagination(
+                    PaginationMeta.builder()
+                        .cursors(
+                            PaginationCursors.builder().after("after").before("before").build()
+                        )
+                        .hasMore(true)
+                        .page(0)
+                        .pageSize(0)
+                        .totalCount(0)
+                        .totalPages(0)
+                        .build()
+                )
+                .addUser(
+                    UserResponse.builder()
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .email("email")
+                        .invitedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .lastLoginAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .name("name")
+                        .role("role")
+                        .status("status")
+                        .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .build()
+                )
+                .build()
+
+        assertThat(usersList.pagination())
+            .contains(
+                PaginationMeta.builder()
+                    .cursors(PaginationCursors.builder().after("after").before("before").build())
+                    .hasMore(true)
+                    .page(0)
+                    .pageSize(0)
+                    .totalCount(0)
+                    .totalPages(0)
+                    .build()
+            )
+        assertThat(usersList.users().getOrNull())
+            .containsExactly(
+                UserResponse.builder()
+                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .email("email")
+                    .invitedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .lastLoginAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .name("name")
+                    .role("role")
+                    .status("status")
+                    .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .build()
+            )
+    }
+
+    @Test
+    fun roundtrip() {
+        val jsonMapper = jsonMapper()
+        val usersList =
+            UsersList.builder()
+                .pagination(
+                    PaginationMeta.builder()
+                        .cursors(
+                            PaginationCursors.builder().after("after").before("before").build()
+                        )
+                        .hasMore(true)
+                        .page(0)
+                        .pageSize(0)
+                        .totalCount(0)
+                        .totalPages(0)
+                        .build()
+                )
+                .addUser(
+                    UserResponse.builder()
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .email("email")
+                        .invitedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .lastLoginAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .name("name")
+                        .role("role")
+                        .status("status")
+                        .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .build()
+                )
+                .build()
+
+        val roundtrippedUsersList =
+            jsonMapper.readValue(
+                jsonMapper.writeValueAsString(usersList),
+                jacksonTypeRef<UsersList>(),
+            )
+
+        assertThat(roundtrippedUsersList).isEqualTo(usersList)
+    }
+}

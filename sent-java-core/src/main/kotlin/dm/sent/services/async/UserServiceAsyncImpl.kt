@@ -18,9 +18,9 @@ import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
 import dm.sent.models.users.ApiResponseOfUser
+import dm.sent.models.users.ApiResponseOfUsersList
 import dm.sent.models.users.UserInviteParams
 import dm.sent.models.users.UserListParams
-import dm.sent.models.users.UserListResponse
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserRetrieveParams
 import dm.sent.models.users.UserUpdateRoleParams
@@ -57,7 +57,7 @@ class UserServiceAsyncImpl internal constructor(private val clientOptions: Clien
     override fun list(
         params: UserListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<UserListResponse> =
+    ): CompletableFuture<ApiResponseOfUsersList> =
         // get /v3/users
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -128,13 +128,13 @@ class UserServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 }
         }
 
-        private val listHandler: Handler<UserListResponse> =
-            jsonHandler<UserListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ApiResponseOfUsersList> =
+            jsonHandler<ApiResponseOfUsersList>(clientOptions.jsonMapper)
 
         override fun list(
             params: UserListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<UserListResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfUsersList>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)

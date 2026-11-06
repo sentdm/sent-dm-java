@@ -4,6 +4,13 @@ package dm.sent.models.conversations
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.jsonMapper
+import dm.sent.models.messages.Message
+import dm.sent.models.messages.MessageBody
+import dm.sent.models.messages.MessageButton
+import dm.sent.models.messages.MessageHeaderMedia
+import dm.sent.models.messages.MessageMedia
+import dm.sent.models.messages.MessageStatusEvent
+import dm.sent.models.webhooks.PaginationCursors
 import dm.sent.models.webhooks.PaginationMeta
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
@@ -17,7 +24,7 @@ internal class ConversationMessagesListTest {
         val conversationMessagesList =
             ConversationMessagesList.builder()
                 .addMessage(
-                    ConversationMessagesList.Message.builder()
+                    Message.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .activeContactPrice(0.0)
                         .channel("channel")
@@ -26,7 +33,7 @@ internal class ConversationMessagesListTest {
                         .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .direction("direction")
                         .addEvent(
-                            ConversationMessagesList.Message.Event.builder()
+                            MessageStatusEvent.builder()
                                 .status("status")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .description("description")
@@ -35,9 +42,9 @@ internal class ConversationMessagesListTest {
                                 .build()
                         )
                         .messageBody(
-                            ConversationMessagesList.Message.MessageBody.builder()
+                            MessageBody.builder()
                                 .addButton(
-                                    ConversationMessagesList.Message.MessageBody.Button.builder()
+                                    MessageButton.builder()
                                         .postbackData("postbackData")
                                         .text("text")
                                         .type("type")
@@ -48,14 +55,10 @@ internal class ConversationMessagesListTest {
                                 .footer("footer")
                                 .header("header")
                                 .headerMedia(
-                                    ConversationMessagesList.Message.MessageBody.HeaderMedia
-                                        .builder()
-                                        .type("type")
-                                        .url("url")
-                                        .build()
+                                    MessageHeaderMedia.builder().type("type").url("url").build()
                                 )
                                 .addMedia(
-                                    ConversationMessagesList.Message.MessageBody.Media.builder()
+                                    MessageMedia.builder()
                                         .mediaType("mediaType")
                                         .mimeType("mimeType")
                                         .sizeBytes(0L)
@@ -81,7 +84,7 @@ internal class ConversationMessagesListTest {
                 .pagination(
                     PaginationMeta.builder()
                         .cursors(
-                            PaginationMeta.Cursors.builder().after("after").before("before").build()
+                            PaginationCursors.builder().after("after").before("before").build()
                         )
                         .hasMore(true)
                         .page(0)
@@ -94,7 +97,7 @@ internal class ConversationMessagesListTest {
 
         assertThat(conversationMessagesList.messages().getOrNull())
             .containsExactly(
-                ConversationMessagesList.Message.builder()
+                Message.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .activeContactPrice(0.0)
                     .channel("channel")
@@ -103,7 +106,7 @@ internal class ConversationMessagesListTest {
                     .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .direction("direction")
                     .addEvent(
-                        ConversationMessagesList.Message.Event.builder()
+                        MessageStatusEvent.builder()
                             .status("status")
                             .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .description("description")
@@ -112,9 +115,9 @@ internal class ConversationMessagesListTest {
                             .build()
                     )
                     .messageBody(
-                        ConversationMessagesList.Message.MessageBody.builder()
+                        MessageBody.builder()
                             .addButton(
-                                ConversationMessagesList.Message.MessageBody.Button.builder()
+                                MessageButton.builder()
                                     .postbackData("postbackData")
                                     .text("text")
                                     .type("type")
@@ -125,13 +128,10 @@ internal class ConversationMessagesListTest {
                             .footer("footer")
                             .header("header")
                             .headerMedia(
-                                ConversationMessagesList.Message.MessageBody.HeaderMedia.builder()
-                                    .type("type")
-                                    .url("url")
-                                    .build()
+                                MessageHeaderMedia.builder().type("type").url("url").build()
                             )
                             .addMedia(
-                                ConversationMessagesList.Message.MessageBody.Media.builder()
+                                MessageMedia.builder()
                                     .mediaType("mediaType")
                                     .mimeType("mimeType")
                                     .sizeBytes(0L)
@@ -157,9 +157,7 @@ internal class ConversationMessagesListTest {
         assertThat(conversationMessagesList.pagination())
             .contains(
                 PaginationMeta.builder()
-                    .cursors(
-                        PaginationMeta.Cursors.builder().after("after").before("before").build()
-                    )
+                    .cursors(PaginationCursors.builder().after("after").before("before").build())
                     .hasMore(true)
                     .page(0)
                     .pageSize(0)
@@ -175,7 +173,7 @@ internal class ConversationMessagesListTest {
         val conversationMessagesList =
             ConversationMessagesList.builder()
                 .addMessage(
-                    ConversationMessagesList.Message.builder()
+                    Message.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .activeContactPrice(0.0)
                         .channel("channel")
@@ -184,7 +182,7 @@ internal class ConversationMessagesListTest {
                         .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .direction("direction")
                         .addEvent(
-                            ConversationMessagesList.Message.Event.builder()
+                            MessageStatusEvent.builder()
                                 .status("status")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .description("description")
@@ -193,9 +191,9 @@ internal class ConversationMessagesListTest {
                                 .build()
                         )
                         .messageBody(
-                            ConversationMessagesList.Message.MessageBody.builder()
+                            MessageBody.builder()
                                 .addButton(
-                                    ConversationMessagesList.Message.MessageBody.Button.builder()
+                                    MessageButton.builder()
                                         .postbackData("postbackData")
                                         .text("text")
                                         .type("type")
@@ -206,14 +204,10 @@ internal class ConversationMessagesListTest {
                                 .footer("footer")
                                 .header("header")
                                 .headerMedia(
-                                    ConversationMessagesList.Message.MessageBody.HeaderMedia
-                                        .builder()
-                                        .type("type")
-                                        .url("url")
-                                        .build()
+                                    MessageHeaderMedia.builder().type("type").url("url").build()
                                 )
                                 .addMedia(
-                                    ConversationMessagesList.Message.MessageBody.Media.builder()
+                                    MessageMedia.builder()
                                         .mediaType("mediaType")
                                         .mimeType("mimeType")
                                         .sizeBytes(0L)
@@ -239,7 +233,7 @@ internal class ConversationMessagesListTest {
                 .pagination(
                     PaginationMeta.builder()
                         .cursors(
-                            PaginationMeta.Cursors.builder().after("after").before("before").build()
+                            PaginationCursors.builder().after("after").before("before").build()
                         )
                         .hasMore(true)
                         .page(0)
