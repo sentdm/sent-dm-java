@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.49.0](https://github.com/sentdm/sent-dm-java/compare/v0.48.0...v0.49.0) (2026-11-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** stable names for shared models; typed methods for sender profiles, channels, compliance requirements and message cancel
+
+### Features
+
+* **api:** stable names for shared models; typed methods for sender profiles, channels, compliance requirements and message cancel ([d37d4b3](https://github.com/sentdm/sent-dm-java/commit/d37d4b30a5ff1e3fe4c0f8814222c3168c60895d))
+
 ## [0.48.0](https://github.com/sentdm/sent-dm-java/compare/v0.47.0...v0.48.0) (2026-11-05)
 
 
