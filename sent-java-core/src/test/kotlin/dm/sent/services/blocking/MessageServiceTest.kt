@@ -4,6 +4,7 @@ package dm.sent.services.blocking
 
 import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.core.JsonValue
+import dm.sent.models.messages.MessageCancelParams
 import dm.sent.models.messages.MessageResendParams
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
 import dm.sent.models.messages.MessageRetrieveStatusParams
@@ -13,6 +14,25 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class MessageServiceTest {
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun cancel() {
+        val client = SentOkHttpClient.builder().apiKey("My API Key").build()
+        val messageService = client.messages()
+
+        val response =
+            messageService.cancel(
+                MessageCancelParams.builder()
+                    .id("8ba7b830-9dad-11d1-80b4-00c04fd430c8")
+                    .idempotencyKey("req_abc123_retry1")
+                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .mutationRequest(MutationRequest.builder().sandbox(false).build())
+                    .build()
+            )
+
+        response.validate()
+    }
 
     @Disabled("Mock server tests are disabled")
     @Test

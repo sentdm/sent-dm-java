@@ -16,6 +16,8 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
+import dm.sent.models.messages.MessageCancelParams
+import dm.sent.models.messages.MessageCancelResponse
 import dm.sent.models.messages.MessageResendParams
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
 import dm.sent.models.messages.MessageRetrieveActivitiesResponse
@@ -60,6 +62,13 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): MessageServiceAsync =
         MessageServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    override fun cancel(
+        params: MessageCancelParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<MessageCancelResponse> =
+        // post /v3/messages/{id}/cancel
+        withRawResponse().cancel(params, requestOptions).thenApply { it.parse() }
+
     override fun resend(
         params: MessageResendParams,
         requestOptions: RequestOptions,
@@ -100,6 +109,40 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
             MessageServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        private val cancelHandler: Handler<MessageCancelResponse> =
+            jsonHandler<MessageCancelResponse>(clientOptions.jsonMapper)
+
+        override fun cancel(
+            params: MessageCancelParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<MessageCancelResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v3", "messages", params._pathParam(0), "cancel")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { cancelHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
 
         private val resendHandler: Handler<MessageSendResponse> =
             jsonHandler<MessageSendResponse>(clientOptions.jsonMapper)
