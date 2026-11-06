@@ -17,13 +17,13 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
+import dm.sent.models.profiles.ApiResponseOfProfileCompletionResult
 import dm.sent.models.profiles.ApiResponseOfProfileDetail
+import dm.sent.models.profiles.ApiResponseOfProfilesList
 import dm.sent.models.profiles.ProfileCompleteParams
-import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
-import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
 import dm.sent.services.blocking.profiles.CampaignService
@@ -93,7 +93,7 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
     override fun list(
         params: ProfileListParams,
         requestOptions: RequestOptions,
-    ): ProfileListResponse =
+    ): ApiResponseOfProfilesList =
         // get /v3/profiles
         withRawResponse().list(params, requestOptions).parse()
 
@@ -107,7 +107,7 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
     override fun complete(
         params: ProfileCompleteParams,
         requestOptions: RequestOptions,
-    ): ProfileCompleteResponse =
+    ): ApiResponseOfProfileCompletionResult =
         // post /v3/profiles/{profileId}/complete
         withRawResponse().complete(params, requestOptions).parse()
 
@@ -231,14 +231,14 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val listHandler: Handler<ProfileListResponse> =
-            jsonHandler<ProfileListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ApiResponseOfProfilesList> =
+            jsonHandler<ApiResponseOfProfilesList>(clientOptions.jsonMapper)
 
         @Deprecated("deprecated")
         override fun list(
             params: ProfileListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ProfileListResponse> {
+        ): HttpResponseFor<ApiResponseOfProfilesList> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -284,14 +284,14 @@ class ProfileServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val completeHandler: Handler<ProfileCompleteResponse> =
-            jsonHandler<ProfileCompleteResponse>(clientOptions.jsonMapper)
+        private val completeHandler: Handler<ApiResponseOfProfileCompletionResult> =
+            jsonHandler<ApiResponseOfProfileCompletionResult>(clientOptions.jsonMapper)
 
         @Deprecated("deprecated")
         override fun complete(
             params: ProfileCompleteParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ProfileCompleteResponse> {
+        ): HttpResponseFor<ApiResponseOfProfileCompletionResult> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())

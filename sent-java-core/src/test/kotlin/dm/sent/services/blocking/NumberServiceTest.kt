@@ -15,7 +15,7 @@ internal class NumberServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val numberService = client.numbers()
 
-        val response =
+        val apiResponseOfNumberLookupResult =
             numberService.lookup(
                 NumberLookupParams.builder()
                     .phoneNumber("+12025551234")
@@ -23,6 +23,6 @@ internal class NumberServiceTest {
                     .build()
             )
 
-        response.validate()
+        apiResponseOfNumberLookupResult.validate()
     }
 }

@@ -7,9 +7,9 @@ import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.models.users.ApiResponseOfUser
+import dm.sent.models.users.ApiResponseOfUsersList
 import dm.sent.models.users.UserInviteParams
 import dm.sent.models.users.UserListParams
-import dm.sent.models.users.UserListResponse
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserRetrieveParams
 import dm.sent.models.users.UserUpdateRoleParams
@@ -80,20 +80,21 @@ interface UserServiceAsync {
      * including their roles and status. Shows invited users (pending acceptance) and active users.
      * Requires developer role or higher.
      */
-    fun list(): CompletableFuture<UserListResponse> = list(UserListParams.none())
+    fun list(): CompletableFuture<ApiResponseOfUsersList> = list(UserListParams.none())
 
     /** @see list */
     fun list(
         params: UserListParams = UserListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<UserListResponse>
+    ): CompletableFuture<ApiResponseOfUsersList>
 
     /** @see list */
-    fun list(params: UserListParams = UserListParams.none()): CompletableFuture<UserListResponse> =
-        list(params, RequestOptions.none())
+    fun list(
+        params: UserListParams = UserListParams.none()
+    ): CompletableFuture<ApiResponseOfUsersList> = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<UserListResponse> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfUsersList> =
         list(UserListParams.none(), requestOptions)
 
     /**
@@ -235,25 +236,25 @@ interface UserServiceAsync {
          * Returns a raw HTTP response for `get /v3/users`, but is otherwise the same as
          * [UserServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<UserListResponse>> =
+        fun list(): CompletableFuture<HttpResponseFor<ApiResponseOfUsersList>> =
             list(UserListParams.none())
 
         /** @see list */
         fun list(
             params: UserListParams = UserListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<UserListResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfUsersList>>
 
         /** @see list */
         fun list(
             params: UserListParams = UserListParams.none()
-        ): CompletableFuture<HttpResponseFor<UserListResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfUsersList>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<UserListResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfUsersList>> =
             list(UserListParams.none(), requestOptions)
 
         /**

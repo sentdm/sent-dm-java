@@ -16,15 +16,15 @@ class WebhookListPage
 private constructor(
     private val service: WebhookService,
     private val params: WebhookListParams,
-    private val response: WebhookListPageResponse,
+    private val response: ApiResponseOfWebhooksList,
 ) : Page<WebhookResponse> {
 
     /**
-     * Delegates to [WebhookListPageResponse], but gracefully handles missing data.
+     * Delegates to [ApiResponseOfWebhooksList], but gracefully handles missing data.
      *
-     * @see WebhookListPageResponse.data
+     * @see ApiResponseOfWebhooksList.data
      */
-    fun data(): Optional<WebhookListPageResponse.Data> = response._data().getOptional("data")
+    fun data(): Optional<WebhooksList> = response._data().getOptional("data")
 
     override fun items(): List<WebhookResponse> = response.webhooks().getOrNull() ?: emptyList()
 
@@ -43,7 +43,7 @@ private constructor(
     fun params(): WebhookListParams = params
 
     /** The response that this page was parsed from. */
-    fun response(): WebhookListPageResponse = response
+    fun response(): ApiResponseOfWebhooksList = response
 
     fun toBuilder() = Builder().from(this)
 
@@ -67,7 +67,7 @@ private constructor(
 
         private var service: WebhookService? = null
         private var params: WebhookListParams? = null
-        private var response: WebhookListPageResponse? = null
+        private var response: ApiResponseOfWebhooksList? = null
 
         @JvmSynthetic
         internal fun from(webhookListPage: WebhookListPage) = apply {
@@ -82,7 +82,7 @@ private constructor(
         fun params(params: WebhookListParams) = apply { this.params = params }
 
         /** The response that this page was parsed from. */
-        fun response(response: WebhookListPageResponse) = apply { this.response = response }
+        fun response(response: ApiResponseOfWebhooksList) = apply { this.response = response }
 
         /**
          * Returns an immutable instance of [WebhookListPage].

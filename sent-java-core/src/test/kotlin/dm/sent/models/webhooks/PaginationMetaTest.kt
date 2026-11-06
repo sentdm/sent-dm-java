@@ -13,7 +13,7 @@ internal class PaginationMetaTest {
     fun create() {
         val paginationMeta =
             PaginationMeta.builder()
-                .cursors(PaginationMeta.Cursors.builder().after("after").before("before").build())
+                .cursors(PaginationCursors.builder().after("after").before("before").build())
                 .hasMore(true)
                 .page(0)
                 .pageSize(0)
@@ -22,7 +22,7 @@ internal class PaginationMetaTest {
                 .build()
 
         assertThat(paginationMeta.cursors())
-            .contains(PaginationMeta.Cursors.builder().after("after").before("before").build())
+            .contains(PaginationCursors.builder().after("after").before("before").build())
         assertThat(paginationMeta.hasMore()).contains(true)
         assertThat(paginationMeta.page()).contains(0)
         assertThat(paginationMeta.pageSize()).contains(0)
@@ -35,7 +35,7 @@ internal class PaginationMetaTest {
         val jsonMapper = jsonMapper()
         val paginationMeta =
             PaginationMeta.builder()
-                .cursors(PaginationMeta.Cursors.builder().after("after").before("before").build())
+                .cursors(PaginationCursors.builder().after("after").before("before").build())
                 .hasMore(true)
                 .page(0)
                 .pageSize(0)

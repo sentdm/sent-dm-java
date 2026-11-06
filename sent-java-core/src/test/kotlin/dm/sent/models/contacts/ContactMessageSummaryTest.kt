@@ -16,11 +16,7 @@ internal class ContactMessageSummaryTest {
         val contactMessageSummary =
             ContactMessageSummary.builder()
                 .addChannelScore(
-                    ContactMessageSummary.ChannelScore.builder()
-                        .channel("channel")
-                        .failScore(0)
-                        .successScore(0)
-                        .build()
+                    ChannelScore.builder().channel("channel").failScore(0).successScore(0).build()
                 )
                 .addChannelsUsed("string")
                 .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -31,11 +27,7 @@ internal class ContactMessageSummaryTest {
 
         assertThat(contactMessageSummary.channelScores().getOrNull())
             .containsExactly(
-                ContactMessageSummary.ChannelScore.builder()
-                    .channel("channel")
-                    .failScore(0)
-                    .successScore(0)
-                    .build()
+                ChannelScore.builder().channel("channel").failScore(0).successScore(0).build()
             )
         assertThat(contactMessageSummary.channelsUsed().getOrNull()).containsExactly("string")
         assertThat(contactMessageSummary.contactId())
@@ -53,11 +45,7 @@ internal class ContactMessageSummaryTest {
         val contactMessageSummary =
             ContactMessageSummary.builder()
                 .addChannelScore(
-                    ContactMessageSummary.ChannelScore.builder()
-                        .channel("channel")
-                        .failScore(0)
-                        .successScore(0)
-                        .build()
+                    ChannelScore.builder().channel("channel").failScore(0).successScore(0).build()
                 )
                 .addChannelsUsed("string")
                 .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

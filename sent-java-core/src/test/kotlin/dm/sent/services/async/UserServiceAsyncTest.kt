@@ -38,13 +38,13 @@ internal class UserServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val userServiceAsync = client.users()
 
-        val usersFuture =
+        val apiResponseOfUsersListFuture =
             userServiceAsync.list(
                 UserListParams.builder().xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
             )
 
-        val users = usersFuture.get()
-        users.validate()
+        val apiResponseOfUsersList = apiResponseOfUsersListFuture.get()
+        apiResponseOfUsersList.validate()
     }
 
     @Disabled("Mock server tests are disabled")

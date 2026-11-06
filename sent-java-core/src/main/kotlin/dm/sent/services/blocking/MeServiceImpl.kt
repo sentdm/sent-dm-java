@@ -14,8 +14,8 @@ import dm.sent.core.http.HttpResponse.Handler
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
+import dm.sent.models.me.ApiResponseOfAccount
 import dm.sent.models.me.MeRetrieveParams
-import dm.sent.models.me.MeRetrieveResponse
 import java.util.function.Consumer
 
 /**
@@ -39,7 +39,7 @@ class MeServiceImpl internal constructor(private val clientOptions: ClientOption
     override fun retrieve(
         params: MeRetrieveParams,
         requestOptions: RequestOptions,
-    ): MeRetrieveResponse =
+    ): ApiResponseOfAccount =
         // get /v3/me
         withRawResponse().retrieve(params, requestOptions).parse()
 
@@ -56,13 +56,13 @@ class MeServiceImpl internal constructor(private val clientOptions: ClientOption
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val retrieveHandler: Handler<MeRetrieveResponse> =
-            jsonHandler<MeRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<ApiResponseOfAccount> =
+            jsonHandler<ApiResponseOfAccount>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: MeRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<MeRetrieveResponse> {
+        ): HttpResponseFor<ApiResponseOfAccount> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)

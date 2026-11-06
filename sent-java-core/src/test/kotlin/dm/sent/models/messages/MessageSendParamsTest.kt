@@ -4,6 +4,7 @@ package dm.sent.models.messages
 
 import dm.sent.core.JsonValue
 import dm.sent.core.http.Headers
+import dm.sent.models.templates.TemplateRef
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -38,11 +39,11 @@ internal class MessageSendParamsTest {
             .scheduledAt(null)
             .subject(null)
             .template(
-                MessageSendParams.Template.builder()
+                TemplateRef.builder()
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                     .name("order_confirmation")
                     .parameters(
-                        MessageSendParams.Template.Parameters.builder()
+                        TemplateRef.Parameters.builder()
                             .putAdditionalProperty("name", JsonValue.from("John Doe"))
                             .putAdditionalProperty("order_id", JsonValue.from("12345"))
                             .build()
@@ -84,11 +85,11 @@ internal class MessageSendParamsTest {
                 .scheduledAt(null)
                 .subject(null)
                 .template(
-                    MessageSendParams.Template.builder()
+                    TemplateRef.builder()
                         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                         .name("order_confirmation")
                         .parameters(
-                            MessageSendParams.Template.Parameters.builder()
+                            TemplateRef.Parameters.builder()
                                 .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                 .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                 .build()
@@ -149,11 +150,11 @@ internal class MessageSendParamsTest {
                 .scheduledAt(null)
                 .subject(null)
                 .template(
-                    MessageSendParams.Template.builder()
+                    TemplateRef.builder()
                         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                         .name("order_confirmation")
                         .parameters(
-                            MessageSendParams.Template.Parameters.builder()
+                            TemplateRef.Parameters.builder()
                                 .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                 .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                 .build()
@@ -191,11 +192,11 @@ internal class MessageSendParamsTest {
         assertThat(body.subject()).isEmpty
         assertThat(body.template())
             .contains(
-                MessageSendParams.Template.builder()
+                TemplateRef.builder()
                     .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                     .name("order_confirmation")
                     .parameters(
-                        MessageSendParams.Template.Parameters.builder()
+                        TemplateRef.Parameters.builder()
                             .putAdditionalProperty("name", JsonValue.from("John Doe"))
                             .putAdditionalProperty("order_id", JsonValue.from("12345"))
                             .build()
