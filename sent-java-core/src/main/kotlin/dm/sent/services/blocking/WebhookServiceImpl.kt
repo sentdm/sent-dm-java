@@ -17,22 +17,22 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
+import dm.sent.models.webhooks.ApiResponseOfWebhookEventTypesList
+import dm.sent.models.webhooks.ApiResponseOfWebhookEventsList
+import dm.sent.models.webhooks.ApiResponseOfWebhookSecret
+import dm.sent.models.webhooks.ApiResponseOfWebhookTest
+import dm.sent.models.webhooks.ApiResponseOfWebhooksList
 import dm.sent.models.webhooks.ApiResponseWebhook
 import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
-import dm.sent.models.webhooks.WebhookListEventTypesResponse
 import dm.sent.models.webhooks.WebhookListEventsPage
-import dm.sent.models.webhooks.WebhookListEventsPageResponse
 import dm.sent.models.webhooks.WebhookListEventsParams
 import dm.sent.models.webhooks.WebhookListPage
-import dm.sent.models.webhooks.WebhookListPageResponse
 import dm.sent.models.webhooks.WebhookListParams
 import dm.sent.models.webhooks.WebhookRetrieveParams
 import dm.sent.models.webhooks.WebhookRotateSecretParams
-import dm.sent.models.webhooks.WebhookRotateSecretResponse
 import dm.sent.models.webhooks.WebhookTestParams
-import dm.sent.models.webhooks.WebhookTestResponse
 import dm.sent.models.webhooks.WebhookToggleStatusParams
 import dm.sent.models.webhooks.WebhookUpdateParams
 import java.util.function.Consumer
@@ -95,7 +95,7 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
     override fun listEventTypes(
         params: WebhookListEventTypesParams,
         requestOptions: RequestOptions,
-    ): WebhookListEventTypesResponse =
+    ): ApiResponseOfWebhookEventTypesList =
         // get /v3/webhooks/event-types
         withRawResponse().listEventTypes(params, requestOptions).parse()
 
@@ -109,14 +109,14 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
     override fun rotateSecret(
         params: WebhookRotateSecretParams,
         requestOptions: RequestOptions,
-    ): WebhookRotateSecretResponse =
+    ): ApiResponseOfWebhookSecret =
         // post /v3/webhooks/{id}/rotate-secret
         withRawResponse().rotateSecret(params, requestOptions).parse()
 
     override fun test(
         params: WebhookTestParams,
         requestOptions: RequestOptions,
-    ): WebhookTestResponse =
+    ): ApiResponseOfWebhookTest =
         // post /v3/webhooks/{id}/test
         withRawResponse().test(params, requestOptions).parse()
 
@@ -229,8 +229,8 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val listHandler: Handler<WebhookListPageResponse> =
-            jsonHandler<WebhookListPageResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ApiResponseOfWebhooksList> =
+            jsonHandler<ApiResponseOfWebhooksList>(clientOptions.jsonMapper)
 
         override fun list(
             params: WebhookListParams,
@@ -287,13 +287,13 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val listEventTypesHandler: Handler<WebhookListEventTypesResponse> =
-            jsonHandler<WebhookListEventTypesResponse>(clientOptions.jsonMapper)
+        private val listEventTypesHandler: Handler<ApiResponseOfWebhookEventTypesList> =
+            jsonHandler<ApiResponseOfWebhookEventTypesList>(clientOptions.jsonMapper)
 
         override fun listEventTypes(
             params: WebhookListEventTypesParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookListEventTypesResponse> {
+        ): HttpResponseFor<ApiResponseOfWebhookEventTypesList> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -314,8 +314,8 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val listEventsHandler: Handler<WebhookListEventsPageResponse> =
-            jsonHandler<WebhookListEventsPageResponse>(clientOptions.jsonMapper)
+        private val listEventsHandler: Handler<ApiResponseOfWebhookEventsList> =
+            jsonHandler<ApiResponseOfWebhookEventsList>(clientOptions.jsonMapper)
 
         override fun listEvents(
             params: WebhookListEventsParams,
@@ -351,13 +351,13 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val rotateSecretHandler: Handler<WebhookRotateSecretResponse> =
-            jsonHandler<WebhookRotateSecretResponse>(clientOptions.jsonMapper)
+        private val rotateSecretHandler: Handler<ApiResponseOfWebhookSecret> =
+            jsonHandler<ApiResponseOfWebhookSecret>(clientOptions.jsonMapper)
 
         override fun rotateSecret(
             params: WebhookRotateSecretParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookRotateSecretResponse> {
+        ): HttpResponseFor<ApiResponseOfWebhookSecret> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -382,13 +382,13 @@ class WebhookServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val testHandler: Handler<WebhookTestResponse> =
-            jsonHandler<WebhookTestResponse>(clientOptions.jsonMapper)
+        private val testHandler: Handler<ApiResponseOfWebhookTest> =
+            jsonHandler<ApiResponseOfWebhookTest>(clientOptions.jsonMapper)
 
         override fun test(
             params: WebhookTestParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookTestResponse> {
+        ): HttpResponseFor<ApiResponseOfWebhookTest> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

@@ -16,6 +16,7 @@ import dm.sent.client.SentClient
 import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.core.JsonValue
 import dm.sent.models.messages.MessageSendParams
+import dm.sent.models.templates.TemplateRef
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -69,11 +70,11 @@ internal class ServiceParamsTest {
                 .scheduledAt(null)
                 .subject(null)
                 .template(
-                    MessageSendParams.Template.builder()
+                    TemplateRef.builder()
                         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                         .name("order_confirmation")
                         .parameters(
-                            MessageSendParams.Template.Parameters.builder()
+                            TemplateRef.Parameters.builder()
                                 .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                 .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                 .build()

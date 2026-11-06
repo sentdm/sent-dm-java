@@ -7,6 +7,7 @@ import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
+import dm.sent.models.webhooks.PaginationCursors
 import dm.sent.models.webhooks.PaginationMeta
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
@@ -33,7 +34,7 @@ internal class ApiResponseOfCallsListTest {
                                 .failureReason("failure_reason")
                                 .from(CallParty.builder().kind("kind").value("value").build())
                                 .addLeg(
-                                    Call.Leg.builder()
+                                    CallLeg.builder()
                                         .billedMinutes(0)
                                         .cost(0.0)
                                         .currency("currency")
@@ -59,7 +60,7 @@ internal class ApiResponseOfCallsListTest {
                         .pagination(
                             PaginationMeta.builder()
                                 .cursors(
-                                    PaginationMeta.Cursors.builder()
+                                    PaginationCursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -111,7 +112,7 @@ internal class ApiResponseOfCallsListTest {
                             .failureReason("failure_reason")
                             .from(CallParty.builder().kind("kind").value("value").build())
                             .addLeg(
-                                Call.Leg.builder()
+                                CallLeg.builder()
                                     .billedMinutes(0)
                                     .cost(0.0)
                                     .currency("currency")
@@ -137,10 +138,7 @@ internal class ApiResponseOfCallsListTest {
                     .pagination(
                         PaginationMeta.builder()
                             .cursors(
-                                PaginationMeta.Cursors.builder()
-                                    .after("after")
-                                    .before("before")
-                                    .build()
+                                PaginationCursors.builder().after("after").before("before").build()
                             )
                             .hasMore(true)
                             .page(0)
@@ -195,7 +193,7 @@ internal class ApiResponseOfCallsListTest {
                                 .failureReason("failure_reason")
                                 .from(CallParty.builder().kind("kind").value("value").build())
                                 .addLeg(
-                                    Call.Leg.builder()
+                                    CallLeg.builder()
                                         .billedMinutes(0)
                                         .cost(0.0)
                                         .currency("currency")
@@ -221,7 +219,7 @@ internal class ApiResponseOfCallsListTest {
                         .pagination(
                             PaginationMeta.builder()
                                 .cursors(
-                                    PaginationMeta.Cursors.builder()
+                                    PaginationCursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()

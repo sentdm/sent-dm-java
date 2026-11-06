@@ -15,7 +15,7 @@ internal class NumberServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val numberServiceAsync = client.numbers()
 
-        val responseFuture =
+        val apiResponseOfNumberLookupResultFuture =
             numberServiceAsync.lookup(
                 NumberLookupParams.builder()
                     .phoneNumber("+12025551234")
@@ -23,7 +23,7 @@ internal class NumberServiceAsyncTest {
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val apiResponseOfNumberLookupResult = apiResponseOfNumberLookupResultFuture.get()
+        apiResponseOfNumberLookupResult.validate()
     }
 }

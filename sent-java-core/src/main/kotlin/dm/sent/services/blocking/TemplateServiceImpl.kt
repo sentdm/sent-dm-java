@@ -17,11 +17,11 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
+import dm.sent.models.templates.ApiResponseOfTemplatesList
 import dm.sent.models.templates.ApiResponseTemplate
 import dm.sent.models.templates.TemplateCreateParams
 import dm.sent.models.templates.TemplateDeleteParams
 import dm.sent.models.templates.TemplateListPage
-import dm.sent.models.templates.TemplateListPageResponse
 import dm.sent.models.templates.TemplateListParams
 import dm.sent.models.templates.TemplateRetrieveParams
 import dm.sent.models.templates.TemplateUpdateParams
@@ -183,8 +183,8 @@ class TemplateServiceImpl internal constructor(private val clientOptions: Client
             }
         }
 
-        private val listHandler: Handler<TemplateListPageResponse> =
-            jsonHandler<TemplateListPageResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ApiResponseOfTemplatesList> =
+            jsonHandler<ApiResponseOfTemplatesList>(clientOptions.jsonMapper)
 
         override fun list(
             params: TemplateListParams,

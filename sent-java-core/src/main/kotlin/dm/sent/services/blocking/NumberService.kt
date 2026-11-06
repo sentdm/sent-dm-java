@@ -6,8 +6,8 @@ import com.google.errorprone.annotations.MustBeClosed
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.numbers.ApiResponseOfNumberLookupResult
 import dm.sent.models.numbers.NumberLookupParams
-import dm.sent.models.numbers.NumberLookupResponse
 import java.util.function.Consumer
 
 /**
@@ -36,7 +36,7 @@ interface NumberService {
      * status, and VoIP detection. Uses the customer's messaging provider for rich data, with
      * fallback to the internal index.
      */
-    fun lookup(phoneNumber: String): NumberLookupResponse =
+    fun lookup(phoneNumber: String): ApiResponseOfNumberLookupResult =
         lookup(phoneNumber, NumberLookupParams.none())
 
     /** @see lookup */
@@ -44,27 +44,30 @@ interface NumberService {
         phoneNumber: String,
         params: NumberLookupParams = NumberLookupParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): NumberLookupResponse =
+    ): ApiResponseOfNumberLookupResult =
         lookup(params.toBuilder().phoneNumber(phoneNumber).build(), requestOptions)
 
     /** @see lookup */
     fun lookup(
         phoneNumber: String,
         params: NumberLookupParams = NumberLookupParams.none(),
-    ): NumberLookupResponse = lookup(phoneNumber, params, RequestOptions.none())
+    ): ApiResponseOfNumberLookupResult = lookup(phoneNumber, params, RequestOptions.none())
 
     /** @see lookup */
     fun lookup(
         params: NumberLookupParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): NumberLookupResponse
+    ): ApiResponseOfNumberLookupResult
 
     /** @see lookup */
-    fun lookup(params: NumberLookupParams): NumberLookupResponse =
+    fun lookup(params: NumberLookupParams): ApiResponseOfNumberLookupResult =
         lookup(params, RequestOptions.none())
 
     /** @see lookup */
-    fun lookup(phoneNumber: String, requestOptions: RequestOptions): NumberLookupResponse =
+    fun lookup(
+        phoneNumber: String,
+        requestOptions: RequestOptions,
+    ): ApiResponseOfNumberLookupResult =
         lookup(phoneNumber, NumberLookupParams.none(), requestOptions)
 
     /** A view of [NumberService] that provides access to raw HTTP responses for each method. */
@@ -82,7 +85,7 @@ interface NumberService {
          * the same as [NumberService.lookup].
          */
         @MustBeClosed
-        fun lookup(phoneNumber: String): HttpResponseFor<NumberLookupResponse> =
+        fun lookup(phoneNumber: String): HttpResponseFor<ApiResponseOfNumberLookupResult> =
             lookup(phoneNumber, NumberLookupParams.none())
 
         /** @see lookup */
@@ -91,7 +94,7 @@ interface NumberService {
             phoneNumber: String,
             params: NumberLookupParams = NumberLookupParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<NumberLookupResponse> =
+        ): HttpResponseFor<ApiResponseOfNumberLookupResult> =
             lookup(params.toBuilder().phoneNumber(phoneNumber).build(), requestOptions)
 
         /** @see lookup */
@@ -99,7 +102,7 @@ interface NumberService {
         fun lookup(
             phoneNumber: String,
             params: NumberLookupParams = NumberLookupParams.none(),
-        ): HttpResponseFor<NumberLookupResponse> =
+        ): HttpResponseFor<ApiResponseOfNumberLookupResult> =
             lookup(phoneNumber, params, RequestOptions.none())
 
         /** @see lookup */
@@ -107,11 +110,11 @@ interface NumberService {
         fun lookup(
             params: NumberLookupParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<NumberLookupResponse>
+        ): HttpResponseFor<ApiResponseOfNumberLookupResult>
 
         /** @see lookup */
         @MustBeClosed
-        fun lookup(params: NumberLookupParams): HttpResponseFor<NumberLookupResponse> =
+        fun lookup(params: NumberLookupParams): HttpResponseFor<ApiResponseOfNumberLookupResult> =
             lookup(params, RequestOptions.none())
 
         /** @see lookup */
@@ -119,7 +122,7 @@ interface NumberService {
         fun lookup(
             phoneNumber: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<NumberLookupResponse> =
+        ): HttpResponseFor<ApiResponseOfNumberLookupResult> =
             lookup(phoneNumber, NumberLookupParams.none(), requestOptions)
     }
 }

@@ -15,14 +15,14 @@ internal class MeServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val meServiceAsync = client.me()
 
-        val meFuture =
+        val apiResponseOfAccountFuture =
             meServiceAsync.retrieve(
                 MeRetrieveParams.builder()
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 
-        val me = meFuture.get()
-        me.validate()
+        val apiResponseOfAccount = apiResponseOfAccountFuture.get()
+        apiResponseOfAccount.validate()
     }
 }

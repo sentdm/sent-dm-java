@@ -17,7 +17,7 @@ internal class TemplateHeaderTest {
                 .template("template")
                 .exampleUrl("example_url")
                 .location(
-                    TemplateHeader.Location.builder()
+                    TemplateHeaderLocation.builder()
                         .address("x")
                         .latitude("x")
                         .longitude("x")
@@ -30,7 +30,7 @@ internal class TemplateHeaderTest {
                     TemplateVariable.builder()
                         .name("x")
                         .props(
-                            TemplateVariable.Props.builder()
+                            TemplateVariableProps.builder()
                                 .mediaType("x")
                                 .sample("x")
                                 .url("x")
@@ -50,7 +50,7 @@ internal class TemplateHeaderTest {
         assertThat(templateHeader.exampleUrl()).contains("example_url")
         assertThat(templateHeader.location())
             .contains(
-                TemplateHeader.Location.builder()
+                TemplateHeaderLocation.builder()
                     .address("x")
                     .latitude("x")
                     .longitude("x")
@@ -64,7 +64,7 @@ internal class TemplateHeaderTest {
                 TemplateVariable.builder()
                     .name("x")
                     .props(
-                        TemplateVariable.Props.builder()
+                        TemplateVariableProps.builder()
                             .mediaType("x")
                             .sample("x")
                             .url("x")
@@ -88,7 +88,7 @@ internal class TemplateHeaderTest {
                 .template("template")
                 .exampleUrl("example_url")
                 .location(
-                    TemplateHeader.Location.builder()
+                    TemplateHeaderLocation.builder()
                         .address("x")
                         .latitude("x")
                         .longitude("x")
@@ -101,7 +101,7 @@ internal class TemplateHeaderTest {
                     TemplateVariable.builder()
                         .name("x")
                         .props(
-                            TemplateVariable.Props.builder()
+                            TemplateVariableProps.builder()
                                 .mediaType("x")
                                 .sample("x")
                                 .url("x")

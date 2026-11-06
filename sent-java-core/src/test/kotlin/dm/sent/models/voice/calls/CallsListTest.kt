@@ -4,6 +4,7 @@ package dm.sent.models.voice.calls
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.jsonMapper
+import dm.sent.models.webhooks.PaginationCursors
 import dm.sent.models.webhooks.PaginationMeta
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
@@ -29,7 +30,7 @@ internal class CallsListTest {
                         .failureReason("failure_reason")
                         .from(CallParty.builder().kind("kind").value("value").build())
                         .addLeg(
-                            Call.Leg.builder()
+                            CallLeg.builder()
                                 .billedMinutes(0)
                                 .cost(0.0)
                                 .currency("currency")
@@ -55,7 +56,7 @@ internal class CallsListTest {
                 .pagination(
                     PaginationMeta.builder()
                         .cursors(
-                            PaginationMeta.Cursors.builder().after("after").before("before").build()
+                            PaginationCursors.builder().after("after").before("before").build()
                         )
                         .hasMore(true)
                         .page(0)
@@ -80,7 +81,7 @@ internal class CallsListTest {
                     .failureReason("failure_reason")
                     .from(CallParty.builder().kind("kind").value("value").build())
                     .addLeg(
-                        Call.Leg.builder()
+                        CallLeg.builder()
                             .billedMinutes(0)
                             .cost(0.0)
                             .currency("currency")
@@ -106,9 +107,7 @@ internal class CallsListTest {
         assertThat(callsList.pagination())
             .contains(
                 PaginationMeta.builder()
-                    .cursors(
-                        PaginationMeta.Cursors.builder().after("after").before("before").build()
-                    )
+                    .cursors(PaginationCursors.builder().after("after").before("before").build())
                     .hasMore(true)
                     .page(0)
                     .pageSize(0)
@@ -136,7 +135,7 @@ internal class CallsListTest {
                         .failureReason("failure_reason")
                         .from(CallParty.builder().kind("kind").value("value").build())
                         .addLeg(
-                            Call.Leg.builder()
+                            CallLeg.builder()
                                 .billedMinutes(0)
                                 .cost(0.0)
                                 .currency("currency")
@@ -162,7 +161,7 @@ internal class CallsListTest {
                 .pagination(
                     PaginationMeta.builder()
                         .cursors(
-                            PaginationMeta.Cursors.builder().after("after").before("before").build()
+                            PaginationCursors.builder().after("after").before("before").build()
                         )
                         .hasMore(true)
                         .page(0)

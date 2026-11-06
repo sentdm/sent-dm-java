@@ -11,6 +11,7 @@ import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.errors.SentInvalidDataException
+import dm.sent.models.messages.Message
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
 import dm.sent.models.webhooks.PaginationMeta
@@ -40,8 +41,7 @@ private constructor(
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
-    fun messages(): Optional<List<ConversationMessagesList.Message>> =
-        data().flatMap { it.messages() }
+    fun messages(): Optional<List<Message>> = data().flatMap { it.messages() }
 
     fun pagination(): Optional<PaginationMeta> = data().flatMap { it.pagination() }
 

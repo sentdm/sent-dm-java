@@ -7,13 +7,13 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.profiles.ApiResponseOfProfileCompletionResult
 import dm.sent.models.profiles.ApiResponseOfProfileDetail
+import dm.sent.models.profiles.ApiResponseOfProfilesList
 import dm.sent.models.profiles.ProfileCompleteParams
-import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
-import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
 import dm.sent.services.blocking.profiles.CampaignService
@@ -239,23 +239,23 @@ interface ProfileService {
      * profile. Profiles represent different brands, departments, or use cases within an
      * organization, each with their own messaging configuration.
      */
-    @Deprecated("deprecated") fun list(): ProfileListResponse = list(ProfileListParams.none())
+    @Deprecated("deprecated") fun list(): ApiResponseOfProfilesList = list(ProfileListParams.none())
 
     /** @see list */
     @Deprecated("deprecated")
     fun list(
         params: ProfileListParams = ProfileListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileListResponse
+    ): ApiResponseOfProfilesList
 
     /** @see list */
     @Deprecated("deprecated")
-    fun list(params: ProfileListParams = ProfileListParams.none()): ProfileListResponse =
+    fun list(params: ProfileListParams = ProfileListParams.none()): ApiResponseOfProfilesList =
         list(params, RequestOptions.none())
 
     /** @see list */
     @Deprecated("deprecated")
-    fun list(requestOptions: RequestOptions): ProfileListResponse =
+    fun list(requestOptions: RequestOptions): ApiResponseOfProfilesList =
         list(ProfileListParams.none(), requestOptions)
 
     /**
@@ -333,8 +333,10 @@ interface ProfileService {
      *   reports the reason
      */
     @Deprecated("deprecated")
-    fun complete(profileId: String, params: ProfileCompleteParams): ProfileCompleteResponse =
-        complete(profileId, params, RequestOptions.none())
+    fun complete(
+        profileId: String,
+        params: ProfileCompleteParams,
+    ): ApiResponseOfProfileCompletionResult = complete(profileId, params, RequestOptions.none())
 
     /** @see complete */
     @Deprecated("deprecated")
@@ -342,12 +344,12 @@ interface ProfileService {
         profileId: String,
         params: ProfileCompleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileCompleteResponse =
+    ): ApiResponseOfProfileCompletionResult =
         complete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see complete */
     @Deprecated("deprecated")
-    fun complete(params: ProfileCompleteParams): ProfileCompleteResponse =
+    fun complete(params: ProfileCompleteParams): ApiResponseOfProfileCompletionResult =
         complete(params, RequestOptions.none())
 
     /** @see complete */
@@ -355,7 +357,7 @@ interface ProfileService {
     fun complete(
         params: ProfileCompleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ProfileCompleteResponse
+    ): ApiResponseOfProfileCompletionResult
 
     /** A view of [ProfileService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -516,7 +518,7 @@ interface ProfileService {
          */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun list(): HttpResponseFor<ProfileListResponse> = list(ProfileListParams.none())
+        fun list(): HttpResponseFor<ApiResponseOfProfilesList> = list(ProfileListParams.none())
 
         /** @see list */
         @Deprecated("deprecated")
@@ -524,19 +526,19 @@ interface ProfileService {
         fun list(
             params: ProfileListParams = ProfileListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileListResponse>
+        ): HttpResponseFor<ApiResponseOfProfilesList>
 
         /** @see list */
         @Deprecated("deprecated")
         @MustBeClosed
         fun list(
             params: ProfileListParams = ProfileListParams.none()
-        ): HttpResponseFor<ProfileListResponse> = list(params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseOfProfilesList> = list(params, RequestOptions.none())
 
         /** @see list */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<ProfileListResponse> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<ApiResponseOfProfilesList> =
             list(ProfileListParams.none(), requestOptions)
 
         /**
@@ -580,7 +582,7 @@ interface ProfileService {
         fun complete(
             profileId: String,
             params: ProfileCompleteParams,
-        ): HttpResponseFor<ProfileCompleteResponse> =
+        ): HttpResponseFor<ApiResponseOfProfileCompletionResult> =
             complete(profileId, params, RequestOptions.none())
 
         /** @see complete */
@@ -590,13 +592,15 @@ interface ProfileService {
             profileId: String,
             params: ProfileCompleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileCompleteResponse> =
+        ): HttpResponseFor<ApiResponseOfProfileCompletionResult> =
             complete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see complete */
         @Deprecated("deprecated")
         @MustBeClosed
-        fun complete(params: ProfileCompleteParams): HttpResponseFor<ProfileCompleteResponse> =
+        fun complete(
+            params: ProfileCompleteParams
+        ): HttpResponseFor<ApiResponseOfProfileCompletionResult> =
             complete(params, RequestOptions.none())
 
         /** @see complete */
@@ -605,6 +609,6 @@ interface ProfileService {
         fun complete(
             params: ProfileCompleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ProfileCompleteResponse>
+        ): HttpResponseFor<ApiResponseOfProfileCompletionResult>
     }
 }
