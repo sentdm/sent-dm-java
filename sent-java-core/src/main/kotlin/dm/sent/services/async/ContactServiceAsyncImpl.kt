@@ -19,10 +19,10 @@ import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
 import dm.sent.models.contacts.ApiResponseOfContact
 import dm.sent.models.contacts.ApiResponseOfContactMessageSummary
+import dm.sent.models.contacts.ApiResponseOfContactsList
 import dm.sent.models.contacts.ContactCreateParams
 import dm.sent.models.contacts.ContactDeleteParams
 import dm.sent.models.contacts.ContactListPageAsync
-import dm.sent.models.contacts.ContactListPageResponse
 import dm.sent.models.contacts.ContactListParams
 import dm.sent.models.contacts.ContactRetrieveMessageSummaryParams
 import dm.sent.models.contacts.ContactRetrieveParams
@@ -207,8 +207,8 @@ class ContactServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val listHandler: Handler<ContactListPageResponse> =
-            jsonHandler<ContactListPageResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ApiResponseOfContactsList> =
+            jsonHandler<ApiResponseOfContactsList>(clientOptions.jsonMapper)
 
         override fun list(
             params: ContactListParams,

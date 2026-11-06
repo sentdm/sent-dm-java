@@ -13,7 +13,7 @@ import dm.sent.core.http.HttpRequest
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponse.Handler
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.core.http.multipartFormData
+import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
 import dm.sent.models.channels.sms.ApiResponseOfListOfSmsMarket
@@ -117,7 +117,7 @@ class SmsServiceAsyncImpl internal constructor(private val clientOptions: Client
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("v3", "channels", "sms")
-                    .body(multipartFormData(clientOptions.jsonMapper, params._body()))
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -196,7 +196,7 @@ class SmsServiceAsyncImpl internal constructor(private val clientOptions: Client
                         params._pathParam(0),
                         params._pathParam(1),
                     )
-                    .body(multipartFormData(clientOptions.jsonMapper, params._body()))
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

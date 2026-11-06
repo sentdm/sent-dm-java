@@ -4,16 +4,15 @@ package dm.sent.models.senderprofiles
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
-import dm.sent.core.MultipartField
 import dm.sent.core.Params
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
-import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import dm.sent.models.channels.sms.MarketCompliance
 import dm.sent.models.webhooks.MutationRequest
@@ -305,55 +304,53 @@ private constructor(
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
-     * Returns the raw multipart value of [billing].
+     * Returns the raw JSON value of [billing].
      *
-     * Unlike [billing], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [billing], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _billing(): MultipartField<SenderProfileBillingRequest> = body._billing()
+    fun _billing(): JsonField<SenderProfileBillingRequest> = body._billing()
 
     /**
-     * Returns the raw multipart value of [channels].
+     * Returns the raw JSON value of [channels].
      *
-     * Unlike [channels], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [channels], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _channels(): MultipartField<SenderProfileChannels> = body._channels()
+    fun _channels(): JsonField<SenderProfileChannels> = body._channels()
 
     /**
-     * Returns the raw multipart value of [compliance].
+     * Returns the raw JSON value of [compliance].
      *
-     * Unlike [compliance], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [compliance], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _compliance(): MultipartField<MarketCompliance> = body._compliance()
+    fun _compliance(): JsonField<MarketCompliance> = body._compliance()
 
     /**
-     * Returns the raw multipart value of [description].
+     * Returns the raw JSON value of [description].
      *
-     * Unlike [description], this method doesn't throw if the multipart field has an unexpected
-     * type.
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _description(): MultipartField<String> = body._description()
+    fun _description(): JsonField<String> = body._description()
 
     /**
-     * Returns the raw multipart value of [name].
+     * Returns the raw JSON value of [name].
      *
-     * Unlike [name], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _name(): MultipartField<String> = body._name()
+    fun _name(): JsonField<String> = body._name()
 
     /**
-     * Returns the raw multipart value of [notifications].
+     * Returns the raw JSON value of [notifications].
      *
-     * Unlike [notifications], this method doesn't throw if the multipart field has an unexpected
-     * type.
+     * Unlike [notifications], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _notifications(): MultipartField<String> = body._notifications()
+    fun _notifications(): JsonField<String> = body._notifications()
 
     /**
-     * Returns the raw multipart value of [shortName].
+     * Returns the raw JSON value of [shortName].
      *
-     * Unlike [shortName], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [shortName], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _shortName(): MultipartField<String> = body._shortName()
+    fun _shortName(): JsonField<String> = body._shortName()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -447,13 +444,13 @@ private constructor(
         fun billing(billing: Optional<SenderProfileBillingRequest>) = billing(billing.getOrNull())
 
         /**
-         * Sets [Builder.billing] to an arbitrary multipart value.
+         * Sets [Builder.billing] to an arbitrary JSON value.
          *
          * You should usually call [Builder.billing] with a well-typed [SenderProfileBillingRequest]
          * value instead. This method is primarily for setting the field to an undocumented or not
          * yet supported value.
          */
-        fun billing(billing: MultipartField<SenderProfileBillingRequest>) = apply {
+        fun billing(billing: JsonField<SenderProfileBillingRequest>) = apply {
             body.billing(billing)
         }
 
@@ -473,15 +470,13 @@ private constructor(
         fun channels(channels: Optional<SenderProfileChannels>) = channels(channels.getOrNull())
 
         /**
-         * Sets [Builder.channels] to an arbitrary multipart value.
+         * Sets [Builder.channels] to an arbitrary JSON value.
          *
          * You should usually call [Builder.channels] with a well-typed [SenderProfileChannels]
          * value instead. This method is primarily for setting the field to an undocumented or not
          * yet supported value.
          */
-        fun channels(channels: MultipartField<SenderProfileChannels>) = apply {
-            body.channels(channels)
-        }
+        fun channels(channels: JsonField<SenderProfileChannels>) = apply { body.channels(channels) }
 
         /**
          * The compliance values a market registers with. `brand` and `campaign` apply to US
@@ -491,13 +486,13 @@ private constructor(
         fun compliance(compliance: MarketCompliance) = apply { body.compliance(compliance) }
 
         /**
-         * Sets [Builder.compliance] to an arbitrary multipart value.
+         * Sets [Builder.compliance] to an arbitrary JSON value.
          *
          * You should usually call [Builder.compliance] with a well-typed [MarketCompliance] value
          * instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun compliance(compliance: MultipartField<MarketCompliance>) = apply {
+        fun compliance(compliance: JsonField<MarketCompliance>) = apply {
             body.compliance(compliance)
         }
 
@@ -507,26 +502,24 @@ private constructor(
         fun description(description: Optional<String>) = description(description.getOrNull())
 
         /**
-         * Sets [Builder.description] to an arbitrary multipart value.
+         * Sets [Builder.description] to an arbitrary JSON value.
          *
          * You should usually call [Builder.description] with a well-typed [String] value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun description(description: MultipartField<String>) = apply {
-            body.description(description)
-        }
+        fun description(description: JsonField<String>) = apply { body.description(description) }
 
         /** Display name for the profile. Required. */
         fun name(name: String) = apply { body.name(name) }
 
         /**
-         * Sets [Builder.name] to an arbitrary multipart value.
+         * Sets [Builder.name] to an arbitrary JSON value.
          *
          * You should usually call [Builder.name] with a well-typed [String] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun name(name: MultipartField<String>) = apply { body.name(name) }
+        fun name(name: JsonField<String>) = apply { body.name(name) }
 
         /**
          * Who is notified about this profile's events: ORGANIZATION, SENDER_PROFILE, or
@@ -540,13 +533,13 @@ private constructor(
             notifications(notifications.getOrNull())
 
         /**
-         * Sets [Builder.notifications] to an arbitrary multipart value.
+         * Sets [Builder.notifications] to an arbitrary JSON value.
          *
          * You should usually call [Builder.notifications] with a well-typed [String] value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun notifications(notifications: MultipartField<String>) = apply {
+        fun notifications(notifications: JsonField<String>) = apply {
             body.notifications(notifications)
         }
 
@@ -557,13 +550,13 @@ private constructor(
         fun shortName(shortName: String) = apply { body.shortName(shortName) }
 
         /**
-         * Sets [Builder.shortName] to an arbitrary multipart value.
+         * Sets [Builder.shortName] to an arbitrary JSON value.
          *
          * You should usually call [Builder.shortName] with a well-typed [String] value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun shortName(shortName: MultipartField<String>) = apply { body.shortName(shortName) }
+        fun shortName(shortName: JsonField<String>) = apply { body.shortName(shortName) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -696,17 +689,7 @@ private constructor(
             )
     }
 
-    fun _body(): Map<String, MultipartField<*>> =
-        (mapOf(
-                "billing" to _billing(),
-                "channels" to _channels(),
-                "compliance" to _compliance(),
-                "description" to _description(),
-                "name" to _name(),
-                "notifications" to _notifications(),
-                "short_name" to _shortName(),
-            ) + _additionalBodyProperties().mapValues { (_, value) -> MultipartField.of(value) })
-            .toImmutable()
+    fun _body(): Body = body
 
     override fun _headers(): Headers =
         Headers.builder()
@@ -728,17 +711,52 @@ private constructor(
      * to say it would let a request contradict itself.
      */
     class Body
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val sandbox: JsonField<Boolean>,
-        private val billing: MultipartField<SenderProfileBillingRequest>,
-        private val channels: MultipartField<SenderProfileChannels>,
-        private val compliance: MultipartField<MarketCompliance>,
-        private val description: MultipartField<String>,
-        private val name: MultipartField<String>,
-        private val notifications: MultipartField<String>,
-        private val shortName: MultipartField<String>,
+        private val billing: JsonField<SenderProfileBillingRequest>,
+        private val channels: JsonField<SenderProfileChannels>,
+        private val compliance: JsonField<MarketCompliance>,
+        private val description: JsonField<String>,
+        private val name: JsonField<String>,
+        private val notifications: JsonField<String>,
+        private val shortName: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("billing")
+            @ExcludeMissing
+            billing: JsonField<SenderProfileBillingRequest> = JsonMissing.of(),
+            @JsonProperty("channels")
+            @ExcludeMissing
+            channels: JsonField<SenderProfileChannels> = JsonMissing.of(),
+            @JsonProperty("compliance")
+            @ExcludeMissing
+            compliance: JsonField<MarketCompliance> = JsonMissing.of(),
+            @JsonProperty("description")
+            @ExcludeMissing
+            description: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("notifications")
+            @ExcludeMissing
+            notifications: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("short_name")
+            @ExcludeMissing
+            shortName: JsonField<String> = JsonMissing.of(),
+        ) : this(
+            sandbox,
+            billing,
+            channels,
+            compliance,
+            description,
+            name,
+            notifications,
+            shortName,
+            mutableMapOf(),
+        )
 
         fun toMutationRequest(): MutationRequest =
             MutationRequest.builder().sandbox(sandbox).build()
@@ -771,7 +789,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun billing(): Optional<SenderProfileBillingRequest> = billing.value.getOptional("billing")
+        fun billing(): Optional<SenderProfileBillingRequest> = billing.getOptional("billing")
 
         /**
          * The channels the profile sends on. Each is independently the profile's own or absent —
@@ -786,7 +804,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun channels(): Optional<SenderProfileChannels> = channels.value.getOptional("channels")
+        fun channels(): Optional<SenderProfileChannels> = channels.getOptional("channels")
 
         /**
          * The compliance values a market registers with. `brand` and `campaign` apply to US
@@ -796,13 +814,13 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun compliance(): Optional<MarketCompliance> = compliance.value.getOptional("compliance")
+        fun compliance(): Optional<MarketCompliance> = compliance.getOptional("compliance")
 
         /**
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun description(): Optional<String> = description.value.getOptional("description")
+        fun description(): Optional<String> = description.getOptional("description")
 
         /**
          * Display name for the profile. Required.
@@ -810,7 +828,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun name(): Optional<String> = name.value.getOptional("name")
+        fun name(): Optional<String> = name.getOptional("name")
 
         /**
          * Who is notified about this profile's events: ORGANIZATION, SENDER_PROFILE, or
@@ -820,7 +838,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun notifications(): Optional<String> = notifications.value.getOptional("notifications")
+        fun notifications(): Optional<String> = notifications.getOptional("notifications")
 
         /**
          * Short name, which is also the SMS sender id — required. 3–11 characters of letters,
@@ -829,7 +847,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun shortName(): Optional<String> = shortName.value.getOptional("short_name")
+        fun shortName(): Optional<String> = shortName.getOptional("short_name")
 
         /**
          * Returns the raw JSON value of [sandbox].
@@ -839,71 +857,64 @@ private constructor(
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
-         * Returns the raw multipart value of [billing].
+         * Returns the raw JSON value of [billing].
          *
-         * Unlike [billing], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [billing], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("billing")
         @ExcludeMissing
-        fun _billing(): MultipartField<SenderProfileBillingRequest> = billing
+        fun _billing(): JsonField<SenderProfileBillingRequest> = billing
 
         /**
-         * Returns the raw multipart value of [channels].
+         * Returns the raw JSON value of [channels].
          *
-         * Unlike [channels], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [channels], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("channels")
         @ExcludeMissing
-        fun _channels(): MultipartField<SenderProfileChannels> = channels
+        fun _channels(): JsonField<SenderProfileChannels> = channels
 
         /**
-         * Returns the raw multipart value of [compliance].
+         * Returns the raw JSON value of [compliance].
          *
-         * Unlike [compliance], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [compliance], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("compliance")
         @ExcludeMissing
-        fun _compliance(): MultipartField<MarketCompliance> = compliance
+        fun _compliance(): JsonField<MarketCompliance> = compliance
 
         /**
-         * Returns the raw multipart value of [description].
+         * Returns the raw JSON value of [description].
          *
-         * Unlike [description], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("description")
         @ExcludeMissing
-        fun _description(): MultipartField<String> = description
+        fun _description(): JsonField<String> = description
 
         /**
-         * Returns the raw multipart value of [name].
+         * Returns the raw JSON value of [name].
          *
-         * Unlike [name], this method doesn't throw if the multipart field has an unexpected type.
+         * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("name") @ExcludeMissing fun _name(): MultipartField<String> = name
+        @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
         /**
-         * Returns the raw multipart value of [notifications].
+         * Returns the raw JSON value of [notifications].
          *
-         * Unlike [notifications], this method doesn't throw if the multipart field has an
-         * unexpected type.
+         * Unlike [notifications], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("notifications")
         @ExcludeMissing
-        fun _notifications(): MultipartField<String> = notifications
+        fun _notifications(): JsonField<String> = notifications
 
         /**
-         * Returns the raw multipart value of [shortName].
+         * Returns the raw JSON value of [shortName].
          *
-         * Unlike [shortName], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [shortName], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("short_name")
-        @ExcludeMissing
-        fun _shortName(): MultipartField<String> = shortName
+        @JsonProperty("short_name") @ExcludeMissing fun _shortName(): JsonField<String> = shortName
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -927,14 +938,13 @@ private constructor(
         class Builder internal constructor() {
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
-            private var billing: MultipartField<SenderProfileBillingRequest> =
-                MultipartField.of(null)
-            private var channels: MultipartField<SenderProfileChannels> = MultipartField.of(null)
-            private var compliance: MultipartField<MarketCompliance> = MultipartField.of(null)
-            private var description: MultipartField<String> = MultipartField.of(null)
-            private var name: MultipartField<String> = MultipartField.of(null)
-            private var notifications: MultipartField<String> = MultipartField.of(null)
-            private var shortName: MultipartField<String> = MultipartField.of(null)
+            private var billing: JsonField<SenderProfileBillingRequest> = JsonMissing.of()
+            private var channels: JsonField<SenderProfileChannels> = JsonMissing.of()
+            private var compliance: JsonField<MarketCompliance> = JsonMissing.of()
+            private var description: JsonField<String> = JsonMissing.of()
+            private var name: JsonField<String> = JsonMissing.of()
+            private var notifications: JsonField<String> = JsonMissing.of()
+            private var shortName: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -982,20 +992,21 @@ private constructor(
              * brand and campaign, where supplying data is the act of owning; it becomes ordinary
              * the moment billing gains a contact or a payment method to carry.
              */
-            fun billing(billing: SenderProfileBillingRequest?) = billing(MultipartField.of(billing))
+            fun billing(billing: SenderProfileBillingRequest?) =
+                billing(JsonField.ofNullable(billing))
 
             /** Alias for calling [Builder.billing] with `billing.orElse(null)`. */
             fun billing(billing: Optional<SenderProfileBillingRequest>) =
                 billing(billing.getOrNull())
 
             /**
-             * Sets [Builder.billing] to an arbitrary multipart value.
+             * Sets [Builder.billing] to an arbitrary JSON value.
              *
              * You should usually call [Builder.billing] with a well-typed
              * [SenderProfileBillingRequest] value instead. This method is primarily for setting the
              * field to an undocumented or not yet supported value.
              */
-            fun billing(billing: MultipartField<SenderProfileBillingRequest>) = apply {
+            fun billing(billing: JsonField<SenderProfileBillingRequest>) = apply {
                 this.billing = billing
             }
 
@@ -1010,19 +1021,20 @@ private constructor(
              * being a list that accepts one entry: the constraint is in the type, and there is no
              * later widening to break the contract.
              */
-            fun channels(channels: SenderProfileChannels?) = channels(MultipartField.of(channels))
+            fun channels(channels: SenderProfileChannels?) =
+                channels(JsonField.ofNullable(channels))
 
             /** Alias for calling [Builder.channels] with `channels.orElse(null)`. */
             fun channels(channels: Optional<SenderProfileChannels>) = channels(channels.getOrNull())
 
             /**
-             * Sets [Builder.channels] to an arbitrary multipart value.
+             * Sets [Builder.channels] to an arbitrary JSON value.
              *
              * You should usually call [Builder.channels] with a well-typed [SenderProfileChannels]
              * value instead. This method is primarily for setting the field to an undocumented or
              * not yet supported value.
              */
-            fun channels(channels: MultipartField<SenderProfileChannels>) = apply {
+            fun channels(channels: JsonField<SenderProfileChannels>) = apply {
                 this.channels = channels
             }
 
@@ -1031,46 +1043,46 @@ private constructor(
              * `TEN_DLC`; other markets fill this map with the document keys their own requirements
              * name.
              */
-            fun compliance(compliance: MarketCompliance) = compliance(MultipartField.of(compliance))
+            fun compliance(compliance: MarketCompliance) = compliance(JsonField.of(compliance))
 
             /**
-             * Sets [Builder.compliance] to an arbitrary multipart value.
+             * Sets [Builder.compliance] to an arbitrary JSON value.
              *
              * You should usually call [Builder.compliance] with a well-typed [MarketCompliance]
              * value instead. This method is primarily for setting the field to an undocumented or
              * not yet supported value.
              */
-            fun compliance(compliance: MultipartField<MarketCompliance>) = apply {
+            fun compliance(compliance: JsonField<MarketCompliance>) = apply {
                 this.compliance = compliance
             }
 
-            fun description(description: String?) = description(MultipartField.of(description))
+            fun description(description: String?) = description(JsonField.ofNullable(description))
 
             /** Alias for calling [Builder.description] with `description.orElse(null)`. */
             fun description(description: Optional<String>) = description(description.getOrNull())
 
             /**
-             * Sets [Builder.description] to an arbitrary multipart value.
+             * Sets [Builder.description] to an arbitrary JSON value.
              *
              * You should usually call [Builder.description] with a well-typed [String] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun description(description: MultipartField<String>) = apply {
+            fun description(description: JsonField<String>) = apply {
                 this.description = description
             }
 
             /** Display name for the profile. Required. */
-            fun name(name: String) = name(MultipartField.of(name))
+            fun name(name: String) = name(JsonField.of(name))
 
             /**
-             * Sets [Builder.name] to an arbitrary multipart value.
+             * Sets [Builder.name] to an arbitrary JSON value.
              *
              * You should usually call [Builder.name] with a well-typed [String] value instead. This
              * method is primarily for setting the field to an undocumented or not yet supported
              * value.
              */
-            fun name(name: MultipartField<String>) = apply { this.name = name }
+            fun name(name: JsonField<String>) = apply { this.name = name }
 
             /**
              * Who is notified about this profile's events: ORGANIZATION, SENDER_PROFILE, or
@@ -1078,20 +1090,20 @@ private constructor(
              * default.
              */
             fun notifications(notifications: String?) =
-                notifications(MultipartField.of(notifications))
+                notifications(JsonField.ofNullable(notifications))
 
             /** Alias for calling [Builder.notifications] with `notifications.orElse(null)`. */
             fun notifications(notifications: Optional<String>) =
                 notifications(notifications.getOrNull())
 
             /**
-             * Sets [Builder.notifications] to an arbitrary multipart value.
+             * Sets [Builder.notifications] to an arbitrary JSON value.
              *
              * You should usually call [Builder.notifications] with a well-typed [String] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun notifications(notifications: MultipartField<String>) = apply {
+            fun notifications(notifications: JsonField<String>) = apply {
                 this.notifications = notifications
             }
 
@@ -1099,16 +1111,16 @@ private constructor(
              * Short name, which is also the SMS sender id — required. 3–11 characters of letters,
              * numbers and spaces, with at least one letter.
              */
-            fun shortName(shortName: String) = shortName(MultipartField.of(shortName))
+            fun shortName(shortName: String) = shortName(JsonField.of(shortName))
 
             /**
-             * Sets [Builder.shortName] to an arbitrary multipart value.
+             * Sets [Builder.shortName] to an arbitrary JSON value.
              *
              * You should usually call [Builder.shortName] with a well-typed [String] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun shortName(shortName: MultipartField<String>) = apply { this.shortName = shortName }
+            fun shortName(shortName: JsonField<String>) = apply { this.shortName = shortName }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -1182,6 +1194,23 @@ private constructor(
             } catch (e: SentInvalidDataException) {
                 false
             }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (sandbox.asKnown().isPresent) 1 else 0) +
+                (billing.asKnown().getOrNull()?.validity() ?: 0) +
+                (channels.asKnown().getOrNull()?.validity() ?: 0) +
+                (compliance.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (description.asKnown().isPresent) 1 else 0) +
+                (if (name.asKnown().isPresent) 1 else 0) +
+                (if (notifications.asKnown().isPresent) 1 else 0) +
+                (if (shortName.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {

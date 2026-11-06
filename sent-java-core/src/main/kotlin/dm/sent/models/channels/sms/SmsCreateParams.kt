@@ -11,7 +11,6 @@ import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
-import dm.sent.core.MultipartField
 import dm.sent.core.Params
 import dm.sent.core.checkKnown
 import dm.sent.core.checkRequired
@@ -228,47 +227,46 @@ private constructor(
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
-     * Returns the raw multipart value of [numberType].
+     * Returns the raw JSON value of [numberType].
      *
-     * Unlike [numberType], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [numberType], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _numberType(): MultipartField<NumberType> = body._numberType()
+    fun _numberType(): JsonField<NumberType> = body._numberType()
 
     /**
-     * Returns the raw multipart value of [areaCodes].
+     * Returns the raw JSON value of [areaCodes].
      *
-     * Unlike [areaCodes], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [areaCodes], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _areaCodes(): MultipartField<List<String>> = body._areaCodes()
+    fun _areaCodes(): JsonField<List<String>> = body._areaCodes()
 
     /**
-     * Returns the raw multipart value of [compliance].
+     * Returns the raw JSON value of [compliance].
      *
-     * Unlike [compliance], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [compliance], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _compliance(): MultipartField<MarketCompliance> = body._compliance()
+    fun _compliance(): JsonField<MarketCompliance> = body._compliance()
 
     /**
-     * Returns the raw multipart value of [country].
+     * Returns the raw JSON value of [country].
      *
-     * Unlike [country], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [country], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _country(): MultipartField<String> = body._country()
+    fun _country(): JsonField<String> = body._country()
 
     /**
-     * Returns the raw multipart value of [numbers].
+     * Returns the raw JSON value of [numbers].
      *
-     * Unlike [numbers], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [numbers], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _numbers(): MultipartField<List<SmsNumberRequest>> = body._numbers()
+    fun _numbers(): JsonField<List<SmsNumberRequest>> = body._numbers()
 
     /**
-     * Returns the raw multipart value of [senderValue].
+     * Returns the raw JSON value of [senderValue].
      *
-     * Unlike [senderValue], this method doesn't throw if the multipart field has an unexpected
-     * type.
+     * Unlike [senderValue], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _senderValue(): MultipartField<String> = body._senderValue()
+    fun _senderValue(): JsonField<String> = body._senderValue()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -362,15 +360,13 @@ private constructor(
         fun numberType(numberType: NumberType) = apply { body.numberType(numberType) }
 
         /**
-         * Sets [Builder.numberType] to an arbitrary multipart value.
+         * Sets [Builder.numberType] to an arbitrary JSON value.
          *
          * You should usually call [Builder.numberType] with a well-typed [NumberType] value
          * instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun numberType(numberType: MultipartField<NumberType>) = apply {
-            body.numberType(numberType)
-        }
+        fun numberType(numberType: JsonField<NumberType>) = apply { body.numberType(numberType) }
 
         /**
          * The area codes to put this sender in, in your own order of preference, e.g.
@@ -401,13 +397,13 @@ private constructor(
         fun areaCodes(areaCodes: Optional<List<String>>) = areaCodes(areaCodes.getOrNull())
 
         /**
-         * Sets [Builder.areaCodes] to an arbitrary multipart value.
+         * Sets [Builder.areaCodes] to an arbitrary JSON value.
          *
          * You should usually call [Builder.areaCodes] with a well-typed `List<String>` value
          * instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun areaCodes(areaCodes: MultipartField<List<String>>) = apply { body.areaCodes(areaCodes) }
+        fun areaCodes(areaCodes: JsonField<List<String>>) = apply { body.areaCodes(areaCodes) }
 
         /**
          * Adds a single [String] to [areaCodes].
@@ -424,13 +420,13 @@ private constructor(
         fun compliance(compliance: MarketCompliance) = apply { body.compliance(compliance) }
 
         /**
-         * Sets [Builder.compliance] to an arbitrary multipart value.
+         * Sets [Builder.compliance] to an arbitrary JSON value.
          *
          * You should usually call [Builder.compliance] with a well-typed [MarketCompliance] value
          * instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun compliance(compliance: MultipartField<MarketCompliance>) = apply {
+        fun compliance(compliance: JsonField<MarketCompliance>) = apply {
             body.compliance(compliance)
         }
 
@@ -438,12 +434,12 @@ private constructor(
         fun country(country: String) = apply { body.country(country) }
 
         /**
-         * Sets [Builder.country] to an arbitrary multipart value.
+         * Sets [Builder.country] to an arbitrary JSON value.
          *
          * You should usually call [Builder.country] with a well-typed [String] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun country(country: MultipartField<String>) = apply { body.country(country) }
+        fun country(country: JsonField<String>) = apply { body.country(country) }
 
         /**
          * The numbers to assign, one entry per area code, e.g.
@@ -463,15 +459,13 @@ private constructor(
         fun numbers(numbers: Optional<List<SmsNumberRequest>>) = numbers(numbers.getOrNull())
 
         /**
-         * Sets [Builder.numbers] to an arbitrary multipart value.
+         * Sets [Builder.numbers] to an arbitrary JSON value.
          *
          * You should usually call [Builder.numbers] with a well-typed `List<SmsNumberRequest>`
          * value instead. This method is primarily for setting the field to an undocumented or not
          * yet supported value.
          */
-        fun numbers(numbers: MultipartField<List<SmsNumberRequest>>) = apply {
-            body.numbers(numbers)
-        }
+        fun numbers(numbers: JsonField<List<SmsNumberRequest>>) = apply { body.numbers(numbers) }
 
         /**
          * Adds a single [SmsNumberRequest] to [numbers].
@@ -490,15 +484,13 @@ private constructor(
         fun senderValue(senderValue: Optional<String>) = senderValue(senderValue.getOrNull())
 
         /**
-         * Sets [Builder.senderValue] to an arbitrary multipart value.
+         * Sets [Builder.senderValue] to an arbitrary JSON value.
          *
          * You should usually call [Builder.senderValue] with a well-typed [String] value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun senderValue(senderValue: MultipartField<String>) = apply {
-            body.senderValue(senderValue)
-        }
+        fun senderValue(senderValue: JsonField<String>) = apply { body.senderValue(senderValue) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -639,16 +631,7 @@ private constructor(
             )
     }
 
-    fun _body(): Map<String, MultipartField<*>> =
-        (mapOf(
-                "number_type" to _numberType(),
-                "area_codes" to _areaCodes(),
-                "compliance" to _compliance(),
-                "country" to _country(),
-                "numbers" to _numbers(),
-                "sender_value" to _senderValue(),
-            ) + _additionalBodyProperties().mapValues { (_, value) -> MultipartField.of(value) })
-            .toImmutable()
+    fun _body(): Body = body
 
     override fun _headers(): Headers =
         Headers.builder()
@@ -670,16 +653,47 @@ private constructor(
      * there.
      */
     class Body
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val sandbox: JsonField<Boolean>,
-        private val numberType: MultipartField<NumberType>,
-        private val areaCodes: MultipartField<List<String>>,
-        private val compliance: MultipartField<MarketCompliance>,
-        private val country: MultipartField<String>,
-        private val numbers: MultipartField<List<SmsNumberRequest>>,
-        private val senderValue: MultipartField<String>,
+        private val numberType: JsonField<NumberType>,
+        private val areaCodes: JsonField<List<String>>,
+        private val compliance: JsonField<MarketCompliance>,
+        private val country: JsonField<String>,
+        private val numbers: JsonField<List<SmsNumberRequest>>,
+        private val senderValue: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("number_type")
+            @ExcludeMissing
+            numberType: JsonField<NumberType> = JsonMissing.of(),
+            @JsonProperty("area_codes")
+            @ExcludeMissing
+            areaCodes: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("compliance")
+            @ExcludeMissing
+            compliance: JsonField<MarketCompliance> = JsonMissing.of(),
+            @JsonProperty("country") @ExcludeMissing country: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("numbers")
+            @ExcludeMissing
+            numbers: JsonField<List<SmsNumberRequest>> = JsonMissing.of(),
+            @JsonProperty("sender_value")
+            @ExcludeMissing
+            senderValue: JsonField<String> = JsonMissing.of(),
+        ) : this(
+            sandbox,
+            numberType,
+            areaCodes,
+            compliance,
+            country,
+            numbers,
+            senderValue,
+            mutableMapOf(),
+        )
 
         fun toMutationRequest(): MutationRequest =
             MutationRequest.builder().sandbox(sandbox).build()
@@ -705,7 +719,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun numberType(): NumberType = numberType.value.getRequired("number_type")
+        fun numberType(): NumberType = numberType.getRequired("number_type")
 
         /**
          * The area codes to put this sender in, in your own order of preference, e.g.
@@ -733,7 +747,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun areaCodes(): Optional<List<String>> = areaCodes.value.getOptional("area_codes")
+        fun areaCodes(): Optional<List<String>> = areaCodes.getOptional("area_codes")
 
         /**
          * The compliance values a market registers with. `brand` and `campaign` apply to US
@@ -743,7 +757,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun compliance(): Optional<MarketCompliance> = compliance.value.getOptional("compliance")
+        fun compliance(): Optional<MarketCompliance> = compliance.getOptional("compliance")
 
         /**
          * ISO 3166-1 alpha-2 country the sender operates in.
@@ -751,7 +765,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun country(): Optional<String> = country.value.getOptional("country")
+        fun country(): Optional<String> = country.getOptional("country")
 
         /**
          * The numbers to assign, one entry per area code, e.g.
@@ -768,7 +782,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun numbers(): Optional<List<SmsNumberRequest>> = numbers.value.getOptional("numbers")
+        fun numbers(): Optional<List<SmsNumberRequest>> = numbers.getOptional("numbers")
 
         /**
          * The sender's identity where the caller chooses it. Required when number_type is
@@ -777,7 +791,7 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun senderValue(): Optional<String> = senderValue.value.getOptional("sender_value")
+        fun senderValue(): Optional<String> = senderValue.getOptional("sender_value")
 
         /**
          * Returns the raw JSON value of [sandbox].
@@ -787,62 +801,56 @@ private constructor(
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
-         * Returns the raw multipart value of [numberType].
+         * Returns the raw JSON value of [numberType].
          *
-         * Unlike [numberType], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [numberType], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("number_type")
         @ExcludeMissing
-        fun _numberType(): MultipartField<NumberType> = numberType
+        fun _numberType(): JsonField<NumberType> = numberType
 
         /**
-         * Returns the raw multipart value of [areaCodes].
+         * Returns the raw JSON value of [areaCodes].
          *
-         * Unlike [areaCodes], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [areaCodes], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("area_codes")
         @ExcludeMissing
-        fun _areaCodes(): MultipartField<List<String>> = areaCodes
+        fun _areaCodes(): JsonField<List<String>> = areaCodes
 
         /**
-         * Returns the raw multipart value of [compliance].
+         * Returns the raw JSON value of [compliance].
          *
-         * Unlike [compliance], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [compliance], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("compliance")
         @ExcludeMissing
-        fun _compliance(): MultipartField<MarketCompliance> = compliance
+        fun _compliance(): JsonField<MarketCompliance> = compliance
 
         /**
-         * Returns the raw multipart value of [country].
+         * Returns the raw JSON value of [country].
          *
-         * Unlike [country], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [country], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("country") @ExcludeMissing fun _country(): MultipartField<String> = country
+        @JsonProperty("country") @ExcludeMissing fun _country(): JsonField<String> = country
 
         /**
-         * Returns the raw multipart value of [numbers].
+         * Returns the raw JSON value of [numbers].
          *
-         * Unlike [numbers], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [numbers], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("numbers")
         @ExcludeMissing
-        fun _numbers(): MultipartField<List<SmsNumberRequest>> = numbers
+        fun _numbers(): JsonField<List<SmsNumberRequest>> = numbers
 
         /**
-         * Returns the raw multipart value of [senderValue].
+         * Returns the raw JSON value of [senderValue].
          *
-         * Unlike [senderValue], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [senderValue], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("sender_value")
         @ExcludeMissing
-        fun _senderValue(): MultipartField<String> = senderValue
+        fun _senderValue(): JsonField<String> = senderValue
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -873,12 +881,12 @@ private constructor(
         class Builder internal constructor() {
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
-            private var numberType: MultipartField<NumberType>? = null
-            private var areaCodes: MultipartField<MutableList<String>>? = null
-            private var compliance: MultipartField<MarketCompliance> = MultipartField.of(null)
-            private var country: MultipartField<String> = MultipartField.of(null)
-            private var numbers: MultipartField<MutableList<SmsNumberRequest>>? = null
-            private var senderValue: MultipartField<String> = MultipartField.of(null)
+            private var numberType: JsonField<NumberType>? = null
+            private var areaCodes: JsonField<MutableList<String>>? = null
+            private var compliance: JsonField<MarketCompliance> = JsonMissing.of()
+            private var country: JsonField<String> = JsonMissing.of()
+            private var numbers: JsonField<MutableList<SmsNumberRequest>>? = null
+            private var senderValue: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -917,16 +925,16 @@ private constructor(
              * for number_type. A client generating a request from our OpenAPI therefore sent what
              * the document called sufficient and was answered 400.
              */
-            fun numberType(numberType: NumberType) = numberType(MultipartField.of(numberType))
+            fun numberType(numberType: NumberType) = numberType(JsonField.of(numberType))
 
             /**
-             * Sets [Builder.numberType] to an arbitrary multipart value.
+             * Sets [Builder.numberType] to an arbitrary JSON value.
              *
              * You should usually call [Builder.numberType] with a well-typed [NumberType] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun numberType(numberType: MultipartField<NumberType>) = apply {
+            fun numberType(numberType: JsonField<NumberType>) = apply {
                 this.numberType = numberType
             }
 
@@ -957,19 +965,19 @@ private constructor(
              * or business documents before a local number can be bought, which can delay or prevent
              * the fill.
              */
-            fun areaCodes(areaCodes: List<String>?) = areaCodes(MultipartField.of(areaCodes))
+            fun areaCodes(areaCodes: List<String>?) = areaCodes(JsonField.ofNullable(areaCodes))
 
             /** Alias for calling [Builder.areaCodes] with `areaCodes.orElse(null)`. */
             fun areaCodes(areaCodes: Optional<List<String>>) = areaCodes(areaCodes.getOrNull())
 
             /**
-             * Sets [Builder.areaCodes] to an arbitrary multipart value.
+             * Sets [Builder.areaCodes] to an arbitrary JSON value.
              *
              * You should usually call [Builder.areaCodes] with a well-typed `List<String>` value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun areaCodes(areaCodes: MultipartField<List<String>>) = apply {
+            fun areaCodes(areaCodes: JsonField<List<String>>) = apply {
                 this.areaCodes = areaCodes.map { it.toMutableList() }
             }
 
@@ -980,7 +988,7 @@ private constructor(
              */
             fun addAreaCode(areaCode: String) = apply {
                 areaCodes =
-                    (areaCodes ?: MultipartField.of(mutableListOf())).also {
+                    (areaCodes ?: JsonField.of(mutableListOf())).also {
                         checkKnown("areaCodes", it).add(areaCode)
                     }
             }
@@ -990,30 +998,30 @@ private constructor(
              * `TEN_DLC`; other markets fill this map with the document keys their own requirements
              * name.
              */
-            fun compliance(compliance: MarketCompliance) = compliance(MultipartField.of(compliance))
+            fun compliance(compliance: MarketCompliance) = compliance(JsonField.of(compliance))
 
             /**
-             * Sets [Builder.compliance] to an arbitrary multipart value.
+             * Sets [Builder.compliance] to an arbitrary JSON value.
              *
              * You should usually call [Builder.compliance] with a well-typed [MarketCompliance]
              * value instead. This method is primarily for setting the field to an undocumented or
              * not yet supported value.
              */
-            fun compliance(compliance: MultipartField<MarketCompliance>) = apply {
+            fun compliance(compliance: JsonField<MarketCompliance>) = apply {
                 this.compliance = compliance
             }
 
             /** ISO 3166-1 alpha-2 country the sender operates in. */
-            fun country(country: String) = country(MultipartField.of(country))
+            fun country(country: String) = country(JsonField.of(country))
 
             /**
-             * Sets [Builder.country] to an arbitrary multipart value.
+             * Sets [Builder.country] to an arbitrary JSON value.
              *
              * You should usually call [Builder.country] with a well-typed [String] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun country(country: MultipartField<String>) = apply { this.country = country }
+            fun country(country: JsonField<String>) = apply { this.country = country }
 
             /**
              * The numbers to assign, one entry per area code, e.g.
@@ -1027,19 +1035,19 @@ private constructor(
              * numbers to it. US TEN_DLC numbers are assigned when the campaign is approved, not at
              * request time. Not available when the profile inherits the organization's campaign.
              */
-            fun numbers(numbers: List<SmsNumberRequest>?) = numbers(MultipartField.of(numbers))
+            fun numbers(numbers: List<SmsNumberRequest>?) = numbers(JsonField.ofNullable(numbers))
 
             /** Alias for calling [Builder.numbers] with `numbers.orElse(null)`. */
             fun numbers(numbers: Optional<List<SmsNumberRequest>>) = numbers(numbers.getOrNull())
 
             /**
-             * Sets [Builder.numbers] to an arbitrary multipart value.
+             * Sets [Builder.numbers] to an arbitrary JSON value.
              *
              * You should usually call [Builder.numbers] with a well-typed `List<SmsNumberRequest>`
              * value instead. This method is primarily for setting the field to an undocumented or
              * not yet supported value.
              */
-            fun numbers(numbers: MultipartField<List<SmsNumberRequest>>) = apply {
+            fun numbers(numbers: JsonField<List<SmsNumberRequest>>) = apply {
                 this.numbers = numbers.map { it.toMutableList() }
             }
 
@@ -1050,7 +1058,7 @@ private constructor(
              */
             fun addNumber(number: SmsNumberRequest) = apply {
                 numbers =
-                    (numbers ?: MultipartField.of(mutableListOf())).also {
+                    (numbers ?: JsonField.of(mutableListOf())).also {
                         checkKnown("numbers", it).add(number)
                     }
             }
@@ -1059,19 +1067,19 @@ private constructor(
              * The sender's identity where the caller chooses it. Required when number_type is
              * ALPHANUMERIC; optional for carrier-assigned types, which are procured afterwards.
              */
-            fun senderValue(senderValue: String?) = senderValue(MultipartField.of(senderValue))
+            fun senderValue(senderValue: String?) = senderValue(JsonField.ofNullable(senderValue))
 
             /** Alias for calling [Builder.senderValue] with `senderValue.orElse(null)`. */
             fun senderValue(senderValue: Optional<String>) = senderValue(senderValue.getOrNull())
 
             /**
-             * Sets [Builder.senderValue] to an arbitrary multipart value.
+             * Sets [Builder.senderValue] to an arbitrary JSON value.
              *
              * You should usually call [Builder.senderValue] with a well-typed [String] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun senderValue(senderValue: MultipartField<String>) = apply {
+            fun senderValue(senderValue: JsonField<String>) = apply {
                 this.senderValue = senderValue
             }
 
@@ -1110,10 +1118,10 @@ private constructor(
                 Body(
                     sandbox,
                     checkRequired("numberType", numberType),
-                    (areaCodes ?: MultipartField.of(null)).map { it.toImmutable() },
+                    (areaCodes ?: JsonMissing.of()).map { it.toImmutable() },
                     compliance,
                     country,
-                    (numbers ?: MultipartField.of(null)).map { it.toImmutable() },
+                    (numbers ?: JsonMissing.of()).map { it.toImmutable() },
                     senderValue,
                     additionalProperties.toMutableMap(),
                 )
@@ -1152,6 +1160,22 @@ private constructor(
             } catch (e: SentInvalidDataException) {
                 false
             }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (sandbox.asKnown().isPresent) 1 else 0) +
+                (numberType.asKnown().getOrNull()?.validity() ?: 0) +
+                (areaCodes.asKnown().getOrNull()?.size ?: 0) +
+                (compliance.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (country.asKnown().isPresent) 1 else 0) +
+                (numbers.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                (if (senderValue.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {

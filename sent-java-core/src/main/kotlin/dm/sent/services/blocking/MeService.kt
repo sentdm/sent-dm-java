@@ -6,8 +6,8 @@ import com.google.errorprone.annotations.MustBeClosed
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.me.ApiResponseOfAccount
 import dm.sent.models.me.MeRetrieveParams
-import dm.sent.models.me.MeRetrieveResponse
 import java.util.function.Consumer
 
 /**
@@ -61,20 +61,20 @@ interface MeService {
      * Sent and off by default. A `profile` reports `false`, having no sender profiles of its own to
      * create anything on.
      */
-    fun retrieve(): MeRetrieveResponse = retrieve(MeRetrieveParams.none())
+    fun retrieve(): ApiResponseOfAccount = retrieve(MeRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         params: MeRetrieveParams = MeRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MeRetrieveResponse
+    ): ApiResponseOfAccount
 
     /** @see retrieve */
-    fun retrieve(params: MeRetrieveParams = MeRetrieveParams.none()): MeRetrieveResponse =
+    fun retrieve(params: MeRetrieveParams = MeRetrieveParams.none()): ApiResponseOfAccount =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(requestOptions: RequestOptions): MeRetrieveResponse =
+    fun retrieve(requestOptions: RequestOptions): ApiResponseOfAccount =
         retrieve(MeRetrieveParams.none(), requestOptions)
 
     /** A view of [MeService] that provides access to raw HTTP responses for each method. */
@@ -92,24 +92,24 @@ interface MeService {
          * [MeService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(): HttpResponseFor<MeRetrieveResponse> = retrieve(MeRetrieveParams.none())
+        fun retrieve(): HttpResponseFor<ApiResponseOfAccount> = retrieve(MeRetrieveParams.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: MeRetrieveParams = MeRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MeRetrieveResponse>
+        ): HttpResponseFor<ApiResponseOfAccount>
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: MeRetrieveParams = MeRetrieveParams.none()
-        ): HttpResponseFor<MeRetrieveResponse> = retrieve(params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseOfAccount> = retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(requestOptions: RequestOptions): HttpResponseFor<MeRetrieveResponse> =
+        fun retrieve(requestOptions: RequestOptions): HttpResponseFor<ApiResponseOfAccount> =
             retrieve(MeRetrieveParams.none(), requestOptions)
     }
 }

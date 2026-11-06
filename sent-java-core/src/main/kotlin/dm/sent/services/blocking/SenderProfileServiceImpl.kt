@@ -15,7 +15,6 @@ import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponse.Handler
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
-import dm.sent.core.http.multipartFormData
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
 import dm.sent.models.senderprofiles.ApiResponseOfSenderProfile
@@ -116,7 +115,7 @@ class SenderProfileServiceImpl internal constructor(private val clientOptions: C
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("v3", "sender-profiles")
-                    .body(multipartFormData(clientOptions.jsonMapper, params._body()))
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

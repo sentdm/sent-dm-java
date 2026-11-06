@@ -5,13 +5,13 @@ package dm.sent.services.async
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.messages.ApiResponseOfCancelledMessage
+import dm.sent.models.messages.ApiResponseOfMessage
+import dm.sent.models.messages.ApiResponseOfMessageActivities
 import dm.sent.models.messages.MessageCancelParams
-import dm.sent.models.messages.MessageCancelResponse
 import dm.sent.models.messages.MessageResendParams
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
-import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.messages.MessageRetrieveStatusParams
-import dm.sent.models.messages.MessageRetrieveStatusResponse
 import dm.sent.models.messages.MessageSendParams
 import dm.sent.models.messages.MessageSendResponse
 import java.util.concurrent.CompletableFuture
@@ -85,26 +85,28 @@ interface MessageServiceAsync {
      * /v3/messages/{id}` is cached briefly, so an immediate re-fetch can still show the
      * pre-cancellation state.
      */
-    fun cancel(id: String, params: MessageCancelParams): CompletableFuture<MessageCancelResponse> =
-        cancel(id, params, RequestOptions.none())
+    fun cancel(
+        id: String,
+        params: MessageCancelParams,
+    ): CompletableFuture<ApiResponseOfCancelledMessage> = cancel(id, params, RequestOptions.none())
 
     /** @see cancel */
     fun cancel(
         id: String,
         params: MessageCancelParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageCancelResponse> =
+    ): CompletableFuture<ApiResponseOfCancelledMessage> =
         cancel(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see cancel */
-    fun cancel(params: MessageCancelParams): CompletableFuture<MessageCancelResponse> =
+    fun cancel(params: MessageCancelParams): CompletableFuture<ApiResponseOfCancelledMessage> =
         cancel(params, RequestOptions.none())
 
     /** @see cancel */
     fun cancel(
         params: MessageCancelParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageCancelResponse>
+    ): CompletableFuture<ApiResponseOfCancelledMessage>
 
     /**
      * Resends a message you already sent, on the same message id, without rebuilding the request.
@@ -162,7 +164,7 @@ interface MessageServiceAsync {
      * carries scheduled_at, the release instant in UTC as it stood at that moment. Other entries
      * have no scheduled_at key.
      */
-    fun retrieveActivities(id: String): CompletableFuture<MessageRetrieveActivitiesResponse> =
+    fun retrieveActivities(id: String): CompletableFuture<ApiResponseOfMessageActivities> =
         retrieveActivities(id, MessageRetrieveActivitiesParams.none())
 
     /** @see retrieveActivities */
@@ -170,33 +172,33 @@ interface MessageServiceAsync {
         id: String,
         params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageRetrieveActivitiesResponse> =
+    ): CompletableFuture<ApiResponseOfMessageActivities> =
         retrieveActivities(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieveActivities */
     fun retrieveActivities(
         id: String,
         params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
-    ): CompletableFuture<MessageRetrieveActivitiesResponse> =
+    ): CompletableFuture<ApiResponseOfMessageActivities> =
         retrieveActivities(id, params, RequestOptions.none())
 
     /** @see retrieveActivities */
     fun retrieveActivities(
         params: MessageRetrieveActivitiesParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageRetrieveActivitiesResponse>
+    ): CompletableFuture<ApiResponseOfMessageActivities>
 
     /** @see retrieveActivities */
     fun retrieveActivities(
         params: MessageRetrieveActivitiesParams
-    ): CompletableFuture<MessageRetrieveActivitiesResponse> =
+    ): CompletableFuture<ApiResponseOfMessageActivities> =
         retrieveActivities(params, RequestOptions.none())
 
     /** @see retrieveActivities */
     fun retrieveActivities(
         id: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<MessageRetrieveActivitiesResponse> =
+    ): CompletableFuture<ApiResponseOfMessageActivities> =
         retrieveActivities(id, MessageRetrieveActivitiesParams.none(), requestOptions)
 
     /**
@@ -207,7 +209,7 @@ interface MessageServiceAsync {
      * scheduled_at, the instant it is held for in UTC — or, on a CANCELLED message, the instant
      * that was called off. A message sent immediately has no scheduled_at key.
      */
-    fun retrieveStatus(id: String): CompletableFuture<MessageRetrieveStatusResponse> =
+    fun retrieveStatus(id: String): CompletableFuture<ApiResponseOfMessage> =
         retrieveStatus(id, MessageRetrieveStatusParams.none())
 
     /** @see retrieveStatus */
@@ -215,33 +217,31 @@ interface MessageServiceAsync {
         id: String,
         params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageRetrieveStatusResponse> =
+    ): CompletableFuture<ApiResponseOfMessage> =
         retrieveStatus(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieveStatus */
     fun retrieveStatus(
         id: String,
         params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
-    ): CompletableFuture<MessageRetrieveStatusResponse> =
-        retrieveStatus(id, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfMessage> = retrieveStatus(id, params, RequestOptions.none())
 
     /** @see retrieveStatus */
     fun retrieveStatus(
         params: MessageRetrieveStatusParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MessageRetrieveStatusResponse>
+    ): CompletableFuture<ApiResponseOfMessage>
 
     /** @see retrieveStatus */
     fun retrieveStatus(
         params: MessageRetrieveStatusParams
-    ): CompletableFuture<MessageRetrieveStatusResponse> =
-        retrieveStatus(params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfMessage> = retrieveStatus(params, RequestOptions.none())
 
     /** @see retrieveStatus */
     fun retrieveStatus(
         id: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<MessageRetrieveStatusResponse> =
+    ): CompletableFuture<ApiResponseOfMessage> =
         retrieveStatus(id, MessageRetrieveStatusParams.none(), requestOptions)
 
     /**
@@ -315,7 +315,7 @@ interface MessageServiceAsync {
         fun cancel(
             id: String,
             params: MessageCancelParams,
-        ): CompletableFuture<HttpResponseFor<MessageCancelResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfCancelledMessage>> =
             cancel(id, params, RequestOptions.none())
 
         /** @see cancel */
@@ -323,20 +323,20 @@ interface MessageServiceAsync {
             id: String,
             params: MessageCancelParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageCancelResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfCancelledMessage>> =
             cancel(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see cancel */
         fun cancel(
             params: MessageCancelParams
-        ): CompletableFuture<HttpResponseFor<MessageCancelResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfCancelledMessage>> =
             cancel(params, RequestOptions.none())
 
         /** @see cancel */
         fun cancel(
             params: MessageCancelParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageCancelResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfCancelledMessage>>
 
         /**
          * Returns a raw HTTP response for `post /v3/messages/{id}/resend`, but is otherwise the
@@ -374,7 +374,7 @@ interface MessageServiceAsync {
          */
         fun retrieveActivities(
             id: String
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessageActivities>> =
             retrieveActivities(id, MessageRetrieveActivitiesParams.none())
 
         /** @see retrieveActivities */
@@ -382,42 +382,40 @@ interface MessageServiceAsync {
             id: String,
             params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessageActivities>> =
             retrieveActivities(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieveActivities */
         fun retrieveActivities(
             id: String,
             params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessageActivities>> =
             retrieveActivities(id, params, RequestOptions.none())
 
         /** @see retrieveActivities */
         fun retrieveActivities(
             params: MessageRetrieveActivitiesParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessageActivities>>
 
         /** @see retrieveActivities */
         fun retrieveActivities(
             params: MessageRetrieveActivitiesParams
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessageActivities>> =
             retrieveActivities(params, RequestOptions.none())
 
         /** @see retrieveActivities */
         fun retrieveActivities(
             id: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessageActivities>> =
             retrieveActivities(id, MessageRetrieveActivitiesParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /v3/messages/{id}`, but is otherwise the same as
          * [MessageServiceAsync.retrieveStatus].
          */
-        fun retrieveStatus(
-            id: String
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> =
+        fun retrieveStatus(id: String): CompletableFuture<HttpResponseFor<ApiResponseOfMessage>> =
             retrieveStatus(id, MessageRetrieveStatusParams.none())
 
         /** @see retrieveStatus */
@@ -425,33 +423,33 @@ interface MessageServiceAsync {
             id: String,
             params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessage>> =
             retrieveStatus(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieveStatus */
         fun retrieveStatus(
             id: String,
             params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessage>> =
             retrieveStatus(id, params, RequestOptions.none())
 
         /** @see retrieveStatus */
         fun retrieveStatus(
             params: MessageRetrieveStatusParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessage>>
 
         /** @see retrieveStatus */
         fun retrieveStatus(
             params: MessageRetrieveStatusParams
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessage>> =
             retrieveStatus(params, RequestOptions.none())
 
         /** @see retrieveStatus */
         fun retrieveStatus(
             id: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessage>> =
             retrieveStatus(id, MessageRetrieveStatusParams.none(), requestOptions)
 
         /**

@@ -11,6 +11,8 @@ import dm.sent.models.channels.rcs.RcsAddress
 import dm.sent.models.channels.rcs.RcsAgent
 import dm.sent.models.channels.sms.SmsMarket
 import dm.sent.models.channels.sms.SmsNumber
+import dm.sent.models.channels.sms.SuppliedCompliance
+import dm.sent.models.channels.sms.SuppliedDocument
 import dm.sent.models.channels.voice.VoiceNumber
 import dm.sent.models.channels.whatsapp.WhatsappChannel
 import dm.sent.models.webhooks.ApiMeta
@@ -84,9 +86,9 @@ internal class ApiResponseOfSenderProfileTest {
                                 .addSms(
                                     SmsMarket.builder()
                                         .compliance(
-                                            SmsMarket.Compliance.builder()
+                                            SuppliedCompliance.builder()
                                                 .brand(
-                                                    SmsMarket.Compliance.Brand.builder()
+                                                    SuppliedCompliance.Brand.builder()
                                                         .putAdditionalProperty(
                                                             "foo",
                                                             JsonValue.from("bar"),
@@ -94,7 +96,7 @@ internal class ApiResponseOfSenderProfileTest {
                                                         .build()
                                                 )
                                                 .campaign(
-                                                    SmsMarket.Compliance.Campaign.builder()
+                                                    SuppliedCompliance.Campaign.builder()
                                                         .putAdditionalProperty(
                                                             "foo",
                                                             JsonValue.from("bar"),
@@ -102,7 +104,7 @@ internal class ApiResponseOfSenderProfileTest {
                                                         .build()
                                                 )
                                                 .addDocument(
-                                                    SmsMarket.Compliance.Document.builder()
+                                                    SuppliedDocument.builder()
                                                         .documentId(
                                                             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
                                                         )
@@ -153,19 +155,19 @@ internal class ApiResponseOfSenderProfileTest {
                                 .build()
                         )
                         .compliance(
-                            SenderProfile.Compliance.builder()
+                            SuppliedCompliance.builder()
                                 .brand(
-                                    SenderProfile.Compliance.Brand.builder()
+                                    SuppliedCompliance.Brand.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .campaign(
-                                    SenderProfile.Compliance.Campaign.builder()
+                                    SuppliedCompliance.Campaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .addDocument(
-                                    SenderProfile.Compliance.Document.builder()
+                                    SuppliedDocument.builder()
                                         .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                         .fileName("file_name")
                                         .key("key")
@@ -263,9 +265,9 @@ internal class ApiResponseOfSenderProfileTest {
                             .addSms(
                                 SmsMarket.builder()
                                     .compliance(
-                                        SmsMarket.Compliance.builder()
+                                        SuppliedCompliance.builder()
                                             .brand(
-                                                SmsMarket.Compliance.Brand.builder()
+                                                SuppliedCompliance.Brand.builder()
                                                     .putAdditionalProperty(
                                                         "foo",
                                                         JsonValue.from("bar"),
@@ -273,7 +275,7 @@ internal class ApiResponseOfSenderProfileTest {
                                                     .build()
                                             )
                                             .campaign(
-                                                SmsMarket.Compliance.Campaign.builder()
+                                                SuppliedCompliance.Campaign.builder()
                                                     .putAdditionalProperty(
                                                         "foo",
                                                         JsonValue.from("bar"),
@@ -281,7 +283,7 @@ internal class ApiResponseOfSenderProfileTest {
                                                     .build()
                                             )
                                             .addDocument(
-                                                SmsMarket.Compliance.Document.builder()
+                                                SuppliedDocument.builder()
                                                     .documentId(
                                                         "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
                                                     )
@@ -332,19 +334,19 @@ internal class ApiResponseOfSenderProfileTest {
                             .build()
                     )
                     .compliance(
-                        SenderProfile.Compliance.builder()
+                        SuppliedCompliance.builder()
                             .brand(
-                                SenderProfile.Compliance.Brand.builder()
+                                SuppliedCompliance.Brand.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .campaign(
-                                SenderProfile.Compliance.Campaign.builder()
+                                SuppliedCompliance.Campaign.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .addDocument(
-                                SenderProfile.Compliance.Document.builder()
+                                SuppliedDocument.builder()
                                     .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                     .fileName("file_name")
                                     .key("key")
@@ -448,9 +450,9 @@ internal class ApiResponseOfSenderProfileTest {
                                 .addSms(
                                     SmsMarket.builder()
                                         .compliance(
-                                            SmsMarket.Compliance.builder()
+                                            SuppliedCompliance.builder()
                                                 .brand(
-                                                    SmsMarket.Compliance.Brand.builder()
+                                                    SuppliedCompliance.Brand.builder()
                                                         .putAdditionalProperty(
                                                             "foo",
                                                             JsonValue.from("bar"),
@@ -458,7 +460,7 @@ internal class ApiResponseOfSenderProfileTest {
                                                         .build()
                                                 )
                                                 .campaign(
-                                                    SmsMarket.Compliance.Campaign.builder()
+                                                    SuppliedCompliance.Campaign.builder()
                                                         .putAdditionalProperty(
                                                             "foo",
                                                             JsonValue.from("bar"),
@@ -466,7 +468,7 @@ internal class ApiResponseOfSenderProfileTest {
                                                         .build()
                                                 )
                                                 .addDocument(
-                                                    SmsMarket.Compliance.Document.builder()
+                                                    SuppliedDocument.builder()
                                                         .documentId(
                                                             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
                                                         )
@@ -517,19 +519,19 @@ internal class ApiResponseOfSenderProfileTest {
                                 .build()
                         )
                         .compliance(
-                            SenderProfile.Compliance.builder()
+                            SuppliedCompliance.builder()
                                 .brand(
-                                    SenderProfile.Compliance.Brand.builder()
+                                    SuppliedCompliance.Brand.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .campaign(
-                                    SenderProfile.Compliance.Campaign.builder()
+                                    SuppliedCompliance.Campaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .addDocument(
-                                    SenderProfile.Compliance.Document.builder()
+                                    SuppliedDocument.builder()
                                         .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                         .fileName("file_name")
                                         .key("key")

@@ -37,12 +37,12 @@ internal class UserServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val userService = client.users()
 
-        val users =
+        val apiResponseOfUsersList =
             userService.list(
                 UserListParams.builder().xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
             )
 
-        users.validate()
+        apiResponseOfUsersList.validate()
     }
 
     @Disabled("Mock server tests are disabled")

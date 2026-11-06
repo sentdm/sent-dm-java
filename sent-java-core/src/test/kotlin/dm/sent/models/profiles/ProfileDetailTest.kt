@@ -19,7 +19,7 @@ internal class ProfileDetailTest {
                 .allowNumberChangeDuringOnboarding(true)
                 .allowTemplateSharing(true)
                 .billingContact(
-                    ProfileDetail.BillingContact.builder()
+                    BillingContact.builder()
                         .address("address")
                         .email("email")
                         .name("name")
@@ -28,10 +28,10 @@ internal class ProfileDetailTest {
                 )
                 .billingModel("billing_model")
                 .brand(
-                    ProfileDetail.Brand.builder()
+                    BrandWithKyc.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .business(
-                            ProfileDetail.Brand.Business.builder()
+                            BrandBusiness.builder()
                                 .city("city")
                                 .country("country")
                                 .countryOfRegistration("country_of_registration")
@@ -46,7 +46,7 @@ internal class ProfileDetailTest {
                                 .build()
                         )
                         .compliance(
-                            ProfileDetail.Brand.Compliance.builder()
+                            BrandCompliance.builder()
                                 .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                                 .addDestinationCountry(
                                     DestinationCountry.builder().id("id").isMain(true).build()
@@ -59,7 +59,7 @@ internal class ProfileDetailTest {
                                 .build()
                         )
                         .contact(
-                            ProfileDetail.Brand.Contact.builder()
+                            BrandContact.builder()
                                 .businessName("business_name")
                                 .email("email")
                                 .name("name")
@@ -70,9 +70,9 @@ internal class ProfileDetailTest {
                         )
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .cspId("csp_id")
-                        .identityStatus(ProfileDetail.Brand.IdentityStatus.SELF_DECLARED)
+                        .identityStatus(TcrBrandIdentityStatus.SELF_DECLARED)
                         .isInherited(true)
-                        .status(ProfileDetail.Brand.Status.ACTIVE)
+                        .status(TcrBrandStatus.ACTIVE)
                         .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .submittedToTcr(true)
                         .tcrBrandId("tcr_brand_id")
@@ -106,7 +106,7 @@ internal class ProfileDetailTest {
         assertThat(profileDetail.allowTemplateSharing()).contains(true)
         assertThat(profileDetail.billingContact())
             .contains(
-                ProfileDetail.BillingContact.builder()
+                BillingContact.builder()
                     .address("address")
                     .email("email")
                     .name("name")
@@ -116,10 +116,10 @@ internal class ProfileDetailTest {
         assertThat(profileDetail.billingModel()).contains("billing_model")
         assertThat(profileDetail.brand())
             .contains(
-                ProfileDetail.Brand.builder()
+                BrandWithKyc.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .business(
-                        ProfileDetail.Brand.Business.builder()
+                        BrandBusiness.builder()
                             .city("city")
                             .country("country")
                             .countryOfRegistration("country_of_registration")
@@ -134,7 +134,7 @@ internal class ProfileDetailTest {
                             .build()
                     )
                     .compliance(
-                        ProfileDetail.Brand.Compliance.builder()
+                        BrandCompliance.builder()
                             .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                             .addDestinationCountry(
                                 DestinationCountry.builder().id("id").isMain(true).build()
@@ -147,7 +147,7 @@ internal class ProfileDetailTest {
                             .build()
                     )
                     .contact(
-                        ProfileDetail.Brand.Contact.builder()
+                        BrandContact.builder()
                             .businessName("business_name")
                             .email("email")
                             .name("name")
@@ -158,9 +158,9 @@ internal class ProfileDetailTest {
                     )
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .cspId("csp_id")
-                    .identityStatus(ProfileDetail.Brand.IdentityStatus.SELF_DECLARED)
+                    .identityStatus(TcrBrandIdentityStatus.SELF_DECLARED)
                     .isInherited(true)
-                    .status(ProfileDetail.Brand.Status.ACTIVE)
+                    .status(TcrBrandStatus.ACTIVE)
                     .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .submittedToTcr(true)
                     .tcrBrandId("tcr_brand_id")
@@ -202,7 +202,7 @@ internal class ProfileDetailTest {
                 .allowNumberChangeDuringOnboarding(true)
                 .allowTemplateSharing(true)
                 .billingContact(
-                    ProfileDetail.BillingContact.builder()
+                    BillingContact.builder()
                         .address("address")
                         .email("email")
                         .name("name")
@@ -211,10 +211,10 @@ internal class ProfileDetailTest {
                 )
                 .billingModel("billing_model")
                 .brand(
-                    ProfileDetail.Brand.builder()
+                    BrandWithKyc.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .business(
-                            ProfileDetail.Brand.Business.builder()
+                            BrandBusiness.builder()
                                 .city("city")
                                 .country("country")
                                 .countryOfRegistration("country_of_registration")
@@ -229,7 +229,7 @@ internal class ProfileDetailTest {
                                 .build()
                         )
                         .compliance(
-                            ProfileDetail.Brand.Compliance.builder()
+                            BrandCompliance.builder()
                                 .brandRelationship(TcrBrandRelationship.BASIC_ACCOUNT)
                                 .addDestinationCountry(
                                     DestinationCountry.builder().id("id").isMain(true).build()
@@ -242,7 +242,7 @@ internal class ProfileDetailTest {
                                 .build()
                         )
                         .contact(
-                            ProfileDetail.Brand.Contact.builder()
+                            BrandContact.builder()
                                 .businessName("business_name")
                                 .email("email")
                                 .name("name")
@@ -253,9 +253,9 @@ internal class ProfileDetailTest {
                         )
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .cspId("csp_id")
-                        .identityStatus(ProfileDetail.Brand.IdentityStatus.SELF_DECLARED)
+                        .identityStatus(TcrBrandIdentityStatus.SELF_DECLARED)
                         .isInherited(true)
-                        .status(ProfileDetail.Brand.Status.ACTIVE)
+                        .status(TcrBrandStatus.ACTIVE)
                         .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .submittedToTcr(true)
                         .tcrBrandId("tcr_brand_id")

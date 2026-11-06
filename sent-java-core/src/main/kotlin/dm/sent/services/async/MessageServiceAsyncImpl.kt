@@ -16,13 +16,13 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
+import dm.sent.models.messages.ApiResponseOfCancelledMessage
+import dm.sent.models.messages.ApiResponseOfMessage
+import dm.sent.models.messages.ApiResponseOfMessageActivities
 import dm.sent.models.messages.MessageCancelParams
-import dm.sent.models.messages.MessageCancelResponse
 import dm.sent.models.messages.MessageResendParams
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
-import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.messages.MessageRetrieveStatusParams
-import dm.sent.models.messages.MessageRetrieveStatusResponse
 import dm.sent.models.messages.MessageSendParams
 import dm.sent.models.messages.MessageSendResponse
 import java.util.concurrent.CompletableFuture
@@ -65,7 +65,7 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun cancel(
         params: MessageCancelParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<MessageCancelResponse> =
+    ): CompletableFuture<ApiResponseOfCancelledMessage> =
         // post /v3/messages/{id}/cancel
         withRawResponse().cancel(params, requestOptions).thenApply { it.parse() }
 
@@ -79,14 +79,14 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun retrieveActivities(
         params: MessageRetrieveActivitiesParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<MessageRetrieveActivitiesResponse> =
+    ): CompletableFuture<ApiResponseOfMessageActivities> =
         // get /v3/messages/{id}/activities
         withRawResponse().retrieveActivities(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieveStatus(
         params: MessageRetrieveStatusParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<MessageRetrieveStatusResponse> =
+    ): CompletableFuture<ApiResponseOfMessage> =
         // get /v3/messages/{id}
         withRawResponse().retrieveStatus(params, requestOptions).thenApply { it.parse() }
 
@@ -110,13 +110,13 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val cancelHandler: Handler<MessageCancelResponse> =
-            jsonHandler<MessageCancelResponse>(clientOptions.jsonMapper)
+        private val cancelHandler: Handler<ApiResponseOfCancelledMessage> =
+            jsonHandler<ApiResponseOfCancelledMessage>(clientOptions.jsonMapper)
 
         override fun cancel(
             params: MessageCancelParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<MessageCancelResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfCancelledMessage>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -178,13 +178,13 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val retrieveActivitiesHandler: Handler<MessageRetrieveActivitiesResponse> =
-            jsonHandler<MessageRetrieveActivitiesResponse>(clientOptions.jsonMapper)
+        private val retrieveActivitiesHandler: Handler<ApiResponseOfMessageActivities> =
+            jsonHandler<ApiResponseOfMessageActivities>(clientOptions.jsonMapper)
 
         override fun retrieveActivities(
             params: MessageRetrieveActivitiesParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveActivitiesResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessageActivities>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -211,13 +211,13 @@ class MessageServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val retrieveStatusHandler: Handler<MessageRetrieveStatusResponse> =
-            jsonHandler<MessageRetrieveStatusResponse>(clientOptions.jsonMapper)
+        private val retrieveStatusHandler: Handler<ApiResponseOfMessage> =
+            jsonHandler<ApiResponseOfMessage>(clientOptions.jsonMapper)
 
         override fun retrieveStatus(
             params: MessageRetrieveStatusParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<MessageRetrieveStatusResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfMessage>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

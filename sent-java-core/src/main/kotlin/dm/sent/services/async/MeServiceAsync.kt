@@ -5,8 +5,8 @@ package dm.sent.services.async
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.me.ApiResponseOfAccount
 import dm.sent.models.me.MeRetrieveParams
-import dm.sent.models.me.MeRetrieveResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -61,21 +61,21 @@ interface MeServiceAsync {
      * Sent and off by default. A `profile` reports `false`, having no sender profiles of its own to
      * create anything on.
      */
-    fun retrieve(): CompletableFuture<MeRetrieveResponse> = retrieve(MeRetrieveParams.none())
+    fun retrieve(): CompletableFuture<ApiResponseOfAccount> = retrieve(MeRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         params: MeRetrieveParams = MeRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<MeRetrieveResponse>
+    ): CompletableFuture<ApiResponseOfAccount>
 
     /** @see retrieve */
     fun retrieve(
         params: MeRetrieveParams = MeRetrieveParams.none()
-    ): CompletableFuture<MeRetrieveResponse> = retrieve(params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfAccount> = retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(requestOptions: RequestOptions): CompletableFuture<MeRetrieveResponse> =
+    fun retrieve(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfAccount> =
         retrieve(MeRetrieveParams.none(), requestOptions)
 
     /** A view of [MeServiceAsync] that provides access to raw HTTP responses for each method. */
@@ -92,25 +92,25 @@ interface MeServiceAsync {
          * Returns a raw HTTP response for `get /v3/me`, but is otherwise the same as
          * [MeServiceAsync.retrieve].
          */
-        fun retrieve(): CompletableFuture<HttpResponseFor<MeRetrieveResponse>> =
+        fun retrieve(): CompletableFuture<HttpResponseFor<ApiResponseOfAccount>> =
             retrieve(MeRetrieveParams.none())
 
         /** @see retrieve */
         fun retrieve(
             params: MeRetrieveParams = MeRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<MeRetrieveResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfAccount>>
 
         /** @see retrieve */
         fun retrieve(
             params: MeRetrieveParams = MeRetrieveParams.none()
-        ): CompletableFuture<HttpResponseFor<MeRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfAccount>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<MeRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfAccount>> =
             retrieve(MeRetrieveParams.none(), requestOptions)
     }
 }

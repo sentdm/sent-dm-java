@@ -15,13 +15,13 @@ internal class MeServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val meService = client.me()
 
-        val me =
+        val apiResponseOfAccount =
             meService.retrieve(
                 MeRetrieveParams.builder()
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 
-        me.validate()
+        apiResponseOfAccount.validate()
     }
 }

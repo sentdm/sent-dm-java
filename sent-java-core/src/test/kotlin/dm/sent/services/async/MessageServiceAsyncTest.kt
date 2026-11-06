@@ -9,6 +9,7 @@ import dm.sent.models.messages.MessageResendParams
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
 import dm.sent.models.messages.MessageRetrieveStatusParams
 import dm.sent.models.messages.MessageSendParams
+import dm.sent.models.templates.TemplateRef
 import dm.sent.models.webhooks.MutationRequest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -21,7 +22,7 @@ internal class MessageServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val messageServiceAsync = client.messages()
 
-        val responseFuture =
+        val apiResponseOfCancelledMessageFuture =
             messageServiceAsync.cancel(
                 MessageCancelParams.builder()
                     .id("8ba7b830-9dad-11d1-80b4-00c04fd430c8")
@@ -31,8 +32,8 @@ internal class MessageServiceAsyncTest {
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val apiResponseOfCancelledMessage = apiResponseOfCancelledMessageFuture.get()
+        apiResponseOfCancelledMessage.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -61,7 +62,7 @@ internal class MessageServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val messageServiceAsync = client.messages()
 
-        val responseFuture =
+        val apiResponseOfMessageActivitiesFuture =
             messageServiceAsync.retrieveActivities(
                 MessageRetrieveActivitiesParams.builder()
                     .id("8ba7b830-9dad-11d1-80b4-00c04fd430c8")
@@ -69,8 +70,8 @@ internal class MessageServiceAsyncTest {
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val apiResponseOfMessageActivities = apiResponseOfMessageActivitiesFuture.get()
+        apiResponseOfMessageActivities.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -79,7 +80,7 @@ internal class MessageServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val messageServiceAsync = client.messages()
 
-        val responseFuture =
+        val apiResponseOfMessageFuture =
             messageServiceAsync.retrieveStatus(
                 MessageRetrieveStatusParams.builder()
                     .id("8ba7b830-9dad-11d1-80b4-00c04fd430c8")
@@ -87,8 +88,8 @@ internal class MessageServiceAsyncTest {
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val apiResponseOfMessage = apiResponseOfMessageFuture.get()
+        apiResponseOfMessage.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -125,11 +126,11 @@ internal class MessageServiceAsyncTest {
                     .scheduledAt(null)
                     .subject(null)
                     .template(
-                        MessageSendParams.Template.builder()
+                        TemplateRef.builder()
                             .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                             .name("order_confirmation")
                             .parameters(
-                                MessageSendParams.Template.Parameters.builder()
+                                TemplateRef.Parameters.builder()
                                     .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                     .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                     .build()

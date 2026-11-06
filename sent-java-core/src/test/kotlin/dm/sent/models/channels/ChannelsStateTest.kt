@@ -9,6 +9,8 @@ import dm.sent.models.channels.rcs.RcsAddress
 import dm.sent.models.channels.rcs.RcsAgent
 import dm.sent.models.channels.sms.SmsMarket
 import dm.sent.models.channels.sms.SmsNumber
+import dm.sent.models.channels.sms.SuppliedCompliance
+import dm.sent.models.channels.sms.SuppliedDocument
 import dm.sent.models.channels.voice.VoiceNumber
 import dm.sent.models.channels.whatsapp.WhatsappChannel
 import java.time.OffsetDateTime
@@ -74,19 +76,19 @@ internal class ChannelsStateTest {
                 .addSms(
                     SmsMarket.builder()
                         .compliance(
-                            SmsMarket.Compliance.builder()
+                            SuppliedCompliance.builder()
                                 .brand(
-                                    SmsMarket.Compliance.Brand.builder()
+                                    SuppliedCompliance.Brand.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .campaign(
-                                    SmsMarket.Compliance.Campaign.builder()
+                                    SuppliedCompliance.Campaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .addDocument(
-                                    SmsMarket.Compliance.Document.builder()
+                                    SuppliedDocument.builder()
                                         .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                         .fileName("file_name")
                                         .key("key")
@@ -189,19 +191,19 @@ internal class ChannelsStateTest {
             .containsExactly(
                 SmsMarket.builder()
                     .compliance(
-                        SmsMarket.Compliance.builder()
+                        SuppliedCompliance.builder()
                             .brand(
-                                SmsMarket.Compliance.Brand.builder()
+                                SuppliedCompliance.Brand.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .campaign(
-                                SmsMarket.Compliance.Campaign.builder()
+                                SuppliedCompliance.Campaign.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .addDocument(
-                                SmsMarket.Compliance.Document.builder()
+                                SuppliedDocument.builder()
                                     .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                     .fileName("file_name")
                                     .key("key")
@@ -308,19 +310,19 @@ internal class ChannelsStateTest {
                 .addSms(
                     SmsMarket.builder()
                         .compliance(
-                            SmsMarket.Compliance.builder()
+                            SuppliedCompliance.builder()
                                 .brand(
-                                    SmsMarket.Compliance.Brand.builder()
+                                    SuppliedCompliance.Brand.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .campaign(
-                                    SmsMarket.Compliance.Campaign.builder()
+                                    SuppliedCompliance.Campaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .addDocument(
-                                    SmsMarket.Compliance.Document.builder()
+                                    SuppliedDocument.builder()
                                         .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                         .fileName("file_name")
                                         .key("key")

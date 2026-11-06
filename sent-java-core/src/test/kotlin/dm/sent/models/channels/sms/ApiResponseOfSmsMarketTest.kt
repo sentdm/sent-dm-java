@@ -20,19 +20,19 @@ internal class ApiResponseOfSmsMarketTest {
                 .data(
                     SmsMarket.builder()
                         .compliance(
-                            SmsMarket.Compliance.builder()
+                            SuppliedCompliance.builder()
                                 .brand(
-                                    SmsMarket.Compliance.Brand.builder()
+                                    SuppliedCompliance.Brand.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .campaign(
-                                    SmsMarket.Compliance.Campaign.builder()
+                                    SuppliedCompliance.Campaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .addDocument(
-                                    SmsMarket.Compliance.Document.builder()
+                                    SuppliedDocument.builder()
                                         .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                         .fileName("file_name")
                                         .key("key")
@@ -81,19 +81,19 @@ internal class ApiResponseOfSmsMarketTest {
             .contains(
                 SmsMarket.builder()
                     .compliance(
-                        SmsMarket.Compliance.builder()
+                        SuppliedCompliance.builder()
                             .brand(
-                                SmsMarket.Compliance.Brand.builder()
+                                SuppliedCompliance.Brand.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .campaign(
-                                SmsMarket.Compliance.Campaign.builder()
+                                SuppliedCompliance.Campaign.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .addDocument(
-                                SmsMarket.Compliance.Document.builder()
+                                SuppliedDocument.builder()
                                     .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                     .fileName("file_name")
                                     .key("key")
@@ -148,19 +148,19 @@ internal class ApiResponseOfSmsMarketTest {
                 .data(
                     SmsMarket.builder()
                         .compliance(
-                            SmsMarket.Compliance.builder()
+                            SuppliedCompliance.builder()
                                 .brand(
-                                    SmsMarket.Compliance.Brand.builder()
+                                    SuppliedCompliance.Brand.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .campaign(
-                                    SmsMarket.Compliance.Campaign.builder()
+                                    SuppliedCompliance.Campaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .addDocument(
-                                    SmsMarket.Compliance.Document.builder()
+                                    SuppliedDocument.builder()
                                         .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                         .fileName("file_name")
                                         .key("key")

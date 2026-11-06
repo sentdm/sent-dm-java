@@ -28,9 +28,9 @@ internal class WebhookUpdateParamsTest {
             .isInheritable(null)
             .retryCount(5)
             .senderProfile(
-                WebhookUpdateParams.SenderProfile.builder()
+                WebhookSenderProfileConfig.builder()
                     .eventFilters(
-                        WebhookUpdateParams.SenderProfile.EventFilters.builder()
+                        WebhookSenderProfileConfig.EventFilters.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
@@ -73,9 +73,9 @@ internal class WebhookUpdateParamsTest {
                 .isInheritable(null)
                 .retryCount(5)
                 .senderProfile(
-                    WebhookUpdateParams.SenderProfile.builder()
+                    WebhookSenderProfileConfig.builder()
                         .eventFilters(
-                            WebhookUpdateParams.SenderProfile.EventFilters.builder()
+                            WebhookSenderProfileConfig.EventFilters.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -128,9 +128,9 @@ internal class WebhookUpdateParamsTest {
                 .isInheritable(null)
                 .retryCount(5)
                 .senderProfile(
-                    WebhookUpdateParams.SenderProfile.builder()
+                    WebhookSenderProfileConfig.builder()
                         .eventFilters(
-                            WebhookUpdateParams.SenderProfile.EventFilters.builder()
+                            WebhookSenderProfileConfig.EventFilters.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
@@ -156,9 +156,9 @@ internal class WebhookUpdateParamsTest {
         assertThat(body.retryCount()).contains(5)
         assertThat(body.senderProfile())
             .contains(
-                WebhookUpdateParams.SenderProfile.builder()
+                WebhookSenderProfileConfig.builder()
                     .eventFilters(
-                        WebhookUpdateParams.SenderProfile.EventFilters.builder()
+                        WebhookSenderProfileConfig.EventFilters.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )

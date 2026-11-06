@@ -4,15 +4,16 @@ package dm.sent.models.channels.sms
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import dm.sent.core.ExcludeMissing
+import dm.sent.core.JsonField
+import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
-import dm.sent.core.MultipartField
 import dm.sent.core.Params
 import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
-import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -143,18 +144,18 @@ private constructor(
     fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
-     * Returns the raw multipart value of [compliance].
+     * Returns the raw JSON value of [compliance].
      *
-     * Unlike [compliance], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [compliance], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _compliance(): MultipartField<MarketCompliance> = body._compliance()
+    fun _compliance(): JsonField<MarketCompliance> = body._compliance()
 
     /**
-     * Returns the raw multipart value of [sandbox].
+     * Returns the raw JSON value of [sandbox].
      *
-     * Unlike [sandbox], this method doesn't throw if the multipart field has an unexpected type.
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _sandbox(): MultipartField<Boolean> = body._sandbox()
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -237,25 +238,25 @@ private constructor(
         fun compliance(compliance: MarketCompliance) = apply { body.compliance(compliance) }
 
         /**
-         * Sets [Builder.compliance] to an arbitrary multipart value.
+         * Sets [Builder.compliance] to an arbitrary JSON value.
          *
          * You should usually call [Builder.compliance] with a well-typed [MarketCompliance] value
          * instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun compliance(compliance: MultipartField<MarketCompliance>) = apply {
+        fun compliance(compliance: JsonField<MarketCompliance>) = apply {
             body.compliance(compliance)
         }
 
         fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
 
         /**
-         * Sets [Builder.sandbox] to an arbitrary multipart value.
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
          *
          * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun sandbox(sandbox: MultipartField<Boolean>) = apply { body.sandbox(sandbox) }
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -398,10 +399,7 @@ private constructor(
             )
     }
 
-    fun _body(): Map<String, MultipartField<*>> =
-        (mapOf("compliance" to _compliance(), "sandbox" to _sandbox()) +
-                _additionalBodyProperties().mapValues { (_, value) -> MultipartField.of(value) })
-            .toImmutable()
+    fun _body(): Body = body
 
     fun _pathParam(index: Int): String =
         when (index) {
@@ -422,11 +420,20 @@ private constructor(
     override fun _queryParams(): QueryParams = additionalQueryParams
 
     class Body
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val compliance: MultipartField<MarketCompliance>,
-        private val sandbox: MultipartField<Boolean>,
+        private val compliance: JsonField<MarketCompliance>,
+        private val sandbox: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("compliance")
+            @ExcludeMissing
+            compliance: JsonField<MarketCompliance> = JsonMissing.of(),
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(compliance, sandbox, mutableMapOf())
 
         /**
          * The compliance values a market registers with. `brand` and `campaign` apply to US
@@ -436,31 +443,29 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun compliance(): Optional<MarketCompliance> = compliance.value.getOptional("compliance")
+        fun compliance(): Optional<MarketCompliance> = compliance.getOptional("compliance")
 
         /**
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun sandbox(): Optional<Boolean> = sandbox.value.getOptional("sandbox")
+        fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
-         * Returns the raw multipart value of [compliance].
+         * Returns the raw JSON value of [compliance].
          *
-         * Unlike [compliance], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [compliance], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("compliance")
         @ExcludeMissing
-        fun _compliance(): MultipartField<MarketCompliance> = compliance
+        fun _compliance(): JsonField<MarketCompliance> = compliance
 
         /**
-         * Returns the raw multipart value of [sandbox].
+         * Returns the raw JSON value of [sandbox].
          *
-         * Unlike [sandbox], this method doesn't throw if the multipart field has an unexpected
-         * type.
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): MultipartField<Boolean> = sandbox
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -483,8 +488,8 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var compliance: MultipartField<MarketCompliance> = MultipartField.of(null)
-            private var sandbox: MultipartField<Boolean> = MultipartField.of(null)
+            private var compliance: JsonField<MarketCompliance> = JsonMissing.of()
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -499,29 +504,29 @@ private constructor(
              * `TEN_DLC`; other markets fill this map with the document keys their own requirements
              * name.
              */
-            fun compliance(compliance: MarketCompliance) = compliance(MultipartField.of(compliance))
+            fun compliance(compliance: MarketCompliance) = compliance(JsonField.of(compliance))
 
             /**
-             * Sets [Builder.compliance] to an arbitrary multipart value.
+             * Sets [Builder.compliance] to an arbitrary JSON value.
              *
              * You should usually call [Builder.compliance] with a well-typed [MarketCompliance]
              * value instead. This method is primarily for setting the field to an undocumented or
              * not yet supported value.
              */
-            fun compliance(compliance: MultipartField<MarketCompliance>) = apply {
+            fun compliance(compliance: JsonField<MarketCompliance>) = apply {
                 this.compliance = compliance
             }
 
-            fun sandbox(sandbox: Boolean) = sandbox(MultipartField.of(sandbox))
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
 
             /**
-             * Sets [Builder.sandbox] to an arbitrary multipart value.
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
              *
              * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun sandbox(sandbox: MultipartField<Boolean>) = apply { this.sandbox = sandbox }
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -578,6 +583,17 @@ private constructor(
             } catch (e: SentInvalidDataException) {
                 false
             }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (compliance.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (sandbox.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {

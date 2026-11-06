@@ -4,6 +4,7 @@ package dm.sent.models.voice.agents
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.jsonMapper
+import dm.sent.models.webhooks.PaginationCursors
 import dm.sent.models.webhooks.PaginationMeta
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
@@ -54,7 +55,7 @@ internal class VoiceAgentsListTest {
                 .pagination(
                     PaginationMeta.builder()
                         .cursors(
-                            PaginationMeta.Cursors.builder().after("after").before("before").build()
+                            PaginationCursors.builder().after("after").before("before").build()
                         )
                         .hasMore(true)
                         .page(0)
@@ -104,9 +105,7 @@ internal class VoiceAgentsListTest {
         assertThat(voiceAgentsList.pagination())
             .contains(
                 PaginationMeta.builder()
-                    .cursors(
-                        PaginationMeta.Cursors.builder().after("after").before("before").build()
-                    )
+                    .cursors(PaginationCursors.builder().after("after").before("before").build())
                     .hasMore(true)
                     .page(0)
                     .pageSize(0)
@@ -159,7 +158,7 @@ internal class VoiceAgentsListTest {
                 .pagination(
                     PaginationMeta.builder()
                         .cursors(
-                            PaginationMeta.Cursors.builder().after("after").before("before").build()
+                            PaginationCursors.builder().after("after").before("before").build()
                         )
                         .hasMore(true)
                         .page(0)

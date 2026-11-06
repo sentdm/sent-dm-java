@@ -5,8 +5,8 @@ package dm.sent.services.async
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.numbers.ApiResponseOfNumberLookupResult
 import dm.sent.models.numbers.NumberLookupParams
-import dm.sent.models.numbers.NumberLookupResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -36,7 +36,7 @@ interface NumberServiceAsync {
      * status, and VoIP detection. Uses the customer's messaging provider for rich data, with
      * fallback to the internal index.
      */
-    fun lookup(phoneNumber: String): CompletableFuture<NumberLookupResponse> =
+    fun lookup(phoneNumber: String): CompletableFuture<ApiResponseOfNumberLookupResult> =
         lookup(phoneNumber, NumberLookupParams.none())
 
     /** @see lookup */
@@ -44,30 +44,31 @@ interface NumberServiceAsync {
         phoneNumber: String,
         params: NumberLookupParams = NumberLookupParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<NumberLookupResponse> =
+    ): CompletableFuture<ApiResponseOfNumberLookupResult> =
         lookup(params.toBuilder().phoneNumber(phoneNumber).build(), requestOptions)
 
     /** @see lookup */
     fun lookup(
         phoneNumber: String,
         params: NumberLookupParams = NumberLookupParams.none(),
-    ): CompletableFuture<NumberLookupResponse> = lookup(phoneNumber, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfNumberLookupResult> =
+        lookup(phoneNumber, params, RequestOptions.none())
 
     /** @see lookup */
     fun lookup(
         params: NumberLookupParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<NumberLookupResponse>
+    ): CompletableFuture<ApiResponseOfNumberLookupResult>
 
     /** @see lookup */
-    fun lookup(params: NumberLookupParams): CompletableFuture<NumberLookupResponse> =
+    fun lookup(params: NumberLookupParams): CompletableFuture<ApiResponseOfNumberLookupResult> =
         lookup(params, RequestOptions.none())
 
     /** @see lookup */
     fun lookup(
         phoneNumber: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<NumberLookupResponse> =
+    ): CompletableFuture<ApiResponseOfNumberLookupResult> =
         lookup(phoneNumber, NumberLookupParams.none(), requestOptions)
 
     /**
@@ -88,7 +89,9 @@ interface NumberServiceAsync {
          * Returns a raw HTTP response for `get /v3/numbers/lookup/{phoneNumber}`, but is otherwise
          * the same as [NumberServiceAsync.lookup].
          */
-        fun lookup(phoneNumber: String): CompletableFuture<HttpResponseFor<NumberLookupResponse>> =
+        fun lookup(
+            phoneNumber: String
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfNumberLookupResult>> =
             lookup(phoneNumber, NumberLookupParams.none())
 
         /** @see lookup */
@@ -96,33 +99,33 @@ interface NumberServiceAsync {
             phoneNumber: String,
             params: NumberLookupParams = NumberLookupParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<NumberLookupResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfNumberLookupResult>> =
             lookup(params.toBuilder().phoneNumber(phoneNumber).build(), requestOptions)
 
         /** @see lookup */
         fun lookup(
             phoneNumber: String,
             params: NumberLookupParams = NumberLookupParams.none(),
-        ): CompletableFuture<HttpResponseFor<NumberLookupResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfNumberLookupResult>> =
             lookup(phoneNumber, params, RequestOptions.none())
 
         /** @see lookup */
         fun lookup(
             params: NumberLookupParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<NumberLookupResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfNumberLookupResult>>
 
         /** @see lookup */
         fun lookup(
             params: NumberLookupParams
-        ): CompletableFuture<HttpResponseFor<NumberLookupResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfNumberLookupResult>> =
             lookup(params, RequestOptions.none())
 
         /** @see lookup */
         fun lookup(
             phoneNumber: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<NumberLookupResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfNumberLookupResult>> =
             lookup(phoneNumber, NumberLookupParams.none(), requestOptions)
     }
 }

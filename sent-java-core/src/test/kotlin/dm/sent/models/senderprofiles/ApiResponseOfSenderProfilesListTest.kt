@@ -11,10 +11,13 @@ import dm.sent.models.channels.rcs.RcsAddress
 import dm.sent.models.channels.rcs.RcsAgent
 import dm.sent.models.channels.sms.SmsMarket
 import dm.sent.models.channels.sms.SmsNumber
+import dm.sent.models.channels.sms.SuppliedCompliance
+import dm.sent.models.channels.sms.SuppliedDocument
 import dm.sent.models.channels.voice.VoiceNumber
 import dm.sent.models.channels.whatsapp.WhatsappChannel
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
+import dm.sent.models.webhooks.PaginationCursors
 import dm.sent.models.webhooks.PaginationMeta
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
@@ -31,7 +34,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                         .pagination(
                             PaginationMeta.builder()
                                 .cursors(
-                                    PaginationMeta.Cursors.builder()
+                                    PaginationCursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -110,9 +113,9 @@ internal class ApiResponseOfSenderProfilesListTest {
                                         .addSms(
                                             SmsMarket.builder()
                                                 .compliance(
-                                                    SmsMarket.Compliance.builder()
+                                                    SuppliedCompliance.builder()
                                                         .brand(
-                                                            SmsMarket.Compliance.Brand.builder()
+                                                            SuppliedCompliance.Brand.builder()
                                                                 .putAdditionalProperty(
                                                                     "foo",
                                                                     JsonValue.from("bar"),
@@ -120,7 +123,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                                 .build()
                                                         )
                                                         .campaign(
-                                                            SmsMarket.Compliance.Campaign.builder()
+                                                            SuppliedCompliance.Campaign.builder()
                                                                 .putAdditionalProperty(
                                                                     "foo",
                                                                     JsonValue.from("bar"),
@@ -128,7 +131,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                                 .build()
                                                         )
                                                         .addDocument(
-                                                            SmsMarket.Compliance.Document.builder()
+                                                            SuppliedDocument.builder()
                                                                 .documentId(
                                                                     "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
                                                                 )
@@ -183,19 +186,19 @@ internal class ApiResponseOfSenderProfilesListTest {
                                         .build()
                                 )
                                 .compliance(
-                                    SenderProfile.Compliance.builder()
+                                    SuppliedCompliance.builder()
                                         .brand(
-                                            SenderProfile.Compliance.Brand.builder()
+                                            SuppliedCompliance.Brand.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()
                                         )
                                         .campaign(
-                                            SenderProfile.Compliance.Campaign.builder()
+                                            SuppliedCompliance.Campaign.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()
                                         )
                                         .addDocument(
-                                            SenderProfile.Compliance.Document.builder()
+                                            SuppliedDocument.builder()
                                                 .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                                 .fileName("file_name")
                                                 .key("key")
@@ -241,10 +244,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                     .pagination(
                         PaginationMeta.builder()
                             .cursors(
-                                PaginationMeta.Cursors.builder()
-                                    .after("after")
-                                    .before("before")
-                                    .build()
+                                PaginationCursors.builder().after("after").before("before").build()
                             )
                             .hasMore(true)
                             .page(0)
@@ -316,9 +316,9 @@ internal class ApiResponseOfSenderProfilesListTest {
                                     .addSms(
                                         SmsMarket.builder()
                                             .compliance(
-                                                SmsMarket.Compliance.builder()
+                                                SuppliedCompliance.builder()
                                                     .brand(
-                                                        SmsMarket.Compliance.Brand.builder()
+                                                        SuppliedCompliance.Brand.builder()
                                                             .putAdditionalProperty(
                                                                 "foo",
                                                                 JsonValue.from("bar"),
@@ -326,7 +326,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                             .build()
                                                     )
                                                     .campaign(
-                                                        SmsMarket.Compliance.Campaign.builder()
+                                                        SuppliedCompliance.Campaign.builder()
                                                             .putAdditionalProperty(
                                                                 "foo",
                                                                 JsonValue.from("bar"),
@@ -334,7 +334,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                             .build()
                                                     )
                                                     .addDocument(
-                                                        SmsMarket.Compliance.Document.builder()
+                                                        SuppliedDocument.builder()
                                                             .documentId(
                                                                 "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
                                                             )
@@ -389,19 +389,19 @@ internal class ApiResponseOfSenderProfilesListTest {
                                     .build()
                             )
                             .compliance(
-                                SenderProfile.Compliance.builder()
+                                SuppliedCompliance.builder()
                                     .brand(
-                                        SenderProfile.Compliance.Brand.builder()
+                                        SuppliedCompliance.Brand.builder()
                                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                                             .build()
                                     )
                                     .campaign(
-                                        SenderProfile.Compliance.Campaign.builder()
+                                        SuppliedCompliance.Campaign.builder()
                                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                                             .build()
                                     )
                                     .addDocument(
-                                        SenderProfile.Compliance.Document.builder()
+                                        SuppliedDocument.builder()
                                             .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                             .fileName("file_name")
                                             .key("key")
@@ -453,7 +453,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                         .pagination(
                             PaginationMeta.builder()
                                 .cursors(
-                                    PaginationMeta.Cursors.builder()
+                                    PaginationCursors.builder()
                                         .after("after")
                                         .before("before")
                                         .build()
@@ -532,9 +532,9 @@ internal class ApiResponseOfSenderProfilesListTest {
                                         .addSms(
                                             SmsMarket.builder()
                                                 .compliance(
-                                                    SmsMarket.Compliance.builder()
+                                                    SuppliedCompliance.builder()
                                                         .brand(
-                                                            SmsMarket.Compliance.Brand.builder()
+                                                            SuppliedCompliance.Brand.builder()
                                                                 .putAdditionalProperty(
                                                                     "foo",
                                                                     JsonValue.from("bar"),
@@ -542,7 +542,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                                 .build()
                                                         )
                                                         .campaign(
-                                                            SmsMarket.Compliance.Campaign.builder()
+                                                            SuppliedCompliance.Campaign.builder()
                                                                 .putAdditionalProperty(
                                                                     "foo",
                                                                     JsonValue.from("bar"),
@@ -550,7 +550,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                                 .build()
                                                         )
                                                         .addDocument(
-                                                            SmsMarket.Compliance.Document.builder()
+                                                            SuppliedDocument.builder()
                                                                 .documentId(
                                                                     "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
                                                                 )
@@ -605,19 +605,19 @@ internal class ApiResponseOfSenderProfilesListTest {
                                         .build()
                                 )
                                 .compliance(
-                                    SenderProfile.Compliance.builder()
+                                    SuppliedCompliance.builder()
                                         .brand(
-                                            SenderProfile.Compliance.Brand.builder()
+                                            SuppliedCompliance.Brand.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()
                                         )
                                         .campaign(
-                                            SenderProfile.Compliance.Campaign.builder()
+                                            SuppliedCompliance.Campaign.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()
                                         )
                                         .addDocument(
-                                            SenderProfile.Compliance.Document.builder()
+                                            SuppliedDocument.builder()
                                                 .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                                 .fileName("file_name")
                                                 .key("key")

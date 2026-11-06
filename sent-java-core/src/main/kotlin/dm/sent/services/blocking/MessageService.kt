@@ -6,13 +6,13 @@ import com.google.errorprone.annotations.MustBeClosed
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.messages.ApiResponseOfCancelledMessage
+import dm.sent.models.messages.ApiResponseOfMessage
+import dm.sent.models.messages.ApiResponseOfMessageActivities
 import dm.sent.models.messages.MessageCancelParams
-import dm.sent.models.messages.MessageCancelResponse
 import dm.sent.models.messages.MessageResendParams
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
-import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.messages.MessageRetrieveStatusParams
-import dm.sent.models.messages.MessageRetrieveStatusResponse
 import dm.sent.models.messages.MessageSendParams
 import dm.sent.models.messages.MessageSendResponse
 import java.util.function.Consumer
@@ -85,7 +85,7 @@ interface MessageService {
      * /v3/messages/{id}` is cached briefly, so an immediate re-fetch can still show the
      * pre-cancellation state.
      */
-    fun cancel(id: String, params: MessageCancelParams): MessageCancelResponse =
+    fun cancel(id: String, params: MessageCancelParams): ApiResponseOfCancelledMessage =
         cancel(id, params, RequestOptions.none())
 
     /** @see cancel */
@@ -93,17 +93,17 @@ interface MessageService {
         id: String,
         params: MessageCancelParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageCancelResponse = cancel(params.toBuilder().id(id).build(), requestOptions)
+    ): ApiResponseOfCancelledMessage = cancel(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see cancel */
-    fun cancel(params: MessageCancelParams): MessageCancelResponse =
+    fun cancel(params: MessageCancelParams): ApiResponseOfCancelledMessage =
         cancel(params, RequestOptions.none())
 
     /** @see cancel */
     fun cancel(
         params: MessageCancelParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageCancelResponse
+    ): ApiResponseOfCancelledMessage
 
     /**
      * Resends a message you already sent, on the same message id, without rebuilding the request.
@@ -160,7 +160,7 @@ interface MessageService {
      * carries scheduled_at, the release instant in UTC as it stood at that moment. Other entries
      * have no scheduled_at key.
      */
-    fun retrieveActivities(id: String): MessageRetrieveActivitiesResponse =
+    fun retrieveActivities(id: String): ApiResponseOfMessageActivities =
         retrieveActivities(id, MessageRetrieveActivitiesParams.none())
 
     /** @see retrieveActivities */
@@ -168,31 +168,31 @@ interface MessageService {
         id: String,
         params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageRetrieveActivitiesResponse =
+    ): ApiResponseOfMessageActivities =
         retrieveActivities(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieveActivities */
     fun retrieveActivities(
         id: String,
         params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
-    ): MessageRetrieveActivitiesResponse = retrieveActivities(id, params, RequestOptions.none())
+    ): ApiResponseOfMessageActivities = retrieveActivities(id, params, RequestOptions.none())
 
     /** @see retrieveActivities */
     fun retrieveActivities(
         params: MessageRetrieveActivitiesParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageRetrieveActivitiesResponse
+    ): ApiResponseOfMessageActivities
 
     /** @see retrieveActivities */
     fun retrieveActivities(
         params: MessageRetrieveActivitiesParams
-    ): MessageRetrieveActivitiesResponse = retrieveActivities(params, RequestOptions.none())
+    ): ApiResponseOfMessageActivities = retrieveActivities(params, RequestOptions.none())
 
     /** @see retrieveActivities */
     fun retrieveActivities(
         id: String,
         requestOptions: RequestOptions,
-    ): MessageRetrieveActivitiesResponse =
+    ): ApiResponseOfMessageActivities =
         retrieveActivities(id, MessageRetrieveActivitiesParams.none(), requestOptions)
 
     /**
@@ -203,7 +203,7 @@ interface MessageService {
      * scheduled_at, the instant it is held for in UTC — or, on a CANCELLED message, the instant
      * that was called off. A message sent immediately has no scheduled_at key.
      */
-    fun retrieveStatus(id: String): MessageRetrieveStatusResponse =
+    fun retrieveStatus(id: String): ApiResponseOfMessage =
         retrieveStatus(id, MessageRetrieveStatusParams.none())
 
     /** @see retrieveStatus */
@@ -211,27 +211,26 @@ interface MessageService {
         id: String,
         params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageRetrieveStatusResponse =
-        retrieveStatus(params.toBuilder().id(id).build(), requestOptions)
+    ): ApiResponseOfMessage = retrieveStatus(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see retrieveStatus */
     fun retrieveStatus(
         id: String,
         params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
-    ): MessageRetrieveStatusResponse = retrieveStatus(id, params, RequestOptions.none())
+    ): ApiResponseOfMessage = retrieveStatus(id, params, RequestOptions.none())
 
     /** @see retrieveStatus */
     fun retrieveStatus(
         params: MessageRetrieveStatusParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): MessageRetrieveStatusResponse
+    ): ApiResponseOfMessage
 
     /** @see retrieveStatus */
-    fun retrieveStatus(params: MessageRetrieveStatusParams): MessageRetrieveStatusResponse =
+    fun retrieveStatus(params: MessageRetrieveStatusParams): ApiResponseOfMessage =
         retrieveStatus(params, RequestOptions.none())
 
     /** @see retrieveStatus */
-    fun retrieveStatus(id: String, requestOptions: RequestOptions): MessageRetrieveStatusResponse =
+    fun retrieveStatus(id: String, requestOptions: RequestOptions): ApiResponseOfMessage =
         retrieveStatus(id, MessageRetrieveStatusParams.none(), requestOptions)
 
     /**
@@ -301,7 +300,8 @@ interface MessageService {
         fun cancel(
             id: String,
             params: MessageCancelParams,
-        ): HttpResponseFor<MessageCancelResponse> = cancel(id, params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseOfCancelledMessage> =
+            cancel(id, params, RequestOptions.none())
 
         /** @see cancel */
         @MustBeClosed
@@ -309,12 +309,12 @@ interface MessageService {
             id: String,
             params: MessageCancelParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageCancelResponse> =
+        ): HttpResponseFor<ApiResponseOfCancelledMessage> =
             cancel(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see cancel */
         @MustBeClosed
-        fun cancel(params: MessageCancelParams): HttpResponseFor<MessageCancelResponse> =
+        fun cancel(params: MessageCancelParams): HttpResponseFor<ApiResponseOfCancelledMessage> =
             cancel(params, RequestOptions.none())
 
         /** @see cancel */
@@ -322,7 +322,7 @@ interface MessageService {
         fun cancel(
             params: MessageCancelParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageCancelResponse>
+        ): HttpResponseFor<ApiResponseOfCancelledMessage>
 
         /**
          * Returns a raw HTTP response for `post /v3/messages/{id}/resend`, but is otherwise the
@@ -358,7 +358,7 @@ interface MessageService {
          * same as [MessageService.retrieveActivities].
          */
         @MustBeClosed
-        fun retrieveActivities(id: String): HttpResponseFor<MessageRetrieveActivitiesResponse> =
+        fun retrieveActivities(id: String): HttpResponseFor<ApiResponseOfMessageActivities> =
             retrieveActivities(id, MessageRetrieveActivitiesParams.none())
 
         /** @see retrieveActivities */
@@ -367,7 +367,7 @@ interface MessageService {
             id: String,
             params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageRetrieveActivitiesResponse> =
+        ): HttpResponseFor<ApiResponseOfMessageActivities> =
             retrieveActivities(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieveActivities */
@@ -375,7 +375,7 @@ interface MessageService {
         fun retrieveActivities(
             id: String,
             params: MessageRetrieveActivitiesParams = MessageRetrieveActivitiesParams.none(),
-        ): HttpResponseFor<MessageRetrieveActivitiesResponse> =
+        ): HttpResponseFor<ApiResponseOfMessageActivities> =
             retrieveActivities(id, params, RequestOptions.none())
 
         /** @see retrieveActivities */
@@ -383,13 +383,13 @@ interface MessageService {
         fun retrieveActivities(
             params: MessageRetrieveActivitiesParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageRetrieveActivitiesResponse>
+        ): HttpResponseFor<ApiResponseOfMessageActivities>
 
         /** @see retrieveActivities */
         @MustBeClosed
         fun retrieveActivities(
             params: MessageRetrieveActivitiesParams
-        ): HttpResponseFor<MessageRetrieveActivitiesResponse> =
+        ): HttpResponseFor<ApiResponseOfMessageActivities> =
             retrieveActivities(params, RequestOptions.none())
 
         /** @see retrieveActivities */
@@ -397,7 +397,7 @@ interface MessageService {
         fun retrieveActivities(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<MessageRetrieveActivitiesResponse> =
+        ): HttpResponseFor<ApiResponseOfMessageActivities> =
             retrieveActivities(id, MessageRetrieveActivitiesParams.none(), requestOptions)
 
         /**
@@ -405,7 +405,7 @@ interface MessageService {
          * [MessageService.retrieveStatus].
          */
         @MustBeClosed
-        fun retrieveStatus(id: String): HttpResponseFor<MessageRetrieveStatusResponse> =
+        fun retrieveStatus(id: String): HttpResponseFor<ApiResponseOfMessage> =
             retrieveStatus(id, MessageRetrieveStatusParams.none())
 
         /** @see retrieveStatus */
@@ -414,7 +414,7 @@ interface MessageService {
             id: String,
             params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageRetrieveStatusResponse> =
+        ): HttpResponseFor<ApiResponseOfMessage> =
             retrieveStatus(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see retrieveStatus */
@@ -422,29 +422,27 @@ interface MessageService {
         fun retrieveStatus(
             id: String,
             params: MessageRetrieveStatusParams = MessageRetrieveStatusParams.none(),
-        ): HttpResponseFor<MessageRetrieveStatusResponse> =
-            retrieveStatus(id, params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseOfMessage> = retrieveStatus(id, params, RequestOptions.none())
 
         /** @see retrieveStatus */
         @MustBeClosed
         fun retrieveStatus(
             params: MessageRetrieveStatusParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<MessageRetrieveStatusResponse>
+        ): HttpResponseFor<ApiResponseOfMessage>
 
         /** @see retrieveStatus */
         @MustBeClosed
         fun retrieveStatus(
             params: MessageRetrieveStatusParams
-        ): HttpResponseFor<MessageRetrieveStatusResponse> =
-            retrieveStatus(params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseOfMessage> = retrieveStatus(params, RequestOptions.none())
 
         /** @see retrieveStatus */
         @MustBeClosed
         fun retrieveStatus(
             id: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<MessageRetrieveStatusResponse> =
+        ): HttpResponseFor<ApiResponseOfMessage> =
             retrieveStatus(id, MessageRetrieveStatusParams.none(), requestOptions)
 
         /**

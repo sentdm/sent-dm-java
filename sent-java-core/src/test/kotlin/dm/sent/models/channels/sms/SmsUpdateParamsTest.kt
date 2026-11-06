@@ -3,9 +3,7 @@
 package dm.sent.models.channels.sms
 
 import dm.sent.core.JsonValue
-import dm.sent.core.MultipartField
 import dm.sent.core.http.Headers
-import java.io.InputStream
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -220,77 +218,56 @@ internal class SmsUpdateParamsTest {
 
         val body = params._body()
 
-        assertThat(body.filterValues { !it.value.isNull() })
-            .usingRecursiveComparison()
-            // TODO(AssertJ): Replace this and the `mapValues` below with:
-            // https://github.com/assertj/assertj/issues/3165
-            .withEqualsForType(
-                { a, b -> a.readBytes() contentEquals b.readBytes() },
-                InputStream::class.java,
-            )
-            .isEqualTo(
-                mapOf(
-                        "compliance" to
-                            MultipartField.of(
-                                MarketCompliance.builder()
-                                    .brand(
-                                        MarketCompliance.Brand.builder()
-                                            .businessName("business_name")
-                                            .city("city")
-                                            .contactEmail("dev@stainless.com")
-                                            .contactName("contact_name")
-                                            .contactPhone("contact_phone")
-                                            .country("country")
-                                            .einIssuingCountry("ein_issuing_country")
-                                            .entityType(
-                                                MarketCompliance.Brand.EntityType.PRIVATE_PROFIT
-                                            )
-                                            .inherit(true)
-                                            .legalName("legal_name")
-                                            .postalCode("postal_code")
-                                            .state("state")
-                                            .street("street")
-                                            .taxId("tax_id")
-                                            .taxIdType("tax_id_type")
-                                            .website("website")
-                                            .build()
-                                    )
-                                    .campaign(
-                                        MarketCompliance.Campaign.builder()
-                                            .description("description")
-                                            .helpKeywords("help_keywords")
-                                            .helpMessage("help_message")
-                                            .inherit(true)
-                                            .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-                                            .optInKeywords("opt_in_keywords")
-                                            .optInMessage("opt_in_message")
-                                            .optOutKeywords("opt_out_keywords")
-                                            .optOutMessage("opt_out_message")
-                                            .privacyPolicyLink("privacy_policy_link")
-                                            .termsAndConditionsLink("terms_and_conditions_link")
-                                            .addUseCase(
-                                                MarketCompliance.Campaign.UseCase.builder()
-                                                    .addSampleMessage(
-                                                        JsonValue.from(mapOf<String, Any>())
-                                                    )
-                                                    .useCase(
-                                                        MarketCompliance.Campaign.UseCase
-                                                            .InnerUseCase
-                                                            .MARKETING
-                                                    )
-                                                    .build()
-                                            )
-                                            .volume("volume")
-                                            .build()
+        assertThat(body.compliance())
+            .contains(
+                MarketCompliance.builder()
+                    .brand(
+                        MarketCompliance.Brand.builder()
+                            .businessName("business_name")
+                            .city("city")
+                            .contactEmail("dev@stainless.com")
+                            .contactName("contact_name")
+                            .contactPhone("contact_phone")
+                            .country("country")
+                            .einIssuingCountry("ein_issuing_country")
+                            .entityType(MarketCompliance.Brand.EntityType.PRIVATE_PROFIT)
+                            .inherit(true)
+                            .legalName("legal_name")
+                            .postalCode("postal_code")
+                            .state("state")
+                            .street("street")
+                            .taxId("tax_id")
+                            .taxIdType("tax_id_type")
+                            .website("website")
+                            .build()
+                    )
+                    .campaign(
+                        MarketCompliance.Campaign.builder()
+                            .description("description")
+                            .helpKeywords("help_keywords")
+                            .helpMessage("help_message")
+                            .inherit(true)
+                            .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+                            .optInKeywords("opt_in_keywords")
+                            .optInMessage("opt_in_message")
+                            .optOutKeywords("opt_out_keywords")
+                            .optOutMessage("opt_out_message")
+                            .privacyPolicyLink("privacy_policy_link")
+                            .termsAndConditionsLink("terms_and_conditions_link")
+                            .addUseCase(
+                                MarketCompliance.Campaign.UseCase.builder()
+                                    .addSampleMessage(JsonValue.from(mapOf<String, Any>()))
+                                    .useCase(
+                                        MarketCompliance.Campaign.UseCase.InnerUseCase.MARKETING
                                     )
                                     .build()
-                            ),
-                        "sandbox" to MultipartField.of(false),
+                            )
+                            .volume("volume")
+                            .build()
                     )
-                    .mapValues { (_, field) ->
-                        field.map { (it as? ByteArray)?.inputStream() ?: it }
-                    }
+                    .build()
             )
+        assertThat(body.sandbox()).contains(false)
     }
 
     @Test
@@ -298,7 +275,5 @@ internal class SmsUpdateParamsTest {
         val params = SmsUpdateParams.builder().country("US").type("ten_dlc").build()
 
         val body = params._body()
-
-        assertThat(body.filterValues { !it.value.isNull() }).isEmpty()
     }
 }
