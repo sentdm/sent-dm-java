@@ -51,6 +51,7 @@ import dm.sent.client.okhttp.SentOkHttpClient;
 import dm.sent.core.JsonValue;
 import dm.sent.models.messages.MessageSendParams;
 import dm.sent.models.messages.MessageSendResponse;
+import dm.sent.models.templates.TemplateRef;
 
 // Configures using the `sent.dmApiKey` and `sent.baseUrl` system properties
 // Or configures using the `SENT_DM_API_KEY` and `SENT_BASE_URL` environment variables
@@ -59,10 +60,10 @@ SentClient client = SentOkHttpClient.fromEnv();
 MessageSendParams params = MessageSendParams.builder()
     .addChannel("sms")
     .addChannel("whatsapp")
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
         .name("order_confirmation")
-        .parameters(MessageSendParams.Template.Parameters.builder()
+        .parameters(TemplateRef.Parameters.builder()
             .putAdditionalProperty("name", JsonValue.from("John Doe"))
             .putAdditionalProperty("order_id", JsonValue.from("12345"))
             .build())
@@ -163,6 +164,7 @@ import dm.sent.client.okhttp.SentOkHttpClient;
 import dm.sent.core.JsonValue;
 import dm.sent.models.messages.MessageSendParams;
 import dm.sent.models.messages.MessageSendResponse;
+import dm.sent.models.templates.TemplateRef;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `sent.dmApiKey` and `sent.baseUrl` system properties
@@ -172,10 +174,10 @@ SentClient client = SentOkHttpClient.fromEnv();
 MessageSendParams params = MessageSendParams.builder()
     .addChannel("sms")
     .addChannel("whatsapp")
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
         .name("order_confirmation")
-        .parameters(MessageSendParams.Template.Parameters.builder()
+        .parameters(TemplateRef.Parameters.builder()
             .putAdditionalProperty("name", JsonValue.from("John Doe"))
             .putAdditionalProperty("order_id", JsonValue.from("12345"))
             .build())
@@ -194,6 +196,7 @@ import dm.sent.client.okhttp.SentOkHttpClientAsync;
 import dm.sent.core.JsonValue;
 import dm.sent.models.messages.MessageSendParams;
 import dm.sent.models.messages.MessageSendResponse;
+import dm.sent.models.templates.TemplateRef;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `sent.dmApiKey` and `sent.baseUrl` system properties
@@ -203,10 +206,10 @@ SentClientAsync client = SentOkHttpClientAsync.fromEnv();
 MessageSendParams params = MessageSendParams.builder()
     .addChannel("sms")
     .addChannel("whatsapp")
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
         .name("order_confirmation")
-        .parameters(MessageSendParams.Template.Parameters.builder()
+        .parameters(TemplateRef.Parameters.builder()
             .putAdditionalProperty("name", JsonValue.from("John Doe"))
             .putAdditionalProperty("order_id", JsonValue.from("12345"))
             .build())
@@ -231,13 +234,14 @@ import dm.sent.core.http.Headers;
 import dm.sent.core.http.HttpResponseFor;
 import dm.sent.models.messages.MessageSendParams;
 import dm.sent.models.messages.MessageSendResponse;
+import dm.sent.models.templates.TemplateRef;
 
 MessageSendParams params = MessageSendParams.builder()
     .addChannel("sms")
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
         .name("order_confirmation")
-        .parameters(MessageSendParams.Template.Parameters.builder()
+        .parameters(TemplateRef.Parameters.builder()
             .putAdditionalProperty("name", JsonValue.from("John Doe"))
             .putAdditionalProperty("order_id", JsonValue.from("12345"))
             .build())
@@ -619,9 +623,10 @@ To set undocumented parameters on _nested_ headers, query params, or body classe
 ```java
 import dm.sent.core.JsonValue;
 import dm.sent.models.messages.MessageSendParams;
+import dm.sent.models.templates.TemplateRef;
 
 MessageSendParams params = MessageSendParams.builder()
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .putAdditionalProperty("secretProperty", JsonValue.from("42"))
         .build())
     .build();
@@ -634,13 +639,14 @@ To set a documented parameter or property to an undocumented or not yet supporte
 ```java
 import dm.sent.core.JsonValue;
 import dm.sent.models.messages.MessageSendParams;
+import dm.sent.models.templates.TemplateRef;
 
 MessageSendParams params = MessageSendParams.builder()
     .channel(JsonValue.from(42))
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
         .name("order_confirmation")
-        .parameters(MessageSendParams.Template.Parameters.builder()
+        .parameters(TemplateRef.Parameters.builder()
             .putAdditionalProperty("name", JsonValue.from("John Doe"))
             .putAdditionalProperty("order_id", JsonValue.from("12345"))
             .build())

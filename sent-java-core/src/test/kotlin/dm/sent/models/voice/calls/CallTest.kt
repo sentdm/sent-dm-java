@@ -26,7 +26,7 @@ internal class CallTest {
                 .failureReason("failure_reason")
                 .from(CallParty.builder().kind("kind").value("value").build())
                 .addLeg(
-                    Call.Leg.builder()
+                    CallLeg.builder()
                         .billedMinutes(0)
                         .cost(0.0)
                         .currency("currency")
@@ -61,7 +61,7 @@ internal class CallTest {
         assertThat(call.from()).contains(CallParty.builder().kind("kind").value("value").build())
         assertThat(call.legs().getOrNull())
             .containsExactly(
-                Call.Leg.builder()
+                CallLeg.builder()
                     .billedMinutes(0)
                     .cost(0.0)
                     .currency("currency")
@@ -101,7 +101,7 @@ internal class CallTest {
                 .failureReason("failure_reason")
                 .from(CallParty.builder().kind("kind").value("value").build())
                 .addLeg(
-                    Call.Leg.builder()
+                    CallLeg.builder()
                         .billedMinutes(0)
                         .cost(0.0)
                         .currency("currency")

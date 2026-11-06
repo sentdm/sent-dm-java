@@ -17,13 +17,13 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
+import dm.sent.models.profiles.ApiResponseOfProfileCompletionResult
 import dm.sent.models.profiles.ApiResponseOfProfileDetail
+import dm.sent.models.profiles.ApiResponseOfProfilesList
 import dm.sent.models.profiles.ProfileCompleteParams
-import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
-import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
 import dm.sent.services.async.profiles.CampaignServiceAsync
@@ -94,7 +94,7 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: ProfileListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ProfileListResponse> =
+    ): CompletableFuture<ApiResponseOfProfilesList> =
         // get /v3/profiles
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -110,7 +110,7 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun complete(
         params: ProfileCompleteParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ProfileCompleteResponse> =
+    ): CompletableFuture<ApiResponseOfProfileCompletionResult> =
         // post /v3/profiles/{profileId}/complete
         withRawResponse().complete(params, requestOptions).thenApply { it.parse() }
 
@@ -243,14 +243,14 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val listHandler: Handler<ProfileListResponse> =
-            jsonHandler<ProfileListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<ApiResponseOfProfilesList> =
+            jsonHandler<ApiResponseOfProfilesList>(clientOptions.jsonMapper)
 
         @Deprecated("deprecated")
         override fun list(
             params: ProfileListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ProfileListResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfilesList>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -302,14 +302,14 @@ class ProfileServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val completeHandler: Handler<ProfileCompleteResponse> =
-            jsonHandler<ProfileCompleteResponse>(clientOptions.jsonMapper)
+        private val completeHandler: Handler<ApiResponseOfProfileCompletionResult> =
+            jsonHandler<ApiResponseOfProfileCompletionResult>(clientOptions.jsonMapper)
 
         @Deprecated("deprecated")
         override fun complete(
             params: ProfileCompleteParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ProfileCompleteResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileCompletionResult>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("profileId", params.profileId().getOrNull())

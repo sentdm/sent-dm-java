@@ -25,7 +25,7 @@ internal class TemplateButtonPropsTest {
                     TemplateVariable.builder()
                         .name("x")
                         .props(
-                            TemplateVariable.Props.builder()
+                            TemplateVariableProps.builder()
                                 .mediaType("x")
                                 .sample("x")
                                 .url("x")
@@ -58,7 +58,7 @@ internal class TemplateButtonPropsTest {
                 TemplateVariable.builder()
                     .name("x")
                     .props(
-                        TemplateVariable.Props.builder()
+                        TemplateVariableProps.builder()
                             .mediaType("x")
                             .sample("x")
                             .url("x")
@@ -95,7 +95,7 @@ internal class TemplateButtonPropsTest {
                     TemplateVariable.builder()
                         .name("x")
                         .props(
-                            TemplateVariable.Props.builder()
+                            TemplateVariableProps.builder()
                                 .mediaType("x")
                                 .sample("x")
                                 .url("x")

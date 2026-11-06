@@ -15,8 +15,8 @@ import dm.sent.core.http.HttpResponse.Handler
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
+import dm.sent.models.numbers.ApiResponseOfNumberLookupResult
 import dm.sent.models.numbers.NumberLookupParams
-import dm.sent.models.numbers.NumberLookupResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -43,7 +43,7 @@ class NumberServiceAsyncImpl internal constructor(private val clientOptions: Cli
     override fun lookup(
         params: NumberLookupParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<NumberLookupResponse> =
+    ): CompletableFuture<ApiResponseOfNumberLookupResult> =
         // get /v3/numbers/lookup/{phoneNumber}
         withRawResponse().lookup(params, requestOptions).thenApply { it.parse() }
 
@@ -60,13 +60,13 @@ class NumberServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val lookupHandler: Handler<NumberLookupResponse> =
-            jsonHandler<NumberLookupResponse>(clientOptions.jsonMapper)
+        private val lookupHandler: Handler<ApiResponseOfNumberLookupResult> =
+            jsonHandler<ApiResponseOfNumberLookupResult>(clientOptions.jsonMapper)
 
         override fun lookup(
             params: NumberLookupParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<NumberLookupResponse>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfNumberLookupResult>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("phoneNumber", params.phoneNumber().getOrNull())

@@ -6,8 +6,14 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
-import dm.sent.models.messages.MessageSendResponse
-import dm.sent.models.profiles.TcrBrandRelationship
+import dm.sent.models.messages.ApiResponseOfCancelledMessage
+import dm.sent.models.messages.CancelledMessage
+import dm.sent.models.messages.MessageBody
+import dm.sent.models.messages.MessageButton
+import dm.sent.models.messages.MessageHeaderMedia
+import dm.sent.models.messages.MessageMedia
+import dm.sent.models.messages.MessageStatusEvent
+import dm.sent.models.profiles.EntityType
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
@@ -56,33 +62,79 @@ internal class ProGuardCompatibilityTest {
         assertThat(client.users()).isNotNull()
         assertThat(client.templates()).isNotNull()
         assertThat(client.profiles()).isNotNull()
+        assertThat(client.senderProfiles()).isNotNull()
         assertThat(client.numbers()).isNotNull()
         assertThat(client.messages()).isNotNull()
         assertThat(client.contacts()).isNotNull()
         assertThat(client.conversations()).isNotNull()
         assertThat(client.voice()).isNotNull()
         assertThat(client.channels()).isNotNull()
+        assertThat(client.compliance()).isNotNull()
         assertThat(client.me()).isNotNull()
     }
 
     @Test
-    fun messageSendResponseRoundtrip() {
+    fun apiResponseOfCancelledMessageRoundtrip() {
         val jsonMapper = jsonMapper()
-        val messageSendResponse =
-            MessageSendResponse.builder()
+        val apiResponseOfCancelledMessage =
+            ApiResponseOfCancelledMessage.builder()
                 .data(
-                    MessageSendResponse.Data.builder()
-                        .addRecipient(
-                            MessageSendResponse.Data.Recipient.builder()
-                                .body("body")
-                                .channel("channel")
-                                .messageId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .to("to")
+                    CancelledMessage.builder()
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .activeContactPrice(0.0)
+                        .channel("channel")
+                        .contactId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .direction("direction")
+                        .addEvent(
+                            MessageStatusEvent.builder()
+                                .status("status")
+                                .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .description("description")
+                                .reason("reason")
+                                .reasonCode("reason_code")
                                 .build()
                         )
+                        .messageBody(
+                            MessageBody.builder()
+                                .addButton(
+                                    MessageButton.builder()
+                                        .postbackData("postbackData")
+                                        .text("text")
+                                        .type("type")
+                                        .value("value")
+                                        .build()
+                                )
+                                .content("content")
+                                .footer("footer")
+                                .header("header")
+                                .headerMedia(
+                                    MessageHeaderMedia.builder().type("type").url("url").build()
+                                )
+                                .addMedia(
+                                    MessageMedia.builder()
+                                        .mediaType("mediaType")
+                                        .mimeType("mimeType")
+                                        .sizeBytes(0L)
+                                        .sourceHashSha256("sourceHashSha256")
+                                        .url("url")
+                                        .build()
+                                )
+                                .subject("subject")
+                                .build()
+                        )
+                        .phone("phone")
+                        .phoneInternational("phone_international")
+                        .price(0.0)
+                        .reason("reason")
+                        .reasonCode("reason_code")
+                        .regionCode("region_code")
                         .status("status")
+                        .templateCategory("template_category")
                         .templateId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .templateName("template_name")
+                        .scheduledAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .build()
                 )
                 .error(
@@ -107,26 +159,27 @@ internal class ProGuardCompatibilityTest {
                 .success(true)
                 .build()
 
-        val roundtrippedMessageSendResponse =
+        val roundtrippedApiResponseOfCancelledMessage =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(messageSendResponse),
-                jacksonTypeRef<MessageSendResponse>(),
+                jsonMapper.writeValueAsString(apiResponseOfCancelledMessage),
+                jacksonTypeRef<ApiResponseOfCancelledMessage>(),
             )
 
-        assertThat(roundtrippedMessageSendResponse).isEqualTo(messageSendResponse)
+        assertThat(roundtrippedApiResponseOfCancelledMessage)
+            .isEqualTo(apiResponseOfCancelledMessage)
     }
 
     @Test
-    fun tcrBrandRelationshipRoundtrip() {
+    fun entityTypeRoundtrip() {
         val jsonMapper = jsonMapper()
-        val tcrBrandRelationship = TcrBrandRelationship.BASIC_ACCOUNT
+        val entityType = EntityType.PRIVATE_PROFIT
 
-        val roundtrippedTcrBrandRelationship =
+        val roundtrippedEntityType =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(tcrBrandRelationship),
-                jacksonTypeRef<TcrBrandRelationship>(),
+                jsonMapper.writeValueAsString(entityType),
+                jacksonTypeRef<EntityType>(),
             )
 
-        assertThat(roundtrippedTcrBrandRelationship).isEqualTo(tcrBrandRelationship)
+        assertThat(roundtrippedEntityType).isEqualTo(entityType)
     }
 }

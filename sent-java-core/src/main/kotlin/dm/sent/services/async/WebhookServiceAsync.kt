@@ -6,20 +6,20 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.webhooks.ApiResponseOfWebhookEventTypesList
+import dm.sent.models.webhooks.ApiResponseOfWebhookSecret
+import dm.sent.models.webhooks.ApiResponseOfWebhookTest
 import dm.sent.models.webhooks.ApiResponseWebhook
 import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
-import dm.sent.models.webhooks.WebhookListEventTypesResponse
 import dm.sent.models.webhooks.WebhookListEventsPageAsync
 import dm.sent.models.webhooks.WebhookListEventsParams
 import dm.sent.models.webhooks.WebhookListPageAsync
 import dm.sent.models.webhooks.WebhookListParams
 import dm.sent.models.webhooks.WebhookRetrieveParams
 import dm.sent.models.webhooks.WebhookRotateSecretParams
-import dm.sent.models.webhooks.WebhookRotateSecretResponse
 import dm.sent.models.webhooks.WebhookTestParams
-import dm.sent.models.webhooks.WebhookTestResponse
 import dm.sent.models.webhooks.WebhookToggleStatusParams
 import dm.sent.models.webhooks.WebhookUpdateParams
 import java.util.concurrent.CompletableFuture
@@ -205,25 +205,25 @@ interface WebhookServiceAsync {
         delete(id, WebhookDeleteParams.none(), requestOptions)
 
     /** Retrieves all available webhook event types that can be subscribed to. */
-    fun listEventTypes(): CompletableFuture<WebhookListEventTypesResponse> =
+    fun listEventTypes(): CompletableFuture<ApiResponseOfWebhookEventTypesList> =
         listEventTypes(WebhookListEventTypesParams.none())
 
     /** @see listEventTypes */
     fun listEventTypes(
         params: WebhookListEventTypesParams = WebhookListEventTypesParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookListEventTypesResponse>
+    ): CompletableFuture<ApiResponseOfWebhookEventTypesList>
 
     /** @see listEventTypes */
     fun listEventTypes(
         params: WebhookListEventTypesParams = WebhookListEventTypesParams.none()
-    ): CompletableFuture<WebhookListEventTypesResponse> =
+    ): CompletableFuture<ApiResponseOfWebhookEventTypesList> =
         listEventTypes(params, RequestOptions.none())
 
     /** @see listEventTypes */
     fun listEventTypes(
         requestOptions: RequestOptions
-    ): CompletableFuture<WebhookListEventTypesResponse> =
+    ): CompletableFuture<ApiResponseOfWebhookEventTypesList> =
         listEventTypes(WebhookListEventTypesParams.none(), requestOptions)
 
     /**
@@ -276,7 +276,7 @@ interface WebhookServiceAsync {
     fun rotateSecret(
         id: String,
         params: WebhookRotateSecretParams,
-    ): CompletableFuture<WebhookRotateSecretResponse> =
+    ): CompletableFuture<ApiResponseOfWebhookSecret> =
         rotateSecret(id, params, RequestOptions.none())
 
     /** @see rotateSecret */
@@ -284,26 +284,26 @@ interface WebhookServiceAsync {
         id: String,
         params: WebhookRotateSecretParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookRotateSecretResponse> =
+    ): CompletableFuture<ApiResponseOfWebhookSecret> =
         rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see rotateSecret */
     fun rotateSecret(
         params: WebhookRotateSecretParams
-    ): CompletableFuture<WebhookRotateSecretResponse> = rotateSecret(params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfWebhookSecret> = rotateSecret(params, RequestOptions.none())
 
     /** @see rotateSecret */
     fun rotateSecret(
         params: WebhookRotateSecretParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookRotateSecretResponse>
+    ): CompletableFuture<ApiResponseOfWebhookSecret>
 
     /**
      * Sends a test event to the specified webhook endpoint to verify connectivity. A version 1
      * webhook is tested at once and the answer says whether it was delivered; a version 2 webhook's
      * test is queued with Svix, which delivers it right after, and the answer says it was queued.
      */
-    fun test(id: String): CompletableFuture<WebhookTestResponse> =
+    fun test(id: String): CompletableFuture<ApiResponseOfWebhookTest> =
         test(id, WebhookTestParams.none())
 
     /** @see test */
@@ -311,27 +311,30 @@ interface WebhookServiceAsync {
         id: String,
         params: WebhookTestParams = WebhookTestParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookTestResponse> =
+    ): CompletableFuture<ApiResponseOfWebhookTest> =
         test(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see test */
     fun test(
         id: String,
         params: WebhookTestParams = WebhookTestParams.none(),
-    ): CompletableFuture<WebhookTestResponse> = test(id, params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfWebhookTest> = test(id, params, RequestOptions.none())
 
     /** @see test */
     fun test(
         params: WebhookTestParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<WebhookTestResponse>
+    ): CompletableFuture<ApiResponseOfWebhookTest>
 
     /** @see test */
-    fun test(params: WebhookTestParams): CompletableFuture<WebhookTestResponse> =
+    fun test(params: WebhookTestParams): CompletableFuture<ApiResponseOfWebhookTest> =
         test(params, RequestOptions.none())
 
     /** @see test */
-    fun test(id: String, requestOptions: RequestOptions): CompletableFuture<WebhookTestResponse> =
+    fun test(
+        id: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ApiResponseOfWebhookTest> =
         test(id, WebhookTestParams.none(), requestOptions)
 
     /** Activates or deactivates a webhook for the authenticated customer. */
@@ -554,25 +557,26 @@ interface WebhookServiceAsync {
          * Returns a raw HTTP response for `get /v3/webhooks/event-types`, but is otherwise the same
          * as [WebhookServiceAsync.listEventTypes].
          */
-        fun listEventTypes(): CompletableFuture<HttpResponseFor<WebhookListEventTypesResponse>> =
+        fun listEventTypes():
+            CompletableFuture<HttpResponseFor<ApiResponseOfWebhookEventTypesList>> =
             listEventTypes(WebhookListEventTypesParams.none())
 
         /** @see listEventTypes */
         fun listEventTypes(
             params: WebhookListEventTypesParams = WebhookListEventTypesParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookListEventTypesResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookEventTypesList>>
 
         /** @see listEventTypes */
         fun listEventTypes(
             params: WebhookListEventTypesParams = WebhookListEventTypesParams.none()
-        ): CompletableFuture<HttpResponseFor<WebhookListEventTypesResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookEventTypesList>> =
             listEventTypes(params, RequestOptions.none())
 
         /** @see listEventTypes */
         fun listEventTypes(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<WebhookListEventTypesResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookEventTypesList>> =
             listEventTypes(WebhookListEventTypesParams.none(), requestOptions)
 
         /**
@@ -623,7 +627,7 @@ interface WebhookServiceAsync {
         fun rotateSecret(
             id: String,
             params: WebhookRotateSecretParams,
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookSecret>> =
             rotateSecret(id, params, RequestOptions.none())
 
         /** @see rotateSecret */
@@ -631,26 +635,26 @@ interface WebhookServiceAsync {
             id: String,
             params: WebhookRotateSecretParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookSecret>> =
             rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see rotateSecret */
         fun rotateSecret(
             params: WebhookRotateSecretParams
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookSecret>> =
             rotateSecret(params, RequestOptions.none())
 
         /** @see rotateSecret */
         fun rotateSecret(
             params: WebhookRotateSecretParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookRotateSecretResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookSecret>>
 
         /**
          * Returns a raw HTTP response for `post /v3/webhooks/{id}/test`, but is otherwise the same
          * as [WebhookServiceAsync.test].
          */
-        fun test(id: String): CompletableFuture<HttpResponseFor<WebhookTestResponse>> =
+        fun test(id: String): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookTest>> =
             test(id, WebhookTestParams.none())
 
         /** @see test */
@@ -658,33 +662,33 @@ interface WebhookServiceAsync {
             id: String,
             params: WebhookTestParams = WebhookTestParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookTestResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookTest>> =
             test(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see test */
         fun test(
             id: String,
             params: WebhookTestParams = WebhookTestParams.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookTestResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookTest>> =
             test(id, params, RequestOptions.none())
 
         /** @see test */
         fun test(
             params: WebhookTestParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<WebhookTestResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookTest>>
 
         /** @see test */
         fun test(
             params: WebhookTestParams
-        ): CompletableFuture<HttpResponseFor<WebhookTestResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookTest>> =
             test(params, RequestOptions.none())
 
         /** @see test */
         fun test(
             id: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<WebhookTestResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfWebhookTest>> =
             test(id, WebhookTestParams.none(), requestOptions)
 
         /**

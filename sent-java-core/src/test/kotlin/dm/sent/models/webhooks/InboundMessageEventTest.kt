@@ -23,7 +23,7 @@ internal class InboundMessageEventTest {
                         .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .channel("channel")
                         .addMedia(
-                            InboundMessageEventPayload.Media.builder()
+                            InboundMedia.builder()
                                 .hashSha256("hash_sha256")
                                 .mimeType("mime_type")
                                 .sizeBytes(0L)
@@ -51,7 +51,7 @@ internal class InboundMessageEventTest {
                     .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .channel("channel")
                     .addMedia(
-                        InboundMessageEventPayload.Media.builder()
+                        InboundMedia.builder()
                             .hashSha256("hash_sha256")
                             .mimeType("mime_type")
                             .sizeBytes(0L)
@@ -83,7 +83,7 @@ internal class InboundMessageEventTest {
                         .accountId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .channel("channel")
                         .addMedia(
-                            InboundMessageEventPayload.Media.builder()
+                            InboundMedia.builder()
                                 .hashSha256("hash_sha256")
                                 .mimeType("mime_type")
                                 .sizeBytes(0L)

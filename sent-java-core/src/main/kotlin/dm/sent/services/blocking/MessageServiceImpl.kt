@@ -16,11 +16,13 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
+import dm.sent.models.messages.ApiResponseOfCancelledMessage
+import dm.sent.models.messages.ApiResponseOfMessage
+import dm.sent.models.messages.ApiResponseOfMessageActivities
+import dm.sent.models.messages.MessageCancelParams
 import dm.sent.models.messages.MessageResendParams
 import dm.sent.models.messages.MessageRetrieveActivitiesParams
-import dm.sent.models.messages.MessageRetrieveActivitiesResponse
 import dm.sent.models.messages.MessageRetrieveStatusParams
-import dm.sent.models.messages.MessageRetrieveStatusResponse
 import dm.sent.models.messages.MessageSendParams
 import dm.sent.models.messages.MessageSendResponse
 import java.util.function.Consumer
@@ -59,6 +61,13 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): MessageService =
         MessageServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    override fun cancel(
+        params: MessageCancelParams,
+        requestOptions: RequestOptions,
+    ): ApiResponseOfCancelledMessage =
+        // post /v3/messages/{id}/cancel
+        withRawResponse().cancel(params, requestOptions).parse()
+
     override fun resend(
         params: MessageResendParams,
         requestOptions: RequestOptions,
@@ -69,14 +78,14 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
     override fun retrieveActivities(
         params: MessageRetrieveActivitiesParams,
         requestOptions: RequestOptions,
-    ): MessageRetrieveActivitiesResponse =
+    ): ApiResponseOfMessageActivities =
         // get /v3/messages/{id}/activities
         withRawResponse().retrieveActivities(params, requestOptions).parse()
 
     override fun retrieveStatus(
         params: MessageRetrieveStatusParams,
         requestOptions: RequestOptions,
-    ): MessageRetrieveStatusResponse =
+    ): ApiResponseOfMessage =
         // get /v3/messages/{id}
         withRawResponse().retrieveStatus(params, requestOptions).parse()
 
@@ -99,6 +108,37 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
             MessageServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        private val cancelHandler: Handler<ApiResponseOfCancelledMessage> =
+            jsonHandler<ApiResponseOfCancelledMessage>(clientOptions.jsonMapper)
+
+        override fun cancel(
+            params: MessageCancelParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ApiResponseOfCancelledMessage> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v3", "messages", params._pathParam(0), "cancel")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { cancelHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
 
         private val resendHandler: Handler<MessageSendResponse> =
             jsonHandler<MessageSendResponse>(clientOptions.jsonMapper)
@@ -131,13 +171,13 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val retrieveActivitiesHandler: Handler<MessageRetrieveActivitiesResponse> =
-            jsonHandler<MessageRetrieveActivitiesResponse>(clientOptions.jsonMapper)
+        private val retrieveActivitiesHandler: Handler<ApiResponseOfMessageActivities> =
+            jsonHandler<ApiResponseOfMessageActivities>(clientOptions.jsonMapper)
 
         override fun retrieveActivities(
             params: MessageRetrieveActivitiesParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<MessageRetrieveActivitiesResponse> {
+        ): HttpResponseFor<ApiResponseOfMessageActivities> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())
@@ -161,13 +201,13 @@ class MessageServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val retrieveStatusHandler: Handler<MessageRetrieveStatusResponse> =
-            jsonHandler<MessageRetrieveStatusResponse>(clientOptions.jsonMapper)
+        private val retrieveStatusHandler: Handler<ApiResponseOfMessage> =
+            jsonHandler<ApiResponseOfMessage>(clientOptions.jsonMapper)
 
         override fun retrieveStatus(
             params: MessageRetrieveStatusParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<MessageRetrieveStatusResponse> {
+        ): HttpResponseFor<ApiResponseOfMessage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("id", params.id().getOrNull())

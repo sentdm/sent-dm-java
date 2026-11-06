@@ -7,20 +7,20 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.webhooks.ApiResponseOfWebhookEventTypesList
+import dm.sent.models.webhooks.ApiResponseOfWebhookSecret
+import dm.sent.models.webhooks.ApiResponseOfWebhookTest
 import dm.sent.models.webhooks.ApiResponseWebhook
 import dm.sent.models.webhooks.WebhookCreateParams
 import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
-import dm.sent.models.webhooks.WebhookListEventTypesResponse
 import dm.sent.models.webhooks.WebhookListEventsPage
 import dm.sent.models.webhooks.WebhookListEventsParams
 import dm.sent.models.webhooks.WebhookListPage
 import dm.sent.models.webhooks.WebhookListParams
 import dm.sent.models.webhooks.WebhookRetrieveParams
 import dm.sent.models.webhooks.WebhookRotateSecretParams
-import dm.sent.models.webhooks.WebhookRotateSecretResponse
 import dm.sent.models.webhooks.WebhookTestParams
-import dm.sent.models.webhooks.WebhookTestResponse
 import dm.sent.models.webhooks.WebhookToggleStatusParams
 import dm.sent.models.webhooks.WebhookUpdateParams
 import java.util.function.Consumer
@@ -190,22 +190,22 @@ interface WebhookService {
         delete(id, WebhookDeleteParams.none(), requestOptions)
 
     /** Retrieves all available webhook event types that can be subscribed to. */
-    fun listEventTypes(): WebhookListEventTypesResponse =
+    fun listEventTypes(): ApiResponseOfWebhookEventTypesList =
         listEventTypes(WebhookListEventTypesParams.none())
 
     /** @see listEventTypes */
     fun listEventTypes(
         params: WebhookListEventTypesParams = WebhookListEventTypesParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookListEventTypesResponse
+    ): ApiResponseOfWebhookEventTypesList
 
     /** @see listEventTypes */
     fun listEventTypes(
         params: WebhookListEventTypesParams = WebhookListEventTypesParams.none()
-    ): WebhookListEventTypesResponse = listEventTypes(params, RequestOptions.none())
+    ): ApiResponseOfWebhookEventTypesList = listEventTypes(params, RequestOptions.none())
 
     /** @see listEventTypes */
-    fun listEventTypes(requestOptions: RequestOptions): WebhookListEventTypesResponse =
+    fun listEventTypes(requestOptions: RequestOptions): ApiResponseOfWebhookEventTypesList =
         listEventTypes(WebhookListEventTypesParams.none(), requestOptions)
 
     /**
@@ -251,7 +251,7 @@ interface WebhookService {
      * once, and with the old one as well for the next 24 hours, so a receiver can switch over
      * without rejecting any; after that the old secret no longer verifies.
      */
-    fun rotateSecret(id: String, params: WebhookRotateSecretParams): WebhookRotateSecretResponse =
+    fun rotateSecret(id: String, params: WebhookRotateSecretParams): ApiResponseOfWebhookSecret =
         rotateSecret(id, params, RequestOptions.none())
 
     /** @see rotateSecret */
@@ -259,49 +259,50 @@ interface WebhookService {
         id: String,
         params: WebhookRotateSecretParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookRotateSecretResponse = rotateSecret(params.toBuilder().id(id).build(), requestOptions)
+    ): ApiResponseOfWebhookSecret = rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see rotateSecret */
-    fun rotateSecret(params: WebhookRotateSecretParams): WebhookRotateSecretResponse =
+    fun rotateSecret(params: WebhookRotateSecretParams): ApiResponseOfWebhookSecret =
         rotateSecret(params, RequestOptions.none())
 
     /** @see rotateSecret */
     fun rotateSecret(
         params: WebhookRotateSecretParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookRotateSecretResponse
+    ): ApiResponseOfWebhookSecret
 
     /**
      * Sends a test event to the specified webhook endpoint to verify connectivity. A version 1
      * webhook is tested at once and the answer says whether it was delivered; a version 2 webhook's
      * test is queued with Svix, which delivers it right after, and the answer says it was queued.
      */
-    fun test(id: String): WebhookTestResponse = test(id, WebhookTestParams.none())
+    fun test(id: String): ApiResponseOfWebhookTest = test(id, WebhookTestParams.none())
 
     /** @see test */
     fun test(
         id: String,
         params: WebhookTestParams = WebhookTestParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookTestResponse = test(params.toBuilder().id(id).build(), requestOptions)
+    ): ApiResponseOfWebhookTest = test(params.toBuilder().id(id).build(), requestOptions)
 
     /** @see test */
     fun test(
         id: String,
         params: WebhookTestParams = WebhookTestParams.none(),
-    ): WebhookTestResponse = test(id, params, RequestOptions.none())
+    ): ApiResponseOfWebhookTest = test(id, params, RequestOptions.none())
 
     /** @see test */
     fun test(
         params: WebhookTestParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookTestResponse
+    ): ApiResponseOfWebhookTest
 
     /** @see test */
-    fun test(params: WebhookTestParams): WebhookTestResponse = test(params, RequestOptions.none())
+    fun test(params: WebhookTestParams): ApiResponseOfWebhookTest =
+        test(params, RequestOptions.none())
 
     /** @see test */
-    fun test(id: String, requestOptions: RequestOptions): WebhookTestResponse =
+    fun test(id: String, requestOptions: RequestOptions): ApiResponseOfWebhookTest =
         test(id, WebhookTestParams.none(), requestOptions)
 
     /** Activates or deactivates a webhook for the authenticated customer. */
@@ -525,7 +526,7 @@ interface WebhookService {
          * as [WebhookService.listEventTypes].
          */
         @MustBeClosed
-        fun listEventTypes(): HttpResponseFor<WebhookListEventTypesResponse> =
+        fun listEventTypes(): HttpResponseFor<ApiResponseOfWebhookEventTypesList> =
             listEventTypes(WebhookListEventTypesParams.none())
 
         /** @see listEventTypes */
@@ -533,20 +534,20 @@ interface WebhookService {
         fun listEventTypes(
             params: WebhookListEventTypesParams = WebhookListEventTypesParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookListEventTypesResponse>
+        ): HttpResponseFor<ApiResponseOfWebhookEventTypesList>
 
         /** @see listEventTypes */
         @MustBeClosed
         fun listEventTypes(
             params: WebhookListEventTypesParams = WebhookListEventTypesParams.none()
-        ): HttpResponseFor<WebhookListEventTypesResponse> =
+        ): HttpResponseFor<ApiResponseOfWebhookEventTypesList> =
             listEventTypes(params, RequestOptions.none())
 
         /** @see listEventTypes */
         @MustBeClosed
         fun listEventTypes(
             requestOptions: RequestOptions
-        ): HttpResponseFor<WebhookListEventTypesResponse> =
+        ): HttpResponseFor<ApiResponseOfWebhookEventTypesList> =
             listEventTypes(WebhookListEventTypesParams.none(), requestOptions)
 
         /**
@@ -601,7 +602,7 @@ interface WebhookService {
         fun rotateSecret(
             id: String,
             params: WebhookRotateSecretParams,
-        ): HttpResponseFor<WebhookRotateSecretResponse> =
+        ): HttpResponseFor<ApiResponseOfWebhookSecret> =
             rotateSecret(id, params, RequestOptions.none())
 
         /** @see rotateSecret */
@@ -610,29 +611,28 @@ interface WebhookService {
             id: String,
             params: WebhookRotateSecretParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookRotateSecretResponse> =
+        ): HttpResponseFor<ApiResponseOfWebhookSecret> =
             rotateSecret(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see rotateSecret */
         @MustBeClosed
         fun rotateSecret(
             params: WebhookRotateSecretParams
-        ): HttpResponseFor<WebhookRotateSecretResponse> =
-            rotateSecret(params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseOfWebhookSecret> = rotateSecret(params, RequestOptions.none())
 
         /** @see rotateSecret */
         @MustBeClosed
         fun rotateSecret(
             params: WebhookRotateSecretParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookRotateSecretResponse>
+        ): HttpResponseFor<ApiResponseOfWebhookSecret>
 
         /**
          * Returns a raw HTTP response for `post /v3/webhooks/{id}/test`, but is otherwise the same
          * as [WebhookService.test].
          */
         @MustBeClosed
-        fun test(id: String): HttpResponseFor<WebhookTestResponse> =
+        fun test(id: String): HttpResponseFor<ApiResponseOfWebhookTest> =
             test(id, WebhookTestParams.none())
 
         /** @see test */
@@ -641,7 +641,7 @@ interface WebhookService {
             id: String,
             params: WebhookTestParams = WebhookTestParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookTestResponse> =
+        ): HttpResponseFor<ApiResponseOfWebhookTest> =
             test(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see test */
@@ -649,23 +649,26 @@ interface WebhookService {
         fun test(
             id: String,
             params: WebhookTestParams = WebhookTestParams.none(),
-        ): HttpResponseFor<WebhookTestResponse> = test(id, params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseOfWebhookTest> = test(id, params, RequestOptions.none())
 
         /** @see test */
         @MustBeClosed
         fun test(
             params: WebhookTestParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookTestResponse>
+        ): HttpResponseFor<ApiResponseOfWebhookTest>
 
         /** @see test */
         @MustBeClosed
-        fun test(params: WebhookTestParams): HttpResponseFor<WebhookTestResponse> =
+        fun test(params: WebhookTestParams): HttpResponseFor<ApiResponseOfWebhookTest> =
             test(params, RequestOptions.none())
 
         /** @see test */
         @MustBeClosed
-        fun test(id: String, requestOptions: RequestOptions): HttpResponseFor<WebhookTestResponse> =
+        fun test(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ApiResponseOfWebhookTest> =
             test(id, WebhookTestParams.none(), requestOptions)
 
         /**

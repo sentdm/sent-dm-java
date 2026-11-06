@@ -9,6 +9,7 @@ import dm.sent.models.profiles.BrandComplianceInfo
 import dm.sent.models.profiles.BrandContactInfo
 import dm.sent.models.profiles.BrandsBrandData
 import dm.sent.models.profiles.DestinationCountry
+import dm.sent.models.profiles.EntityType
 import dm.sent.models.profiles.PaymentDetails
 import dm.sent.models.profiles.ProfileCompleteParams
 import dm.sent.models.profiles.ProfileCreateParams
@@ -76,7 +77,7 @@ internal class ProfileServiceTest {
                                     .city("New York")
                                     .country("US")
                                     .countryOfRegistration("US")
-                                    .entityType(BrandBusinessInfo.EntityType.PRIVATE_PROFIT)
+                                    .entityType(EntityType.PRIVATE_PROFIT)
                                     .legalName("Acme Corporation LLC")
                                     .postalCode("10001")
                                     .state("NY")
@@ -188,7 +189,7 @@ internal class ProfileServiceTest {
                                     .city("New York")
                                     .country("US")
                                     .countryOfRegistration("US")
-                                    .entityType(BrandBusinessInfo.EntityType.PRIVATE_PROFIT)
+                                    .entityType(EntityType.PRIVATE_PROFIT)
                                     .legalName("Acme Corporation LLC")
                                     .postalCode("10001")
                                     .state("NY")
@@ -232,14 +233,14 @@ internal class ProfileServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val profileService = client.profiles()
 
-        val profiles =
+        val apiResponseOfProfilesList =
             profileService.list(
                 ProfileListParams.builder()
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 
-        profiles.validate()
+        apiResponseOfProfilesList.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -263,7 +264,7 @@ internal class ProfileServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val profileService = client.profiles()
 
-        val response =
+        val apiResponseOfProfileCompletionResult =
             profileService.complete(
                 ProfileCompleteParams.builder()
                     .profileId("660e8400-e29b-41d4-a716-446655440000")
@@ -274,6 +275,6 @@ internal class ProfileServiceTest {
                     .build()
             )
 
-        response.validate()
+        apiResponseOfProfileCompletionResult.validate()
     }
 }
