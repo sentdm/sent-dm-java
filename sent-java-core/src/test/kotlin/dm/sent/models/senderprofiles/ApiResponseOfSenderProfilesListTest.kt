@@ -130,6 +130,14 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                                 )
                                                                 .build()
                                                         )
+                                                        .addCampaign(
+                                                            SuppliedCompliance.Campaign.builder()
+                                                                .putAdditionalProperty(
+                                                                    "foo",
+                                                                    JsonValue.from("bar"),
+                                                                )
+                                                                .build()
+                                                        )
                                                         .addDocument(
                                                             SuppliedDocument.builder()
                                                                 .documentId(
@@ -146,13 +154,15 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                 .addNumber(
                                                     SmsNumber.builder()
                                                         .areaCode("area_code")
+                                                        .campaignId(
+                                                            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+                                                        )
                                                         .senderValue("sender_value")
                                                         .status("status")
                                                         .build()
                                                 )
                                                 .reason("reason")
                                                 .reasonCode("reason_code")
-                                                .senderValue("sender_value")
                                                 .status(SmsMarket.Status.PROVISIONING)
                                                 .build()
                                         )
@@ -193,6 +203,11 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                 .build()
                                         )
                                         .campaign(
+                                            SuppliedCompliance.Campaign.builder()
+                                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                                .build()
+                                        )
+                                        .addCampaign(
                                             SuppliedCompliance.Campaign.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()
@@ -333,6 +348,14 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                             )
                                                             .build()
                                                     )
+                                                    .addCampaign(
+                                                        SuppliedCompliance.Campaign.builder()
+                                                            .putAdditionalProperty(
+                                                                "foo",
+                                                                JsonValue.from("bar"),
+                                                            )
+                                                            .build()
+                                                    )
                                                     .addDocument(
                                                         SuppliedDocument.builder()
                                                             .documentId(
@@ -349,13 +372,15 @@ internal class ApiResponseOfSenderProfilesListTest {
                                             .addNumber(
                                                 SmsNumber.builder()
                                                     .areaCode("area_code")
+                                                    .campaignId(
+                                                        "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+                                                    )
                                                     .senderValue("sender_value")
                                                     .status("status")
                                                     .build()
                                             )
                                             .reason("reason")
                                             .reasonCode("reason_code")
-                                            .senderValue("sender_value")
                                             .status(SmsMarket.Status.PROVISIONING)
                                             .build()
                                     )
@@ -396,6 +421,11 @@ internal class ApiResponseOfSenderProfilesListTest {
                                             .build()
                                     )
                                     .campaign(
+                                        SuppliedCompliance.Campaign.builder()
+                                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                            .build()
+                                    )
+                                    .addCampaign(
                                         SuppliedCompliance.Campaign.builder()
                                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                                             .build()
@@ -549,6 +579,14 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                                 )
                                                                 .build()
                                                         )
+                                                        .addCampaign(
+                                                            SuppliedCompliance.Campaign.builder()
+                                                                .putAdditionalProperty(
+                                                                    "foo",
+                                                                    JsonValue.from("bar"),
+                                                                )
+                                                                .build()
+                                                        )
                                                         .addDocument(
                                                             SuppliedDocument.builder()
                                                                 .documentId(
@@ -565,13 +603,15 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                 .addNumber(
                                                     SmsNumber.builder()
                                                         .areaCode("area_code")
+                                                        .campaignId(
+                                                            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+                                                        )
                                                         .senderValue("sender_value")
                                                         .status("status")
                                                         .build()
                                                 )
                                                 .reason("reason")
                                                 .reasonCode("reason_code")
-                                                .senderValue("sender_value")
                                                 .status(SmsMarket.Status.PROVISIONING)
                                                 .build()
                                         )
@@ -612,6 +652,11 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                 .build()
                                         )
                                         .campaign(
+                                            SuppliedCompliance.Campaign.builder()
+                                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                                .build()
+                                        )
+                                        .addCampaign(
                                             SuppliedCompliance.Campaign.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()

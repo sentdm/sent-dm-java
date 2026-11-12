@@ -31,6 +31,11 @@ internal class ChannelEventPayloadTest {
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .addCampaign(
+                            SuppliedCompliance.Campaign.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
                         .addDocument(
                             SuppliedDocument.builder()
                                 .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -60,6 +65,11 @@ internal class ChannelEventPayloadTest {
                             .build()
                     )
                     .campaign(
+                        SuppliedCompliance.Campaign.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .addCampaign(
                         SuppliedCompliance.Campaign.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
@@ -97,6 +107,11 @@ internal class ChannelEventPayloadTest {
                                 .build()
                         )
                         .campaign(
+                            SuppliedCompliance.Campaign.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
+                        .addCampaign(
                             SuppliedCompliance.Campaign.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()

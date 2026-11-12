@@ -27,6 +27,11 @@ internal class SmsMarketTest {
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .addCampaign(
+                            SuppliedCompliance.Campaign.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
                         .addDocument(
                             SuppliedDocument.builder()
                                 .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -41,13 +46,13 @@ internal class SmsMarketTest {
                 .addNumber(
                     SmsNumber.builder()
                         .areaCode("area_code")
+                        .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .senderValue("sender_value")
                         .status("status")
                         .build()
                 )
                 .reason("reason")
                 .reasonCode("reason_code")
-                .senderValue("sender_value")
                 .status(SmsMarket.Status.PROVISIONING)
                 .build()
 
@@ -60,6 +65,11 @@ internal class SmsMarketTest {
                             .build()
                     )
                     .campaign(
+                        SuppliedCompliance.Campaign.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .addCampaign(
                         SuppliedCompliance.Campaign.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
@@ -79,13 +89,13 @@ internal class SmsMarketTest {
             .containsExactly(
                 SmsNumber.builder()
                     .areaCode("area_code")
+                    .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .senderValue("sender_value")
                     .status("status")
                     .build()
             )
         assertThat(smsMarket.reason()).contains("reason")
         assertThat(smsMarket.reasonCode()).contains("reason_code")
-        assertThat(smsMarket.senderValue()).contains("sender_value")
         assertThat(smsMarket.status()).contains(SmsMarket.Status.PROVISIONING)
     }
 
@@ -106,6 +116,11 @@ internal class SmsMarketTest {
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .addCampaign(
+                            SuppliedCompliance.Campaign.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
                         .addDocument(
                             SuppliedDocument.builder()
                                 .documentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -120,13 +135,13 @@ internal class SmsMarketTest {
                 .addNumber(
                     SmsNumber.builder()
                         .areaCode("area_code")
+                        .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .senderValue("sender_value")
                         .status("status")
                         .build()
                 )
                 .reason("reason")
                 .reasonCode("reason_code")
-                .senderValue("sender_value")
                 .status(SmsMarket.Status.PROVISIONING)
                 .build()
 
