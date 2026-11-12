@@ -10,6 +10,7 @@ import dm.sent.models.webhooks.WebhookDeleteParams
 import dm.sent.models.webhooks.WebhookListEventTypesParams
 import dm.sent.models.webhooks.WebhookRetrieveParams
 import dm.sent.models.webhooks.WebhookRotateSecretParams
+import dm.sent.models.webhooks.WebhookSenderProfileConfig
 import dm.sent.models.webhooks.WebhookTestParams
 import dm.sent.models.webhooks.WebhookToggleStatusParams
 import dm.sent.models.webhooks.WebhookUpdateParams
@@ -48,9 +49,9 @@ internal class WebhookServiceAsyncTest {
                     .isInheritable(false)
                     .retryCount(3)
                     .senderProfile(
-                        WebhookCreateParams.SenderProfile.builder()
+                        WebhookSenderProfileConfig.builder()
                             .eventFilters(
-                                WebhookCreateParams.SenderProfile.EventFilters.builder()
+                                WebhookSenderProfileConfig.EventFilters.builder()
                                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                     .build()
                             )
@@ -111,9 +112,9 @@ internal class WebhookServiceAsyncTest {
                     .isInheritable(null)
                     .retryCount(5)
                     .senderProfile(
-                        WebhookUpdateParams.SenderProfile.builder()
+                        WebhookSenderProfileConfig.builder()
                             .eventFilters(
-                                WebhookUpdateParams.SenderProfile.EventFilters.builder()
+                                WebhookSenderProfileConfig.EventFilters.builder()
                                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                     .build()
                             )
@@ -163,15 +164,15 @@ internal class WebhookServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val responseFuture =
+        val apiResponseOfWebhookEventTypesListFuture =
             webhookServiceAsync.listEventTypes(
                 WebhookListEventTypesParams.builder()
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val apiResponseOfWebhookEventTypesList = apiResponseOfWebhookEventTypesListFuture.get()
+        apiResponseOfWebhookEventTypesList.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -192,7 +193,7 @@ internal class WebhookServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val responseFuture =
+        val apiResponseOfWebhookSecretFuture =
             webhookServiceAsync.rotateSecret(
                 WebhookRotateSecretParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
@@ -202,8 +203,8 @@ internal class WebhookServiceAsyncTest {
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val apiResponseOfWebhookSecret = apiResponseOfWebhookSecretFuture.get()
+        apiResponseOfWebhookSecret.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -212,7 +213,7 @@ internal class WebhookServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val webhookServiceAsync = client.webhooks()
 
-        val responseFuture =
+        val apiResponseOfWebhookTestFuture =
             webhookServiceAsync.test(
                 WebhookTestParams.builder()
                     .id("d4f5a6b7-c8d9-4e0f-a1b2-c3d4e5f6a7b8")
@@ -223,8 +224,8 @@ internal class WebhookServiceAsyncTest {
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val apiResponseOfWebhookTest = apiResponseOfWebhookTestFuture.get()
+        apiResponseOfWebhookTest.validate()
     }
 
     @Disabled("Mock server tests are disabled")

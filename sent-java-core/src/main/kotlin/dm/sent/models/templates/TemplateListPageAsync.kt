@@ -19,15 +19,15 @@ private constructor(
     private val service: TemplateServiceAsync,
     private val streamHandlerExecutor: Executor,
     private val params: TemplateListParams,
-    private val response: TemplateListPageResponse,
+    private val response: ApiResponseOfTemplatesList,
 ) : PageAsync<Template> {
 
     /**
-     * Delegates to [TemplateListPageResponse], but gracefully handles missing data.
+     * Delegates to [ApiResponseOfTemplatesList], but gracefully handles missing data.
      *
-     * @see TemplateListPageResponse.data
+     * @see ApiResponseOfTemplatesList.data
      */
-    fun data(): Optional<TemplateListPageResponse.Data> = response._data().getOptional("data")
+    fun data(): Optional<TemplatesList> = response._data().getOptional("data")
 
     override fun items(): List<Template> = response.templates().getOrNull() ?: emptyList()
 
@@ -47,7 +47,7 @@ private constructor(
     fun params(): TemplateListParams = params
 
     /** The response that this page was parsed from. */
-    fun response(): TemplateListPageResponse = response
+    fun response(): ApiResponseOfTemplatesList = response
 
     fun toBuilder() = Builder().from(this)
 
@@ -73,7 +73,7 @@ private constructor(
         private var service: TemplateServiceAsync? = null
         private var streamHandlerExecutor: Executor? = null
         private var params: TemplateListParams? = null
-        private var response: TemplateListPageResponse? = null
+        private var response: ApiResponseOfTemplatesList? = null
 
         @JvmSynthetic
         internal fun from(templateListPageAsync: TemplateListPageAsync) = apply {
@@ -93,7 +93,7 @@ private constructor(
         fun params(params: TemplateListParams) = apply { this.params = params }
 
         /** The response that this page was parsed from. */
-        fun response(response: TemplateListPageResponse) = apply { this.response = response }
+        fun response(response: ApiResponseOfTemplatesList) = apply { this.response = response }
 
         /**
          * Returns an immutable instance of [TemplateListPageAsync].

@@ -6,13 +6,13 @@ import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
+import dm.sent.models.profiles.ApiResponseOfProfileCompletionResult
 import dm.sent.models.profiles.ApiResponseOfProfileDetail
+import dm.sent.models.profiles.ApiResponseOfProfilesList
 import dm.sent.models.profiles.ProfileCompleteParams
-import dm.sent.models.profiles.ProfileCompleteResponse
 import dm.sent.models.profiles.ProfileCreateParams
 import dm.sent.models.profiles.ProfileDeleteParams
 import dm.sent.models.profiles.ProfileListParams
-import dm.sent.models.profiles.ProfileListResponse
 import dm.sent.models.profiles.ProfileRetrieveParams
 import dm.sent.models.profiles.ProfileUpdateParams
 import dm.sent.services.async.profiles.CampaignServiceAsync
@@ -248,24 +248,24 @@ interface ProfileServiceAsync {
      * organization, each with their own messaging configuration.
      */
     @Deprecated("deprecated")
-    fun list(): CompletableFuture<ProfileListResponse> = list(ProfileListParams.none())
+    fun list(): CompletableFuture<ApiResponseOfProfilesList> = list(ProfileListParams.none())
 
     /** @see list */
     @Deprecated("deprecated")
     fun list(
         params: ProfileListParams = ProfileListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ProfileListResponse>
+    ): CompletableFuture<ApiResponseOfProfilesList>
 
     /** @see list */
     @Deprecated("deprecated")
     fun list(
         params: ProfileListParams = ProfileListParams.none()
-    ): CompletableFuture<ProfileListResponse> = list(params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfProfilesList> = list(params, RequestOptions.none())
 
     /** @see list */
     @Deprecated("deprecated")
-    fun list(requestOptions: RequestOptions): CompletableFuture<ProfileListResponse> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfProfilesList> =
         list(ProfileListParams.none(), requestOptions)
 
     /**
@@ -351,7 +351,7 @@ interface ProfileServiceAsync {
     fun complete(
         profileId: String,
         params: ProfileCompleteParams,
-    ): CompletableFuture<ProfileCompleteResponse> =
+    ): CompletableFuture<ApiResponseOfProfileCompletionResult> =
         complete(profileId, params, RequestOptions.none())
 
     /** @see complete */
@@ -360,12 +360,14 @@ interface ProfileServiceAsync {
         profileId: String,
         params: ProfileCompleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ProfileCompleteResponse> =
+    ): CompletableFuture<ApiResponseOfProfileCompletionResult> =
         complete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
     /** @see complete */
     @Deprecated("deprecated")
-    fun complete(params: ProfileCompleteParams): CompletableFuture<ProfileCompleteResponse> =
+    fun complete(
+        params: ProfileCompleteParams
+    ): CompletableFuture<ApiResponseOfProfileCompletionResult> =
         complete(params, RequestOptions.none())
 
     /** @see complete */
@@ -373,7 +375,7 @@ interface ProfileServiceAsync {
     fun complete(
         params: ProfileCompleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ProfileCompleteResponse>
+    ): CompletableFuture<ApiResponseOfProfileCompletionResult>
 
     /**
      * A view of [ProfileServiceAsync] that provides access to raw HTTP responses for each method.
@@ -532,7 +534,7 @@ interface ProfileServiceAsync {
          * [ProfileServiceAsync.list].
          */
         @Deprecated("deprecated")
-        fun list(): CompletableFuture<HttpResponseFor<ProfileListResponse>> =
+        fun list(): CompletableFuture<HttpResponseFor<ApiResponseOfProfilesList>> =
             list(ProfileListParams.none())
 
         /** @see list */
@@ -540,20 +542,20 @@ interface ProfileServiceAsync {
         fun list(
             params: ProfileListParams = ProfileListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileListResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfilesList>>
 
         /** @see list */
         @Deprecated("deprecated")
         fun list(
             params: ProfileListParams = ProfileListParams.none()
-        ): CompletableFuture<HttpResponseFor<ProfileListResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfilesList>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         @Deprecated("deprecated")
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<ProfileListResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfilesList>> =
             list(ProfileListParams.none(), requestOptions)
 
         /**
@@ -595,7 +597,7 @@ interface ProfileServiceAsync {
         fun complete(
             profileId: String,
             params: ProfileCompleteParams,
-        ): CompletableFuture<HttpResponseFor<ProfileCompleteResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileCompletionResult>> =
             complete(profileId, params, RequestOptions.none())
 
         /** @see complete */
@@ -604,14 +606,14 @@ interface ProfileServiceAsync {
             profileId: String,
             params: ProfileCompleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileCompleteResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileCompletionResult>> =
             complete(params.toBuilder().profileId(profileId).build(), requestOptions)
 
         /** @see complete */
         @Deprecated("deprecated")
         fun complete(
             params: ProfileCompleteParams
-        ): CompletableFuture<HttpResponseFor<ProfileCompleteResponse>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileCompletionResult>> =
             complete(params, RequestOptions.none())
 
         /** @see complete */
@@ -619,6 +621,6 @@ interface ProfileServiceAsync {
         fun complete(
             params: ProfileCompleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ProfileCompleteResponse>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfProfileCompletionResult>>
     }
 }

@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.48.0)
-[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.48.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java)
+[![Maven Central](https://img.shields.io/maven-central/v/dm.sent/sent-java)](https://central.sonatype.com/artifact/dm.sent/sent-java/0.49.0)
+[![javadoc](https://javadoc.io/badge2/dm.sent/sent-java/0.49.0/javadoc.svg)](https://javadoc.io/doc/dm.sent/sent-java)
 
 <!-- x-release-please-end -->
 
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-java/0.48.0).
+The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm). Javadocs are available on [javadoc.io](https://javadoc.io/doc/dm.sent/sent-java/0.49.0).
 
 <!-- x-release-please-end -->
 
@@ -24,7 +24,7 @@ The REST API documentation can be found on [docs.sent.dm](https://docs.sent.dm).
 ### Gradle
 
 ```kotlin
-implementation("dm.sent:sent-java:0.48.0")
+implementation("dm.sent:sent-java:0.49.0")
 ```
 
 ### Maven
@@ -33,7 +33,7 @@ implementation("dm.sent:sent-java:0.48.0")
 <dependency>
   <groupId>dm.sent</groupId>
   <artifactId>sent-java</artifactId>
-  <version>0.48.0</version>
+  <version>0.49.0</version>
 </dependency>
 ```
 
@@ -51,6 +51,7 @@ import dm.sent.client.okhttp.SentOkHttpClient;
 import dm.sent.core.JsonValue;
 import dm.sent.models.messages.MessageSendParams;
 import dm.sent.models.messages.MessageSendResponse;
+import dm.sent.models.templates.TemplateRef;
 
 // Configures using the `sent.dmApiKey` and `sent.baseUrl` system properties
 // Or configures using the `SENT_DM_API_KEY` and `SENT_BASE_URL` environment variables
@@ -59,10 +60,10 @@ SentClient client = SentOkHttpClient.fromEnv();
 MessageSendParams params = MessageSendParams.builder()
     .addChannel("sms")
     .addChannel("whatsapp")
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
         .name("order_confirmation")
-        .parameters(MessageSendParams.Template.Parameters.builder()
+        .parameters(TemplateRef.Parameters.builder()
             .putAdditionalProperty("name", JsonValue.from("John Doe"))
             .putAdditionalProperty("order_id", JsonValue.from("12345"))
             .build())
@@ -163,6 +164,7 @@ import dm.sent.client.okhttp.SentOkHttpClient;
 import dm.sent.core.JsonValue;
 import dm.sent.models.messages.MessageSendParams;
 import dm.sent.models.messages.MessageSendResponse;
+import dm.sent.models.templates.TemplateRef;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `sent.dmApiKey` and `sent.baseUrl` system properties
@@ -172,10 +174,10 @@ SentClient client = SentOkHttpClient.fromEnv();
 MessageSendParams params = MessageSendParams.builder()
     .addChannel("sms")
     .addChannel("whatsapp")
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
         .name("order_confirmation")
-        .parameters(MessageSendParams.Template.Parameters.builder()
+        .parameters(TemplateRef.Parameters.builder()
             .putAdditionalProperty("name", JsonValue.from("John Doe"))
             .putAdditionalProperty("order_id", JsonValue.from("12345"))
             .build())
@@ -194,6 +196,7 @@ import dm.sent.client.okhttp.SentOkHttpClientAsync;
 import dm.sent.core.JsonValue;
 import dm.sent.models.messages.MessageSendParams;
 import dm.sent.models.messages.MessageSendResponse;
+import dm.sent.models.templates.TemplateRef;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `sent.dmApiKey` and `sent.baseUrl` system properties
@@ -203,10 +206,10 @@ SentClientAsync client = SentOkHttpClientAsync.fromEnv();
 MessageSendParams params = MessageSendParams.builder()
     .addChannel("sms")
     .addChannel("whatsapp")
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
         .name("order_confirmation")
-        .parameters(MessageSendParams.Template.Parameters.builder()
+        .parameters(TemplateRef.Parameters.builder()
             .putAdditionalProperty("name", JsonValue.from("John Doe"))
             .putAdditionalProperty("order_id", JsonValue.from("12345"))
             .build())
@@ -231,13 +234,14 @@ import dm.sent.core.http.Headers;
 import dm.sent.core.http.HttpResponseFor;
 import dm.sent.models.messages.MessageSendParams;
 import dm.sent.models.messages.MessageSendResponse;
+import dm.sent.models.templates.TemplateRef;
 
 MessageSendParams params = MessageSendParams.builder()
     .addChannel("sms")
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
         .name("order_confirmation")
-        .parameters(MessageSendParams.Template.Parameters.builder()
+        .parameters(TemplateRef.Parameters.builder()
             .putAdditionalProperty("name", JsonValue.from("John Doe"))
             .putAdditionalProperty("order_id", JsonValue.from("12345"))
             .build())
@@ -619,9 +623,10 @@ To set undocumented parameters on _nested_ headers, query params, or body classe
 ```java
 import dm.sent.core.JsonValue;
 import dm.sent.models.messages.MessageSendParams;
+import dm.sent.models.templates.TemplateRef;
 
 MessageSendParams params = MessageSendParams.builder()
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .putAdditionalProperty("secretProperty", JsonValue.from("42"))
         .build())
     .build();
@@ -634,13 +639,14 @@ To set a documented parameter or property to an undocumented or not yet supporte
 ```java
 import dm.sent.core.JsonValue;
 import dm.sent.models.messages.MessageSendParams;
+import dm.sent.models.templates.TemplateRef;
 
 MessageSendParams params = MessageSendParams.builder()
     .channel(JsonValue.from(42))
-    .template(MessageSendParams.Template.builder()
+    .template(TemplateRef.builder()
         .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
         .name("order_confirmation")
-        .parameters(MessageSendParams.Template.Parameters.builder()
+        .parameters(TemplateRef.Parameters.builder()
             .putAdditionalProperty("name", JsonValue.from("John Doe"))
             .putAdditionalProperty("order_id", JsonValue.from("12345"))
             .build())

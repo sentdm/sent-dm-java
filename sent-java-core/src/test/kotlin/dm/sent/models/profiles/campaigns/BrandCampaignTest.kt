@@ -4,6 +4,7 @@ package dm.sent.models.profiles.campaigns
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.jsonMapper
+import dm.sent.models.profiles.TcrCampaignStatus
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -27,6 +28,7 @@ internal class BrandCampaignTest {
                 .hasSubmissionTransaction(true)
                 .helpKeywords("helpKeywords")
                 .helpMessage("helpMessage")
+                .isInherited(true)
                 .messageFlow("messageFlow")
                 .name("name")
                 .optinKeywords("optinKeywords")
@@ -34,7 +36,7 @@ internal class BrandCampaignTest {
                 .optoutKeywords("optoutKeywords")
                 .optoutMessage("optoutMessage")
                 .privacyPolicyLink("privacyPolicyLink")
-                .status(BrandCampaign.Status.SENT_CREATED)
+                .status(TcrCampaignStatus.SENT_CREATED)
                 .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .submittedToTcr(true)
                 .tcrCampaignId("tcrCampaignId")
@@ -71,6 +73,7 @@ internal class BrandCampaignTest {
         assertThat(brandCampaign.hasSubmissionTransaction()).contains(true)
         assertThat(brandCampaign.helpKeywords()).contains("helpKeywords")
         assertThat(brandCampaign.helpMessage()).contains("helpMessage")
+        assertThat(brandCampaign.isInherited()).contains(true)
         assertThat(brandCampaign.messageFlow()).contains("messageFlow")
         assertThat(brandCampaign.name()).contains("name")
         assertThat(brandCampaign.optinKeywords()).contains("optinKeywords")
@@ -78,7 +81,7 @@ internal class BrandCampaignTest {
         assertThat(brandCampaign.optoutKeywords()).contains("optoutKeywords")
         assertThat(brandCampaign.optoutMessage()).contains("optoutMessage")
         assertThat(brandCampaign.privacyPolicyLink()).contains("privacyPolicyLink")
-        assertThat(brandCampaign.status()).contains(BrandCampaign.Status.SENT_CREATED)
+        assertThat(brandCampaign.status()).contains(TcrCampaignStatus.SENT_CREATED)
         assertThat(brandCampaign.submittedAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(brandCampaign.submittedToTcr()).contains(true)
@@ -120,6 +123,7 @@ internal class BrandCampaignTest {
                 .hasSubmissionTransaction(true)
                 .helpKeywords("helpKeywords")
                 .helpMessage("helpMessage")
+                .isInherited(true)
                 .messageFlow("messageFlow")
                 .name("name")
                 .optinKeywords("optinKeywords")
@@ -127,7 +131,7 @@ internal class BrandCampaignTest {
                 .optoutKeywords("optoutKeywords")
                 .optoutMessage("optoutMessage")
                 .privacyPolicyLink("privacyPolicyLink")
-                .status(BrandCampaign.Status.SENT_CREATED)
+                .status(TcrCampaignStatus.SENT_CREATED)
                 .submittedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .submittedToTcr(true)
                 .tcrCampaignId("tcrCampaignId")

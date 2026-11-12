@@ -19,18 +19,17 @@ private constructor(
     private val service: WebhookServiceAsync,
     private val streamHandlerExecutor: Executor,
     private val params: WebhookListEventsParams,
-    private val response: WebhookListEventsPageResponse,
-) : PageAsync<WebhookListEventsResponse> {
+    private val response: ApiResponseOfWebhookEventsList,
+) : PageAsync<WebhookDelivery> {
 
     /**
-     * Delegates to [WebhookListEventsPageResponse], but gracefully handles missing data.
+     * Delegates to [ApiResponseOfWebhookEventsList], but gracefully handles missing data.
      *
-     * @see WebhookListEventsPageResponse.data
+     * @see ApiResponseOfWebhookEventsList.data
      */
-    fun data(): Optional<WebhookListEventsPageResponse.Data> = response._data().getOptional("data")
+    fun data(): Optional<WebhookEventsList> = response._data().getOptional("data")
 
-    override fun items(): List<WebhookListEventsResponse> =
-        response.events().getOrNull() ?: emptyList()
+    override fun items(): List<WebhookDelivery> = response.events().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 
@@ -42,14 +41,14 @@ private constructor(
     override fun nextPage(): CompletableFuture<WebhookListEventsPageAsync> =
         service.listEvents(nextPageParams())
 
-    fun autoPager(): AutoPagerAsync<WebhookListEventsResponse> =
+    fun autoPager(): AutoPagerAsync<WebhookDelivery> =
         AutoPagerAsync.from(this, streamHandlerExecutor)
 
     /** The parameters that were used to request this page. */
     fun params(): WebhookListEventsParams = params
 
     /** The response that this page was parsed from. */
-    fun response(): WebhookListEventsPageResponse = response
+    fun response(): ApiResponseOfWebhookEventsList = response
 
     fun toBuilder() = Builder().from(this)
 
@@ -75,7 +74,7 @@ private constructor(
         private var service: WebhookServiceAsync? = null
         private var streamHandlerExecutor: Executor? = null
         private var params: WebhookListEventsParams? = null
-        private var response: WebhookListEventsPageResponse? = null
+        private var response: ApiResponseOfWebhookEventsList? = null
 
         @JvmSynthetic
         internal fun from(webhookListEventsPageAsync: WebhookListEventsPageAsync) = apply {
@@ -95,7 +94,7 @@ private constructor(
         fun params(params: WebhookListEventsParams) = apply { this.params = params }
 
         /** The response that this page was parsed from. */
-        fun response(response: WebhookListEventsPageResponse) = apply { this.response = response }
+        fun response(response: ApiResponseOfWebhookEventsList) = apply { this.response = response }
 
         /**
          * Returns an immutable instance of [WebhookListEventsPageAsync].

@@ -35,9 +35,9 @@ internal class ApiResponseWebhookTest {
                         .lastSuccessfulDeliveryAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .retryCount(0)
                         .senderProfile(
-                            WebhookResponse.SenderProfile.builder()
+                            WebhookSenderProfile.builder()
                                 .eventFilters(
-                                    WebhookResponse.SenderProfile.EventFilters.builder()
+                                    WebhookSenderProfile.EventFilters.builder()
                                         .putAdditionalProperty(
                                             "foo",
                                             JsonValue.from(listOf("string")),
@@ -96,9 +96,9 @@ internal class ApiResponseWebhookTest {
                     .lastSuccessfulDeliveryAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .retryCount(0)
                     .senderProfile(
-                        WebhookResponse.SenderProfile.builder()
+                        WebhookSenderProfile.builder()
                             .eventFilters(
-                                WebhookResponse.SenderProfile.EventFilters.builder()
+                                WebhookSenderProfile.EventFilters.builder()
                                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                     .build()
                             )
@@ -160,9 +160,9 @@ internal class ApiResponseWebhookTest {
                         .lastSuccessfulDeliveryAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .retryCount(0)
                         .senderProfile(
-                            WebhookResponse.SenderProfile.builder()
+                            WebhookSenderProfile.builder()
                                 .eventFilters(
-                                    WebhookResponse.SenderProfile.EventFilters.builder()
+                                    WebhookSenderProfile.EventFilters.builder()
                                         .putAdditionalProperty(
                                             "foo",
                                             JsonValue.from(listOf("string")),

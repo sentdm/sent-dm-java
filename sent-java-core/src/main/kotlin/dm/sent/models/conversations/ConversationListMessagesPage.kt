@@ -5,6 +5,7 @@ package dm.sent.models.conversations
 import dm.sent.core.AutoPager
 import dm.sent.core.Page
 import dm.sent.core.checkRequired
+import dm.sent.models.messages.Message
 import dm.sent.services.blocking.ConversationService
 import java.util.Objects
 import java.util.Optional
@@ -17,7 +18,7 @@ private constructor(
     private val service: ConversationService,
     private val params: ConversationListMessagesParams,
     private val response: ApiResponseOfConversationMessagesList,
-) : Page<ConversationMessagesList.Message> {
+) : Page<Message> {
 
     /**
      * Delegates to [ApiResponseOfConversationMessagesList], but gracefully handles missing data.
@@ -26,8 +27,7 @@ private constructor(
      */
     fun data(): Optional<ConversationMessagesList> = response._data().getOptional("data")
 
-    override fun items(): List<ConversationMessagesList.Message> =
-        response.messages().getOrNull() ?: emptyList()
+    override fun items(): List<Message> = response.messages().getOrNull() ?: emptyList()
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 
@@ -38,7 +38,7 @@ private constructor(
 
     override fun nextPage(): ConversationListMessagesPage = service.listMessages(nextPageParams())
 
-    fun autoPager(): AutoPager<ConversationMessagesList.Message> = AutoPager.from(this)
+    fun autoPager(): AutoPager<Message> = AutoPager.from(this)
 
     /** The parameters that were used to request this page. */
     fun params(): ConversationListMessagesParams = params

@@ -4,12 +4,14 @@ package dm.sent.client
 
 import dm.sent.core.ClientOptions
 import dm.sent.services.async.ChannelServiceAsync
+import dm.sent.services.async.ComplianceServiceAsync
 import dm.sent.services.async.ContactServiceAsync
 import dm.sent.services.async.ConversationServiceAsync
 import dm.sent.services.async.MeServiceAsync
 import dm.sent.services.async.MessageServiceAsync
 import dm.sent.services.async.NumberServiceAsync
 import dm.sent.services.async.ProfileServiceAsync
+import dm.sent.services.async.SenderProfileServiceAsync
 import dm.sent.services.async.TemplateServiceAsync
 import dm.sent.services.async.UserServiceAsync
 import dm.sent.services.async.VoiceServiceAsync
@@ -97,6 +99,26 @@ interface SentClientAsync {
     fun profiles(): ProfileServiceAsync
 
     /**
+     * Your customers, each sending as itself.
+     *
+     * A sender profile is a tenant of yours: it has its own API key, its own balance, and can have
+     * its own identity and senders — so your customers send under their own brand and never see
+     * Sent. Depth is one; a profile cannot create profiles.
+     *
+     * **Everything is inherited unless the profile owns it.** `{ "name": "…" }` alone gives you a
+     * usable profile immediately, running on your identity, your inbox and your billing. Supply a
+     * capability's fields and the profile owns that one instead.
+     *
+     * **A sender is the exception.** A brand and a campaign can be inherited; a number cannot. A
+     * profile either has a sender of its own or reaches only the countries Sent runs a shared route
+     * for, and the US is not one of them.
+     *
+     * To act for a profile on any other resource, send `x-profile-id` with your organization key
+     * rather than looking for a parallel set of endpoints.
+     */
+    fun senderProfiles(): SenderProfileServiceAsync
+
+    /**
      * What a phone number actually is, before you send to it.
      *
      * A lookup returns the number's country, line type and carrier, which is what decides whether
@@ -152,7 +174,50 @@ interface SentClientAsync {
 
     fun voice(): VoiceServiceAsync
 
+    /**
+     * The senders you send from, one per channel.
+     *
+     * **SMS is a list of markets**, each keyed by `(country, number_type)` — a customer can hold
+     * `us/10dlc` and `gb/alphanumeric` at once, so a market is addressed by the pair rather than by
+     * country alone. **WhatsApp and RCS are single**: a customer has one business account and one
+     * agent. **Voice is per number**: each number you hold can carry phone calls on its own (`POST
+     * /v3/channels/voice`), each with the callback URL Sent asks what to do with its calls, one of
+     * them is the default line for calls placed from your app, and voice tokens are minted with
+     * `POST /v3/voice/tokens`. Read your voice numbers with `GET /v3/channels/voice` and change one
+     * with `PATCH /v3/channels/voice/{number}`.
+     *
+     * ## Compliance lives on the market
+     *
+     * Adding a market records everything that market registers with, in its `compliance` object.
+     * Only **US `TEN_DLC`** registers with a regime — The Campaign Registry — and it is the only
+     * market whose compliance carries `brand` and `campaign`. Everywhere else compliance is
+     * documents, and many markets ask for none at all.
+     *
+     * `GET` and `PATCH` on a market return and accept the same shape, so what comes back can be
+     * sent back: an omitted key is left alone, and a key reported in `requirements` is the path
+     * into the body that clears it.
+     *
+     * Call `GET /v3/compliance/requirements` first — it answers what a market demands before you
+     * hold it, with a body you can fill in and post.
+     */
     fun channels(): ChannelServiceAsync
+
+    /**
+     * What a market demands, before you have it.
+     *
+     * Requirements vary enormously and change without notice. US `TEN_DLC` registers a brand and a
+     * campaign with The Campaign Registry and asks a substantial set of questions; an alphanumeric
+     * sender pre-registers with documents in one country and needs nothing in another.
+     *
+     * This is the authoritative answer for whichever market you ask about, and it is generated from
+     * the same declaration that validates the calls themselves — so it cannot drift from what is
+     * actually enforced. The response includes the request body to send, with every key that market
+     * wants already present and blank.
+     *
+     * What you supplied, as opposed to what is asked of you, is reported on the market under
+     * **Channels**.
+     */
+    fun compliance(): ComplianceServiceAsync
 
     /**
      * Who the current key is.
@@ -232,6 +297,26 @@ interface SentClientAsync {
         fun profiles(): ProfileServiceAsync.WithRawResponse
 
         /**
+         * Your customers, each sending as itself.
+         *
+         * A sender profile is a tenant of yours: it has its own API key, its own balance, and can
+         * have its own identity and senders — so your customers send under their own brand and
+         * never see Sent. Depth is one; a profile cannot create profiles.
+         *
+         * **Everything is inherited unless the profile owns it.** `{ "name": "…" }` alone gives you
+         * a usable profile immediately, running on your identity, your inbox and your billing.
+         * Supply a capability's fields and the profile owns that one instead.
+         *
+         * **A sender is the exception.** A brand and a campaign can be inherited; a number cannot.
+         * A profile either has a sender of its own or reaches only the countries Sent runs a shared
+         * route for, and the US is not one of them.
+         *
+         * To act for a profile on any other resource, send `x-profile-id` with your organization
+         * key rather than looking for a parallel set of endpoints.
+         */
+        fun senderProfiles(): SenderProfileServiceAsync.WithRawResponse
+
+        /**
          * What a phone number actually is, before you send to it.
          *
          * A lookup returns the number's country, line type and carrier, which is what decides
@@ -288,7 +373,51 @@ interface SentClientAsync {
 
         fun voice(): VoiceServiceAsync.WithRawResponse
 
+        /**
+         * The senders you send from, one per channel.
+         *
+         * **SMS is a list of markets**, each keyed by `(country, number_type)` — a customer can
+         * hold `us/10dlc` and `gb/alphanumeric` at once, so a market is addressed by the pair
+         * rather than by country alone. **WhatsApp and RCS are single**: a customer has one
+         * business account and one agent. **Voice is per number**: each number you hold can carry
+         * phone calls on its own (`POST /v3/channels/voice`), each with the callback URL Sent asks
+         * what to do with its calls, one of them is the default line for calls placed from your
+         * app, and voice tokens are minted with `POST /v3/voice/tokens`. Read your voice numbers
+         * with `GET /v3/channels/voice` and change one with `PATCH /v3/channels/voice/{number}`.
+         *
+         * ## Compliance lives on the market
+         *
+         * Adding a market records everything that market registers with, in its `compliance`
+         * object. Only **US `TEN_DLC`** registers with a regime — The Campaign Registry — and it is
+         * the only market whose compliance carries `brand` and `campaign`. Everywhere else
+         * compliance is documents, and many markets ask for none at all.
+         *
+         * `GET` and `PATCH` on a market return and accept the same shape, so what comes back can be
+         * sent back: an omitted key is left alone, and a key reported in `requirements` is the path
+         * into the body that clears it.
+         *
+         * Call `GET /v3/compliance/requirements` first — it answers what a market demands before
+         * you hold it, with a body you can fill in and post.
+         */
         fun channels(): ChannelServiceAsync.WithRawResponse
+
+        /**
+         * What a market demands, before you have it.
+         *
+         * Requirements vary enormously and change without notice. US `TEN_DLC` registers a brand
+         * and a campaign with The Campaign Registry and asks a substantial set of questions; an
+         * alphanumeric sender pre-registers with documents in one country and needs nothing in
+         * another.
+         *
+         * This is the authoritative answer for whichever market you ask about, and it is generated
+         * from the same declaration that validates the calls themselves — so it cannot drift from
+         * what is actually enforced. The response includes the request body to send, with every key
+         * that market wants already present and blank.
+         *
+         * What you supplied, as opposed to what is asked of you, is reported on the market under
+         * **Channels**.
+         */
+        fun compliance(): ComplianceServiceAsync.WithRawResponse
 
         /**
          * Who the current key is.

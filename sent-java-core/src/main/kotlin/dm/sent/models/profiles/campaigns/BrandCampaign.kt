@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import dm.sent.core.Enum
 import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
@@ -14,6 +13,7 @@ import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
+import dm.sent.models.profiles.TcrCampaignStatus
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
@@ -36,6 +36,7 @@ private constructor(
     private val hasSubmissionTransaction: JsonField<Boolean>,
     private val helpKeywords: JsonField<String>,
     private val helpMessage: JsonField<String>,
+    private val isInherited: JsonField<Boolean>,
     private val messageFlow: JsonField<String>,
     private val name: JsonField<String>,
     private val optinKeywords: JsonField<String>,
@@ -43,7 +44,7 @@ private constructor(
     private val optoutKeywords: JsonField<String>,
     private val optoutMessage: JsonField<String>,
     private val privacyPolicyLink: JsonField<String>,
-    private val status: JsonField<Status>,
+    private val status: JsonField<TcrCampaignStatus>,
     private val submittedAt: JsonField<OffsetDateTime>,
     private val submittedToTcr: JsonField<Boolean>,
     private val tcrCampaignId: JsonField<String>,
@@ -88,6 +89,9 @@ private constructor(
         @JsonProperty("helpMessage")
         @ExcludeMissing
         helpMessage: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("isInherited")
+        @ExcludeMissing
+        isInherited: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("messageFlow")
         @ExcludeMissing
         messageFlow: JsonField<String> = JsonMissing.of(),
@@ -107,7 +111,9 @@ private constructor(
         @JsonProperty("privacyPolicyLink")
         @ExcludeMissing
         privacyPolicyLink: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("status") @ExcludeMissing status: JsonField<Status> = JsonMissing.of(),
+        @JsonProperty("status")
+        @ExcludeMissing
+        status: JsonField<TcrCampaignStatus> = JsonMissing.of(),
         @JsonProperty("submittedAt")
         @ExcludeMissing
         submittedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -144,6 +150,7 @@ private constructor(
         hasSubmissionTransaction,
         helpKeywords,
         helpMessage,
+        isInherited,
         messageFlow,
         name,
         optinKeywords,
@@ -245,6 +252,16 @@ private constructor(
     fun helpMessage(): Optional<String> = helpMessage.getOptional("helpMessage")
 
     /**
+     * Whether the campaign is the organization's, which the profile runs on, rather than one of the
+     * profile's own. A profile running on its organization's campaign can hold campaigns of its own
+     * beside it, and the list returns both.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun isInherited(): Optional<Boolean> = isInherited.getOptional("isInherited")
+
+    /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
@@ -290,7 +307,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun status(): Optional<Status> = status.getOptional("status")
+    fun status(): Optional<TcrCampaignStatus> = status.getOptional("status")
 
     /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -457,6 +474,15 @@ private constructor(
     @JsonProperty("helpMessage") @ExcludeMissing fun _helpMessage(): JsonField<String> = helpMessage
 
     /**
+     * Returns the raw JSON value of [isInherited].
+     *
+     * Unlike [isInherited], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("isInherited")
+    @ExcludeMissing
+    fun _isInherited(): JsonField<Boolean> = isInherited
+
+    /**
      * Returns the raw JSON value of [messageFlow].
      *
      * Unlike [messageFlow], this method doesn't throw if the JSON field has an unexpected type.
@@ -521,7 +547,7 @@ private constructor(
      *
      * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<Status> = status
+    @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<TcrCampaignStatus> = status
 
     /**
      * Returns the raw JSON value of [submittedAt].
@@ -634,6 +660,7 @@ private constructor(
         private var hasSubmissionTransaction: JsonField<Boolean> = JsonMissing.of()
         private var helpKeywords: JsonField<String> = JsonMissing.of()
         private var helpMessage: JsonField<String> = JsonMissing.of()
+        private var isInherited: JsonField<Boolean> = JsonMissing.of()
         private var messageFlow: JsonField<String> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var optinKeywords: JsonField<String> = JsonMissing.of()
@@ -641,7 +668,7 @@ private constructor(
         private var optoutKeywords: JsonField<String> = JsonMissing.of()
         private var optoutMessage: JsonField<String> = JsonMissing.of()
         private var privacyPolicyLink: JsonField<String> = JsonMissing.of()
-        private var status: JsonField<Status> = JsonMissing.of()
+        private var status: JsonField<TcrCampaignStatus> = JsonMissing.of()
         private var submittedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var submittedToTcr: JsonField<Boolean> = JsonMissing.of()
         private var tcrCampaignId: JsonField<String> = JsonMissing.of()
@@ -667,6 +694,7 @@ private constructor(
             hasSubmissionTransaction = brandCampaign.hasSubmissionTransaction
             helpKeywords = brandCampaign.helpKeywords
             helpMessage = brandCampaign.helpMessage
+            isInherited = brandCampaign.isInherited
             messageFlow = brandCampaign.messageFlow
             name = brandCampaign.name
             optinKeywords = brandCampaign.optinKeywords
@@ -878,6 +906,22 @@ private constructor(
          */
         fun helpMessage(helpMessage: JsonField<String>) = apply { this.helpMessage = helpMessage }
 
+        /**
+         * Whether the campaign is the organization's, which the profile runs on, rather than one of
+         * the profile's own. A profile running on its organization's campaign can hold campaigns of
+         * its own beside it, and the list returns both.
+         */
+        fun isInherited(isInherited: Boolean) = isInherited(JsonField.of(isInherited))
+
+        /**
+         * Sets [Builder.isInherited] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isInherited] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isInherited(isInherited: JsonField<Boolean>) = apply { this.isInherited = isInherited }
+
         fun messageFlow(messageFlow: String?) = messageFlow(JsonField.ofNullable(messageFlow))
 
         /** Alias for calling [Builder.messageFlow] with `messageFlow.orElse(null)`. */
@@ -990,18 +1034,19 @@ private constructor(
             this.privacyPolicyLink = privacyPolicyLink
         }
 
-        fun status(status: Status?) = status(JsonField.ofNullable(status))
+        fun status(status: TcrCampaignStatus?) = status(JsonField.ofNullable(status))
 
         /** Alias for calling [Builder.status] with `status.orElse(null)`. */
-        fun status(status: Optional<Status>) = status(status.getOrNull())
+        fun status(status: Optional<TcrCampaignStatus>) = status(status.getOrNull())
 
         /**
          * Sets [Builder.status] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.status] with a well-typed [Status] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.status] with a well-typed [TcrCampaignStatus] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun status(status: JsonField<Status>) = apply { this.status = status }
+        fun status(status: JsonField<TcrCampaignStatus>) = apply { this.status = status }
 
         fun submittedAt(submittedAt: OffsetDateTime?) =
             submittedAt(JsonField.ofNullable(submittedAt))
@@ -1197,6 +1242,7 @@ private constructor(
                 hasSubmissionTransaction,
                 helpKeywords,
                 helpMessage,
+                isInherited,
                 messageFlow,
                 name,
                 optinKeywords,
@@ -1245,6 +1291,7 @@ private constructor(
         hasSubmissionTransaction()
         helpKeywords()
         helpMessage()
+        isInherited()
         messageFlow()
         name()
         optinKeywords()
@@ -1292,6 +1339,7 @@ private constructor(
             (if (hasSubmissionTransaction.asKnown().isPresent) 1 else 0) +
             (if (helpKeywords.asKnown().isPresent) 1 else 0) +
             (if (helpMessage.asKnown().isPresent) 1 else 0) +
+            (if (isInherited.asKnown().isPresent) 1 else 0) +
             (if (messageFlow.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (optinKeywords.asKnown().isPresent) 1 else 0) +
@@ -1309,145 +1357,6 @@ private constructor(
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (useCases.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (volume.asKnown().isPresent) 1 else 0)
-
-    class Status @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
-
-        /**
-         * Returns this class instance's raw value.
-         *
-         * This is usually only useful if this instance was deserialized from data that doesn't
-         * match any known member, and you want to know that value. For example, if the SDK is on an
-         * older version than the API, then the API may respond with new members that the SDK is
-         * unaware of.
-         */
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-        companion object {
-
-            @JvmField val SENT_CREATED = of("SENT_CREATED")
-
-            @JvmField val ACTIVE = of("ACTIVE")
-
-            @JvmField val EXPIRED = of("EXPIRED")
-
-            @JvmStatic fun of(value: String) = Status(JsonField.of(value))
-        }
-
-        /** An enum containing [Status]'s known values. */
-        enum class Known {
-            SENT_CREATED,
-            ACTIVE,
-            EXPIRED,
-        }
-
-        /**
-         * An enum containing [Status]'s known values, as well as an [_UNKNOWN] member.
-         *
-         * An instance of [Status] can contain an unknown value in a couple of cases:
-         * - It was deserialized from data that doesn't match any known member. For example, if the
-         *   SDK is on an older version than the API, then the API may respond with new members that
-         *   the SDK is unaware of.
-         * - It was constructed with an arbitrary value using the [of] method.
-         */
-        enum class Value {
-            SENT_CREATED,
-            ACTIVE,
-            EXPIRED,
-            /** An enum member indicating that [Status] was instantiated with an unknown value. */
-            _UNKNOWN,
-        }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
-         * if the class was instantiated with an unknown value.
-         *
-         * Use the [known] method instead if you're certain the value is always known or if you want
-         * to throw for the unknown case.
-         */
-        fun value(): Value =
-            when (this) {
-                SENT_CREATED -> Value.SENT_CREATED
-                ACTIVE -> Value.ACTIVE
-                EXPIRED -> Value.EXPIRED
-                else -> Value._UNKNOWN
-            }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value.
-         *
-         * Use the [value] method instead if you're uncertain the value is always known and don't
-         * want to throw for the unknown case.
-         *
-         * @throws SentInvalidDataException if this class instance's value is a not a known member.
-         */
-        fun known(): Known =
-            when (this) {
-                SENT_CREATED -> Known.SENT_CREATED
-                ACTIVE -> Known.ACTIVE
-                EXPIRED -> Known.EXPIRED
-                else -> throw SentInvalidDataException("Unknown Status: $value")
-            }
-
-        /**
-         * Returns this class instance's primitive wire representation.
-         *
-         * This differs from the [toString] method because that method is primarily for debugging
-         * and generally doesn't throw.
-         *
-         * @throws SentInvalidDataException if this class instance's value does not have the
-         *   expected primitive type.
-         */
-        fun asString(): String =
-            _value().asString().orElseThrow { SentInvalidDataException("Value is not a String") }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws SentInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): Status = apply {
-            if (validated) {
-                return@apply
-            }
-
-            known()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: SentInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is Status && value == other.value
-        }
-
-        override fun hashCode() = value.hashCode()
-
-        override fun toString() = value.toString()
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -1467,6 +1376,7 @@ private constructor(
             hasSubmissionTransaction == other.hasSubmissionTransaction &&
             helpKeywords == other.helpKeywords &&
             helpMessage == other.helpMessage &&
+            isInherited == other.isInherited &&
             messageFlow == other.messageFlow &&
             name == other.name &&
             optinKeywords == other.optinKeywords &&
@@ -1501,6 +1411,7 @@ private constructor(
             hasSubmissionTransaction,
             helpKeywords,
             helpMessage,
+            isInherited,
             messageFlow,
             name,
             optinKeywords,
@@ -1525,5 +1436,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BrandCampaign{id=$id, billedDate=$billedDate, brandId=$brandId, cost=$cost, createdAt=$createdAt, customerId=$customerId, dcaElectionsComplete=$dcaElectionsComplete, dcaElectionsCompletedAt=$dcaElectionsCompletedAt, description=$description, hasSubmissionTransaction=$hasSubmissionTransaction, helpKeywords=$helpKeywords, helpMessage=$helpMessage, messageFlow=$messageFlow, name=$name, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrCampaignId=$tcrCampaignId, tcrSyncError=$tcrSyncError, termsAndConditionsLink=$termsAndConditionsLink, type=$type, updatedAt=$updatedAt, useCases=$useCases, volume=$volume, additionalProperties=$additionalProperties}"
+        "BrandCampaign{id=$id, billedDate=$billedDate, brandId=$brandId, cost=$cost, createdAt=$createdAt, customerId=$customerId, dcaElectionsComplete=$dcaElectionsComplete, dcaElectionsCompletedAt=$dcaElectionsCompletedAt, description=$description, hasSubmissionTransaction=$hasSubmissionTransaction, helpKeywords=$helpKeywords, helpMessage=$helpMessage, isInherited=$isInherited, messageFlow=$messageFlow, name=$name, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrCampaignId=$tcrCampaignId, tcrSyncError=$tcrSyncError, termsAndConditionsLink=$termsAndConditionsLink, type=$type, updatedAt=$updatedAt, useCases=$useCases, volume=$volume, additionalProperties=$additionalProperties}"
 }

@@ -8,9 +8,9 @@ import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponse
 import dm.sent.core.http.HttpResponseFor
 import dm.sent.models.users.ApiResponseOfUser
+import dm.sent.models.users.ApiResponseOfUsersList
 import dm.sent.models.users.UserInviteParams
 import dm.sent.models.users.UserListParams
-import dm.sent.models.users.UserListResponse
 import dm.sent.models.users.UserRemoveParams
 import dm.sent.models.users.UserRetrieveParams
 import dm.sent.models.users.UserUpdateRoleParams
@@ -75,20 +75,20 @@ interface UserService {
      * including their roles and status. Shows invited users (pending acceptance) and active users.
      * Requires developer role or higher.
      */
-    fun list(): UserListResponse = list(UserListParams.none())
+    fun list(): ApiResponseOfUsersList = list(UserListParams.none())
 
     /** @see list */
     fun list(
         params: UserListParams = UserListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): UserListResponse
+    ): ApiResponseOfUsersList
 
     /** @see list */
-    fun list(params: UserListParams = UserListParams.none()): UserListResponse =
+    fun list(params: UserListParams = UserListParams.none()): ApiResponseOfUsersList =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): UserListResponse =
+    fun list(requestOptions: RequestOptions): ApiResponseOfUsersList =
         list(UserListParams.none(), requestOptions)
 
     /**
@@ -224,24 +224,25 @@ interface UserService {
          * Returns a raw HTTP response for `get /v3/users`, but is otherwise the same as
          * [UserService.list].
          */
-        @MustBeClosed fun list(): HttpResponseFor<UserListResponse> = list(UserListParams.none())
+        @MustBeClosed
+        fun list(): HttpResponseFor<ApiResponseOfUsersList> = list(UserListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: UserListParams = UserListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<UserListResponse>
+        ): HttpResponseFor<ApiResponseOfUsersList>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: UserListParams = UserListParams.none()
-        ): HttpResponseFor<UserListResponse> = list(params, RequestOptions.none())
+        ): HttpResponseFor<ApiResponseOfUsersList> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<UserListResponse> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<ApiResponseOfUsersList> =
             list(UserListParams.none(), requestOptions)
 
         /**

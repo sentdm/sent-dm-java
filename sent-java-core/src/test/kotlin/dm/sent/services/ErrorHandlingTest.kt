@@ -23,6 +23,7 @@ import dm.sent.errors.UnauthorizedException
 import dm.sent.errors.UnexpectedStatusCodeException
 import dm.sent.errors.UnprocessableEntityException
 import dm.sent.models.messages.MessageSendParams
+import dm.sent.models.templates.TemplateRef
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.jupiter.api.BeforeEach
@@ -97,11 +98,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -159,11 +160,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -221,11 +222,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -283,11 +284,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -345,11 +346,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -407,11 +408,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -469,11 +470,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -531,11 +532,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -593,11 +594,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -655,11 +656,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -717,11 +718,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -779,11 +780,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -841,11 +842,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -903,11 +904,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -965,11 +966,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -1027,11 +1028,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()
@@ -1087,11 +1088,11 @@ internal class ErrorHandlingTest {
                         .scheduledAt(null)
                         .subject(null)
                         .template(
-                            MessageSendParams.Template.builder()
+                            TemplateRef.builder()
                                 .id("7ba7b820-9dad-11d1-80b4-00c04fd430c8")
                                 .name("order_confirmation")
                                 .parameters(
-                                    MessageSendParams.Template.Parameters.builder()
+                                    TemplateRef.Parameters.builder()
                                         .putAdditionalProperty("name", JsonValue.from("John Doe"))
                                         .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                         .build()

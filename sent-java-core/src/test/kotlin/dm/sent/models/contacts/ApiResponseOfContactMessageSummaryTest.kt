@@ -20,7 +20,7 @@ internal class ApiResponseOfContactMessageSummaryTest {
                 .data(
                     ContactMessageSummary.builder()
                         .addChannelScore(
-                            ContactMessageSummary.ChannelScore.builder()
+                            ChannelScore.builder()
                                 .channel("channel")
                                 .failScore(0)
                                 .successScore(0)
@@ -59,7 +59,7 @@ internal class ApiResponseOfContactMessageSummaryTest {
             .contains(
                 ContactMessageSummary.builder()
                     .addChannelScore(
-                        ContactMessageSummary.ChannelScore.builder()
+                        ChannelScore.builder()
                             .channel("channel")
                             .failScore(0)
                             .successScore(0)
@@ -104,7 +104,7 @@ internal class ApiResponseOfContactMessageSummaryTest {
                 .data(
                     ContactMessageSummary.builder()
                         .addChannelScore(
-                            ContactMessageSummary.ChannelScore.builder()
+                            ChannelScore.builder()
                                 .channel("channel")
                                 .failScore(0)
                                 .successScore(0)
