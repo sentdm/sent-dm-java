@@ -110,7 +110,8 @@ interface SentClientAsync {
      * capability's fields and the profile owns that one instead.
      *
      * **A sender is the exception.** A brand and a campaign can be inherited; a number cannot. A
-     * profile either has a sender of its own or terminates through your shared routes.
+     * profile either has a sender of its own or reaches only the countries Sent runs a shared route
+     * for, and the US is not one of them.
      *
      * To act for a profile on any other resource, send `x-profile-id` with your organization key
      * rather than looking for a parallel set of endpoints.
@@ -307,7 +308,8 @@ interface SentClientAsync {
          * Supply a capability's fields and the profile owns that one instead.
          *
          * **A sender is the exception.** A brand and a campaign can be inherited; a number cannot.
-         * A profile either has a sender of its own or terminates through your shared routes.
+         * A profile either has a sender of its own or reaches only the countries Sent runs a shared
+         * route for, and the US is not one of them.
          *
          * To act for a profile on any other resource, send `x-profile-id` with your organization
          * key rather than looking for a parallel set of endpoints.

@@ -36,6 +36,7 @@ private constructor(
     private val hasSubmissionTransaction: JsonField<Boolean>,
     private val helpKeywords: JsonField<String>,
     private val helpMessage: JsonField<String>,
+    private val isInherited: JsonField<Boolean>,
     private val messageFlow: JsonField<String>,
     private val name: JsonField<String>,
     private val optinKeywords: JsonField<String>,
@@ -88,6 +89,9 @@ private constructor(
         @JsonProperty("helpMessage")
         @ExcludeMissing
         helpMessage: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("isInherited")
+        @ExcludeMissing
+        isInherited: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("messageFlow")
         @ExcludeMissing
         messageFlow: JsonField<String> = JsonMissing.of(),
@@ -146,6 +150,7 @@ private constructor(
         hasSubmissionTransaction,
         helpKeywords,
         helpMessage,
+        isInherited,
         messageFlow,
         name,
         optinKeywords,
@@ -245,6 +250,16 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun helpMessage(): Optional<String> = helpMessage.getOptional("helpMessage")
+
+    /**
+     * Whether the campaign is the organization's, which the profile runs on, rather than one of the
+     * profile's own. A profile running on its organization's campaign can hold campaigns of its own
+     * beside it, and the list returns both.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun isInherited(): Optional<Boolean> = isInherited.getOptional("isInherited")
 
     /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -459,6 +474,15 @@ private constructor(
     @JsonProperty("helpMessage") @ExcludeMissing fun _helpMessage(): JsonField<String> = helpMessage
 
     /**
+     * Returns the raw JSON value of [isInherited].
+     *
+     * Unlike [isInherited], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("isInherited")
+    @ExcludeMissing
+    fun _isInherited(): JsonField<Boolean> = isInherited
+
+    /**
      * Returns the raw JSON value of [messageFlow].
      *
      * Unlike [messageFlow], this method doesn't throw if the JSON field has an unexpected type.
@@ -636,6 +660,7 @@ private constructor(
         private var hasSubmissionTransaction: JsonField<Boolean> = JsonMissing.of()
         private var helpKeywords: JsonField<String> = JsonMissing.of()
         private var helpMessage: JsonField<String> = JsonMissing.of()
+        private var isInherited: JsonField<Boolean> = JsonMissing.of()
         private var messageFlow: JsonField<String> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var optinKeywords: JsonField<String> = JsonMissing.of()
@@ -669,6 +694,7 @@ private constructor(
             hasSubmissionTransaction = brandCampaign.hasSubmissionTransaction
             helpKeywords = brandCampaign.helpKeywords
             helpMessage = brandCampaign.helpMessage
+            isInherited = brandCampaign.isInherited
             messageFlow = brandCampaign.messageFlow
             name = brandCampaign.name
             optinKeywords = brandCampaign.optinKeywords
@@ -879,6 +905,22 @@ private constructor(
          * value.
          */
         fun helpMessage(helpMessage: JsonField<String>) = apply { this.helpMessage = helpMessage }
+
+        /**
+         * Whether the campaign is the organization's, which the profile runs on, rather than one of
+         * the profile's own. A profile running on its organization's campaign can hold campaigns of
+         * its own beside it, and the list returns both.
+         */
+        fun isInherited(isInherited: Boolean) = isInherited(JsonField.of(isInherited))
+
+        /**
+         * Sets [Builder.isInherited] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isInherited] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isInherited(isInherited: JsonField<Boolean>) = apply { this.isInherited = isInherited }
 
         fun messageFlow(messageFlow: String?) = messageFlow(JsonField.ofNullable(messageFlow))
 
@@ -1200,6 +1242,7 @@ private constructor(
                 hasSubmissionTransaction,
                 helpKeywords,
                 helpMessage,
+                isInherited,
                 messageFlow,
                 name,
                 optinKeywords,
@@ -1248,6 +1291,7 @@ private constructor(
         hasSubmissionTransaction()
         helpKeywords()
         helpMessage()
+        isInherited()
         messageFlow()
         name()
         optinKeywords()
@@ -1295,6 +1339,7 @@ private constructor(
             (if (hasSubmissionTransaction.asKnown().isPresent) 1 else 0) +
             (if (helpKeywords.asKnown().isPresent) 1 else 0) +
             (if (helpMessage.asKnown().isPresent) 1 else 0) +
+            (if (isInherited.asKnown().isPresent) 1 else 0) +
             (if (messageFlow.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (optinKeywords.asKnown().isPresent) 1 else 0) +
@@ -1331,6 +1376,7 @@ private constructor(
             hasSubmissionTransaction == other.hasSubmissionTransaction &&
             helpKeywords == other.helpKeywords &&
             helpMessage == other.helpMessage &&
+            isInherited == other.isInherited &&
             messageFlow == other.messageFlow &&
             name == other.name &&
             optinKeywords == other.optinKeywords &&
@@ -1365,6 +1411,7 @@ private constructor(
             hasSubmissionTransaction,
             helpKeywords,
             helpMessage,
+            isInherited,
             messageFlow,
             name,
             optinKeywords,
@@ -1389,5 +1436,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BrandCampaign{id=$id, billedDate=$billedDate, brandId=$brandId, cost=$cost, createdAt=$createdAt, customerId=$customerId, dcaElectionsComplete=$dcaElectionsComplete, dcaElectionsCompletedAt=$dcaElectionsCompletedAt, description=$description, hasSubmissionTransaction=$hasSubmissionTransaction, helpKeywords=$helpKeywords, helpMessage=$helpMessage, messageFlow=$messageFlow, name=$name, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrCampaignId=$tcrCampaignId, tcrSyncError=$tcrSyncError, termsAndConditionsLink=$termsAndConditionsLink, type=$type, updatedAt=$updatedAt, useCases=$useCases, volume=$volume, additionalProperties=$additionalProperties}"
+        "BrandCampaign{id=$id, billedDate=$billedDate, brandId=$brandId, cost=$cost, createdAt=$createdAt, customerId=$customerId, dcaElectionsComplete=$dcaElectionsComplete, dcaElectionsCompletedAt=$dcaElectionsCompletedAt, description=$description, hasSubmissionTransaction=$hasSubmissionTransaction, helpKeywords=$helpKeywords, helpMessage=$helpMessage, isInherited=$isInherited, messageFlow=$messageFlow, name=$name, optinKeywords=$optinKeywords, optinMessage=$optinMessage, optoutKeywords=$optoutKeywords, optoutMessage=$optoutMessage, privacyPolicyLink=$privacyPolicyLink, status=$status, submittedAt=$submittedAt, submittedToTcr=$submittedToTcr, tcrCampaignId=$tcrCampaignId, tcrSyncError=$tcrSyncError, termsAndConditionsLink=$termsAndConditionsLink, type=$type, updatedAt=$updatedAt, useCases=$useCases, volume=$volume, additionalProperties=$additionalProperties}"
 }
