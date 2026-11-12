@@ -7,6 +7,7 @@ import dm.sent.core.JsonValue
 import dm.sent.models.channels.sms.SmsNumberRequest
 import dm.sent.models.channels.sms.tendlc.TenDlcAddCampaignParams
 import dm.sent.models.channels.sms.tendlc.TenDlcAddNumbersParams
+import dm.sent.models.channels.sms.tendlc.TenDlcCampaignUseCase
 import dm.sent.models.channels.sms.tendlc.TenDlcRetrieveComplianceParams
 import dm.sent.models.channels.sms.tendlc.TenDlcUpdateCampaignParams
 import org.junit.jupiter.api.Disabled
@@ -37,9 +38,9 @@ internal class TenDlcServiceTest {
                     .sandbox(false)
                     .termsAndConditionsLink("terms_and_conditions_link")
                     .addUseCase(
-                        TenDlcAddCampaignParams.UseCase.builder()
+                        TenDlcCampaignUseCase.builder()
                             .addSampleMessage(JsonValue.from(mapOf<String, Any>()))
-                            .useCase(TenDlcAddCampaignParams.UseCase.InnerUseCase.MARKETING)
+                            .useCase(TenDlcCampaignUseCase.UseCase.MARKETING)
                             .build()
                     )
                     .volume("volume")
@@ -109,9 +110,9 @@ internal class TenDlcServiceTest {
                     .sandbox(false)
                     .termsAndConditionsLink("terms_and_conditions_link")
                     .addUseCase(
-                        TenDlcUpdateCampaignParams.UseCase.builder()
+                        TenDlcCampaignUseCase.builder()
                             .addSampleMessage(JsonValue.from(mapOf<String, Any>()))
-                            .useCase(TenDlcUpdateCampaignParams.UseCase.InnerUseCase.MARKETING)
+                            .useCase(TenDlcCampaignUseCase.UseCase.MARKETING)
                             .build()
                     )
                     .volume("volume")
