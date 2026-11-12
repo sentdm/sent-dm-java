@@ -21,6 +21,7 @@ class SmsNumber
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val areaCode: JsonField<String>,
+    private val campaignId: JsonField<String>,
     private val senderValue: JsonField<String>,
     private val status: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -29,11 +30,14 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("area_code") @ExcludeMissing areaCode: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("campaign_id")
+        @ExcludeMissing
+        campaignId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("sender_value")
         @ExcludeMissing
         senderValue: JsonField<String> = JsonMissing.of(),
         @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
-    ) : this(areaCode, senderValue, status, mutableMapOf())
+    ) : this(areaCode, campaignId, senderValue, status, mutableMapOf())
 
     /**
      * The number's area code, e.g. 212. While the number is still to be assigned, the area code it
@@ -43,6 +47,16 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun areaCode(): Optional<String> = areaCode.getOptional("area_code")
+
+    /**
+     * The campaign the number is on, or is owed for: the id of its entry in compliance.campaigns.
+     * Omitted for a market that registers no campaigns, and where the campaign is not known — a
+     * number recorded without one, or one owed on a campaign inherited from the organization.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun campaignId(): Optional<String> = campaignId.getOptional("campaign_id")
 
     /**
      * The number, or null while it is still to be assigned.
@@ -67,6 +81,13 @@ private constructor(
      * Unlike [areaCode], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("area_code") @ExcludeMissing fun _areaCode(): JsonField<String> = areaCode
+
+    /**
+     * Returns the raw JSON value of [campaignId].
+     *
+     * Unlike [campaignId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("campaign_id") @ExcludeMissing fun _campaignId(): JsonField<String> = campaignId
 
     /**
      * Returns the raw JSON value of [senderValue].
@@ -106,6 +127,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var areaCode: JsonField<String> = JsonMissing.of()
+        private var campaignId: JsonField<String> = JsonMissing.of()
         private var senderValue: JsonField<String> = JsonMissing.of()
         private var status: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -113,6 +135,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(smsNumber: SmsNumber) = apply {
             areaCode = smsNumber.areaCode
+            campaignId = smsNumber.campaignId
             senderValue = smsNumber.senderValue
             status = smsNumber.status
             additionalProperties = smsNumber.additionalProperties.toMutableMap()
@@ -134,6 +157,26 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun areaCode(areaCode: JsonField<String>) = apply { this.areaCode = areaCode }
+
+        /**
+         * The campaign the number is on, or is owed for: the id of its entry in
+         * compliance.campaigns. Omitted for a market that registers no campaigns, and where the
+         * campaign is not known — a number recorded without one, or one owed on a campaign
+         * inherited from the organization.
+         */
+        fun campaignId(campaignId: String?) = campaignId(JsonField.ofNullable(campaignId))
+
+        /** Alias for calling [Builder.campaignId] with `campaignId.orElse(null)`. */
+        fun campaignId(campaignId: Optional<String>) = campaignId(campaignId.getOrNull())
+
+        /**
+         * Sets [Builder.campaignId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.campaignId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun campaignId(campaignId: JsonField<String>) = apply { this.campaignId = campaignId }
 
         /** The number, or null while it is still to be assigned. */
         fun senderValue(senderValue: String?) = senderValue(JsonField.ofNullable(senderValue))
@@ -192,7 +235,13 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): SmsNumber =
-            SmsNumber(areaCode, senderValue, status, additionalProperties.toMutableMap())
+            SmsNumber(
+                areaCode,
+                campaignId,
+                senderValue,
+                status,
+                additionalProperties.toMutableMap(),
+            )
     }
 
     private var validated: Boolean = false
@@ -211,6 +260,7 @@ private constructor(
         }
 
         areaCode()
+        campaignId()
         senderValue()
         status()
         validated = true
@@ -232,6 +282,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (areaCode.asKnown().isPresent) 1 else 0) +
+            (if (campaignId.asKnown().isPresent) 1 else 0) +
             (if (senderValue.asKnown().isPresent) 1 else 0) +
             (if (status.asKnown().isPresent) 1 else 0)
 
@@ -242,17 +293,18 @@ private constructor(
 
         return other is SmsNumber &&
             areaCode == other.areaCode &&
+            campaignId == other.campaignId &&
             senderValue == other.senderValue &&
             status == other.status &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(areaCode, senderValue, status, additionalProperties)
+        Objects.hash(areaCode, campaignId, senderValue, status, additionalProperties)
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SmsNumber{areaCode=$areaCode, senderValue=$senderValue, status=$status, additionalProperties=$additionalProperties}"
+        "SmsNumber{areaCode=$areaCode, campaignId=$campaignId, senderValue=$senderValue, status=$status, additionalProperties=$additionalProperties}"
 }
