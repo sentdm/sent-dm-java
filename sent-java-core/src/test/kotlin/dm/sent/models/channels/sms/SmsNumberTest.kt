@@ -14,11 +14,13 @@ internal class SmsNumberTest {
         val smsNumber =
             SmsNumber.builder()
                 .areaCode("area_code")
+                .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .senderValue("sender_value")
                 .status("status")
                 .build()
 
         assertThat(smsNumber.areaCode()).contains("area_code")
+        assertThat(smsNumber.campaignId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(smsNumber.senderValue()).contains("sender_value")
         assertThat(smsNumber.status()).contains("status")
     }
@@ -29,6 +31,7 @@ internal class SmsNumberTest {
         val smsNumber =
             SmsNumber.builder()
                 .areaCode("area_code")
+                .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .senderValue("sender_value")
                 .status("status")
                 .build()

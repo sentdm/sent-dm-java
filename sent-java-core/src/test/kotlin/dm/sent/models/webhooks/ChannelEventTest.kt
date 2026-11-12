@@ -5,6 +5,7 @@ package dm.sent.models.webhooks
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
+import dm.sent.models.channels.sms.SuppliedCampaign
 import dm.sent.models.channels.sms.SuppliedCompliance
 import dm.sent.models.channels.sms.SuppliedDocument
 import org.assertj.core.api.Assertions.assertThat
@@ -32,6 +33,11 @@ internal class ChannelEventTest {
                                 )
                                 .campaign(
                                     SuppliedCompliance.Campaign.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .addCampaign(
+                                    SuppliedCampaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
@@ -73,6 +79,11 @@ internal class ChannelEventTest {
                             )
                             .campaign(
                                 SuppliedCompliance.Campaign.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .addCampaign(
+                                SuppliedCampaign.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
@@ -118,6 +129,11 @@ internal class ChannelEventTest {
                                 )
                                 .campaign(
                                     SuppliedCompliance.Campaign.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .addCampaign(
+                                    SuppliedCampaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )

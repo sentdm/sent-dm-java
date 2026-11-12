@@ -178,9 +178,9 @@ private constructor(
 
     /**
      * Why the call did not complete: callback_timeout, invalid_answer, insufficient_balance,
-     * destination_blocked, callback_not_configured, rejected, no_answer, or for an agent call
-     * agent_busy or agent_unreachable. Null while the call is live, when it completed, and when it
-     * failed without a recorded reason
+     * payment_method_missing, destination_blocked, callback_not_configured, rejected, no_answer, or
+     * for an agent call agent_busy or agent_unreachable. Null while the call is live, when it
+     * completed, and when it failed without a recorded reason
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -634,9 +634,9 @@ private constructor(
 
         /**
          * Why the call did not complete: callback_timeout, invalid_answer, insufficient_balance,
-         * destination_blocked, callback_not_configured, rejected, no_answer, or for an agent call
-         * agent_busy or agent_unreachable. Null while the call is live, when it completed, and when
-         * it failed without a recorded reason
+         * payment_method_missing, destination_blocked, callback_not_configured, rejected,
+         * no_answer, or for an agent call agent_busy or agent_unreachable. Null while the call is
+         * live, when it completed, and when it failed without a recorded reason
          */
         fun failureReason(failureReason: String?) =
             failureReason(JsonField.ofNullable(failureReason))
