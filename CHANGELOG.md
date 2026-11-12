@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.51.0](https://github.com/sentdm/sent-dm-java/compare/v0.50.0...v0.51.0) (2026-11-12)
+
+
+### Features
+
+* **api:** methods for the US 10DLC campaigns, numbers and market compliance ([1971c92](https://github.com/sentdm/sent-dm-java/commit/1971c9206aece7f06ba3f7d11cb5d977519104ad))
+
 ## [0.50.0](https://github.com/sentdm/sent-dm-java/compare/v0.49.0...v0.50.0) (2026-11-12)
 
 
