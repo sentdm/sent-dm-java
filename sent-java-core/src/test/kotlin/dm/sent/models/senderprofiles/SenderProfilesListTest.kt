@@ -11,6 +11,7 @@ import dm.sent.models.channels.rcs.RcsAddress
 import dm.sent.models.channels.rcs.RcsAgent
 import dm.sent.models.channels.sms.SmsMarket
 import dm.sent.models.channels.sms.SmsNumber
+import dm.sent.models.channels.sms.SuppliedCampaign
 import dm.sent.models.channels.sms.SuppliedCompliance
 import dm.sent.models.channels.sms.SuppliedDocument
 import dm.sent.models.channels.voice.VoiceNumber
@@ -116,6 +117,14 @@ internal class SenderProfilesListTest {
                                                         )
                                                         .build()
                                                 )
+                                                .addCampaign(
+                                                    SuppliedCampaign.builder()
+                                                        .putAdditionalProperty(
+                                                            "foo",
+                                                            JsonValue.from("bar"),
+                                                        )
+                                                        .build()
+                                                )
                                                 .addDocument(
                                                     SuppliedDocument.builder()
                                                         .documentId(
@@ -132,13 +141,13 @@ internal class SenderProfilesListTest {
                                         .addNumber(
                                             SmsNumber.builder()
                                                 .areaCode("area_code")
+                                                .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                                 .senderValue("sender_value")
                                                 .status("status")
                                                 .build()
                                         )
                                         .reason("reason")
                                         .reasonCode("reason_code")
-                                        .senderValue("sender_value")
                                         .status(SmsMarket.Status.PROVISIONING)
                                         .build()
                                 )
@@ -176,6 +185,11 @@ internal class SenderProfilesListTest {
                                 )
                                 .campaign(
                                     SuppliedCompliance.Campaign.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .addCampaign(
+                                    SuppliedCampaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
@@ -286,6 +300,14 @@ internal class SenderProfilesListTest {
                                                     )
                                                     .build()
                                             )
+                                            .addCampaign(
+                                                SuppliedCampaign.builder()
+                                                    .putAdditionalProperty(
+                                                        "foo",
+                                                        JsonValue.from("bar"),
+                                                    )
+                                                    .build()
+                                            )
                                             .addDocument(
                                                 SuppliedDocument.builder()
                                                     .documentId(
@@ -302,13 +324,13 @@ internal class SenderProfilesListTest {
                                     .addNumber(
                                         SmsNumber.builder()
                                             .areaCode("area_code")
+                                            .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                             .senderValue("sender_value")
                                             .status("status")
                                             .build()
                                     )
                                     .reason("reason")
                                     .reasonCode("reason_code")
-                                    .senderValue("sender_value")
                                     .status(SmsMarket.Status.PROVISIONING)
                                     .build()
                             )
@@ -346,6 +368,11 @@ internal class SenderProfilesListTest {
                             )
                             .campaign(
                                 SuppliedCompliance.Campaign.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .addCampaign(
+                                SuppliedCampaign.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
@@ -461,6 +488,14 @@ internal class SenderProfilesListTest {
                                                         )
                                                         .build()
                                                 )
+                                                .addCampaign(
+                                                    SuppliedCampaign.builder()
+                                                        .putAdditionalProperty(
+                                                            "foo",
+                                                            JsonValue.from("bar"),
+                                                        )
+                                                        .build()
+                                                )
                                                 .addDocument(
                                                     SuppliedDocument.builder()
                                                         .documentId(
@@ -477,13 +512,13 @@ internal class SenderProfilesListTest {
                                         .addNumber(
                                             SmsNumber.builder()
                                                 .areaCode("area_code")
+                                                .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                                 .senderValue("sender_value")
                                                 .status("status")
                                                 .build()
                                         )
                                         .reason("reason")
                                         .reasonCode("reason_code")
-                                        .senderValue("sender_value")
                                         .status(SmsMarket.Status.PROVISIONING)
                                         .build()
                                 )
@@ -521,6 +556,11 @@ internal class SenderProfilesListTest {
                                 )
                                 .campaign(
                                     SuppliedCompliance.Campaign.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .addCampaign(
+                                    SuppliedCampaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )

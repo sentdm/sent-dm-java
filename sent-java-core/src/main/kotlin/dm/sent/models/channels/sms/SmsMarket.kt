@@ -36,7 +36,6 @@ private constructor(
     private val numbers: JsonField<List<SmsNumber>>,
     private val reason: JsonField<String>,
     private val reasonCode: JsonField<String>,
-    private val senderValue: JsonField<String>,
     private val status: JsonField<Status>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -57,21 +56,8 @@ private constructor(
         @JsonProperty("reason_code")
         @ExcludeMissing
         reasonCode: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("sender_value")
-        @ExcludeMissing
-        senderValue: JsonField<String> = JsonMissing.of(),
         @JsonProperty("status") @ExcludeMissing status: JsonField<Status> = JsonMissing.of(),
-    ) : this(
-        compliance,
-        country,
-        numberType,
-        numbers,
-        reason,
-        reasonCode,
-        senderValue,
-        status,
-        mutableMapOf(),
-    )
+    ) : this(compliance, country, numberType, numbers, reason, reasonCode, status, mutableMapOf())
 
     /**
      * What a market has been given: the identity it registers under, its programme, and any
@@ -139,16 +125,6 @@ private constructor(
     fun reasonCode(): Optional<String> = reasonCode.getOptional("reason_code")
 
     /**
-     * The sender itself. Null until a carrier-assigned number is procured. For a market holding
-     * several numbers, the first active one (the first assigned while none is active) — every
-     * number is in numbers.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun senderValue(): Optional<String> = senderValue.getOptional("sender_value")
-
-    /**
      * Where this market's sender stands, in terms of who is holding it up — PROVISIONING,
      * ACTION_NEEDED, PENDING_REVIEW or ACTIVE. Read-only.
      *
@@ -212,15 +188,6 @@ private constructor(
     @JsonProperty("reason_code") @ExcludeMissing fun _reasonCode(): JsonField<String> = reasonCode
 
     /**
-     * Returns the raw JSON value of [senderValue].
-     *
-     * Unlike [senderValue], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("sender_value")
-    @ExcludeMissing
-    fun _senderValue(): JsonField<String> = senderValue
-
-    /**
      * Returns the raw JSON value of [status].
      *
      * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
@@ -254,7 +221,6 @@ private constructor(
         private var numbers: JsonField<MutableList<SmsNumber>>? = null
         private var reason: JsonField<String> = JsonMissing.of()
         private var reasonCode: JsonField<String> = JsonMissing.of()
-        private var senderValue: JsonField<String> = JsonMissing.of()
         private var status: JsonField<Status> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -266,7 +232,6 @@ private constructor(
             numbers = smsMarket.numbers.map { it.toMutableList() }
             reason = smsMarket.reason
             reasonCode = smsMarket.reasonCode
-            senderValue = smsMarket.senderValue
             status = smsMarket.status
             additionalProperties = smsMarket.additionalProperties.toMutableMap()
         }
@@ -403,25 +368,6 @@ private constructor(
         fun reasonCode(reasonCode: JsonField<String>) = apply { this.reasonCode = reasonCode }
 
         /**
-         * The sender itself. Null until a carrier-assigned number is procured. For a market holding
-         * several numbers, the first active one (the first assigned while none is active) — every
-         * number is in numbers.
-         */
-        fun senderValue(senderValue: String?) = senderValue(JsonField.ofNullable(senderValue))
-
-        /** Alias for calling [Builder.senderValue] with `senderValue.orElse(null)`. */
-        fun senderValue(senderValue: Optional<String>) = senderValue(senderValue.getOrNull())
-
-        /**
-         * Sets [Builder.senderValue] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.senderValue] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun senderValue(senderValue: JsonField<String>) = apply { this.senderValue = senderValue }
-
-        /**
          * Where this market's sender stands, in terms of who is holding it up — PROVISIONING,
          * ACTION_NEEDED, PENDING_REVIEW or ACTIVE. Read-only.
          *
@@ -481,7 +427,6 @@ private constructor(
                 (numbers ?: JsonMissing.of()).map { it.toImmutable() },
                 reason,
                 reasonCode,
-                senderValue,
                 status,
                 additionalProperties.toMutableMap(),
             )
@@ -508,7 +453,6 @@ private constructor(
         numbers().ifPresent { it.forEach { it.validate() } }
         reason()
         reasonCode()
-        senderValue()
         status().ifPresent { it.validate() }
         validated = true
     }
@@ -534,7 +478,6 @@ private constructor(
             (numbers.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (reason.asKnown().isPresent) 1 else 0) +
             (if (reasonCode.asKnown().isPresent) 1 else 0) +
-            (if (senderValue.asKnown().isPresent) 1 else 0) +
             (status.asKnown().getOrNull()?.validity() ?: 0)
 
     /**
@@ -792,7 +735,6 @@ private constructor(
             numbers == other.numbers &&
             reason == other.reason &&
             reasonCode == other.reasonCode &&
-            senderValue == other.senderValue &&
             status == other.status &&
             additionalProperties == other.additionalProperties
     }
@@ -805,7 +747,6 @@ private constructor(
             numbers,
             reason,
             reasonCode,
-            senderValue,
             status,
             additionalProperties,
         )
@@ -814,5 +755,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SmsMarket{compliance=$compliance, country=$country, numberType=$numberType, numbers=$numbers, reason=$reason, reasonCode=$reasonCode, senderValue=$senderValue, status=$status, additionalProperties=$additionalProperties}"
+        "SmsMarket{compliance=$compliance, country=$country, numberType=$numberType, numbers=$numbers, reason=$reason, reasonCode=$reasonCode, status=$status, additionalProperties=$additionalProperties}"
 }
