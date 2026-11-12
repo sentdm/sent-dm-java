@@ -88,23 +88,14 @@ interface TenDlcServiceAsync {
      *
      * Returns **the market**, in the shape `GET /v3/channels/sms/US/TEN_DLC` returns, with `202`.
      */
-    fun addCampaign(): CompletableFuture<ApiResponseOfSmsMarket> =
-        addCampaign(TenDlcAddCampaignParams.none())
+    fun addCampaign(params: TenDlcAddCampaignParams): CompletableFuture<ApiResponseOfSmsMarket> =
+        addCampaign(params, RequestOptions.none())
 
     /** @see addCampaign */
     fun addCampaign(
-        params: TenDlcAddCampaignParams = TenDlcAddCampaignParams.none(),
+        params: TenDlcAddCampaignParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ApiResponseOfSmsMarket>
-
-    /** @see addCampaign */
-    fun addCampaign(
-        params: TenDlcAddCampaignParams = TenDlcAddCampaignParams.none()
-    ): CompletableFuture<ApiResponseOfSmsMarket> = addCampaign(params, RequestOptions.none())
-
-    /** @see addCampaign */
-    fun addCampaign(requestOptions: RequestOptions): CompletableFuture<ApiResponseOfSmsMarket> =
-        addCampaign(TenDlcAddCampaignParams.none(), requestOptions)
 
     /**
      * Adds numbers to **one campaign of your own** on the US `TEN_DLC` market you hold, named by
@@ -245,26 +236,16 @@ interface TenDlcServiceAsync {
          * Returns a raw HTTP response for `post /v3/channels/sms/compliances/US/TEN_DLC/campaigns`,
          * but is otherwise the same as [TenDlcServiceAsync.addCampaign].
          */
-        fun addCampaign(): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> =
-            addCampaign(TenDlcAddCampaignParams.none())
-
-        /** @see addCampaign */
         fun addCampaign(
-            params: TenDlcAddCampaignParams = TenDlcAddCampaignParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>>
-
-        /** @see addCampaign */
-        fun addCampaign(
-            params: TenDlcAddCampaignParams = TenDlcAddCampaignParams.none()
+            params: TenDlcAddCampaignParams
         ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> =
             addCampaign(params, RequestOptions.none())
 
         /** @see addCampaign */
         fun addCampaign(
-            requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> =
-            addCampaign(TenDlcAddCampaignParams.none(), requestOptions)
+            params: TenDlcAddCampaignParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>>
 
         /**
          * Returns a raw HTTP response for `post /v3/channels/sms/numbers/US/TEN_DLC`, but is

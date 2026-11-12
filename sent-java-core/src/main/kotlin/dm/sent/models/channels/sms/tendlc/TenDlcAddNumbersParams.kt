@@ -45,14 +45,14 @@ import kotlin.jvm.optionals.getOrNull
  */
 class TenDlcAddNumbersParams
 private constructor(
-    private val idempotencyKey: String?,
+    private val idempotencyKey: String,
     private val xProfileId: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    fun idempotencyKey(): Optional<String> = Optional.ofNullable(idempotencyKey)
+    fun idempotencyKey(): String = idempotencyKey
 
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
@@ -123,6 +123,7 @@ private constructor(
          *
          * The following fields are required:
          * ```java
+         * .idempotencyKey()
          * .campaignId()
          * .numbers()
          * ```
@@ -148,11 +149,7 @@ private constructor(
             additionalQueryParams = tenDlcAddNumbersParams.additionalQueryParams.toBuilder()
         }
 
-        fun idempotencyKey(idempotencyKey: String?) = apply { this.idempotencyKey = idempotencyKey }
-
-        /** Alias for calling [Builder.idempotencyKey] with `idempotencyKey.orElse(null)`. */
-        fun idempotencyKey(idempotencyKey: Optional<String>) =
-            idempotencyKey(idempotencyKey.getOrNull())
+        fun idempotencyKey(idempotencyKey: String) = apply { this.idempotencyKey = idempotencyKey }
 
         fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
 
@@ -347,6 +344,7 @@ private constructor(
          *
          * The following fields are required:
          * ```java
+         * .idempotencyKey()
          * .campaignId()
          * .numbers()
          * ```
@@ -355,7 +353,7 @@ private constructor(
          */
         fun build(): TenDlcAddNumbersParams =
             TenDlcAddNumbersParams(
-                idempotencyKey,
+                checkRequired("idempotencyKey", idempotencyKey),
                 xProfileId,
                 body.build(),
                 additionalHeaders.build(),
@@ -368,7 +366,7 @@ private constructor(
     override fun _headers(): Headers =
         Headers.builder()
             .apply {
-                idempotencyKey?.let { put("Idempotency-Key", it) }
+                put("Idempotency-Key", idempotencyKey)
                 xProfileId?.let { put("x-profile-id", it) }
                 putAll(additionalHeaders)
             }

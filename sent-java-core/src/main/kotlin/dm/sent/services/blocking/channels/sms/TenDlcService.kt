@@ -88,22 +88,14 @@ interface TenDlcService {
      *
      * Returns **the market**, in the shape `GET /v3/channels/sms/US/TEN_DLC` returns, with `202`.
      */
-    fun addCampaign(): ApiResponseOfSmsMarket = addCampaign(TenDlcAddCampaignParams.none())
+    fun addCampaign(params: TenDlcAddCampaignParams): ApiResponseOfSmsMarket =
+        addCampaign(params, RequestOptions.none())
 
     /** @see addCampaign */
     fun addCampaign(
-        params: TenDlcAddCampaignParams = TenDlcAddCampaignParams.none(),
+        params: TenDlcAddCampaignParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ApiResponseOfSmsMarket
-
-    /** @see addCampaign */
-    fun addCampaign(
-        params: TenDlcAddCampaignParams = TenDlcAddCampaignParams.none()
-    ): ApiResponseOfSmsMarket = addCampaign(params, RequestOptions.none())
-
-    /** @see addCampaign */
-    fun addCampaign(requestOptions: RequestOptions): ApiResponseOfSmsMarket =
-        addCampaign(TenDlcAddCampaignParams.none(), requestOptions)
 
     /**
      * Adds numbers to **one campaign of your own** on the US `TEN_DLC` market you hold, named by
@@ -233,26 +225,15 @@ interface TenDlcService {
          * but is otherwise the same as [TenDlcService.addCampaign].
          */
         @MustBeClosed
-        fun addCampaign(): HttpResponseFor<ApiResponseOfSmsMarket> =
-            addCampaign(TenDlcAddCampaignParams.none())
+        fun addCampaign(params: TenDlcAddCampaignParams): HttpResponseFor<ApiResponseOfSmsMarket> =
+            addCampaign(params, RequestOptions.none())
 
         /** @see addCampaign */
         @MustBeClosed
         fun addCampaign(
-            params: TenDlcAddCampaignParams = TenDlcAddCampaignParams.none(),
+            params: TenDlcAddCampaignParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<ApiResponseOfSmsMarket>
-
-        /** @see addCampaign */
-        @MustBeClosed
-        fun addCampaign(
-            params: TenDlcAddCampaignParams = TenDlcAddCampaignParams.none()
-        ): HttpResponseFor<ApiResponseOfSmsMarket> = addCampaign(params, RequestOptions.none())
-
-        /** @see addCampaign */
-        @MustBeClosed
-        fun addCampaign(requestOptions: RequestOptions): HttpResponseFor<ApiResponseOfSmsMarket> =
-            addCampaign(TenDlcAddCampaignParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /v3/channels/sms/numbers/US/TEN_DLC`, but is

@@ -46,13 +46,15 @@ internal class TenDlcAddNumbersParamsTest {
     fun headersWithoutOptionalFields() {
         val params =
             TenDlcAddNumbersParams.builder()
+                .idempotencyKey("req_abc123_retry1")
                 .campaignId("8f14e45f-ceea-467f-a8f0-7c2a3d1b9e01")
                 .addNumber(SmsNumberRequest.builder().build())
                 .build()
 
         val headers = params._headers()
 
-        assertThat(headers).isEqualTo(Headers.builder().build())
+        assertThat(headers)
+            .isEqualTo(Headers.builder().put("Idempotency-Key", "req_abc123_retry1").build())
     }
 
     @Test
@@ -78,6 +80,7 @@ internal class TenDlcAddNumbersParamsTest {
     fun bodyWithoutOptionalFields() {
         val params =
             TenDlcAddNumbersParams.builder()
+                .idempotencyKey("req_abc123_retry1")
                 .campaignId("8f14e45f-ceea-467f-a8f0-7c2a3d1b9e01")
                 .addNumber(SmsNumberRequest.builder().build())
                 .build()
