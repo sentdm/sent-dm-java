@@ -40,6 +40,10 @@ interface ComplianceServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ComplianceServiceAsync
 
     /**
+     * **Deprecated.** Use `GET /v3/channels/{channel}/{country}/compliance` instead, and expect
+     * this to be removed in a future release. It answers exactly as before, so nothing needs to
+     * change today.
+     *
      * **Call this first.** It returns what a channel, country and sender type demand before you can
      * send there — and `setup[]`, the calls that satisfy those demands, in order, each with a body
      * you can copy and send as it stands. You never have to track forty countries' rules yourself.
@@ -100,22 +104,26 @@ interface ComplianceServiceAsync {
      * `compliance` array at all. A `sender_id_pattern` may still be present — many markets
      * constrain the sender string without registering anything.
      */
+    @Deprecated("deprecated")
     fun retrieveRequirements(): CompletableFuture<ApiResponseOfComplianceRequirements> =
         retrieveRequirements(ComplianceRetrieveRequirementsParams.none())
 
     /** @see retrieveRequirements */
+    @Deprecated("deprecated")
     fun retrieveRequirements(
         params: ComplianceRetrieveRequirementsParams = ComplianceRetrieveRequirementsParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ApiResponseOfComplianceRequirements>
 
     /** @see retrieveRequirements */
+    @Deprecated("deprecated")
     fun retrieveRequirements(
         params: ComplianceRetrieveRequirementsParams = ComplianceRetrieveRequirementsParams.none()
     ): CompletableFuture<ApiResponseOfComplianceRequirements> =
         retrieveRequirements(params, RequestOptions.none())
 
     /** @see retrieveRequirements */
+    @Deprecated("deprecated")
     fun retrieveRequirements(
         requestOptions: RequestOptions
     ): CompletableFuture<ApiResponseOfComplianceRequirements> =
@@ -140,11 +148,13 @@ interface ComplianceServiceAsync {
          * Returns a raw HTTP response for `get /v3/compliance/requirements`, but is otherwise the
          * same as [ComplianceServiceAsync.retrieveRequirements].
          */
+        @Deprecated("deprecated")
         fun retrieveRequirements():
             CompletableFuture<HttpResponseFor<ApiResponseOfComplianceRequirements>> =
             retrieveRequirements(ComplianceRetrieveRequirementsParams.none())
 
         /** @see retrieveRequirements */
+        @Deprecated("deprecated")
         fun retrieveRequirements(
             params: ComplianceRetrieveRequirementsParams =
                 ComplianceRetrieveRequirementsParams.none(),
@@ -152,6 +162,7 @@ interface ComplianceServiceAsync {
         ): CompletableFuture<HttpResponseFor<ApiResponseOfComplianceRequirements>>
 
         /** @see retrieveRequirements */
+        @Deprecated("deprecated")
         fun retrieveRequirements(
             params: ComplianceRetrieveRequirementsParams =
                 ComplianceRetrieveRequirementsParams.none()
@@ -159,6 +170,7 @@ interface ComplianceServiceAsync {
             retrieveRequirements(params, RequestOptions.none())
 
         /** @see retrieveRequirements */
+        @Deprecated("deprecated")
         fun retrieveRequirements(
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<ApiResponseOfComplianceRequirements>> =

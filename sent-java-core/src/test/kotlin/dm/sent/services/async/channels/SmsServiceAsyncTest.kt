@@ -6,10 +6,7 @@ import dm.sent.client.okhttp.SentOkHttpClientAsync
 import dm.sent.core.JsonValue
 import dm.sent.models.channels.sms.MarketCompliance
 import dm.sent.models.channels.sms.SmsCreateParams
-import dm.sent.models.channels.sms.SmsListParams
 import dm.sent.models.channels.sms.SmsNumberRequest
-import dm.sent.models.channels.sms.SmsRetrieveParams
-import dm.sent.models.channels.sms.SmsUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -21,7 +18,7 @@ internal class SmsServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val smsServiceAsync = client.channels().sms()
 
-        val apiResponseOfSmsMarketFuture =
+        val smsFuture =
             smsServiceAsync.create(
                 SmsCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
@@ -34,7 +31,7 @@ internal class SmsServiceAsyncTest {
                         MarketCompliance.builder()
                             .brand(
                                 MarketCompliance.Brand.builder()
-                                    .businessName("business_name")
+                                    .businessName("xxx")
                                     .city("city")
                                     .contactEmail("dev@stainless.com")
                                     .contactName("contact_name")
@@ -47,22 +44,22 @@ internal class SmsServiceAsyncTest {
                                     .postalCode("postal_code")
                                     .state("state")
                                     .street("street")
-                                    .taxId("tax_id")
+                                    .taxId("xx")
                                     .taxIdType("tax_id_type")
                                     .website("website")
                                     .build()
                             )
                             .campaign(
                                 MarketCompliance.Campaign.builder()
-                                    .description("description")
+                                    .description("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                                     .helpKeywords("help_keywords")
-                                    .helpMessage("help_message")
+                                    .helpMessage("xxxxxxxxxxxxxxxxxxxx")
                                     .inherit(true)
                                     .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                                     .optInKeywords("opt_in_keywords")
-                                    .optInMessage("opt_in_message")
+                                    .optInMessage("xxxxxxxxxxxxxxxxxxxx")
                                     .optOutKeywords("opt_out_keywords")
-                                    .optOutMessage("opt_out_message")
+                                    .optOutMessage("xxxxxxxxxxxxxxxxxxxx")
                                     .privacyPolicyLink("privacy_policy_link")
                                     .termsAndConditionsLink("terms_and_conditions_link")
                                     .addUseCase(
@@ -79,117 +76,12 @@ internal class SmsServiceAsyncTest {
                             )
                             .build()
                     )
-                    .country("US")
                     .addNumber(SmsNumberRequest.builder().areaCode("area_code").quantity(0).build())
                     .senderValue(null)
                     .build()
             )
 
-        val apiResponseOfSmsMarket = apiResponseOfSmsMarketFuture.get()
-        apiResponseOfSmsMarket.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
-    fun retrieve() {
-        val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val smsServiceAsync = client.channels().sms()
-
-        val apiResponseOfSmsMarketFuture =
-            smsServiceAsync.retrieve(
-                SmsRetrieveParams.builder()
-                    .country("US")
-                    .type("ten_dlc")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
-
-        val apiResponseOfSmsMarket = apiResponseOfSmsMarketFuture.get()
-        apiResponseOfSmsMarket.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
-    fun update() {
-        val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val smsServiceAsync = client.channels().sms()
-
-        val apiResponseOfSmsMarketFuture =
-            smsServiceAsync.update(
-                SmsUpdateParams.builder()
-                    .country("US")
-                    .type("ten_dlc")
-                    .idempotencyKey("req_abc123_retry1")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .compliance(
-                        MarketCompliance.builder()
-                            .brand(
-                                MarketCompliance.Brand.builder()
-                                    .businessName("business_name")
-                                    .city("city")
-                                    .contactEmail("dev@stainless.com")
-                                    .contactName("contact_name")
-                                    .contactPhone("contact_phone")
-                                    .country("country")
-                                    .einIssuingCountry("ein_issuing_country")
-                                    .entityType(MarketCompliance.Brand.EntityType.PRIVATE_PROFIT)
-                                    .inherit(true)
-                                    .legalName("legal_name")
-                                    .postalCode("postal_code")
-                                    .state("state")
-                                    .street("street")
-                                    .taxId("tax_id")
-                                    .taxIdType("tax_id_type")
-                                    .website("website")
-                                    .build()
-                            )
-                            .campaign(
-                                MarketCompliance.Campaign.builder()
-                                    .description("description")
-                                    .helpKeywords("help_keywords")
-                                    .helpMessage("help_message")
-                                    .inherit(true)
-                                    .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-                                    .optInKeywords("opt_in_keywords")
-                                    .optInMessage("opt_in_message")
-                                    .optOutKeywords("opt_out_keywords")
-                                    .optOutMessage("opt_out_message")
-                                    .privacyPolicyLink("privacy_policy_link")
-                                    .termsAndConditionsLink("terms_and_conditions_link")
-                                    .addUseCase(
-                                        MarketCompliance.Campaign.UseCase.builder()
-                                            .addSampleMessage(JsonValue.from(mapOf<String, Any>()))
-                                            .useCase(
-                                                MarketCompliance.Campaign.UseCase.InnerUseCase
-                                                    .MARKETING
-                                            )
-                                            .build()
-                                    )
-                                    .volume("volume")
-                                    .build()
-                            )
-                            .build()
-                    )
-                    .sandbox(false)
-                    .build()
-            )
-
-        val apiResponseOfSmsMarket = apiResponseOfSmsMarketFuture.get()
-        apiResponseOfSmsMarket.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
-    fun list() {
-        val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val smsServiceAsync = client.channels().sms()
-
-        val apiResponseOfListOfSmsMarketFuture =
-            smsServiceAsync.list(
-                SmsListParams.builder().xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
-            )
-
-        val apiResponseOfListOfSmsMarket = apiResponseOfListOfSmsMarketFuture.get()
-        apiResponseOfListOfSmsMarket.validate()
+        val sms = smsFuture.get()
+        sms.validate()
     }
 }

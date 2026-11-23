@@ -159,7 +159,8 @@ private constructor(
     fun subject(): Optional<String> = body.subject()
 
     /**
-     * SDK-style template reference: resolve by ID or by name, with optional parameters.
+     * SDK-style template reference: resolve by id, by slug or by name (exactly one), with optional
+     * parameters.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -467,7 +468,10 @@ private constructor(
          */
         fun subject(subject: JsonField<String>) = apply { body.subject(subject) }
 
-        /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
+        /**
+         * SDK-style template reference: resolve by id, by slug or by name (exactly one), with
+         * optional parameters.
+         */
         fun template(template: TemplateRef?) = apply { body.template(template) }
 
         /** Alias for calling [Builder.template] with `template.orElse(null)`. */
@@ -808,7 +812,8 @@ private constructor(
         fun subject(): Optional<String> = subject.getOptional("subject")
 
         /**
-         * SDK-style template reference: resolve by ID or by name, with optional parameters.
+         * SDK-style template reference: resolve by id, by slug or by name (exactly one), with
+         * optional parameters.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -1123,7 +1128,10 @@ private constructor(
              */
             fun subject(subject: JsonField<String>) = apply { this.subject = subject }
 
-            /** SDK-style template reference: resolve by ID or by name, with optional parameters. */
+            /**
+             * SDK-style template reference: resolve by id, by slug or by name (exactly one), with
+             * optional parameters.
+             */
             fun template(template: TemplateRef?) = template(JsonField.ofNullable(template))
 
             /** Alias for calling [Builder.template] with `template.orElse(null)`. */
