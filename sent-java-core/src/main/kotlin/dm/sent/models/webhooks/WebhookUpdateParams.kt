@@ -79,7 +79,7 @@ private constructor(
     /**
      * Makes this webhook inheritable by the organization's sender profiles (see create), or stops
      * it being inheritable. Omit or pass null to keep it as it is. Only a version 2 webhook can be
-     * inheritable.
+     * inheritable, and never an agent's.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -313,7 +313,7 @@ private constructor(
         /**
          * Makes this webhook inheritable by the organization's sender profiles (see create), or
          * stops it being inheritable. Omit or pass null to keep it as it is. Only a version 2
-         * webhook can be inheritable.
+         * webhook can be inheritable, and never an agent's.
          */
         fun isInheritable(isInheritable: Boolean?) = apply { body.isInheritable(isInheritable) }
 
@@ -632,7 +632,7 @@ private constructor(
         /**
          * Makes this webhook inheritable by the organization's sender profiles (see create), or
          * stops it being inheritable. Omit or pass null to keep it as it is. Only a version 2
-         * webhook can be inheritable.
+         * webhook can be inheritable, and never an agent's.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -876,7 +876,7 @@ private constructor(
             /**
              * Makes this webhook inheritable by the organization's sender profiles (see create), or
              * stops it being inheritable. Omit or pass null to keep it as it is. Only a version 2
-             * webhook can be inheritable.
+             * webhook can be inheritable, and never an agent's.
              */
             fun isInheritable(isInheritable: Boolean?) =
                 isInheritable(JsonField.ofNullable(isInheritable))

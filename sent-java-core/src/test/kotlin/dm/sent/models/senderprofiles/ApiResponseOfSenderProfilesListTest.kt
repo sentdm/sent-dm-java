@@ -9,8 +9,8 @@ import dm.sent.models.channels.ChannelsState
 import dm.sent.models.channels.MmsMarket
 import dm.sent.models.channels.rcs.RcsAddress
 import dm.sent.models.channels.rcs.RcsAgent
-import dm.sent.models.channels.sms.SmsMarket
 import dm.sent.models.channels.sms.SmsNumber
+import dm.sent.models.channels.sms.SuppliedCampaign
 import dm.sent.models.channels.sms.SuppliedCompliance
 import dm.sent.models.channels.sms.SuppliedDocument
 import dm.sent.models.channels.voice.VoiceNumber
@@ -111,7 +111,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                 .build()
                                         )
                                         .addSms(
-                                            SmsMarket.builder()
+                                            ChannelsState.Sms.builder()
                                                 .compliance(
                                                     SuppliedCompliance.builder()
                                                         .brand(
@@ -131,7 +131,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                                 .build()
                                                         )
                                                         .addCampaign(
-                                                            SuppliedCompliance.Campaign.builder()
+                                                            SuppliedCampaign.builder()
                                                                 .putAdditionalProperty(
                                                                     "foo",
                                                                     JsonValue.from("bar"),
@@ -163,7 +163,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                 )
                                                 .reason("reason")
                                                 .reasonCode("reason_code")
-                                                .status(SmsMarket.Status.PROVISIONING)
+                                                .status(ChannelsState.Sms.Status.PROVISIONING)
                                                 .build()
                                         )
                                         .addVoice(
@@ -208,7 +208,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                 .build()
                                         )
                                         .addCampaign(
-                                            SuppliedCompliance.Campaign.builder()
+                                            SuppliedCampaign.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()
                                         )
@@ -329,7 +329,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                             .build()
                                     )
                                     .addSms(
-                                        SmsMarket.builder()
+                                        ChannelsState.Sms.builder()
                                             .compliance(
                                                 SuppliedCompliance.builder()
                                                     .brand(
@@ -349,7 +349,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                             .build()
                                                     )
                                                     .addCampaign(
-                                                        SuppliedCompliance.Campaign.builder()
+                                                        SuppliedCampaign.builder()
                                                             .putAdditionalProperty(
                                                                 "foo",
                                                                 JsonValue.from("bar"),
@@ -381,7 +381,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                             )
                                             .reason("reason")
                                             .reasonCode("reason_code")
-                                            .status(SmsMarket.Status.PROVISIONING)
+                                            .status(ChannelsState.Sms.Status.PROVISIONING)
                                             .build()
                                     )
                                     .addVoice(
@@ -426,7 +426,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                             .build()
                                     )
                                     .addCampaign(
-                                        SuppliedCompliance.Campaign.builder()
+                                        SuppliedCampaign.builder()
                                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                                             .build()
                                     )
@@ -560,7 +560,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                 .build()
                                         )
                                         .addSms(
-                                            SmsMarket.builder()
+                                            ChannelsState.Sms.builder()
                                                 .compliance(
                                                     SuppliedCompliance.builder()
                                                         .brand(
@@ -580,7 +580,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                                 .build()
                                                         )
                                                         .addCampaign(
-                                                            SuppliedCompliance.Campaign.builder()
+                                                            SuppliedCampaign.builder()
                                                                 .putAdditionalProperty(
                                                                     "foo",
                                                                     JsonValue.from("bar"),
@@ -612,7 +612,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                 )
                                                 .reason("reason")
                                                 .reasonCode("reason_code")
-                                                .status(SmsMarket.Status.PROVISIONING)
+                                                .status(ChannelsState.Sms.Status.PROVISIONING)
                                                 .build()
                                         )
                                         .addVoice(
@@ -657,7 +657,7 @@ internal class ApiResponseOfSenderProfilesListTest {
                                                 .build()
                                         )
                                         .addCampaign(
-                                            SuppliedCompliance.Campaign.builder()
+                                            SuppliedCampaign.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()
                                         )

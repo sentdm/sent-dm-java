@@ -26,7 +26,7 @@ internal class SuppliedComplianceTest {
                         .build()
                 )
                 .addCampaign(
-                    SuppliedCompliance.Campaign.builder()
+                    SuppliedCampaign.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
@@ -53,7 +53,7 @@ internal class SuppliedComplianceTest {
             )
         assertThat(suppliedCompliance.campaigns().getOrNull())
             .containsExactly(
-                SuppliedCompliance.Campaign.builder()
+                SuppliedCampaign.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
@@ -83,7 +83,7 @@ internal class SuppliedComplianceTest {
                         .build()
                 )
                 .addCampaign(
-                    SuppliedCompliance.Campaign.builder()
+                    SuppliedCampaign.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )

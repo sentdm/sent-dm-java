@@ -53,6 +53,16 @@ private constructor(
     fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
+     * One of your Sent agents: the webhook then receives only that agent's events, its agent events
+     * and the messages it sent or received, and is never inheritable: is_inheritable set with it is
+     * refused. Only the account the agent runs on can set it, and only on a version 2 webhook.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun agentId(): Optional<String> = body.agentId()
+
+    /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
@@ -130,6 +140,13 @@ private constructor(
      * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
+
+    /**
+     * Returns the raw JSON value of [agentId].
+     *
+     * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _agentId(): JsonField<String> = body._agentId()
 
     /**
      * Returns the raw JSON value of [displayName].
@@ -247,10 +264,10 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [sandbox]
+         * - [agentId]
          * - [displayName]
          * - [endpointUrl]
          * - [eventFilters]
-         * - [eventTypes]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -268,6 +285,25 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
+
+        /**
+         * One of your Sent agents: the webhook then receives only that agent's events, its agent
+         * events and the messages it sent or received, and is never inheritable: is_inheritable set
+         * with it is refused. Only the account the agent runs on can set it, and only on a version
+         * 2 webhook.
+         */
+        fun agentId(agentId: String?) = apply { body.agentId(agentId) }
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+        /**
+         * Sets [Builder.agentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun agentId(agentId: JsonField<String>) = apply { body.agentId(agentId) }
 
         fun displayName(displayName: String) = apply { body.displayName(displayName) }
 
@@ -575,6 +611,7 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val sandbox: JsonField<Boolean>,
+        private val agentId: JsonField<String>,
         private val displayName: JsonField<String>,
         private val endpointUrl: JsonField<String>,
         private val eventFilters: JsonField<EventFilters>,
@@ -590,6 +627,7 @@ private constructor(
         @JsonCreator
         private constructor(
             @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("display_name")
             @ExcludeMissing
             displayName: JsonField<String> = JsonMissing.of(),
@@ -619,6 +657,7 @@ private constructor(
             webhookVersion: JsonField<Long> = JsonMissing.of(),
         ) : this(
             sandbox,
+            agentId,
             displayName,
             endpointUrl,
             eventFilters,
@@ -642,6 +681,17 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
+
+        /**
+         * One of your Sent agents: the webhook then receives only that agent's events, its agent
+         * events and the messages it sent or received, and is never inheritable: is_inheritable set
+         * with it is refused. Only the account the agent runs on can set it, and only on a version
+         * 2 webhook.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun agentId(): Optional<String> = agentId.getOptional("agent_id")
 
         /**
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -722,6 +772,13 @@ private constructor(
          * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
+        /**
+         * Returns the raw JSON value of [agentId].
+         *
+         * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
 
         /**
          * Returns the raw JSON value of [displayName].
@@ -829,6 +886,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
+            private var agentId: JsonField<String> = JsonMissing.of()
             private var displayName: JsonField<String> = JsonMissing.of()
             private var endpointUrl: JsonField<String> = JsonMissing.of()
             private var eventFilters: JsonField<EventFilters> = JsonMissing.of()
@@ -843,6 +901,7 @@ private constructor(
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 sandbox = body.sandbox
+                agentId = body.agentId
                 displayName = body.displayName
                 endpointUrl = body.endpointUrl
                 eventFilters = body.eventFilters
@@ -869,6 +928,26 @@ private constructor(
              * supported value.
              */
             fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
+            /**
+             * One of your Sent agents: the webhook then receives only that agent's events, its
+             * agent events and the messages it sent or received, and is never inheritable:
+             * is_inheritable set with it is refused. Only the account the agent runs on can set it,
+             * and only on a version 2 webhook.
+             */
+            fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
+
+            /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+            fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+            /**
+             * Sets [Builder.agentId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.agentId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
 
             fun displayName(displayName: String) = displayName(JsonField.of(displayName))
 
@@ -1067,6 +1146,7 @@ private constructor(
             fun build(): Body =
                 Body(
                     sandbox,
+                    agentId,
                     displayName,
                     endpointUrl,
                     eventFilters,
@@ -1097,6 +1177,7 @@ private constructor(
             }
 
             sandbox()
+            agentId()
             displayName()
             endpointUrl()
             eventFilters().ifPresent { it.validate() }
@@ -1126,6 +1207,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (sandbox.asKnown().isPresent) 1 else 0) +
+                (if (agentId.asKnown().isPresent) 1 else 0) +
                 (if (displayName.asKnown().isPresent) 1 else 0) +
                 (if (endpointUrl.asKnown().isPresent) 1 else 0) +
                 (eventFilters.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1143,6 +1225,7 @@ private constructor(
 
             return other is Body &&
                 sandbox == other.sandbox &&
+                agentId == other.agentId &&
                 displayName == other.displayName &&
                 endpointUrl == other.endpointUrl &&
                 eventFilters == other.eventFilters &&
@@ -1158,6 +1241,7 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 sandbox,
+                agentId,
                 displayName,
                 endpointUrl,
                 eventFilters,
@@ -1174,7 +1258,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, displayName=$displayName, endpointUrl=$endpointUrl, eventFilters=$eventFilters, eventTypes=$eventTypes, isInheritable=$isInheritable, retryCount=$retryCount, senderProfile=$senderProfile, timeoutSeconds=$timeoutSeconds, webhookVersion=$webhookVersion, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, agentId=$agentId, displayName=$displayName, endpointUrl=$endpointUrl, eventFilters=$eventFilters, eventTypes=$eventTypes, isInheritable=$isInheritable, retryCount=$retryCount, senderProfile=$senderProfile, timeoutSeconds=$timeoutSeconds, webhookVersion=$webhookVersion, additionalProperties=$additionalProperties}"
     }
 
     class EventFilters

@@ -40,7 +40,7 @@ class SuppliedCompliance
 private constructor(
     private val brand: JsonField<Brand>,
     private val campaign: JsonField<Campaign>,
-    private val campaigns: JsonField<List<Campaign>>,
+    private val campaigns: JsonField<List<SuppliedCampaign>>,
     private val documents: JsonField<List<SuppliedDocument>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -51,7 +51,7 @@ private constructor(
         @JsonProperty("campaign") @ExcludeMissing campaign: JsonField<Campaign> = JsonMissing.of(),
         @JsonProperty("campaigns")
         @ExcludeMissing
-        campaigns: JsonField<List<Campaign>> = JsonMissing.of(),
+        campaigns: JsonField<List<SuppliedCampaign>> = JsonMissing.of(),
         @JsonProperty("documents")
         @ExcludeMissing
         documents: JsonField<List<SuppliedDocument>> = JsonMissing.of(),
@@ -98,15 +98,19 @@ private constructor(
      * Every campaign this market registers, each with inherit saying whose it is — oldest first.
      *
      * A list, because a market can now be on more than one. POST
-     * /v3/channels/sms/compliances/US/TEN_DLC/campaigns adds a campaign of the customer's own
-     * beside the one it has, and a profile running on its organization's campaign keeps that one
-     * when it adds its own. Campaign can only show one of them, so it stays as it was, for callers
-     * that read it, and this is where the rest are.
+     * /v3/channels/sms/US/TEN_DLC/campaigns adds a campaign of the customer's own beside the one it
+     * has, and a profile running on its organization's campaign keeps that one when it adds its
+     * own. Campaign can only show one of them, so it stays as it was, for callers that read it, and
+     * this is where the rest are.
      *
      * The organization's campaign reads "inherit": true and the customer's own read "inherit":
-     * false. Each entry is the shape of Campaign plus id, the campaign's own id, so several can be
-     * told apart. Campaign carries no id, because it is sent back to PATCH, which refuses a key it
-     * does not declare; this list is read-only.
+     * false. Each entry also carries its own status (ACTIVE once the carriers have elected it,
+     * PENDING_REVIEW until then, ACTION_NEEDED when sent back for correction, DECLINED when the
+     * carriers refused it, INACTIVE once ended), so a market on several says which is approved; why
+     * the market is held up stays its own reason, which names the campaign concerned. Each entry is
+     * the shape of Campaign plus id, the campaign's own id, so several can be told apart. Campaign
+     * carries no id, because it is sent back to PATCH, which refuses a key it does not declare;
+     * this list is read-only.
      *
      * Absent for a market that registers with nobody; empty for one that registers and has no
      * campaign yet.
@@ -114,7 +118,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun campaigns(): Optional<List<Campaign>> = campaigns.getOptional("campaigns")
+    fun campaigns(): Optional<List<SuppliedCampaign>> = campaigns.getOptional("campaigns")
 
     /**
      * What has been supplied for this market.
@@ -152,7 +156,7 @@ private constructor(
      */
     @JsonProperty("campaigns")
     @ExcludeMissing
-    fun _campaigns(): JsonField<List<Campaign>> = campaigns
+    fun _campaigns(): JsonField<List<SuppliedCampaign>> = campaigns
 
     /**
      * Returns the raw JSON value of [documents].
@@ -186,7 +190,7 @@ private constructor(
 
         private var brand: JsonField<Brand> = JsonMissing.of()
         private var campaign: JsonField<Campaign> = JsonMissing.of()
-        private var campaigns: JsonField<MutableList<Campaign>>? = null
+        private var campaigns: JsonField<MutableList<SuppliedCampaign>>? = null
         private var documents: JsonField<MutableList<SuppliedDocument>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -258,41 +262,47 @@ private constructor(
          * first.
          *
          * A list, because a market can now be on more than one. POST
-         * /v3/channels/sms/compliances/US/TEN_DLC/campaigns adds a campaign of the customer's own
-         * beside the one it has, and a profile running on its organization's campaign keeps that
-         * one when it adds its own. Campaign can only show one of them, so it stays as it was, for
-         * callers that read it, and this is where the rest are.
+         * /v3/channels/sms/US/TEN_DLC/campaigns adds a campaign of the customer's own beside the
+         * one it has, and a profile running on its organization's campaign keeps that one when it
+         * adds its own. Campaign can only show one of them, so it stays as it was, for callers that
+         * read it, and this is where the rest are.
          *
          * The organization's campaign reads "inherit": true and the customer's own read "inherit":
-         * false. Each entry is the shape of Campaign plus id, the campaign's own id, so several can
-         * be told apart. Campaign carries no id, because it is sent back to PATCH, which refuses a
-         * key it does not declare; this list is read-only.
+         * false. Each entry also carries its own status (ACTIVE once the carriers have elected it,
+         * PENDING_REVIEW until then, ACTION_NEEDED when sent back for correction, DECLINED when the
+         * carriers refused it, INACTIVE once ended), so a market on several says which is approved;
+         * why the market is held up stays its own reason, which names the campaign concerned. Each
+         * entry is the shape of Campaign plus id, the campaign's own id, so several can be told
+         * apart. Campaign carries no id, because it is sent back to PATCH, which refuses a key it
+         * does not declare; this list is read-only.
          *
          * Absent for a market that registers with nobody; empty for one that registers and has no
          * campaign yet.
          */
-        fun campaigns(campaigns: List<Campaign>?) = campaigns(JsonField.ofNullable(campaigns))
+        fun campaigns(campaigns: List<SuppliedCampaign>?) =
+            campaigns(JsonField.ofNullable(campaigns))
 
         /** Alias for calling [Builder.campaigns] with `campaigns.orElse(null)`. */
-        fun campaigns(campaigns: Optional<List<Campaign>>) = campaigns(campaigns.getOrNull())
+        fun campaigns(campaigns: Optional<List<SuppliedCampaign>>) =
+            campaigns(campaigns.getOrNull())
 
         /**
          * Sets [Builder.campaigns] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.campaigns] with a well-typed `List<Campaign>` value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.campaigns] with a well-typed `List<SuppliedCampaign>`
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
          */
-        fun campaigns(campaigns: JsonField<List<Campaign>>) = apply {
+        fun campaigns(campaigns: JsonField<List<SuppliedCampaign>>) = apply {
             this.campaigns = campaigns.map { it.toMutableList() }
         }
 
         /**
-         * Adds a single [Campaign] to [campaigns].
+         * Adds a single [SuppliedCampaign] to [campaigns].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addCampaign(campaign: Campaign) = apply {
+        fun addCampaign(campaign: SuppliedCampaign) = apply {
             campaigns =
                 (campaigns ?: JsonField.of(mutableListOf())).also {
                     checkKnown("campaigns", it).add(campaign)
@@ -551,114 +561,6 @@ private constructor(
      * Carries no id. Nothing addresses a campaign, and an undeclared key would be refused if the
      * caller sent this object back — which it is meant to be able to do.
      */
-    class Campaign
-    @JsonCreator
-    private constructor(
-        @com.fasterxml.jackson.annotation.JsonValue
-        private val additionalProperties: Map<String, JsonValue>
-    ) {
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
-
-        fun toBuilder() = Builder().from(this)
-
-        companion object {
-
-            /** Returns a mutable builder for constructing an instance of [Campaign]. */
-            @JvmStatic fun builder() = Builder()
-        }
-
-        /** A builder for [Campaign]. */
-        class Builder internal constructor() {
-
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-            @JvmSynthetic
-            internal fun from(campaign: Campaign) = apply {
-                additionalProperties = campaign.additionalProperties.toMutableMap()
-            }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
-
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
-
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
-
-            /**
-             * Returns an immutable instance of [Campaign].
-             *
-             * Further updates to this [Builder] will not mutate the returned instance.
-             */
-            fun build(): Campaign = Campaign(additionalProperties.toImmutable())
-        }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws SentInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): Campaign = apply {
-            if (validated) {
-                return@apply
-            }
-
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: SentInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is Campaign && additionalProperties == other.additionalProperties
-        }
-
-        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
-
-        override fun hashCode(): Int = hashCode
-
-        override fun toString() = "Campaign{additionalProperties=$additionalProperties}"
-    }
-
     class Campaign
     @JsonCreator
     private constructor(

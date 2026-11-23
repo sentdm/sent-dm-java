@@ -4,7 +4,6 @@ package dm.sent.services.blocking.channels
 
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
-import dm.sent.core.checkRequired
 import dm.sent.core.handlers.errorBodyHandler
 import dm.sent.core.handlers.errorHandler
 import dm.sent.core.handlers.jsonHandler
@@ -16,14 +15,11 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepare
-import dm.sent.models.channels.sms.ApiResponseOfListOfSmsMarket
-import dm.sent.models.channels.sms.ApiResponseOfSmsMarket
 import dm.sent.models.channels.sms.SmsCreateParams
-import dm.sent.models.channels.sms.SmsListParams
-import dm.sent.models.channels.sms.SmsRetrieveParams
-import dm.sent.models.channels.sms.SmsUpdateParams
+import dm.sent.models.channels.sms.SmsCreateResponse
+import dm.sent.services.blocking.channels.sms.TenDlcService
+import dm.sent.services.blocking.channels.sms.TenDlcServiceImpl
 import java.util.function.Consumer
-import kotlin.jvm.optionals.getOrNull
 
 /**
  * The senders you send from, one per channel.
@@ -57,44 +53,31 @@ class SmsServiceImpl internal constructor(private val clientOptions: ClientOptio
         WithRawResponseImpl(clientOptions)
     }
 
+    private val tenDlc: TenDlcService by lazy { TenDlcServiceImpl(clientOptions) }
+
     override fun withRawResponse(): SmsService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): SmsService =
         SmsServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    override fun tenDlc(): TenDlcService = tenDlc
+
     override fun create(
         params: SmsCreateParams,
         requestOptions: RequestOptions,
-    ): ApiResponseOfSmsMarket =
+    ): SmsCreateResponse =
         // post /v3/channels/sms
         withRawResponse().create(params, requestOptions).parse()
-
-    override fun retrieve(
-        params: SmsRetrieveParams,
-        requestOptions: RequestOptions,
-    ): ApiResponseOfSmsMarket =
-        // get /v3/channels/sms/{country}/{type}
-        withRawResponse().retrieve(params, requestOptions).parse()
-
-    override fun update(
-        params: SmsUpdateParams,
-        requestOptions: RequestOptions,
-    ): ApiResponseOfSmsMarket =
-        // patch /v3/channels/sms/{country}/{type}
-        withRawResponse().update(params, requestOptions).parse()
-
-    override fun list(
-        params: SmsListParams,
-        requestOptions: RequestOptions,
-    ): ApiResponseOfListOfSmsMarket =
-        // get /v3/channels/sms
-        withRawResponse().list(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SmsService.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        private val tenDlc: TenDlcService.WithRawResponse by lazy {
+            TenDlcServiceImpl.WithRawResponseImpl(clientOptions)
+        }
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
@@ -103,13 +86,15 @@ class SmsServiceImpl internal constructor(private val clientOptions: ClientOptio
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<ApiResponseOfSmsMarket> =
-            jsonHandler<ApiResponseOfSmsMarket>(clientOptions.jsonMapper)
+        override fun tenDlc(): TenDlcService.WithRawResponse = tenDlc
+
+        private val createHandler: Handler<SmsCreateResponse> =
+            jsonHandler<SmsCreateResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: SmsCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfSmsMarket> {
+        ): HttpResponseFor<SmsCreateResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -123,106 +108,6 @@ class SmsServiceImpl internal constructor(private val clientOptions: ClientOptio
             return errorHandler.handle(response).parseable {
                 response
                     .use { createHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val retrieveHandler: Handler<ApiResponseOfSmsMarket> =
-            jsonHandler<ApiResponseOfSmsMarket>(clientOptions.jsonMapper)
-
-        override fun retrieve(
-            params: SmsRetrieveParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfSmsMarket> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("type", params.type().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments(
-                        "v3",
-                        "channels",
-                        "sms",
-                        params._pathParam(0),
-                        params._pathParam(1),
-                    )
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { retrieveHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val updateHandler: Handler<ApiResponseOfSmsMarket> =
-            jsonHandler<ApiResponseOfSmsMarket>(clientOptions.jsonMapper)
-
-        override fun update(
-            params: SmsUpdateParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfSmsMarket> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("type", params.type().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.PATCH)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments(
-                        "v3",
-                        "channels",
-                        "sms",
-                        params._pathParam(0),
-                        params._pathParam(1),
-                    )
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { updateHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val listHandler: Handler<ApiResponseOfListOfSmsMarket> =
-            jsonHandler<ApiResponseOfListOfSmsMarket>(clientOptions.jsonMapper)
-
-        override fun list(
-            params: SmsListParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<ApiResponseOfListOfSmsMarket> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v3", "channels", "sms")
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { listHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

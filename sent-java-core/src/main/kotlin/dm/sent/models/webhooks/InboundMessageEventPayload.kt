@@ -31,6 +31,8 @@ private constructor(
     private val messageId: JsonField<String>,
     private val outboundNumber: JsonField<String>,
     private val referral: JsonValue,
+    private val sentAgentId: JsonField<String>,
+    private val sentInstanceId: JsonField<String>,
     private val text: JsonField<String>,
     private val updatedAt: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -54,6 +56,12 @@ private constructor(
         @ExcludeMissing
         outboundNumber: JsonField<String> = JsonMissing.of(),
         @JsonProperty("referral") @ExcludeMissing referral: JsonValue = JsonMissing.of(),
+        @JsonProperty("sent_agent_id")
+        @ExcludeMissing
+        sentAgentId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("sent_instance_id")
+        @ExcludeMissing
+        sentInstanceId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("text") @ExcludeMissing text: JsonField<String> = JsonMissing.of(),
         @JsonProperty("updated_at") @ExcludeMissing updatedAt: JsonField<String> = JsonMissing.of(),
     ) : this(
@@ -65,6 +73,8 @@ private constructor(
         messageId,
         outboundNumber,
         referral,
+        sentAgentId,
+        sentInstanceId,
         text,
         updatedAt,
         mutableMapOf(),
@@ -152,6 +162,23 @@ private constructor(
     @JsonProperty("referral") @ExcludeMissing fun _referral(): JsonValue = referral
 
     /**
+     * The Sent agent whose conversation this reply arrived in, when the contact is in one, as on
+     * the messages it sent. Absent otherwise.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun sentAgentId(): Optional<String> = sentAgentId.getOptional("sent_agent_id")
+
+    /**
+     * The conversation (agent × contact) the reply belongs to, when it belongs to one.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun sentInstanceId(): Optional<String> = sentInstanceId.getOptional("sent_instance_id")
+
+    /**
      * The message body. Sent as null when the inbound message carried no text, for example a
      * media-only message. The field is always present, so read it and check for null rather than
      * checking whether the key exists.
@@ -224,6 +251,24 @@ private constructor(
     fun _outboundNumber(): JsonField<String> = outboundNumber
 
     /**
+     * Returns the raw JSON value of [sentAgentId].
+     *
+     * Unlike [sentAgentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("sent_agent_id")
+    @ExcludeMissing
+    fun _sentAgentId(): JsonField<String> = sentAgentId
+
+    /**
+     * Returns the raw JSON value of [sentInstanceId].
+     *
+     * Unlike [sentInstanceId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("sent_instance_id")
+    @ExcludeMissing
+    fun _sentInstanceId(): JsonField<String> = sentInstanceId
+
+    /**
      * Returns the raw JSON value of [text].
      *
      * Unlike [text], this method doesn't throw if the JSON field has an unexpected type.
@@ -274,6 +319,8 @@ private constructor(
         private var messageId: JsonField<String> = JsonMissing.of()
         private var outboundNumber: JsonField<String> = JsonMissing.of()
         private var referral: JsonValue = JsonMissing.of()
+        private var sentAgentId: JsonField<String> = JsonMissing.of()
+        private var sentInstanceId: JsonField<String> = JsonMissing.of()
         private var text: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -288,6 +335,8 @@ private constructor(
             messageId = inboundMessageEventPayload.messageId
             outboundNumber = inboundMessageEventPayload.outboundNumber
             referral = inboundMessageEventPayload.referral
+            sentAgentId = inboundMessageEventPayload.sentAgentId
+            sentInstanceId = inboundMessageEventPayload.sentInstanceId
             text = inboundMessageEventPayload.text
             updatedAt = inboundMessageEventPayload.updatedAt
             additionalProperties = inboundMessageEventPayload.additionalProperties.toMutableMap()
@@ -420,6 +469,43 @@ private constructor(
         fun referral(referral: JsonValue) = apply { this.referral = referral }
 
         /**
+         * The Sent agent whose conversation this reply arrived in, when the contact is in one, as
+         * on the messages it sent. Absent otherwise.
+         */
+        fun sentAgentId(sentAgentId: String?) = sentAgentId(JsonField.ofNullable(sentAgentId))
+
+        /** Alias for calling [Builder.sentAgentId] with `sentAgentId.orElse(null)`. */
+        fun sentAgentId(sentAgentId: Optional<String>) = sentAgentId(sentAgentId.getOrNull())
+
+        /**
+         * Sets [Builder.sentAgentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sentAgentId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun sentAgentId(sentAgentId: JsonField<String>) = apply { this.sentAgentId = sentAgentId }
+
+        /** The conversation (agent × contact) the reply belongs to, when it belongs to one. */
+        fun sentInstanceId(sentInstanceId: String?) =
+            sentInstanceId(JsonField.ofNullable(sentInstanceId))
+
+        /** Alias for calling [Builder.sentInstanceId] with `sentInstanceId.orElse(null)`. */
+        fun sentInstanceId(sentInstanceId: Optional<String>) =
+            sentInstanceId(sentInstanceId.getOrNull())
+
+        /**
+         * Sets [Builder.sentInstanceId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sentInstanceId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun sentInstanceId(sentInstanceId: JsonField<String>) = apply {
+            this.sentInstanceId = sentInstanceId
+        }
+
+        /**
          * The message body. Sent as null when the inbound message carried no text, for example a
          * media-only message. The field is always present, so read it and check for null rather
          * than checking whether the key exists.
@@ -494,6 +580,8 @@ private constructor(
                 messageId,
                 outboundNumber,
                 referral,
+                sentAgentId,
+                sentInstanceId,
                 text,
                 updatedAt,
                 additionalProperties.toMutableMap(),
@@ -522,6 +610,8 @@ private constructor(
         media().ifPresent { it.forEach { it.validate() } }
         messageId()
         outboundNumber()
+        sentAgentId()
+        sentInstanceId()
         text()
         updatedAt()
         validated = true
@@ -549,6 +639,8 @@ private constructor(
             (media.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (messageId.asKnown().isPresent) 1 else 0) +
             (if (outboundNumber.asKnown().isPresent) 1 else 0) +
+            (if (sentAgentId.asKnown().isPresent) 1 else 0) +
+            (if (sentInstanceId.asKnown().isPresent) 1 else 0) +
             (if (text.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
 
@@ -566,6 +658,8 @@ private constructor(
             messageId == other.messageId &&
             outboundNumber == other.outboundNumber &&
             referral == other.referral &&
+            sentAgentId == other.sentAgentId &&
+            sentInstanceId == other.sentInstanceId &&
             text == other.text &&
             updatedAt == other.updatedAt &&
             additionalProperties == other.additionalProperties
@@ -581,6 +675,8 @@ private constructor(
             messageId,
             outboundNumber,
             referral,
+            sentAgentId,
+            sentInstanceId,
             text,
             updatedAt,
             additionalProperties,
@@ -590,5 +686,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InboundMessageEventPayload{inboundNumber=$inboundNumber, receivedAt=$receivedAt, accountId=$accountId, channel=$channel, media=$media, messageId=$messageId, outboundNumber=$outboundNumber, referral=$referral, text=$text, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "InboundMessageEventPayload{inboundNumber=$inboundNumber, receivedAt=$receivedAt, accountId=$accountId, channel=$channel, media=$media, messageId=$messageId, outboundNumber=$outboundNumber, referral=$referral, sentAgentId=$sentAgentId, sentInstanceId=$sentInstanceId, text=$text, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

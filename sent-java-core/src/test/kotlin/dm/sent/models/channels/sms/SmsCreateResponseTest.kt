@@ -8,18 +8,17 @@ import dm.sent.core.jsonMapper
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
-import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ApiResponseOfListOfSmsMarketTest {
+internal class SmsCreateResponseTest {
 
     @Test
     fun create() {
-        val apiResponseOfListOfSmsMarket =
-            ApiResponseOfListOfSmsMarket.builder()
-                .addData(
-                    SmsMarket.builder()
+        val smsCreateResponse =
+            SmsCreateResponse.builder()
+                .data(
+                    SmsCreateResponse.Data.builder()
                         .compliance(
                             SuppliedCompliance.builder()
                                 .brand(
@@ -33,7 +32,7 @@ internal class ApiResponseOfListOfSmsMarketTest {
                                         .build()
                                 )
                                 .addCampaign(
-                                    SuppliedCompliance.Campaign.builder()
+                                    SuppliedCampaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
@@ -58,7 +57,7 @@ internal class ApiResponseOfListOfSmsMarketTest {
                         )
                         .reason("reason")
                         .reasonCode("reason_code")
-                        .status(SmsMarket.Status.PROVISIONING)
+                        .status(SmsCreateResponse.Data.Status.PROVISIONING)
                         .build()
                 )
                 .error(
@@ -83,9 +82,9 @@ internal class ApiResponseOfListOfSmsMarketTest {
                 .success(true)
                 .build()
 
-        assertThat(apiResponseOfListOfSmsMarket.data().getOrNull())
-            .containsExactly(
-                SmsMarket.builder()
+        assertThat(smsCreateResponse.data())
+            .contains(
+                SmsCreateResponse.Data.builder()
                     .compliance(
                         SuppliedCompliance.builder()
                             .brand(
@@ -99,7 +98,7 @@ internal class ApiResponseOfListOfSmsMarketTest {
                                     .build()
                             )
                             .addCampaign(
-                                SuppliedCompliance.Campaign.builder()
+                                SuppliedCampaign.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
@@ -124,10 +123,10 @@ internal class ApiResponseOfListOfSmsMarketTest {
                     )
                     .reason("reason")
                     .reasonCode("reason_code")
-                    .status(SmsMarket.Status.PROVISIONING)
+                    .status(SmsCreateResponse.Data.Status.PROVISIONING)
                     .build()
             )
-        assertThat(apiResponseOfListOfSmsMarket.error())
+        assertThat(smsCreateResponse.error())
             .contains(
                 ErrorDetail.builder()
                     .code("code")
@@ -140,7 +139,7 @@ internal class ApiResponseOfListOfSmsMarketTest {
                     .message("message")
                     .build()
             )
-        assertThat(apiResponseOfListOfSmsMarket.meta())
+        assertThat(smsCreateResponse.meta())
             .contains(
                 ApiMeta.builder()
                     .requestId("request_id")
@@ -148,16 +147,16 @@ internal class ApiResponseOfListOfSmsMarketTest {
                     .version("version")
                     .build()
             )
-        assertThat(apiResponseOfListOfSmsMarket.success()).contains(true)
+        assertThat(smsCreateResponse.success()).contains(true)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val apiResponseOfListOfSmsMarket =
-            ApiResponseOfListOfSmsMarket.builder()
-                .addData(
-                    SmsMarket.builder()
+        val smsCreateResponse =
+            SmsCreateResponse.builder()
+                .data(
+                    SmsCreateResponse.Data.builder()
                         .compliance(
                             SuppliedCompliance.builder()
                                 .brand(
@@ -171,7 +170,7 @@ internal class ApiResponseOfListOfSmsMarketTest {
                                         .build()
                                 )
                                 .addCampaign(
-                                    SuppliedCompliance.Campaign.builder()
+                                    SuppliedCampaign.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
@@ -196,7 +195,7 @@ internal class ApiResponseOfListOfSmsMarketTest {
                         )
                         .reason("reason")
                         .reasonCode("reason_code")
-                        .status(SmsMarket.Status.PROVISIONING)
+                        .status(SmsCreateResponse.Data.Status.PROVISIONING)
                         .build()
                 )
                 .error(
@@ -221,12 +220,12 @@ internal class ApiResponseOfListOfSmsMarketTest {
                 .success(true)
                 .build()
 
-        val roundtrippedApiResponseOfListOfSmsMarket =
+        val roundtrippedSmsCreateResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(apiResponseOfListOfSmsMarket),
-                jacksonTypeRef<ApiResponseOfListOfSmsMarket>(),
+                jsonMapper.writeValueAsString(smsCreateResponse),
+                jacksonTypeRef<SmsCreateResponse>(),
             )
 
-        assertThat(roundtrippedApiResponseOfListOfSmsMarket).isEqualTo(apiResponseOfListOfSmsMarket)
+        assertThat(roundtrippedSmsCreateResponse).isEqualTo(smsCreateResponse)
     }
 }
