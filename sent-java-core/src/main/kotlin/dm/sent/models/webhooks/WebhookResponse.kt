@@ -23,6 +23,7 @@ class WebhookResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
+    private val agentId: JsonField<String>,
     private val consecutiveFailures: JsonField<Int>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val customerId: JsonField<String>,
@@ -46,6 +47,7 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("consecutive_failures")
         @ExcludeMissing
         consecutiveFailures: JsonField<Int> = JsonMissing.of(),
@@ -95,6 +97,7 @@ private constructor(
         webhookVersion: JsonField<Long> = JsonMissing.of(),
     ) : this(
         id,
+        agentId,
         consecutiveFailures,
         createdAt,
         customerId,
@@ -120,6 +123,15 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun id(): Optional<String> = id.getOptional("id")
+
+    /**
+     * The Sent agent whose events alone this webhook receives; absent on a webhook of the whole
+     * account.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun agentId(): Optional<String> = agentId.getOptional("agent_id")
 
     /**
      * Failed attempts since the last success. Version 1 only: always 0 on a version 2 webhook,
@@ -254,6 +266,13 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [agentId].
+     *
+     * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
 
     /**
      * Returns the raw JSON value of [consecutiveFailures].
@@ -427,6 +446,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
+        private var agentId: JsonField<String> = JsonMissing.of()
         private var consecutiveFailures: JsonField<Int> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var customerId: JsonField<String> = JsonMissing.of()
@@ -449,6 +469,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(webhookResponse: WebhookResponse) = apply {
             id = webhookResponse.id
+            agentId = webhookResponse.agentId
             consecutiveFailures = webhookResponse.consecutiveFailures
             createdAt = webhookResponse.createdAt
             customerId = webhookResponse.customerId
@@ -478,6 +499,23 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
+
+        /**
+         * The Sent agent whose events alone this webhook receives; absent on a webhook of the whole
+         * account.
+         */
+        fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+        /**
+         * Sets [Builder.agentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
 
         /**
          * Failed attempts since the last success. Version 1 only: always 0 on a version 2 webhook,
@@ -789,6 +827,7 @@ private constructor(
         fun build(): WebhookResponse =
             WebhookResponse(
                 id,
+                agentId,
                 consecutiveFailures,
                 createdAt,
                 customerId,
@@ -826,6 +865,7 @@ private constructor(
         }
 
         id()
+        agentId()
         consecutiveFailures()
         createdAt()
         customerId()
@@ -862,6 +902,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
+            (if (agentId.asKnown().isPresent) 1 else 0) +
             (if (consecutiveFailures.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (customerId.asKnown().isPresent) 1 else 0) +
@@ -995,6 +1036,7 @@ private constructor(
 
         return other is WebhookResponse &&
             id == other.id &&
+            agentId == other.agentId &&
             consecutiveFailures == other.consecutiveFailures &&
             createdAt == other.createdAt &&
             customerId == other.customerId &&
@@ -1018,6 +1060,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             id,
+            agentId,
             consecutiveFailures,
             createdAt,
             customerId,
@@ -1042,5 +1085,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "WebhookResponse{id=$id, consecutiveFailures=$consecutiveFailures, createdAt=$createdAt, customerId=$customerId, displayName=$displayName, endpointUrl=$endpointUrl, eventFilters=$eventFilters, eventTypes=$eventTypes, isActive=$isActive, isInheritable=$isInheritable, lastDeliveryAttemptAt=$lastDeliveryAttemptAt, lastSuccessfulDeliveryAt=$lastSuccessfulDeliveryAt, retryCount=$retryCount, senderProfile=$senderProfile, signingSecret=$signingSecret, timeoutSeconds=$timeoutSeconds, updatedAt=$updatedAt, webhookVersion=$webhookVersion, additionalProperties=$additionalProperties}"
+        "WebhookResponse{id=$id, agentId=$agentId, consecutiveFailures=$consecutiveFailures, createdAt=$createdAt, customerId=$customerId, displayName=$displayName, endpointUrl=$endpointUrl, eventFilters=$eventFilters, eventTypes=$eventTypes, isActive=$isActive, isInheritable=$isInheritable, lastDeliveryAttemptAt=$lastDeliveryAttemptAt, lastSuccessfulDeliveryAt=$lastSuccessfulDeliveryAt, retryCount=$retryCount, senderProfile=$senderProfile, signingSecret=$signingSecret, timeoutSeconds=$timeoutSeconds, updatedAt=$updatedAt, webhookVersion=$webhookVersion, additionalProperties=$additionalProperties}"
 }

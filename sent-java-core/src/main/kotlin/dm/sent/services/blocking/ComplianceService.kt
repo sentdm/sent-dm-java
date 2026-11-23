@@ -40,6 +40,10 @@ interface ComplianceService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ComplianceService
 
     /**
+     * **Deprecated.** Use `GET /v3/channels/{channel}/{country}/compliance` instead, and expect
+     * this to be removed in a future release. It answers exactly as before, so nothing needs to
+     * change today.
+     *
      * **Call this first.** It returns what a channel, country and sender type demand before you can
      * send there — and `setup[]`, the calls that satisfy those demands, in order, each with a body
      * you can copy and send as it stands. You never have to track forty countries' rules yourself.
@@ -100,21 +104,25 @@ interface ComplianceService {
      * `compliance` array at all. A `sender_id_pattern` may still be present — many markets
      * constrain the sender string without registering anything.
      */
+    @Deprecated("deprecated")
     fun retrieveRequirements(): ApiResponseOfComplianceRequirements =
         retrieveRequirements(ComplianceRetrieveRequirementsParams.none())
 
     /** @see retrieveRequirements */
+    @Deprecated("deprecated")
     fun retrieveRequirements(
         params: ComplianceRetrieveRequirementsParams = ComplianceRetrieveRequirementsParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ApiResponseOfComplianceRequirements
 
     /** @see retrieveRequirements */
+    @Deprecated("deprecated")
     fun retrieveRequirements(
         params: ComplianceRetrieveRequirementsParams = ComplianceRetrieveRequirementsParams.none()
     ): ApiResponseOfComplianceRequirements = retrieveRequirements(params, RequestOptions.none())
 
     /** @see retrieveRequirements */
+    @Deprecated("deprecated")
     fun retrieveRequirements(requestOptions: RequestOptions): ApiResponseOfComplianceRequirements =
         retrieveRequirements(ComplianceRetrieveRequirementsParams.none(), requestOptions)
 
@@ -134,11 +142,13 @@ interface ComplianceService {
          * Returns a raw HTTP response for `get /v3/compliance/requirements`, but is otherwise the
          * same as [ComplianceService.retrieveRequirements].
          */
+        @Deprecated("deprecated")
         @MustBeClosed
         fun retrieveRequirements(): HttpResponseFor<ApiResponseOfComplianceRequirements> =
             retrieveRequirements(ComplianceRetrieveRequirementsParams.none())
 
         /** @see retrieveRequirements */
+        @Deprecated("deprecated")
         @MustBeClosed
         fun retrieveRequirements(
             params: ComplianceRetrieveRequirementsParams =
@@ -147,6 +157,7 @@ interface ComplianceService {
         ): HttpResponseFor<ApiResponseOfComplianceRequirements>
 
         /** @see retrieveRequirements */
+        @Deprecated("deprecated")
         @MustBeClosed
         fun retrieveRequirements(
             params: ComplianceRetrieveRequirementsParams =
@@ -155,6 +166,7 @@ interface ComplianceService {
             retrieveRequirements(params, RequestOptions.none())
 
         /** @see retrieveRequirements */
+        @Deprecated("deprecated")
         @MustBeClosed
         fun retrieveRequirements(
             requestOptions: RequestOptions

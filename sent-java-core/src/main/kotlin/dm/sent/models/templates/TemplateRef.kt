@@ -17,13 +17,17 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** SDK-style template reference: resolve by ID or by name, with optional parameters. */
+/**
+ * SDK-style template reference: resolve by id, by slug or by name (exactly one), with optional
+ * parameters.
+ */
 class TemplateRef
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
     private val name: JsonField<String>,
     private val parameters: JsonField<Parameters>,
+    private val slug: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -34,10 +38,11 @@ private constructor(
         @JsonProperty("parameters")
         @ExcludeMissing
         parameters: JsonField<Parameters> = JsonMissing.of(),
-    ) : this(id, name, parameters, mutableMapOf())
+        @JsonProperty("slug") @ExcludeMissing slug: JsonField<String> = JsonMissing.of(),
+    ) : this(id, name, parameters, slug, mutableMapOf())
 
     /**
-     * Template ID (mutually exclusive with name)
+     * Template ID (mutually exclusive with slug and name)
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -45,7 +50,7 @@ private constructor(
     fun id(): Optional<String> = id.getOptional("id")
 
     /**
-     * Template name (mutually exclusive with id)
+     * Template name (mutually exclusive with id and slug)
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -72,6 +77,15 @@ private constructor(
     fun parameters(): Optional<Parameters> = parameters.getOptional("parameters")
 
     /**
+     * Template slug (mutually exclusive with id and name): the stable name every template on this
+     * account carries (GET /v3/templates lists them). Compared case-insensitively.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun slug(): Optional<String> = slug.getOptional("slug")
+
+    /**
      * Returns the raw JSON value of [id].
      *
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
@@ -93,6 +107,13 @@ private constructor(
     @JsonProperty("parameters")
     @ExcludeMissing
     fun _parameters(): JsonField<Parameters> = parameters
+
+    /**
+     * Returns the raw JSON value of [slug].
+     *
+     * Unlike [slug], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("slug") @ExcludeMissing fun _slug(): JsonField<String> = slug
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -118,6 +139,7 @@ private constructor(
         private var id: JsonField<String> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var parameters: JsonField<Parameters> = JsonMissing.of()
+        private var slug: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -125,10 +147,11 @@ private constructor(
             id = templateRef.id
             name = templateRef.name
             parameters = templateRef.parameters
+            slug = templateRef.slug
             additionalProperties = templateRef.additionalProperties.toMutableMap()
         }
 
-        /** Template ID (mutually exclusive with name) */
+        /** Template ID (mutually exclusive with slug and name) */
         fun id(id: String?) = id(JsonField.ofNullable(id))
 
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
@@ -142,7 +165,7 @@ private constructor(
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
 
-        /** Template name (mutually exclusive with id) */
+        /** Template name (mutually exclusive with id and slug) */
         fun name(name: String?) = name(JsonField.ofNullable(name))
 
         /** Alias for calling [Builder.name] with `name.orElse(null)`. */
@@ -186,6 +209,23 @@ private constructor(
          */
         fun parameters(parameters: JsonField<Parameters>) = apply { this.parameters = parameters }
 
+        /**
+         * Template slug (mutually exclusive with id and name): the stable name every template on
+         * this account carries (GET /v3/templates lists them). Compared case-insensitively.
+         */
+        fun slug(slug: String?) = slug(JsonField.ofNullable(slug))
+
+        /** Alias for calling [Builder.slug] with `slug.orElse(null)`. */
+        fun slug(slug: Optional<String>) = slug(slug.getOrNull())
+
+        /**
+         * Sets [Builder.slug] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.slug] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun slug(slug: JsonField<String>) = apply { this.slug = slug }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -211,7 +251,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): TemplateRef =
-            TemplateRef(id, name, parameters, additionalProperties.toMutableMap())
+            TemplateRef(id, name, parameters, slug, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false
@@ -232,6 +272,7 @@ private constructor(
         id()
         name()
         parameters().ifPresent { it.validate() }
+        slug()
         validated = true
     }
 
@@ -252,7 +293,8 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
-            (parameters.asKnown().getOrNull()?.validity() ?: 0)
+            (parameters.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (slug.asKnown().isPresent) 1 else 0)
 
     /**
      * Template variable parameters for personalization, keyed by variable name.
@@ -385,13 +427,16 @@ private constructor(
             id == other.id &&
             name == other.name &&
             parameters == other.parameters &&
+            slug == other.slug &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(id, name, parameters, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(id, name, parameters, slug, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TemplateRef{id=$id, name=$name, parameters=$parameters, additionalProperties=$additionalProperties}"
+        "TemplateRef{id=$id, name=$name, parameters=$parameters, slug=$slug, additionalProperties=$additionalProperties}"
 }

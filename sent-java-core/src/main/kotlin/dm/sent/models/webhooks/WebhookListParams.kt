@@ -15,6 +15,7 @@ import kotlin.jvm.optionals.getOrNull
  */
 class WebhookListParams
 private constructor(
+    private val agentId: String?,
     private val isActive: Boolean?,
     private val page: Int?,
     private val pageSize: Int?,
@@ -23,6 +24,9 @@ private constructor(
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    /** Only the webhooks of this Sent agent. */
+    fun agentId(): Optional<String> = Optional.ofNullable(agentId)
 
     fun isActive(): Optional<Boolean> = Optional.ofNullable(isActive)
 
@@ -53,6 +57,7 @@ private constructor(
     /** A builder for [WebhookListParams]. */
     class Builder internal constructor() {
 
+        private var agentId: String? = null
         private var isActive: Boolean? = null
         private var page: Int? = null
         private var pageSize: Int? = null
@@ -63,6 +68,7 @@ private constructor(
 
         @JvmSynthetic
         internal fun from(webhookListParams: WebhookListParams) = apply {
+            agentId = webhookListParams.agentId
             isActive = webhookListParams.isActive
             page = webhookListParams.page
             pageSize = webhookListParams.pageSize
@@ -71,6 +77,12 @@ private constructor(
             additionalHeaders = webhookListParams.additionalHeaders.toBuilder()
             additionalQueryParams = webhookListParams.additionalQueryParams.toBuilder()
         }
+
+        /** Only the webhooks of this Sent agent. */
+        fun agentId(agentId: String?) = apply { this.agentId = agentId }
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
 
         fun isActive(isActive: Boolean?) = apply { this.isActive = isActive }
 
@@ -223,6 +235,7 @@ private constructor(
          */
         fun build(): WebhookListParams =
             WebhookListParams(
+                agentId,
                 isActive,
                 page,
                 pageSize,
@@ -244,6 +257,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
+                agentId?.let { put("agent_id", it) }
                 isActive?.let { put("is_active", it.toString()) }
                 page?.let { put("page", it.toString()) }
                 pageSize?.let { put("page_size", it.toString()) }
@@ -258,6 +272,7 @@ private constructor(
         }
 
         return other is WebhookListParams &&
+            agentId == other.agentId &&
             isActive == other.isActive &&
             page == other.page &&
             pageSize == other.pageSize &&
@@ -269,6 +284,7 @@ private constructor(
 
     override fun hashCode(): Int =
         Objects.hash(
+            agentId,
             isActive,
             page,
             pageSize,
@@ -279,5 +295,5 @@ private constructor(
         )
 
     override fun toString() =
-        "WebhookListParams{isActive=$isActive, page=$page, pageSize=$pageSize, search=$search, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "WebhookListParams{agentId=$agentId, isActive=$isActive, page=$page, pageSize=$pageSize, search=$search, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
