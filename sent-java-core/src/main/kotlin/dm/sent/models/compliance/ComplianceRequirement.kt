@@ -27,6 +27,8 @@ private constructor(
     private val key: JsonField<String>,
     private val label: JsonField<String>,
     private val maxItems: JsonField<Int>,
+    private val maxLength: JsonField<Int>,
+    private val minItems: JsonField<Int>,
     private val minLength: JsonField<Int>,
     private val notes: JsonField<String>,
     private val options: JsonField<List<String>>,
@@ -45,6 +47,8 @@ private constructor(
         @JsonProperty("key") @ExcludeMissing key: JsonField<String> = JsonMissing.of(),
         @JsonProperty("label") @ExcludeMissing label: JsonField<String> = JsonMissing.of(),
         @JsonProperty("max_items") @ExcludeMissing maxItems: JsonField<Int> = JsonMissing.of(),
+        @JsonProperty("max_length") @ExcludeMissing maxLength: JsonField<Int> = JsonMissing.of(),
+        @JsonProperty("min_items") @ExcludeMissing minItems: JsonField<Int> = JsonMissing.of(),
         @JsonProperty("min_length") @ExcludeMissing minLength: JsonField<Int> = JsonMissing.of(),
         @JsonProperty("notes") @ExcludeMissing notes: JsonField<String> = JsonMissing.of(),
         @JsonProperty("options")
@@ -61,6 +65,8 @@ private constructor(
         key,
         label,
         maxItems,
+        maxLength,
+        minItems,
         minLength,
         notes,
         options,
@@ -115,6 +121,22 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun maxItems(): Optional<Int> = maxItems.getOptional("max_items")
+
+    /**
+     * Longest acceptable value, where the market caps it. On a list of strings, each item's.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun maxLength(): Optional<Int> = maxLength.getOptional("max_length")
+
+    /**
+     * Fewest entries this value accepts, where the market sets a minimum.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun minItems(): Optional<Int> = minItems.getOptional("min_items")
 
     /**
      * Shortest acceptable value, where the market sets one. TCR refuses a consent narrative under
@@ -205,6 +227,20 @@ private constructor(
     @JsonProperty("max_items") @ExcludeMissing fun _maxItems(): JsonField<Int> = maxItems
 
     /**
+     * Returns the raw JSON value of [maxLength].
+     *
+     * Unlike [maxLength], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("max_length") @ExcludeMissing fun _maxLength(): JsonField<Int> = maxLength
+
+    /**
+     * Returns the raw JSON value of [minItems].
+     *
+     * Unlike [minItems], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("min_items") @ExcludeMissing fun _minItems(): JsonField<Int> = minItems
+
+    /**
      * Returns the raw JSON value of [minLength].
      *
      * Unlike [minLength], this method doesn't throw if the JSON field has an unexpected type.
@@ -274,6 +310,8 @@ private constructor(
         private var key: JsonField<String> = JsonMissing.of()
         private var label: JsonField<String> = JsonMissing.of()
         private var maxItems: JsonField<Int> = JsonMissing.of()
+        private var maxLength: JsonField<Int> = JsonMissing.of()
+        private var minItems: JsonField<Int> = JsonMissing.of()
         private var minLength: JsonField<Int> = JsonMissing.of()
         private var notes: JsonField<String> = JsonMissing.of()
         private var options: JsonField<MutableList<String>>? = null
@@ -289,6 +327,8 @@ private constructor(
             key = complianceRequirement.key
             label = complianceRequirement.label
             maxItems = complianceRequirement.maxItems
+            maxLength = complianceRequirement.maxLength
+            minItems = complianceRequirement.minItems
             minLength = complianceRequirement.minLength
             notes = complianceRequirement.notes
             options = complianceRequirement.options.map { it.toMutableList() }
@@ -398,6 +438,50 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun maxItems(maxItems: JsonField<Int>) = apply { this.maxItems = maxItems }
+
+        /**
+         * Longest acceptable value, where the market caps it. On a list of strings, each item's.
+         */
+        fun maxLength(maxLength: Int?) = maxLength(JsonField.ofNullable(maxLength))
+
+        /**
+         * Alias for [Builder.maxLength].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun maxLength(maxLength: Int) = maxLength(maxLength as Int?)
+
+        /** Alias for calling [Builder.maxLength] with `maxLength.orElse(null)`. */
+        fun maxLength(maxLength: Optional<Int>) = maxLength(maxLength.getOrNull())
+
+        /**
+         * Sets [Builder.maxLength] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.maxLength] with a well-typed [Int] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun maxLength(maxLength: JsonField<Int>) = apply { this.maxLength = maxLength }
+
+        /** Fewest entries this value accepts, where the market sets a minimum. */
+        fun minItems(minItems: Int?) = minItems(JsonField.ofNullable(minItems))
+
+        /**
+         * Alias for [Builder.minItems].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun minItems(minItems: Int) = minItems(minItems as Int?)
+
+        /** Alias for calling [Builder.minItems] with `minItems.orElse(null)`. */
+        fun minItems(minItems: Optional<Int>) = minItems(minItems.getOrNull())
+
+        /**
+         * Sets [Builder.minItems] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.minItems] with a well-typed [Int] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun minItems(minItems: JsonField<Int>) = apply { this.minItems = minItems }
 
         /**
          * Shortest acceptable value, where the market sets one. TCR refuses a consent narrative
@@ -542,6 +626,8 @@ private constructor(
                 key,
                 label,
                 maxItems,
+                maxLength,
+                minItems,
                 minLength,
                 notes,
                 (options ?: JsonMissing.of()).map { it.toImmutable() },
@@ -572,6 +658,8 @@ private constructor(
         key()
         label()
         maxItems()
+        maxLength()
+        minItems()
         minLength()
         notes()
         options()
@@ -601,6 +689,8 @@ private constructor(
             (if (key.asKnown().isPresent) 1 else 0) +
             (if (label.asKnown().isPresent) 1 else 0) +
             (if (maxItems.asKnown().isPresent) 1 else 0) +
+            (if (maxLength.asKnown().isPresent) 1 else 0) +
+            (if (minItems.asKnown().isPresent) 1 else 0) +
             (if (minLength.asKnown().isPresent) 1 else 0) +
             (if (notes.asKnown().isPresent) 1 else 0) +
             (options.asKnown().getOrNull()?.size ?: 0) +
@@ -619,6 +709,8 @@ private constructor(
             key == other.key &&
             label == other.label &&
             maxItems == other.maxItems &&
+            maxLength == other.maxLength &&
+            minItems == other.minItems &&
             minLength == other.minLength &&
             notes == other.notes &&
             options == other.options &&
@@ -635,6 +727,8 @@ private constructor(
             key,
             label,
             maxItems,
+            maxLength,
+            minItems,
             minLength,
             notes,
             options,
@@ -648,5 +742,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ComplianceRequirement{format=$format, itemFields=$itemFields, key=$key, label=$label, maxItems=$maxItems, minLength=$minLength, notes=$notes, options=$options, required=$required, requiredWhen=$requiredWhen, type=$type, additionalProperties=$additionalProperties}"
+        "ComplianceRequirement{format=$format, itemFields=$itemFields, key=$key, label=$label, maxItems=$maxItems, maxLength=$maxLength, minItems=$minItems, minLength=$minLength, notes=$notes, options=$options, required=$required, requiredWhen=$requiredWhen, type=$type, additionalProperties=$additionalProperties}"
 }

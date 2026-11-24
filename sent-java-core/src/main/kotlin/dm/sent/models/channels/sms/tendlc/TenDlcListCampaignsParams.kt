@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms
+package dm.sent.models.channels.sms.tendlc
 
 import dm.sent.core.Params
 import dm.sent.core.http.Headers
@@ -10,16 +10,20 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Every market you send SMS in, each with its sender, where that sender stands, and what its
- * compliance holds.
+ * Every campaign your US `TEN_DLC` market registers, oldest first, each with its `id`, where it
+ * stands and `inherit` (`true` for your organization's) beside its fields — the list `GET
+ * /v3/channels/sms/US/TEN_DLC` reports under `compliance.campaigns`. Add one with `POST` on this
+ * path, and change one of your own with `PATCH /v3/channels/sms/US/TEN_DLC/campaigns/{id}`.
  *
- * The same entries `GET /v3/channels` reports under `sms`, and the same shape `GET
- * /v3/channels/sms/{country}/{type}` returns for one of them — so a list, a member read and the
- * all-channels read cannot describe a market differently.
+ * Each campaign has a `status` of its own, so a market on several says which is approved: `ACTIVE`
+ * once the carriers have elected it, `PENDING_REVIEW` until then, `ACTION_NEEDED` when it came back
+ * for correction, `DECLINED` when the carriers refused it, `INACTIVE` once it has ended. Why the
+ * market is held up is the market's own `reason`, which names the campaign concerned. `status` is
+ * read-only and ignored when the entry is sent back.
  *
- * Send `x-profile-id` with an organization key to list one of your profiles' markets.
+ * A customer without a US `TEN_DLC` market is `404`.
  */
-class SmsListParams
+class TenDlcListCampaignsParams
 private constructor(
     private val xProfileId: String?,
     private val additionalHeaders: Headers,
@@ -38,13 +42,15 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): SmsListParams = builder().build()
+        @JvmStatic fun none(): TenDlcListCampaignsParams = builder().build()
 
-        /** Returns a mutable builder for constructing an instance of [SmsListParams]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [TenDlcListCampaignsParams].
+         */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [SmsListParams]. */
+    /** A builder for [TenDlcListCampaignsParams]. */
     class Builder internal constructor() {
 
         private var xProfileId: String? = null
@@ -52,10 +58,10 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(smsListParams: SmsListParams) = apply {
-            xProfileId = smsListParams.xProfileId
-            additionalHeaders = smsListParams.additionalHeaders.toBuilder()
-            additionalQueryParams = smsListParams.additionalQueryParams.toBuilder()
+        internal fun from(tenDlcListCampaignsParams: TenDlcListCampaignsParams) = apply {
+            xProfileId = tenDlcListCampaignsParams.xProfileId
+            additionalHeaders = tenDlcListCampaignsParams.additionalHeaders.toBuilder()
+            additionalQueryParams = tenDlcListCampaignsParams.additionalQueryParams.toBuilder()
         }
 
         fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
@@ -162,12 +168,16 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [SmsListParams].
+         * Returns an immutable instance of [TenDlcListCampaignsParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): SmsListParams =
-            SmsListParams(xProfileId, additionalHeaders.build(), additionalQueryParams.build())
+        fun build(): TenDlcListCampaignsParams =
+            TenDlcListCampaignsParams(
+                xProfileId,
+                additionalHeaders.build(),
+                additionalQueryParams.build(),
+            )
     }
 
     override fun _headers(): Headers =
@@ -185,7 +195,7 @@ private constructor(
             return true
         }
 
-        return other is SmsListParams &&
+        return other is TenDlcListCampaignsParams &&
             xProfileId == other.xProfileId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -195,5 +205,5 @@ private constructor(
         Objects.hash(xProfileId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "SmsListParams{xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TenDlcListCampaignsParams{xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

@@ -1,26 +1,25 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms.tendlc
+package dm.sent.models.channels.markets
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
+import dm.sent.models.channels.sms.SmsNumber
 import dm.sent.models.channels.sms.SuppliedCampaign
 import dm.sent.models.channels.sms.SuppliedCompliance
 import dm.sent.models.channels.sms.SuppliedDocument
-import dm.sent.models.webhooks.ApiMeta
-import dm.sent.models.webhooks.ErrorDetail
-import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ApiResponseOfSuppliedComplianceTest {
+internal class ChannelMarketTest {
 
     @Test
     fun create() {
-        val apiResponseOfSuppliedCompliance =
-            ApiResponseOfSuppliedCompliance.builder()
-                .data(
+        val channelMarket =
+            ChannelMarket.builder()
+                .compliance(
                     SuppliedCompliance.builder()
                         .brand(
                             SuppliedCompliance.Brand.builder()
@@ -46,29 +45,22 @@ internal class ApiResponseOfSuppliedComplianceTest {
                         )
                         .build()
                 )
-                .error(
-                    ErrorDetail.builder()
-                        .code("code")
-                        .details(
-                            ErrorDetail.Details.builder()
-                                .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
-                                .build()
-                        )
-                        .docUrl("doc_url")
-                        .message("message")
+                .country("country")
+                .numberType("number_type")
+                .addNumber(
+                    SmsNumber.builder()
+                        .areaCode("area_code")
+                        .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .senderValue("sender_value")
+                        .status("status")
                         .build()
                 )
-                .meta(
-                    ApiMeta.builder()
-                        .requestId("request_id")
-                        .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .version("version")
-                        .build()
-                )
-                .success(true)
+                .reason("reason")
+                .reasonCode("reason_code")
+                .status(ChannelMarket.Status.PROVISIONING)
                 .build()
 
-        assertThat(apiResponseOfSuppliedCompliance.data())
+        assertThat(channelMarket.compliance())
             .contains(
                 SuppliedCompliance.builder()
                     .brand(
@@ -95,36 +87,28 @@ internal class ApiResponseOfSuppliedComplianceTest {
                     )
                     .build()
             )
-        assertThat(apiResponseOfSuppliedCompliance.error())
-            .contains(
-                ErrorDetail.builder()
-                    .code("code")
-                    .details(
-                        ErrorDetail.Details.builder()
-                            .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
-                            .build()
-                    )
-                    .docUrl("doc_url")
-                    .message("message")
+        assertThat(channelMarket.country()).contains("country")
+        assertThat(channelMarket.numberType()).contains("number_type")
+        assertThat(channelMarket.numbers().getOrNull())
+            .containsExactly(
+                SmsNumber.builder()
+                    .areaCode("area_code")
+                    .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .senderValue("sender_value")
+                    .status("status")
                     .build()
             )
-        assertThat(apiResponseOfSuppliedCompliance.meta())
-            .contains(
-                ApiMeta.builder()
-                    .requestId("request_id")
-                    .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .version("version")
-                    .build()
-            )
-        assertThat(apiResponseOfSuppliedCompliance.success()).contains(true)
+        assertThat(channelMarket.reason()).contains("reason")
+        assertThat(channelMarket.reasonCode()).contains("reason_code")
+        assertThat(channelMarket.status()).contains(ChannelMarket.Status.PROVISIONING)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val apiResponseOfSuppliedCompliance =
-            ApiResponseOfSuppliedCompliance.builder()
-                .data(
+        val channelMarket =
+            ChannelMarket.builder()
+                .compliance(
                     SuppliedCompliance.builder()
                         .brand(
                             SuppliedCompliance.Brand.builder()
@@ -150,35 +134,27 @@ internal class ApiResponseOfSuppliedComplianceTest {
                         )
                         .build()
                 )
-                .error(
-                    ErrorDetail.builder()
-                        .code("code")
-                        .details(
-                            ErrorDetail.Details.builder()
-                                .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
-                                .build()
-                        )
-                        .docUrl("doc_url")
-                        .message("message")
+                .country("country")
+                .numberType("number_type")
+                .addNumber(
+                    SmsNumber.builder()
+                        .areaCode("area_code")
+                        .campaignId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .senderValue("sender_value")
+                        .status("status")
                         .build()
                 )
-                .meta(
-                    ApiMeta.builder()
-                        .requestId("request_id")
-                        .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .version("version")
-                        .build()
-                )
-                .success(true)
+                .reason("reason")
+                .reasonCode("reason_code")
+                .status(ChannelMarket.Status.PROVISIONING)
                 .build()
 
-        val roundtrippedApiResponseOfSuppliedCompliance =
+        val roundtrippedChannelMarket =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(apiResponseOfSuppliedCompliance),
-                jacksonTypeRef<ApiResponseOfSuppliedCompliance>(),
+                jsonMapper.writeValueAsString(channelMarket),
+                jacksonTypeRef<ChannelMarket>(),
             )
 
-        assertThat(roundtrippedApiResponseOfSuppliedCompliance)
-            .isEqualTo(apiResponseOfSuppliedCompliance)
+        assertThat(roundtrippedChannelMarket).isEqualTo(channelMarket)
     }
 }

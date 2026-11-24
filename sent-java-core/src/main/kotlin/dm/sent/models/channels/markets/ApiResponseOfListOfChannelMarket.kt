@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms
+package dm.sent.models.channels.markets
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -10,6 +10,8 @@ import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
+import dm.sent.core.checkKnown
+import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
@@ -19,10 +21,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Standard API response envelope for all v3 endpoints */
-class ApiResponseOfSmsMarket
+class ApiResponseOfListOfChannelMarket
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val data: JsonField<SmsMarket>,
+    private val data: JsonField<List<ChannelMarket>>,
     private val error: JsonField<ErrorDetail>,
     private val meta: JsonField<ApiMeta>,
     private val success: JsonField<Boolean>,
@@ -31,25 +33,21 @@ private constructor(
 
     @JsonCreator
     private constructor(
-        @JsonProperty("data") @ExcludeMissing data: JsonField<SmsMarket> = JsonMissing.of(),
+        @JsonProperty("data")
+        @ExcludeMissing
+        data: JsonField<List<ChannelMarket>> = JsonMissing.of(),
         @JsonProperty("error") @ExcludeMissing error: JsonField<ErrorDetail> = JsonMissing.of(),
         @JsonProperty("meta") @ExcludeMissing meta: JsonField<ApiMeta> = JsonMissing.of(),
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
     /**
-     * One SMS market the profile sends in — its sender, where that sender stands, and what the
-     * market wants.
-     *
-     * A profile may send in several: it is a tenant, not a market. Each carries its own status,
-     * because a profile can be live in one country and mid-registration in another — and each
-     * carries what it still owes, rather than that being reported in a separate array a caller has
-     * to join on.
+     * The response data (null if error)
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun data(): Optional<SmsMarket> = data.getOptional("data")
+    fun data(): Optional<List<ChannelMarket>> = data.getOptional("data")
 
     /**
      * Error information
@@ -80,7 +78,7 @@ private constructor(
      *
      * Unlike [data], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<SmsMarket> = data
+    @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<List<ChannelMarket>> = data
 
     /**
      * Returns the raw JSON value of [error].
@@ -117,49 +115,61 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [ApiResponseOfSmsMarket]. */
+        /**
+         * Returns a mutable builder for constructing an instance of
+         * [ApiResponseOfListOfChannelMarket].
+         */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ApiResponseOfSmsMarket]. */
+    /** A builder for [ApiResponseOfListOfChannelMarket]. */
     class Builder internal constructor() {
 
-        private var data: JsonField<SmsMarket> = JsonMissing.of()
+        private var data: JsonField<MutableList<ChannelMarket>>? = null
         private var error: JsonField<ErrorDetail> = JsonMissing.of()
         private var meta: JsonField<ApiMeta> = JsonMissing.of()
         private var success: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(apiResponseOfSmsMarket: ApiResponseOfSmsMarket) = apply {
-            data = apiResponseOfSmsMarket.data
-            error = apiResponseOfSmsMarket.error
-            meta = apiResponseOfSmsMarket.meta
-            success = apiResponseOfSmsMarket.success
-            additionalProperties = apiResponseOfSmsMarket.additionalProperties.toMutableMap()
-        }
+        internal fun from(apiResponseOfListOfChannelMarket: ApiResponseOfListOfChannelMarket) =
+            apply {
+                data = apiResponseOfListOfChannelMarket.data.map { it.toMutableList() }
+                error = apiResponseOfListOfChannelMarket.error
+                meta = apiResponseOfListOfChannelMarket.meta
+                success = apiResponseOfListOfChannelMarket.success
+                additionalProperties =
+                    apiResponseOfListOfChannelMarket.additionalProperties.toMutableMap()
+            }
 
-        /**
-         * One SMS market the profile sends in — its sender, where that sender stands, and what the
-         * market wants.
-         *
-         * A profile may send in several: it is a tenant, not a market. Each carries its own status,
-         * because a profile can be live in one country and mid-registration in another — and each
-         * carries what it still owes, rather than that being reported in a separate array a caller
-         * has to join on.
-         */
-        fun data(data: SmsMarket?) = data(JsonField.ofNullable(data))
+        /** The response data (null if error) */
+        fun data(data: List<ChannelMarket>?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
-        fun data(data: Optional<SmsMarket>) = data(data.getOrNull())
+        fun data(data: Optional<List<ChannelMarket>>) = data(data.getOrNull())
 
         /**
          * Sets [Builder.data] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.data] with a well-typed [SmsMarket] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.data] with a well-typed `List<ChannelMarket>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun data(data: JsonField<SmsMarket>) = apply { this.data = data }
+        fun data(data: JsonField<List<ChannelMarket>>) = apply {
+            this.data = data.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [ChannelMarket] to [Builder.data].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addData(data: ChannelMarket) = apply {
+            this.data =
+                (this.data ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("data", it).add(data)
+                }
+        }
 
         /** Error information */
         fun error(error: ErrorDetail?) = error(JsonField.ofNullable(error))
@@ -218,12 +228,18 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ApiResponseOfSmsMarket].
+         * Returns an immutable instance of [ApiResponseOfListOfChannelMarket].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ApiResponseOfSmsMarket =
-            ApiResponseOfSmsMarket(data, error, meta, success, additionalProperties.toMutableMap())
+        fun build(): ApiResponseOfListOfChannelMarket =
+            ApiResponseOfListOfChannelMarket(
+                (data ?: JsonMissing.of()).map { it.toImmutable() },
+                error,
+                meta,
+                success,
+                additionalProperties.toMutableMap(),
+            )
     }
 
     private var validated: Boolean = false
@@ -236,12 +252,12 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): ApiResponseOfSmsMarket = apply {
+    fun validate(): ApiResponseOfListOfChannelMarket = apply {
         if (validated) {
             return@apply
         }
 
-        data().ifPresent { it.validate() }
+        data().ifPresent { it.forEach { it.validate() } }
         error().ifPresent { it.validate() }
         meta().ifPresent { it.validate() }
         success()
@@ -263,7 +279,7 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (data.asKnown().getOrNull()?.validity() ?: 0) +
+        (data.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (error.asKnown().getOrNull()?.validity() ?: 0) +
             (meta.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
@@ -273,7 +289,7 @@ private constructor(
             return true
         }
 
-        return other is ApiResponseOfSmsMarket &&
+        return other is ApiResponseOfListOfChannelMarket &&
             data == other.data &&
             error == other.error &&
             meta == other.meta &&
@@ -288,5 +304,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ApiResponseOfSmsMarket{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
+        "ApiResponseOfListOfChannelMarket{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
 }

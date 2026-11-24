@@ -6,12 +6,14 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import dm.sent.core.Enum
 import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.core.Params
 import dm.sent.core.checkKnown
+import dm.sent.core.checkRequired
 import dm.sent.core.http.Headers
 import dm.sent.core.http.QueryParams
 import dm.sent.core.toImmutable
@@ -27,13 +29,13 @@ import kotlin.jvm.optionals.getOrNull
  *
  * ## What to send
  *
- * The fields to change, at the top level of the body, under the `compliance.campaign.*` keys `GET
- * /v3/compliance/requirements?country=US&type=TEN_DLC` lists, without that prefix. A field you
- * leave out keeps its value, and a rejected one is keyed by its name. `id` and `"inherit": false`
- * are ignored, so an entry of `compliance.campaigns` can be sent as read; `"inherit": true` is
- * `400`, because this call changes a campaign's fields, not whose campaign you run on. The campaign
- * only: add numbers with `POST /v3/channels/sms/numbers/US/TEN_DLC`, and change the brand or
- * documents with `PATCH /v3/channels/sms/US/TEN_DLC`.
+ * The fields to change, at the top level of the body, under their keys (`description`,
+ * `message_flow`, `use_cases`, `help_message`, …). A field you leave out keeps its value, and a
+ * rejected one is keyed by its name. `id` and `"inherit": false` are ignored, so an entry of
+ * `campaigns` can be sent as read; `"inherit": true` is `400`, because this call changes a
+ * campaign's fields, not whose campaign you run on. The campaign only: add numbers with `POST
+ * /v3/channels/sms/US/TEN_DLC/numbers`, and change the brand or documents with `PATCH
+ * /v3/channels/sms/US/TEN_DLC`.
  *
  * ## When it can be changed
  *
@@ -174,12 +176,15 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun useCases(): Optional<List<TenDlcCampaignUseCase>> = body.useCases()
+    fun useCases(): Optional<List<UseCase>> = body.useCases()
 
     /**
-     * Expected monthly volume. Decides how the campaign registers and which fee tier applies: below
-     * the low-volume threshold it registers as LOW_VOLUME with sub-use-cases, above it as a single
-     * use case or MIXED. Omitting it registers the campaign at the higher-fee standard tier.
+     * Expected monthly volume. Required whenever the campaign's fields are written. A whole number
+     * of messages, e.g. 1000 or 10000. Decides how the campaign registers and which fee tier
+     * applies: below the low-volume threshold it registers as LOW_VOLUME with sub-use-cases, above
+     * it as a single use case or MIXED. Omitting it registers the campaign at the higher-fee
+     * standard tier. Required when `compliance.campaign.inherit != true`, whenever its block is
+     * written.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
@@ -270,7 +275,7 @@ private constructor(
      *
      * Unlike [useCases], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _useCases(): JsonField<List<TenDlcCampaignUseCase>> = body._useCases()
+    fun _useCases(): JsonField<List<UseCase>> = body._useCases()
 
     /**
      * Returns the raw JSON value of [volume].
@@ -542,31 +547,31 @@ private constructor(
          * register is decided by volume, never declared. Required when `compliance.campaign.inherit
          * != true`.
          */
-        fun useCases(useCases: List<TenDlcCampaignUseCase>) = apply { body.useCases(useCases) }
+        fun useCases(useCases: List<UseCase>) = apply { body.useCases(useCases) }
 
         /**
          * Sets [Builder.useCases] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.useCases] with a well-typed
-         * `List<TenDlcCampaignUseCase>` value instead. This method is primarily for setting the
-         * field to an undocumented or not yet supported value.
+         * You should usually call [Builder.useCases] with a well-typed `List<UseCase>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun useCases(useCases: JsonField<List<TenDlcCampaignUseCase>>) = apply {
-            body.useCases(useCases)
-        }
+        fun useCases(useCases: JsonField<List<UseCase>>) = apply { body.useCases(useCases) }
 
         /**
-         * Adds a single [TenDlcCampaignUseCase] to [useCases].
+         * Adds a single [UseCase] to [useCases].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addUseCase(useCase: TenDlcCampaignUseCase) = apply { body.addUseCase(useCase) }
+        fun addUseCase(useCase: UseCase) = apply { body.addUseCase(useCase) }
 
         /**
-         * Expected monthly volume. Decides how the campaign registers and which fee tier applies:
-         * below the low-volume threshold it registers as LOW_VOLUME with sub-use-cases, above it as
-         * a single use case or MIXED. Omitting it registers the campaign at the higher-fee standard
-         * tier.
+         * Expected monthly volume. Required whenever the campaign's fields are written. A whole
+         * number of messages, e.g. 1000 or 10000. Decides how the campaign registers and which fee
+         * tier applies: below the low-volume threshold it registers as LOW_VOLUME with
+         * sub-use-cases, above it as a single use case or MIXED. Omitting it registers the campaign
+         * at the higher-fee standard tier. Required when `compliance.campaign.inherit != true`,
+         * whenever its block is written.
          */
         fun volume(volume: String) = apply { body.volume(volume) }
 
@@ -730,10 +735,7 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /**
-     * The fields of one campaign on the US `TEN_DLC` market, at the top level of the body. Adding a
-     * campaign needs all of them; changing one takes only the fields to change.
-     */
+    /** The fields to change, at the top level. Partial: a field left out keeps its value. */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -748,7 +750,7 @@ private constructor(
         private val privacyPolicyLink: JsonField<String>,
         private val sandbox: JsonField<Boolean>,
         private val termsAndConditionsLink: JsonField<String>,
-        private val useCases: JsonField<List<TenDlcCampaignUseCase>>,
+        private val useCases: JsonField<List<UseCase>>,
         private val volume: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -788,7 +790,7 @@ private constructor(
             termsAndConditionsLink: JsonField<String> = JsonMissing.of(),
             @JsonProperty("use_cases")
             @ExcludeMissing
-            useCases: JsonField<List<TenDlcCampaignUseCase>> = JsonMissing.of(),
+            useCases: JsonField<List<UseCase>> = JsonMissing.of(),
             @JsonProperty("volume") @ExcludeMissing volume: JsonField<String> = JsonMissing.of(),
         ) : this(
             description,
@@ -922,13 +924,15 @@ private constructor(
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
          */
-        fun useCases(): Optional<List<TenDlcCampaignUseCase>> = useCases.getOptional("use_cases")
+        fun useCases(): Optional<List<UseCase>> = useCases.getOptional("use_cases")
 
         /**
-         * Expected monthly volume. Decides how the campaign registers and which fee tier applies:
-         * below the low-volume threshold it registers as LOW_VOLUME with sub-use-cases, above it as
-         * a single use case or MIXED. Omitting it registers the campaign at the higher-fee standard
-         * tier.
+         * Expected monthly volume. Required whenever the campaign's fields are written. A whole
+         * number of messages, e.g. 1000 or 10000. Decides how the campaign registers and which fee
+         * tier applies: below the low-volume threshold it registers as LOW_VOLUME with
+         * sub-use-cases, above it as a single use case or MIXED. Omitting it registers the campaign
+         * at the higher-fee standard tier. Required when `compliance.campaign.inherit != true`,
+         * whenever its block is written.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -1046,7 +1050,7 @@ private constructor(
          */
         @JsonProperty("use_cases")
         @ExcludeMissing
-        fun _useCases(): JsonField<List<TenDlcCampaignUseCase>> = useCases
+        fun _useCases(): JsonField<List<UseCase>> = useCases
 
         /**
          * Returns the raw JSON value of [volume].
@@ -1087,7 +1091,7 @@ private constructor(
             private var privacyPolicyLink: JsonField<String> = JsonMissing.of()
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var termsAndConditionsLink: JsonField<String> = JsonMissing.of()
-            private var useCases: JsonField<MutableList<TenDlcCampaignUseCase>>? = null
+            private var useCases: JsonField<MutableList<UseCase>>? = null
             private var volume: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -1308,25 +1312,25 @@ private constructor(
              * they register is decided by volume, never declared. Required when
              * `compliance.campaign.inherit != true`.
              */
-            fun useCases(useCases: List<TenDlcCampaignUseCase>) = useCases(JsonField.of(useCases))
+            fun useCases(useCases: List<UseCase>) = useCases(JsonField.of(useCases))
 
             /**
              * Sets [Builder.useCases] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.useCases] with a well-typed
-             * `List<TenDlcCampaignUseCase>` value instead. This method is primarily for setting the
-             * field to an undocumented or not yet supported value.
+             * You should usually call [Builder.useCases] with a well-typed `List<UseCase>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun useCases(useCases: JsonField<List<TenDlcCampaignUseCase>>) = apply {
+            fun useCases(useCases: JsonField<List<UseCase>>) = apply {
                 this.useCases = useCases.map { it.toMutableList() }
             }
 
             /**
-             * Adds a single [TenDlcCampaignUseCase] to [useCases].
+             * Adds a single [UseCase] to [useCases].
              *
              * @throws IllegalStateException if the field was previously set to a non-list.
              */
-            fun addUseCase(useCase: TenDlcCampaignUseCase) = apply {
+            fun addUseCase(useCase: UseCase) = apply {
                 useCases =
                     (useCases ?: JsonField.of(mutableListOf())).also {
                         checkKnown("useCases", it).add(useCase)
@@ -1334,10 +1338,12 @@ private constructor(
             }
 
             /**
-             * Expected monthly volume. Decides how the campaign registers and which fee tier
-             * applies: below the low-volume threshold it registers as LOW_VOLUME with
+             * Expected monthly volume. Required whenever the campaign's fields are written. A whole
+             * number of messages, e.g. 1000 or 10000. Decides how the campaign registers and which
+             * fee tier applies: below the low-volume threshold it registers as LOW_VOLUME with
              * sub-use-cases, above it as a single use case or MIXED. Omitting it registers the
-             * campaign at the higher-fee standard tier.
+             * campaign at the higher-fee standard tier. Required when `compliance.campaign.inherit
+             * != true`, whenever its block is written.
              */
             fun volume(volume: String) = volume(JsonField.of(volume))
 
@@ -1500,6 +1506,445 @@ private constructor(
 
         override fun toString() =
             "Body{description=$description, helpKeywords=$helpKeywords, helpMessage=$helpMessage, messageFlow=$messageFlow, optInKeywords=$optInKeywords, optInMessage=$optInMessage, optOutKeywords=$optOutKeywords, optOutMessage=$optOutMessage, privacyPolicyLink=$privacyPolicyLink, sandbox=$sandbox, termsAndConditionsLink=$termsAndConditionsLink, useCases=$useCases, volume=$volume, additionalProperties=$additionalProperties}"
+    }
+
+    class UseCase
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val sampleMessages: JsonField<List<JsonValue>>,
+        private val useCase: JsonField<InnerUseCase>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("sample_messages")
+            @ExcludeMissing
+            sampleMessages: JsonField<List<JsonValue>> = JsonMissing.of(),
+            @JsonProperty("use_case")
+            @ExcludeMissing
+            useCase: JsonField<InnerUseCase> = JsonMissing.of(),
+        ) : this(sampleMessages, useCase, mutableMapOf())
+
+        /**
+         * Sample messages. TCR sample1..sample5 for this use case. One to five, each 20 to 1024
+         * characters and carrying the brand name and an opt-out instruction. At most five across
+         * the campaign, and at least two when a high-volume campaign has a single use case.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun sampleMessages(): List<JsonValue> = sampleMessages.getRequired("sample_messages")
+
+        /**
+         * Use case. What this entry sends. MIXED and LOW_VOLUME are refused — volume decides those.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun useCase(): InnerUseCase = useCase.getRequired("use_case")
+
+        /**
+         * Returns the raw JSON value of [sampleMessages].
+         *
+         * Unlike [sampleMessages], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("sample_messages")
+        @ExcludeMissing
+        fun _sampleMessages(): JsonField<List<JsonValue>> = sampleMessages
+
+        /**
+         * Returns the raw JSON value of [useCase].
+         *
+         * Unlike [useCase], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("use_case") @ExcludeMissing fun _useCase(): JsonField<InnerUseCase> = useCase
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [UseCase].
+             *
+             * The following fields are required:
+             * ```java
+             * .sampleMessages()
+             * .useCase()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [UseCase]. */
+        class Builder internal constructor() {
+
+            private var sampleMessages: JsonField<MutableList<JsonValue>>? = null
+            private var useCase: JsonField<InnerUseCase>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(useCase: UseCase) = apply {
+                sampleMessages = useCase.sampleMessages.map { it.toMutableList() }
+                this.useCase = useCase.useCase
+                additionalProperties = useCase.additionalProperties.toMutableMap()
+            }
+
+            /**
+             * Sample messages. TCR sample1..sample5 for this use case. One to five, each 20 to 1024
+             * characters and carrying the brand name and an opt-out instruction. At most five
+             * across the campaign, and at least two when a high-volume campaign has a single use
+             * case.
+             */
+            fun sampleMessages(sampleMessages: List<JsonValue>) =
+                sampleMessages(JsonField.of(sampleMessages))
+
+            /**
+             * Sets [Builder.sampleMessages] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sampleMessages] with a well-typed `List<JsonValue>`
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun sampleMessages(sampleMessages: JsonField<List<JsonValue>>) = apply {
+                this.sampleMessages = sampleMessages.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [JsonValue] to [sampleMessages].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addSampleMessage(sampleMessage: JsonValue) = apply {
+                sampleMessages =
+                    (sampleMessages ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("sampleMessages", it).add(sampleMessage)
+                    }
+            }
+
+            /**
+             * Use case. What this entry sends. MIXED and LOW_VOLUME are refused — volume decides
+             * those.
+             */
+            fun useCase(useCase: InnerUseCase) = useCase(JsonField.of(useCase))
+
+            /**
+             * Sets [Builder.useCase] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.useCase] with a well-typed [InnerUseCase] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun useCase(useCase: JsonField<InnerUseCase>) = apply { this.useCase = useCase }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [UseCase].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .sampleMessages()
+             * .useCase()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): UseCase =
+                UseCase(
+                    checkRequired("sampleMessages", sampleMessages).map { it.toImmutable() },
+                    checkRequired("useCase", useCase),
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws SentInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): UseCase = apply {
+            if (validated) {
+                return@apply
+            }
+
+            sampleMessages()
+            useCase().validate()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: SentInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (sampleMessages.asKnown().getOrNull()?.size ?: 0) +
+                (useCase.asKnown().getOrNull()?.validity() ?: 0)
+
+        /**
+         * Use case. What this entry sends. MIXED and LOW_VOLUME are refused — volume decides those.
+         */
+        class InnerUseCase @JsonCreator private constructor(private val value: JsonField<String>) :
+            Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val MARKETING = of("MARKETING")
+
+                @JvmField val ACCOUNT_NOTIFICATION = of("ACCOUNT_NOTIFICATION")
+
+                @JvmField val CUSTOMER_CARE = of("CUSTOMER_CARE")
+
+                @JvmField val FRAUD_ALERT = of("FRAUD_ALERT")
+
+                @JvmField val _2_FA = of("2FA")
+
+                @JvmField val DELIVERY_NOTIFICATION = of("DELIVERY_NOTIFICATION")
+
+                @JvmField val SECURITY_ALERT = of("SECURITY_ALERT")
+
+                @JvmField val M2_M = of("M2M")
+
+                @JvmField val HIGHER_EDUCATION = of("HIGHER_EDUCATION")
+
+                @JvmField val POLLING_VOTING = of("POLLING_VOTING")
+
+                @JvmField val PUBLIC_SERVICE_ANNOUNCEMENT = of("PUBLIC_SERVICE_ANNOUNCEMENT")
+
+                @JvmStatic fun of(value: String) = InnerUseCase(JsonField.of(value))
+            }
+
+            /** An enum containing [InnerUseCase]'s known values. */
+            enum class Known {
+                MARKETING,
+                ACCOUNT_NOTIFICATION,
+                CUSTOMER_CARE,
+                FRAUD_ALERT,
+                _2_FA,
+                DELIVERY_NOTIFICATION,
+                SECURITY_ALERT,
+                M2_M,
+                HIGHER_EDUCATION,
+                POLLING_VOTING,
+                PUBLIC_SERVICE_ANNOUNCEMENT,
+            }
+
+            /**
+             * An enum containing [InnerUseCase]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [InnerUseCase] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                MARKETING,
+                ACCOUNT_NOTIFICATION,
+                CUSTOMER_CARE,
+                FRAUD_ALERT,
+                _2_FA,
+                DELIVERY_NOTIFICATION,
+                SECURITY_ALERT,
+                M2_M,
+                HIGHER_EDUCATION,
+                POLLING_VOTING,
+                PUBLIC_SERVICE_ANNOUNCEMENT,
+                /**
+                 * An enum member indicating that [InnerUseCase] was instantiated with an unknown
+                 * value.
+                 */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    MARKETING -> Value.MARKETING
+                    ACCOUNT_NOTIFICATION -> Value.ACCOUNT_NOTIFICATION
+                    CUSTOMER_CARE -> Value.CUSTOMER_CARE
+                    FRAUD_ALERT -> Value.FRAUD_ALERT
+                    _2_FA -> Value._2_FA
+                    DELIVERY_NOTIFICATION -> Value.DELIVERY_NOTIFICATION
+                    SECURITY_ALERT -> Value.SECURITY_ALERT
+                    M2_M -> Value.M2_M
+                    HIGHER_EDUCATION -> Value.HIGHER_EDUCATION
+                    POLLING_VOTING -> Value.POLLING_VOTING
+                    PUBLIC_SERVICE_ANNOUNCEMENT -> Value.PUBLIC_SERVICE_ANNOUNCEMENT
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws SentInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    MARKETING -> Known.MARKETING
+                    ACCOUNT_NOTIFICATION -> Known.ACCOUNT_NOTIFICATION
+                    CUSTOMER_CARE -> Known.CUSTOMER_CARE
+                    FRAUD_ALERT -> Known.FRAUD_ALERT
+                    _2_FA -> Known._2_FA
+                    DELIVERY_NOTIFICATION -> Known.DELIVERY_NOTIFICATION
+                    SECURITY_ALERT -> Known.SECURITY_ALERT
+                    M2_M -> Known.M2_M
+                    HIGHER_EDUCATION -> Known.HIGHER_EDUCATION
+                    POLLING_VOTING -> Known.POLLING_VOTING
+                    PUBLIC_SERVICE_ANNOUNCEMENT -> Known.PUBLIC_SERVICE_ANNOUNCEMENT
+                    else -> throw SentInvalidDataException("Unknown InnerUseCase: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws SentInvalidDataException if this class instance's value does not have the
+             *   expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    SentInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws SentInvalidDataException if any value type in this object doesn't match its
+             *   expected type.
+             */
+            fun validate(): InnerUseCase = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: SentInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is InnerUseCase && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is UseCase &&
+                sampleMessages == other.sampleMessages &&
+                useCase == other.useCase &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(sampleMessages, useCase, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "UseCase{sampleMessages=$sampleMessages, useCase=$useCase, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

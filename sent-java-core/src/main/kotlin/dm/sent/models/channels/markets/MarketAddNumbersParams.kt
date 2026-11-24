@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms.tendlc
+package dm.sent.models.channels.markets
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -25,32 +25,49 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Adds numbers to **one campaign of your own** on the US `TEN_DLC` market you hold, named by
- * `campaign_id` — the `id` of an entry in the market's `compliance.campaigns`.
+ * Adds numbers to a market you hold. They are **added** to what it already asks for, never
+ * replacing it — with one exception: a US `TEN_DLC` campaign opened without `numbers` asks for one
+ * number in any area code by default, and while it holds no number yet, the first numbers added
+ * replace that default. Once it holds one, they are added beside it.
+ *
+ * ## Where they go
+ * - **SMS US `TEN_DLC`**: to **one campaign of your own**, named by `campaign_id` — the `id` of an
+ *   entry in the market's `compliance.campaigns` (`GET /v3/channels/sms/US/TEN_DLC`). Required:
+ *   left out it is `400` naming your campaigns in service. One you inherit from your organization
+ *   is `400`: its numbers are the organization's. One out of service — expired, deactivated or
+ *   released — is `409`. A campaign the carriers have not approved yet gets its numbers when they
+ *   do; an approved one gets them now. With everything it asks for, a campaign holds at most 49
+ *   numbers, counting one for each sender profile inheriting it.
+ * - **`LOCAL`**: to the market, claimed from inventory now; what inventory cannot cover stays
+ *   pending. No `campaign_id`. A market holds at most 49 numbers.
+ * - **Any other sender type** takes no numbers: `400`.
  *
  * ## What to send
- * - `campaign_id` — the campaign. One you inherit from your organization is `400`: its numbers are
- *   the organization's. One out of service — expired, deactivated or released — is `409`.
- * - `numbers` — the list `POST /v3/channels/sms` takes, one entry per area code.
  *
- * ## What happens
+ * `numbers` — the list `POST /v3/channels/sms` takes, one entry per area code — and, on US
+ * `TEN_DLC`, `campaign_id`, required.
  *
- * The entries are **added** to what the campaign already asks for. With everything it asks for, a
- * campaign holds at most 49 numbers, counting one for each sender profile inheriting it. A campaign
- * the carriers have not approved yet gets its numbers when they do; an approved one gets them now.
  * Until a number is assigned it reads as `PROVISIONING` in the market's `numbers`, with the area
- * code it was asked for.
- *
- * Returns **the market**, in the shape `GET /v3/channels/sms/US/TEN_DLC` returns, with `202`.
+ * code it was asked for. Returns **the market**, in the shape `GET
+ * /v3/channels/sms/{country}/{type}` returns, with `202`.
  */
-class TenDlcAddNumbersParams
+class MarketAddNumbersParams
 private constructor(
+    private val channel: String,
+    private val country: String,
+    private val type: String?,
     private val idempotencyKey: String,
     private val xProfileId: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    fun channel(): String = channel
+
+    fun country(): String = country
+
+    fun type(): Optional<String> = Optional.ofNullable(type)
 
     fun idempotencyKey(): String = idempotencyKey
 
@@ -66,24 +83,26 @@ private constructor(
     fun sandbox(): Optional<Boolean> = body.sandbox()
 
     /**
-     * The campaign to add the numbers to, as compliance.campaigns[].id reports it. Required.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
-     *   missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun campaignId(): String = body.campaignId()
-
-    /**
-     * The numbers to add, one entry per area code, e.g.
+     * The numbers, one entry per area code, e.g.
      * [{"area_code": "415", "quantity": 2}, {"quantity": 1}]. quantity defaults to 1, and an entry
      * without area_code means any area code. Required.
      *
-     * Added to what the campaign already asks for, never replacing it.
+     * POST adds them to what the market or campaign already asks for; PATCH replaces that list with
+     * them, and has to cover every number already held, since none is ever released.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
      *   missing or null (e.g. if the server responded with an unexpected value).
      */
     fun numbers(): List<SmsNumberRequest> = body.numbers()
+
+    /**
+     * The campaign to add the numbers to, as campaigns[].id reports it. Required on SMS US TEN_DLC,
+     * where every number belongs to a campaign; refused on a market without campaigns.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun campaignId(): Optional<String> = body.campaignId()
 
     /**
      * Returns the raw JSON value of [sandbox].
@@ -93,18 +112,18 @@ private constructor(
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
 
     /**
-     * Returns the raw JSON value of [campaignId].
-     *
-     * Unlike [campaignId], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _campaignId(): JsonField<String> = body._campaignId()
-
-    /**
      * Returns the raw JSON value of [numbers].
      *
      * Unlike [numbers], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _numbers(): JsonField<List<SmsNumberRequest>> = body._numbers()
+
+    /**
+     * Returns the raw JSON value of [campaignId].
+     *
+     * Unlike [campaignId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _campaignId(): JsonField<String> = body._campaignId()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -119,21 +138,25 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [TenDlcAddNumbersParams].
+         * Returns a mutable builder for constructing an instance of [MarketAddNumbersParams].
          *
          * The following fields are required:
          * ```java
+         * .channel()
+         * .country()
          * .idempotencyKey()
-         * .campaignId()
          * .numbers()
          * ```
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [TenDlcAddNumbersParams]. */
+    /** A builder for [MarketAddNumbersParams]. */
     class Builder internal constructor() {
 
+        private var channel: String? = null
+        private var country: String? = null
+        private var type: String? = null
         private var idempotencyKey: String? = null
         private var xProfileId: String? = null
         private var body: Body.Builder = Body.builder()
@@ -141,13 +164,25 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(tenDlcAddNumbersParams: TenDlcAddNumbersParams) = apply {
-            idempotencyKey = tenDlcAddNumbersParams.idempotencyKey
-            xProfileId = tenDlcAddNumbersParams.xProfileId
-            body = tenDlcAddNumbersParams.body.toBuilder()
-            additionalHeaders = tenDlcAddNumbersParams.additionalHeaders.toBuilder()
-            additionalQueryParams = tenDlcAddNumbersParams.additionalQueryParams.toBuilder()
+        internal fun from(marketAddNumbersParams: MarketAddNumbersParams) = apply {
+            channel = marketAddNumbersParams.channel
+            country = marketAddNumbersParams.country
+            type = marketAddNumbersParams.type
+            idempotencyKey = marketAddNumbersParams.idempotencyKey
+            xProfileId = marketAddNumbersParams.xProfileId
+            body = marketAddNumbersParams.body.toBuilder()
+            additionalHeaders = marketAddNumbersParams.additionalHeaders.toBuilder()
+            additionalQueryParams = marketAddNumbersParams.additionalQueryParams.toBuilder()
         }
+
+        fun channel(channel: String) = apply { this.channel = channel }
+
+        fun country(country: String) = apply { this.country = country }
+
+        fun type(type: String?) = apply { this.type = type }
+
+        /** Alias for calling [Builder.type] with `type.orElse(null)`. */
+        fun type(type: Optional<String>) = type(type.getOrNull())
 
         fun idempotencyKey(idempotencyKey: String) = apply { this.idempotencyKey = idempotencyKey }
 
@@ -162,8 +197,8 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [sandbox]
-         * - [campaignId]
          * - [numbers]
+         * - [campaignId]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -182,25 +217,12 @@ private constructor(
         fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         /**
-         * The campaign to add the numbers to, as compliance.campaigns[].id reports it. Required.
-         */
-        fun campaignId(campaignId: String) = apply { body.campaignId(campaignId) }
-
-        /**
-         * Sets [Builder.campaignId] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.campaignId] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun campaignId(campaignId: JsonField<String>) = apply { body.campaignId(campaignId) }
-
-        /**
-         * The numbers to add, one entry per area code, e.g.
+         * The numbers, one entry per area code, e.g.
          * [{"area_code": "415", "quantity": 2}, {"quantity": 1}]. quantity defaults to 1, and an
          * entry without area_code means any area code. Required.
          *
-         * Added to what the campaign already asks for, never replacing it.
+         * POST adds them to what the market or campaign already asks for; PATCH replaces that list
+         * with them, and has to cover every number already held, since none is ever released.
          */
         fun numbers(numbers: List<SmsNumberRequest>) = apply { body.numbers(numbers) }
 
@@ -219,6 +241,24 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addNumber(number: SmsNumberRequest) = apply { body.addNumber(number) }
+
+        /**
+         * The campaign to add the numbers to, as campaigns[].id reports it. Required on SMS US
+         * TEN_DLC, where every number belongs to a campaign; refused on a market without campaigns.
+         */
+        fun campaignId(campaignId: String?) = apply { body.campaignId(campaignId) }
+
+        /** Alias for calling [Builder.campaignId] with `campaignId.orElse(null)`. */
+        fun campaignId(campaignId: Optional<String>) = campaignId(campaignId.getOrNull())
+
+        /**
+         * Sets [Builder.campaignId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.campaignId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun campaignId(campaignId: JsonField<String>) = apply { body.campaignId(campaignId) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -338,21 +378,25 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [TenDlcAddNumbersParams].
+         * Returns an immutable instance of [MarketAddNumbersParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
          * ```java
+         * .channel()
+         * .country()
          * .idempotencyKey()
-         * .campaignId()
          * .numbers()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): TenDlcAddNumbersParams =
-            TenDlcAddNumbersParams(
+        fun build(): MarketAddNumbersParams =
+            MarketAddNumbersParams(
+                checkRequired("channel", channel),
+                checkRequired("country", country),
+                type,
                 checkRequired("idempotencyKey", idempotencyKey),
                 xProfileId,
                 body.build(),
@@ -362,6 +406,14 @@ private constructor(
     }
 
     fun _body(): Body = body
+
+    fun _pathParam(index: Int): String =
+        when (index) {
+            0 -> channel
+            1 -> country
+            2 -> type ?: ""
+            else -> ""
+        }
 
     override fun _headers(): Headers =
         Headers.builder()
@@ -375,28 +427,29 @@ private constructor(
     override fun _queryParams(): QueryParams = additionalQueryParams
 
     /**
-     * Adds numbers to one campaign of the customer's own on the US 10DLC market it holds, named by
-     * campaign_id — the id of an entry in the market's compliance.campaigns.
+     * What adding to (AddMarketNumbersRequest) and replacing (ReplaceMarketNumbersRequest) a
+     * market's numbers share: the market in the path and, on SMS US TEN_DLC, the campaign they
+     * belong to.
      */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val sandbox: JsonField<Boolean>,
-        private val campaignId: JsonField<String>,
         private val numbers: JsonField<List<SmsNumberRequest>>,
+        private val campaignId: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
             @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
-            @JsonProperty("campaign_id")
-            @ExcludeMissing
-            campaignId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("numbers")
             @ExcludeMissing
             numbers: JsonField<List<SmsNumberRequest>> = JsonMissing.of(),
-        ) : this(sandbox, campaignId, numbers, mutableMapOf())
+            @JsonProperty("campaign_id")
+            @ExcludeMissing
+            campaignId: JsonField<String> = JsonMissing.of(),
+        ) : this(sandbox, numbers, campaignId, mutableMapOf())
 
         fun toMutationRequest(): MutationRequest =
             MutationRequest.builder().sandbox(sandbox).build()
@@ -411,24 +464,26 @@ private constructor(
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
 
         /**
-         * The campaign to add the numbers to, as compliance.campaigns[].id reports it. Required.
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun campaignId(): String = campaignId.getRequired("campaign_id")
-
-        /**
-         * The numbers to add, one entry per area code, e.g.
+         * The numbers, one entry per area code, e.g.
          * [{"area_code": "415", "quantity": 2}, {"quantity": 1}]. quantity defaults to 1, and an
          * entry without area_code means any area code. Required.
          *
-         * Added to what the campaign already asks for, never replacing it.
+         * POST adds them to what the market or campaign already asks for; PATCH replaces that list
+         * with them, and has to cover every number already held, since none is ever released.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun numbers(): List<SmsNumberRequest> = numbers.getRequired("numbers")
+
+        /**
+         * The campaign to add the numbers to, as campaigns[].id reports it. Required on SMS US
+         * TEN_DLC, where every number belongs to a campaign; refused on a market without campaigns.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun campaignId(): Optional<String> = campaignId.getOptional("campaign_id")
 
         /**
          * Returns the raw JSON value of [sandbox].
@@ -438,15 +493,6 @@ private constructor(
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
-         * Returns the raw JSON value of [campaignId].
-         *
-         * Unlike [campaignId], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("campaign_id")
-        @ExcludeMissing
-        fun _campaignId(): JsonField<String> = campaignId
-
-        /**
          * Returns the raw JSON value of [numbers].
          *
          * Unlike [numbers], this method doesn't throw if the JSON field has an unexpected type.
@@ -454,6 +500,15 @@ private constructor(
         @JsonProperty("numbers")
         @ExcludeMissing
         fun _numbers(): JsonField<List<SmsNumberRequest>> = numbers
+
+        /**
+         * Returns the raw JSON value of [campaignId].
+         *
+         * Unlike [campaignId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("campaign_id")
+        @ExcludeMissing
+        fun _campaignId(): JsonField<String> = campaignId
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -474,7 +529,6 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .campaignId()
              * .numbers()
              * ```
              */
@@ -485,15 +539,15 @@ private constructor(
         class Builder internal constructor() {
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
-            private var campaignId: JsonField<String>? = null
             private var numbers: JsonField<MutableList<SmsNumberRequest>>? = null
+            private var campaignId: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 sandbox = body.sandbox
-                campaignId = body.campaignId
                 numbers = body.numbers.map { it.toMutableList() }
+                campaignId = body.campaignId
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -513,26 +567,13 @@ private constructor(
             fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             /**
-             * The campaign to add the numbers to, as compliance.campaigns[].id reports it.
-             * Required.
-             */
-            fun campaignId(campaignId: String) = campaignId(JsonField.of(campaignId))
-
-            /**
-             * Sets [Builder.campaignId] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.campaignId] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun campaignId(campaignId: JsonField<String>) = apply { this.campaignId = campaignId }
-
-            /**
-             * The numbers to add, one entry per area code, e.g.
+             * The numbers, one entry per area code, e.g.
              * [{"area_code": "415", "quantity": 2}, {"quantity": 1}]. quantity defaults to 1, and
              * an entry without area_code means any area code. Required.
              *
-             * Added to what the campaign already asks for, never replacing it.
+             * POST adds them to what the market or campaign already asks for; PATCH replaces that
+             * list with them, and has to cover every number already held, since none is ever
+             * released.
              */
             fun numbers(numbers: List<SmsNumberRequest>) = numbers(JsonField.of(numbers))
 
@@ -558,6 +599,25 @@ private constructor(
                         checkKnown("numbers", it).add(number)
                     }
             }
+
+            /**
+             * The campaign to add the numbers to, as campaigns[].id reports it. Required on SMS US
+             * TEN_DLC, where every number belongs to a campaign; refused on a market without
+             * campaigns.
+             */
+            fun campaignId(campaignId: String?) = campaignId(JsonField.ofNullable(campaignId))
+
+            /** Alias for calling [Builder.campaignId] with `campaignId.orElse(null)`. */
+            fun campaignId(campaignId: Optional<String>) = campaignId(campaignId.getOrNull())
+
+            /**
+             * Sets [Builder.campaignId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.campaignId] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun campaignId(campaignId: JsonField<String>) = apply { this.campaignId = campaignId }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -585,7 +645,6 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .campaignId()
              * .numbers()
              * ```
              *
@@ -594,8 +653,8 @@ private constructor(
             fun build(): Body =
                 Body(
                     sandbox,
-                    checkRequired("campaignId", campaignId),
                     checkRequired("numbers", numbers).map { it.toImmutable() },
+                    campaignId,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -617,8 +676,8 @@ private constructor(
             }
 
             sandbox()
-            campaignId()
             numbers().forEach { it?.validate() }
+            campaignId()
             validated = true
         }
 
@@ -639,8 +698,8 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (sandbox.asKnown().isPresent) 1 else 0) +
-                (if (campaignId.asKnown().isPresent) 1 else 0) +
-                (numbers.asKnown().getOrNull()?.sumOf { (it?.validity() ?: 0).toInt() } ?: 0)
+                (numbers.asKnown().getOrNull()?.sumOf { (it?.validity() ?: 0).toInt() } ?: 0) +
+                (if (campaignId.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -649,19 +708,19 @@ private constructor(
 
             return other is Body &&
                 sandbox == other.sandbox &&
-                campaignId == other.campaignId &&
                 numbers == other.numbers &&
+                campaignId == other.campaignId &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(sandbox, campaignId, numbers, additionalProperties)
+            Objects.hash(sandbox, numbers, campaignId, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, campaignId=$campaignId, numbers=$numbers, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, numbers=$numbers, campaignId=$campaignId, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -669,7 +728,10 @@ private constructor(
             return true
         }
 
-        return other is TenDlcAddNumbersParams &&
+        return other is MarketAddNumbersParams &&
+            channel == other.channel &&
+            country == other.country &&
+            type == other.type &&
             idempotencyKey == other.idempotencyKey &&
             xProfileId == other.xProfileId &&
             body == other.body &&
@@ -678,8 +740,17 @@ private constructor(
     }
 
     override fun hashCode(): Int =
-        Objects.hash(idempotencyKey, xProfileId, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            channel,
+            country,
+            type,
+            idempotencyKey,
+            xProfileId,
+            body,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "TenDlcAddNumbersParams{idempotencyKey=$idempotencyKey, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "MarketAddNumbersParams{channel=$channel, country=$country, type=$type, idempotencyKey=$idempotencyKey, xProfileId=$xProfileId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
