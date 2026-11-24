@@ -25,13 +25,16 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Gives the customer a sender in one country — the first market it sends in, and the fifth.
+ * Gives the customer a sender in one country — the first market it sends in, and the fifth. Two
+ * addresses, one call: `POST /v3/channels/sms` with `country` and `number_type` in the body, or
+ * `POST /v3/channels/sms/{country}/{type}` with the market as the path (the path wins over the
+ * body).
  *
  * ## What to have in place first
  *
- * **Call `GET /v3/compliance/requirements?country=US&type=TEN_DLC` first.** It returns this
- * request's body ready to fill in, plus the brand and campaign calls to make before it, in order.
- * You never have to track forty countries' rules yourself.
+ * **Call `GET /v3/channels/sms/{country}/compliance` first.** It lists every sender type the
+ * country offers and, for each, the compliance values and documents to send, with their formats and
+ * options. You never have to track forty countries' rules yourself.
  *
  * **A market that registers with a compliance regime needs an identity, and this call takes one.**
  * US `TEN_DLC` registers with The Campaign Registry and files that registration against a business
@@ -48,11 +51,16 @@ import kotlin.jvm.optionals.getOrNull
  * first. Nothing is submitted here either: the rows are what a submission is later assembled from,
  * and filing is externally rejectable so it happens on its own path.
  *
- * **A half you run yourself has to be complete here.** Whichever of `brand` and `campaign` is your
- * own rather than your organization's must carry every field the regime asks of it, counting what
- * you already hold — send the rest in this request. A missing one is `400` naming each field,
- * rather than a `202` for a market that could never be filed. A half you inherit is asked for
- * nothing.
+ * **Your own brand has to be complete here.** It must carry every field the regime asks of it,
+ * counting what you already hold — send the rest in this request. A missing one is `400` naming
+ * each field, rather than a `202` for a market that could never be filed. A brand you inherit is
+ * asked for nothing.
+ *
+ * **A campaign of your own is optional here.** Sent, it has to be complete in the same way, and the
+ * `numbers` you ask for go on it. Omitted, no campaign is written and `numbers` and `area_codes`
+ * are refused (`400`), because numbers belong to a campaign: the market reads `ACTION_NEEDED` until
+ * you add one with `POST /v3/channels/sms/US/TEN_DLC/campaigns`, then its numbers with `POST
+ * /v3/channels/sms/US/TEN_DLC/numbers`.
  *
  * A market that registers with nobody — an alphanumeric sender in most countries — needs neither,
  * and may need documents instead.
@@ -80,32 +88,23 @@ import kotlin.jvm.optionals.getOrNull
  * "quantity": 2}, {"quantity": 1}]` for two numbers in 212 and one in any area code. `quantity`
  * defaults to 1, and an entry without `area_code` means any area code. Omit `numbers` for one
  * number. It is for `LOCAL` and `TEN_DLC` only and cannot be combined with `area_codes`. A market
- * holds at most 49 numbers, counting the ones it already has.
+ * holds at most 49 numbers.
  *
- * **On a `LOCAL` market you already hold, `numbers` adds those numbers to it** instead of `409`. US
- * `TEN_DLC` numbers belong to the market's campaign and are assigned when the campaign is approved,
- * not at request time. Until then they read as `PROVISIONING` in the response's `numbers`, each
- * with the area code it was asked for. A profile inheriting your organization's campaign cannot
- * request `numbers` (`400`). `numbers` on a `TEN_DLC` market you already hold is `409`: change its
- * campaign's numbers with `PATCH /v3/channels/sms/{country}/{type}`, add numbers to one of its
- * campaigns with `POST /v3/channels/sms/numbers/US/TEN_DLC`, or add a new campaign with `POST
- * /v3/channels/sms/compliances/US/TEN_DLC/campaigns`.
+ * US `TEN_DLC` numbers belong to the market's campaign and are assigned when the campaign is
+ * approved, not at request time. Until then they read as `PROVISIONING` in the response's
+ * `numbers`, each with the area code it was asked for. A profile inheriting your organization's
+ * campaign cannot request `numbers` (`400`).
  *
- * **A market you already send in is `409`**: adding what is already there is a mistake worth
- * reporting rather than a silent no-op. A market is a `(country, sender_type)` pair, so a **second
- * sender type in a country you already send in is fine** — `US TOLL_FREE` alongside `US TEN_DLC` is
- * the ordinary case. Two of the same type is not.
- *
- * **A market you hold that has no sender yet is not a duplicate**, and re-sending it re-asks for a
- * sender rather than being refused. That is the way out of an area-code request nothing could fill:
- * send the call again to name different codes, or no codes at all to take a number anywhere in the
- * country. It answers `201` with the sender when the pool has one, otherwise `202` with the codes
- * recorded — and changes nothing else; compliance on a market you hold is `PATCH
- * /v3/channels/sms/{country}/{type}`.
+ * **This call opens a market once. A market you already hold is `409`**, with a sender or still
+ * waiting for one, and nothing is added to it here: change its compliance with `PATCH
+ * /v3/channels/sms/{country}/{type}`, add numbers (and their area codes) with `POST
+ * /v3/channels/sms/{country}/{type}/numbers`, and on US `TEN_DLC` add a campaign with `POST
+ * /v3/channels/sms/US/TEN_DLC/campaigns`. The `409` names them. A market is a `(country,
+ * sender_type)` pair, so a **second sender type in a country you already send in is fine** — `US
+ * TOLL_FREE` alongside `US TEN_DLC` is the ordinary case. Two of the same type is not.
  *
  * One exception: while a market's sender type is still unassigned, adding any type to that country
- * is `409` once it has a sender, because the market you have may be about to become the one you
- * asked for.
+ * is `409`, because the market you have may be about to become the one you asked for.
  *
  * Returns **the market**, in the shape `GET` and `PATCH` on `/v3/channels/sms/{country}/{type}` use
  * — so what this answers can be read back and written back without reshaping. Not every channel you
@@ -188,14 +187,6 @@ private constructor(
     fun compliance(): Optional<MarketCompliance> = body.compliance()
 
     /**
-     * ISO 3166-1 alpha-2 country the sender operates in.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun country(): Optional<String> = body.country()
-
-    /**
      * The numbers to assign, one entry per area code, e.g.
      * [{"area_code": "212", "quantity": 2}, {"area_code": "415"}, {"quantity": 1}]: two numbers in
      * 212, one in 415 and one in any area code. quantity defaults to 1, and an entry without
@@ -248,13 +239,6 @@ private constructor(
      * Unlike [compliance], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _compliance(): JsonField<MarketCompliance> = body._compliance()
-
-    /**
-     * Returns the raw JSON value of [country].
-     *
-     * Unlike [country], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _country(): JsonField<String> = body._country()
 
     /**
      * Returns the raw JSON value of [numbers].
@@ -331,7 +315,7 @@ private constructor(
          * - [numberType]
          * - [areaCodes]
          * - [compliance]
-         * - [country]
+         * - [numbers]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -431,17 +415,6 @@ private constructor(
         fun compliance(compliance: JsonField<MarketCompliance>) = apply {
             body.compliance(compliance)
         }
-
-        /** ISO 3166-1 alpha-2 country the sender operates in. */
-        fun country(country: String) = apply { body.country(country) }
-
-        /**
-         * Sets [Builder.country] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.country] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun country(country: JsonField<String>) = apply { body.country(country) }
 
         /**
          * The numbers to assign, one entry per area code, e.g.
@@ -661,7 +634,6 @@ private constructor(
         private val numberType: JsonField<NumberType>,
         private val areaCodes: JsonField<List<String>>,
         private val compliance: JsonField<MarketCompliance>,
-        private val country: JsonField<String>,
         private val numbers: JsonField<List<SmsNumberRequest>>,
         private val senderValue: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -679,23 +651,13 @@ private constructor(
             @JsonProperty("compliance")
             @ExcludeMissing
             compliance: JsonField<MarketCompliance> = JsonMissing.of(),
-            @JsonProperty("country") @ExcludeMissing country: JsonField<String> = JsonMissing.of(),
             @JsonProperty("numbers")
             @ExcludeMissing
             numbers: JsonField<List<SmsNumberRequest>> = JsonMissing.of(),
             @JsonProperty("sender_value")
             @ExcludeMissing
             senderValue: JsonField<String> = JsonMissing.of(),
-        ) : this(
-            sandbox,
-            numberType,
-            areaCodes,
-            compliance,
-            country,
-            numbers,
-            senderValue,
-            mutableMapOf(),
-        )
+        ) : this(sandbox, numberType, areaCodes, compliance, numbers, senderValue, mutableMapOf())
 
         fun toMutationRequest(): MutationRequest =
             MutationRequest.builder().sandbox(sandbox).build()
@@ -762,14 +724,6 @@ private constructor(
         fun compliance(): Optional<MarketCompliance> = compliance.getOptional("compliance")
 
         /**
-         * ISO 3166-1 alpha-2 country the sender operates in.
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun country(): Optional<String> = country.getOptional("country")
-
-        /**
          * The numbers to assign, one entry per area code, e.g.
          * [{"area_code": "212", "quantity": 2}, {"area_code": "415"}, {"quantity": 1}]: two numbers
          * in 212, one in 415 and one in any area code. quantity defaults to 1, and an entry without
@@ -830,13 +784,6 @@ private constructor(
         fun _compliance(): JsonField<MarketCompliance> = compliance
 
         /**
-         * Returns the raw JSON value of [country].
-         *
-         * Unlike [country], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("country") @ExcludeMissing fun _country(): JsonField<String> = country
-
-        /**
          * Returns the raw JSON value of [numbers].
          *
          * Unlike [numbers], this method doesn't throw if the JSON field has an unexpected type.
@@ -886,7 +833,6 @@ private constructor(
             private var numberType: JsonField<NumberType>? = null
             private var areaCodes: JsonField<MutableList<String>>? = null
             private var compliance: JsonField<MarketCompliance> = JsonMissing.of()
-            private var country: JsonField<String> = JsonMissing.of()
             private var numbers: JsonField<MutableList<SmsNumberRequest>>? = null
             private var senderValue: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -897,7 +843,6 @@ private constructor(
                 numberType = body.numberType
                 areaCodes = body.areaCodes.map { it.toMutableList() }
                 compliance = body.compliance
-                country = body.country
                 numbers = body.numbers.map { it.toMutableList() }
                 senderValue = body.senderValue
                 additionalProperties = body.additionalProperties.toMutableMap()
@@ -1013,18 +958,6 @@ private constructor(
                 this.compliance = compliance
             }
 
-            /** ISO 3166-1 alpha-2 country the sender operates in. */
-            fun country(country: String) = country(JsonField.of(country))
-
-            /**
-             * Sets [Builder.country] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.country] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun country(country: JsonField<String>) = apply { this.country = country }
-
             /**
              * The numbers to assign, one entry per area code, e.g.
              * [{"area_code": "212", "quantity": 2}, {"area_code": "415"}, {"quantity": 1}]: two
@@ -1122,7 +1055,6 @@ private constructor(
                     checkRequired("numberType", numberType),
                     (areaCodes ?: JsonMissing.of()).map { it.toImmutable() },
                     compliance,
-                    country,
                     (numbers ?: JsonMissing.of()).map { it.toImmutable() },
                     senderValue,
                     additionalProperties.toMutableMap(),
@@ -1149,7 +1081,6 @@ private constructor(
             numberType().validate()
             areaCodes()
             compliance().ifPresent { it.validate() }
-            country()
             numbers().ifPresent { it.forEach { it.validate() } }
             senderValue()
             validated = true
@@ -1175,7 +1106,6 @@ private constructor(
                 (numberType.asKnown().getOrNull()?.validity() ?: 0) +
                 (areaCodes.asKnown().getOrNull()?.size ?: 0) +
                 (compliance.asKnown().getOrNull()?.validity() ?: 0) +
-                (if (country.asKnown().isPresent) 1 else 0) +
                 (numbers.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (if (senderValue.asKnown().isPresent) 1 else 0)
 
@@ -1189,7 +1119,6 @@ private constructor(
                 numberType == other.numberType &&
                 areaCodes == other.areaCodes &&
                 compliance == other.compliance &&
-                country == other.country &&
                 numbers == other.numbers &&
                 senderValue == other.senderValue &&
                 additionalProperties == other.additionalProperties
@@ -1201,7 +1130,6 @@ private constructor(
                 numberType,
                 areaCodes,
                 compliance,
-                country,
                 numbers,
                 senderValue,
                 additionalProperties,
@@ -1211,7 +1139,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, numberType=$numberType, areaCodes=$areaCodes, compliance=$compliance, country=$country, numbers=$numbers, senderValue=$senderValue, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, numberType=$numberType, areaCodes=$areaCodes, compliance=$compliance, numbers=$numbers, senderValue=$senderValue, additionalProperties=$additionalProperties}"
     }
 
     /**

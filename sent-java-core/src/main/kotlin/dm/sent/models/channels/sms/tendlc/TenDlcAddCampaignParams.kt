@@ -31,10 +31,9 @@ import kotlin.jvm.optionals.getOrNull
  * ## What to send
  *
  * The new campaign's fields, at the top level of the body: use cases, consent narrative, volume,
- * sample messages and keywords, under the `compliance.campaign.*` keys `GET
- * /v3/compliance/requirements?country=US&type=TEN_DLC` lists, without that prefix. It has to be
- * complete. A rejected field is keyed by its name (`description`). `id` and `inherit` are ignored,
- * so an entry of `compliance.campaigns` can be sent as read.
+ * sample messages and keywords, under their keys (`description`, `message_flow`, `use_cases`,
+ * `volume`, …). It has to be complete. A rejected field is keyed by its name (`description`). `id`
+ * and `inherit` are ignored, so an entry of `campaigns` can be sent as read.
  *
  * The identity is the market's and is not sent here. A market whose identity has no registration
  * yet, or one not yet submitted for review, is `400`.
@@ -43,16 +42,15 @@ import kotlin.jvm.optionals.getOrNull
  *
  * The campaign is recorded and goes for review; it is not filed with The Campaign Registry by this
  * call. **It comes without numbers**: send its `id` from `compliance.campaigns` to `POST
- * /v3/channels/sms/numbers/US/TEN_DLC` to give it some. **The campaign you already have, and its
- * numbers, are not touched** — including a campaign you run on from your organization.
+ * /v3/channels/sms/{country}/{type}/numbers` to give it some. **The campaign you already have, and
+ * its numbers, are not touched** — including a campaign you run on from your organization.
  *
  * **Each call files a new campaign**, which is charged when it is submitted. Send an
  * `Idempotency-Key` so a retried request does not file a second one.
  *
- * To change the campaign a market already has, use `PATCH /v3/channels/sms/US/TEN_DLC`. Once a
- * market holds more than one campaign, that `PATCH` refuses a campaign or numbers change (`409`)
- * rather than guess which campaign is meant; numbers are added to a named campaign with `POST
- * /v3/channels/sms/numbers/US/TEN_DLC`.
+ * To change a campaign, use `PATCH /v3/channels/sms/US/TEN_DLC/campaigns/{campaignId}`; `PATCH
+ * /v3/channels/sms/US/TEN_DLC` changes the brand and documents only, and refuses a campaign or
+ * numbers (`400`).
  *
  * Returns **the market**, in the shape `GET /v3/channels/sms/US/TEN_DLC` returns, with `202`.
  */
@@ -75,28 +73,28 @@ private constructor(
      * is asked for rather than derived from the customer's name. Required when
      * `compliance.campaign.inherit != true`.
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun description(): Optional<String> = body.description()
+    fun description(): String = body.description()
 
     /**
      * Help keywords. TCR helpKeywords, comma separated, e.g. HELP,INFO. Required when
      * `compliance.campaign.inherit != true`.
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun helpKeywords(): Optional<String> = body.helpKeywords()
+    fun helpKeywords(): String = body.helpKeywords()
 
     /**
      * Help reply. TCR helpMessage. Its presence is what sets subscriberHelp. Required when
      * `compliance.campaign.inherit != true`.
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun helpMessage(): Optional<String> = body.helpMessage()
+    fun helpMessage(): String = body.helpMessage()
 
     /**
      * Consent narrative. TCR messageFlow: how recipients opt in, in prose. Under 40 characters is
@@ -104,57 +102,89 @@ private constructor(
      * unchecked by default, and that consent is not a condition of purchase. Required when
      * `compliance.campaign.inherit != true`.
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun messageFlow(): Optional<String> = body.messageFlow()
+    fun messageFlow(): String = body.messageFlow()
 
     /**
      * Opt-in keywords. TCR optinKeywords, comma separated, e.g. START,YES. Required when
      * `compliance.campaign.inherit != true`.
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun optInKeywords(): Optional<String> = body.optInKeywords()
+    fun optInKeywords(): String = body.optInKeywords()
 
     /**
      * Opt-in confirmation. TCR optinMessage. Should state message frequency and that rates may
      * apply. Its presence is what sets subscriberOptin. Required when `compliance.campaign.inherit
      * != true`.
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun optInMessage(): Optional<String> = body.optInMessage()
+    fun optInMessage(): String = body.optInMessage()
 
     /**
      * Opt-out keywords. TCR optoutKeywords, comma separated. STOP, END, CANCEL, UNSUBSCRIBE and
      * QUIT are honoured regardless of what is declared. Required when `compliance.campaign.inherit
      * != true`.
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun optOutKeywords(): Optional<String> = body.optOutKeywords()
+    fun optOutKeywords(): String = body.optOutKeywords()
 
     /**
      * Opt-out confirmation. TCR optoutMessage. Its presence is what sets subscriberOptout. Required
      * when `compliance.campaign.inherit != true`.
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun optOutMessage(): Optional<String> = body.optOutMessage()
+    fun optOutMessage(): String = body.optOutMessage()
 
     /**
      * Privacy policy URL. TCR privacyPolicyLink. Required when `compliance.campaign.inherit !=
      * true`.
      *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun privacyPolicyLink(): Optional<String> = body.privacyPolicyLink()
+    fun privacyPolicyLink(): String = body.privacyPolicyLink()
+
+    /**
+     * Terms and conditions URL. TCR termsAndConditionsLink. Required when
+     * `compliance.campaign.inherit != true`.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun termsAndConditionsLink(): String = body.termsAndConditionsLink()
+
+    /**
+     * Use cases. What the campaign sends, and an example of each. One to five entries; how they
+     * register is decided by volume, never declared. Required when `compliance.campaign.inherit !=
+     * true`.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun useCases(): List<TenDlcCampaignUseCase> = body.useCases()
+
+    /**
+     * Expected monthly volume. Required whenever the campaign's fields are written. A whole number
+     * of messages, e.g. 1000 or 10000. Decides how the campaign registers and which fee tier
+     * applies: below the low-volume threshold it registers as LOW_VOLUME with sub-use-cases, above
+     * it as a single use case or MIXED. Omitting it registers the campaign at the higher-fee
+     * standard tier. Required when `compliance.campaign.inherit != true`, whenever its block is
+     * written.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
+     *   missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun volume(): String = body.volume()
 
     /**
      * Sandbox flag - when true, the operation is simulated without side effects Useful for testing
@@ -164,35 +194,6 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun sandbox(): Optional<Boolean> = body.sandbox()
-
-    /**
-     * Terms and conditions URL. TCR termsAndConditionsLink. Required when
-     * `compliance.campaign.inherit != true`.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun termsAndConditionsLink(): Optional<String> = body.termsAndConditionsLink()
-
-    /**
-     * Use cases. What the campaign sends, and an example of each. One to five entries; how they
-     * register is decided by volume, never declared. Required when `compliance.campaign.inherit !=
-     * true`.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun useCases(): Optional<List<TenDlcCampaignUseCase>> = body.useCases()
-
-    /**
-     * Expected monthly volume. Decides how the campaign registers and which fee tier applies: below
-     * the low-volume threshold it registers as LOW_VOLUME with sub-use-cases, above it as a single
-     * use case or MIXED. Omitting it registers the campaign at the higher-fee standard tier.
-     *
-     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
-     *   responded with an unexpected value).
-     */
-    fun volume(): Optional<String> = body.volume()
 
     /**
      * Returns the raw JSON value of [description].
@@ -259,13 +260,6 @@ private constructor(
     fun _privacyPolicyLink(): JsonField<String> = body._privacyPolicyLink()
 
     /**
-     * Returns the raw JSON value of [sandbox].
-     *
-     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _sandbox(): JsonField<Boolean> = body._sandbox()
-
-    /**
      * Returns the raw JSON value of [termsAndConditionsLink].
      *
      * Unlike [termsAndConditionsLink], this method doesn't throw if the JSON field has an
@@ -287,6 +281,13 @@ private constructor(
      */
     fun _volume(): JsonField<String> = body._volume()
 
+    /**
+     * Returns the raw JSON value of [sandbox].
+     *
+     * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _sandbox(): JsonField<Boolean> = body._sandbox()
+
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
     /** Additional headers to send with the request. */
@@ -305,6 +306,18 @@ private constructor(
          * The following fields are required:
          * ```java
          * .idempotencyKey()
+         * .description()
+         * .helpKeywords()
+         * .helpMessage()
+         * .messageFlow()
+         * .optInKeywords()
+         * .optInMessage()
+         * .optOutKeywords()
+         * .optOutMessage()
+         * .privacyPolicyLink()
+         * .termsAndConditionsLink()
+         * .useCases()
+         * .volume()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -505,20 +518,6 @@ private constructor(
         }
 
         /**
-         * Sandbox flag - when true, the operation is simulated without side effects Useful for
-         * testing integrations without actual execution
-         */
-        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
-
-        /**
-         * Sets [Builder.sandbox] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
-
-        /**
          * Terms and conditions URL. TCR termsAndConditionsLink. Required when
          * `compliance.campaign.inherit != true`.
          */
@@ -563,10 +562,12 @@ private constructor(
         fun addUseCase(useCase: TenDlcCampaignUseCase) = apply { body.addUseCase(useCase) }
 
         /**
-         * Expected monthly volume. Decides how the campaign registers and which fee tier applies:
-         * below the low-volume threshold it registers as LOW_VOLUME with sub-use-cases, above it as
-         * a single use case or MIXED. Omitting it registers the campaign at the higher-fee standard
-         * tier.
+         * Expected monthly volume. Required whenever the campaign's fields are written. A whole
+         * number of messages, e.g. 1000 or 10000. Decides how the campaign registers and which fee
+         * tier applies: below the low-volume threshold it registers as LOW_VOLUME with
+         * sub-use-cases, above it as a single use case or MIXED. Omitting it registers the campaign
+         * at the higher-fee standard tier. Required when `compliance.campaign.inherit != true`,
+         * whenever its block is written.
          */
         fun volume(volume: String) = apply { body.volume(volume) }
 
@@ -577,6 +578,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun volume(volume: JsonField<String>) = apply { body.volume(volume) }
+
+        /**
+         * Sandbox flag - when true, the operation is simulated without side effects Useful for
+         * testing integrations without actual execution
+         */
+        fun sandbox(sandbox: Boolean) = apply { body.sandbox(sandbox) }
+
+        /**
+         * Sets [Builder.sandbox] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -703,6 +718,18 @@ private constructor(
          * The following fields are required:
          * ```java
          * .idempotencyKey()
+         * .description()
+         * .helpKeywords()
+         * .helpMessage()
+         * .messageFlow()
+         * .optInKeywords()
+         * .optInMessage()
+         * .optOutKeywords()
+         * .optOutMessage()
+         * .privacyPolicyLink()
+         * .termsAndConditionsLink()
+         * .useCases()
+         * .volume()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -731,8 +758,8 @@ private constructor(
     override fun _queryParams(): QueryParams = additionalQueryParams
 
     /**
-     * The fields of one campaign on the US `TEN_DLC` market, at the top level of the body. Adding a
-     * campaign needs all of them; changing one takes only the fields to change.
+     * The campaign's fields, at the top level. Send an `Idempotency-Key` so a retry does not file a
+     * second.
      */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -746,10 +773,10 @@ private constructor(
         private val optOutKeywords: JsonField<String>,
         private val optOutMessage: JsonField<String>,
         private val privacyPolicyLink: JsonField<String>,
-        private val sandbox: JsonField<Boolean>,
         private val termsAndConditionsLink: JsonField<String>,
         private val useCases: JsonField<List<TenDlcCampaignUseCase>>,
         private val volume: JsonField<String>,
+        private val sandbox: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -782,7 +809,6 @@ private constructor(
             @JsonProperty("privacy_policy_link")
             @ExcludeMissing
             privacyPolicyLink: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("terms_and_conditions_link")
             @ExcludeMissing
             termsAndConditionsLink: JsonField<String> = JsonMissing.of(),
@@ -790,6 +816,7 @@ private constructor(
             @ExcludeMissing
             useCases: JsonField<List<TenDlcCampaignUseCase>> = JsonMissing.of(),
             @JsonProperty("volume") @ExcludeMissing volume: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
         ) : this(
             description,
             helpKeywords,
@@ -800,10 +827,10 @@ private constructor(
             optOutKeywords,
             optOutMessage,
             privacyPolicyLink,
-            sandbox,
             termsAndConditionsLink,
             useCases,
             volume,
+            sandbox,
             mutableMapOf(),
         )
 
@@ -813,28 +840,28 @@ private constructor(
          * which is why it is asked for rather than derived from the customer's name. Required when
          * `compliance.campaign.inherit != true`.
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun description(): Optional<String> = description.getOptional("description")
+        fun description(): String = description.getRequired("description")
 
         /**
          * Help keywords. TCR helpKeywords, comma separated, e.g. HELP,INFO. Required when
          * `compliance.campaign.inherit != true`.
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun helpKeywords(): Optional<String> = helpKeywords.getOptional("help_keywords")
+        fun helpKeywords(): String = helpKeywords.getRequired("help_keywords")
 
         /**
          * Help reply. TCR helpMessage. Its presence is what sets subscriberHelp. Required when
          * `compliance.campaign.inherit != true`.
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun helpMessage(): Optional<String> = helpMessage.getOptional("help_message")
+        fun helpMessage(): String = helpMessage.getRequired("help_message")
 
         /**
          * Consent narrative. TCR messageFlow: how recipients opt in, in prose. Under 40 characters
@@ -842,58 +869,90 @@ private constructor(
          * box is unchecked by default, and that consent is not a condition of purchase. Required
          * when `compliance.campaign.inherit != true`.
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun messageFlow(): Optional<String> = messageFlow.getOptional("message_flow")
+        fun messageFlow(): String = messageFlow.getRequired("message_flow")
 
         /**
          * Opt-in keywords. TCR optinKeywords, comma separated, e.g. START,YES. Required when
          * `compliance.campaign.inherit != true`.
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun optInKeywords(): Optional<String> = optInKeywords.getOptional("opt_in_keywords")
+        fun optInKeywords(): String = optInKeywords.getRequired("opt_in_keywords")
 
         /**
          * Opt-in confirmation. TCR optinMessage. Should state message frequency and that rates may
          * apply. Its presence is what sets subscriberOptin. Required when
          * `compliance.campaign.inherit != true`.
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun optInMessage(): Optional<String> = optInMessage.getOptional("opt_in_message")
+        fun optInMessage(): String = optInMessage.getRequired("opt_in_message")
 
         /**
          * Opt-out keywords. TCR optoutKeywords, comma separated. STOP, END, CANCEL, UNSUBSCRIBE and
          * QUIT are honoured regardless of what is declared. Required when
          * `compliance.campaign.inherit != true`.
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun optOutKeywords(): Optional<String> = optOutKeywords.getOptional("opt_out_keywords")
+        fun optOutKeywords(): String = optOutKeywords.getRequired("opt_out_keywords")
 
         /**
          * Opt-out confirmation. TCR optoutMessage. Its presence is what sets subscriberOptout.
          * Required when `compliance.campaign.inherit != true`.
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun optOutMessage(): Optional<String> = optOutMessage.getOptional("opt_out_message")
+        fun optOutMessage(): String = optOutMessage.getRequired("opt_out_message")
 
         /**
          * Privacy policy URL. TCR privacyPolicyLink. Required when `compliance.campaign.inherit !=
          * true`.
          *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun privacyPolicyLink(): Optional<String> =
-            privacyPolicyLink.getOptional("privacy_policy_link")
+        fun privacyPolicyLink(): String = privacyPolicyLink.getRequired("privacy_policy_link")
+
+        /**
+         * Terms and conditions URL. TCR termsAndConditionsLink. Required when
+         * `compliance.campaign.inherit != true`.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun termsAndConditionsLink(): String =
+            termsAndConditionsLink.getRequired("terms_and_conditions_link")
+
+        /**
+         * Use cases. What the campaign sends, and an example of each. One to five entries; how they
+         * register is decided by volume, never declared. Required when `compliance.campaign.inherit
+         * != true`.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun useCases(): List<TenDlcCampaignUseCase> = useCases.getRequired("use_cases")
+
+        /**
+         * Expected monthly volume. Required whenever the campaign's fields are written. A whole
+         * number of messages, e.g. 1000 or 10000. Decides how the campaign registers and which fee
+         * tier applies: below the low-volume threshold it registers as LOW_VOLUME with
+         * sub-use-cases, above it as a single use case or MIXED. Omitting it registers the campaign
+         * at the higher-fee standard tier. Required when `compliance.campaign.inherit != true`,
+         * whenever its block is written.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun volume(): String = volume.getRequired("volume")
 
         /**
          * Sandbox flag - when true, the operation is simulated without side effects Useful for
@@ -903,37 +962,6 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
-
-        /**
-         * Terms and conditions URL. TCR termsAndConditionsLink. Required when
-         * `compliance.campaign.inherit != true`.
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun termsAndConditionsLink(): Optional<String> =
-            termsAndConditionsLink.getOptional("terms_and_conditions_link")
-
-        /**
-         * Use cases. What the campaign sends, and an example of each. One to five entries; how they
-         * register is decided by volume, never declared. Required when `compliance.campaign.inherit
-         * != true`.
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun useCases(): Optional<List<TenDlcCampaignUseCase>> = useCases.getOptional("use_cases")
-
-        /**
-         * Expected monthly volume. Decides how the campaign registers and which fee tier applies:
-         * below the low-volume threshold it registers as LOW_VOLUME with sub-use-cases, above it as
-         * a single use case or MIXED. Omitting it registers the campaign at the higher-fee standard
-         * tier.
-         *
-         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
-         */
-        fun volume(): Optional<String> = volume.getOptional("volume")
 
         /**
          * Returns the raw JSON value of [description].
@@ -1023,13 +1051,6 @@ private constructor(
         fun _privacyPolicyLink(): JsonField<String> = privacyPolicyLink
 
         /**
-         * Returns the raw JSON value of [sandbox].
-         *
-         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
-
-        /**
          * Returns the raw JSON value of [termsAndConditionsLink].
          *
          * Unlike [termsAndConditionsLink], this method doesn't throw if the JSON field has an
@@ -1055,6 +1076,13 @@ private constructor(
          */
         @JsonProperty("volume") @ExcludeMissing fun _volume(): JsonField<String> = volume
 
+        /**
+         * Returns the raw JSON value of [sandbox].
+         *
+         * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -1069,26 +1097,44 @@ private constructor(
 
         companion object {
 
-            /** Returns a mutable builder for constructing an instance of [Body]. */
+            /**
+             * Returns a mutable builder for constructing an instance of [Body].
+             *
+             * The following fields are required:
+             * ```java
+             * .description()
+             * .helpKeywords()
+             * .helpMessage()
+             * .messageFlow()
+             * .optInKeywords()
+             * .optInMessage()
+             * .optOutKeywords()
+             * .optOutMessage()
+             * .privacyPolicyLink()
+             * .termsAndConditionsLink()
+             * .useCases()
+             * .volume()
+             * ```
+             */
             @JvmStatic fun builder() = Builder()
         }
 
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var description: JsonField<String> = JsonMissing.of()
-            private var helpKeywords: JsonField<String> = JsonMissing.of()
-            private var helpMessage: JsonField<String> = JsonMissing.of()
-            private var messageFlow: JsonField<String> = JsonMissing.of()
-            private var optInKeywords: JsonField<String> = JsonMissing.of()
-            private var optInMessage: JsonField<String> = JsonMissing.of()
-            private var optOutKeywords: JsonField<String> = JsonMissing.of()
-            private var optOutMessage: JsonField<String> = JsonMissing.of()
-            private var privacyPolicyLink: JsonField<String> = JsonMissing.of()
-            private var sandbox: JsonField<Boolean> = JsonMissing.of()
-            private var termsAndConditionsLink: JsonField<String> = JsonMissing.of()
+            private var description: JsonField<String>? = null
+            private var helpKeywords: JsonField<String>? = null
+            private var helpMessage: JsonField<String>? = null
+            private var messageFlow: JsonField<String>? = null
+            private var optInKeywords: JsonField<String>? = null
+            private var optInMessage: JsonField<String>? = null
+            private var optOutKeywords: JsonField<String>? = null
+            private var optOutMessage: JsonField<String>? = null
+            private var privacyPolicyLink: JsonField<String>? = null
+            private var termsAndConditionsLink: JsonField<String>? = null
             private var useCases: JsonField<MutableList<TenDlcCampaignUseCase>>? = null
-            private var volume: JsonField<String> = JsonMissing.of()
+            private var volume: JsonField<String>? = null
+            private var sandbox: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -1102,10 +1148,10 @@ private constructor(
                 optOutKeywords = body.optOutKeywords
                 optOutMessage = body.optOutMessage
                 privacyPolicyLink = body.privacyPolicyLink
-                sandbox = body.sandbox
                 termsAndConditionsLink = body.termsAndConditionsLink
                 useCases = body.useCases.map { it.toMutableList() }
                 volume = body.volume
+                sandbox = body.sandbox
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -1271,21 +1317,6 @@ private constructor(
             }
 
             /**
-             * Sandbox flag - when true, the operation is simulated without side effects Useful for
-             * testing integrations without actual execution
-             */
-            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
-
-            /**
-             * Sets [Builder.sandbox] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
-
-            /**
              * Terms and conditions URL. TCR termsAndConditionsLink. Required when
              * `compliance.campaign.inherit != true`.
              */
@@ -1334,10 +1365,12 @@ private constructor(
             }
 
             /**
-             * Expected monthly volume. Decides how the campaign registers and which fee tier
-             * applies: below the low-volume threshold it registers as LOW_VOLUME with
+             * Expected monthly volume. Required whenever the campaign's fields are written. A whole
+             * number of messages, e.g. 1000 or 10000. Decides how the campaign registers and which
+             * fee tier applies: below the low-volume threshold it registers as LOW_VOLUME with
              * sub-use-cases, above it as a single use case or MIXED. Omitting it registers the
-             * campaign at the higher-fee standard tier.
+             * campaign at the higher-fee standard tier. Required when `compliance.campaign.inherit
+             * != true`, whenever its block is written.
              */
             fun volume(volume: String) = volume(JsonField.of(volume))
 
@@ -1349,6 +1382,21 @@ private constructor(
              * supported value.
              */
             fun volume(volume: JsonField<String>) = apply { this.volume = volume }
+
+            /**
+             * Sandbox flag - when true, the operation is simulated without side effects Useful for
+             * testing integrations without actual execution
+             */
+            fun sandbox(sandbox: Boolean) = sandbox(JsonField.of(sandbox))
+
+            /**
+             * Sets [Builder.sandbox] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sandbox] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -1373,22 +1421,40 @@ private constructor(
              * Returns an immutable instance of [Body].
              *
              * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .description()
+             * .helpKeywords()
+             * .helpMessage()
+             * .messageFlow()
+             * .optInKeywords()
+             * .optInMessage()
+             * .optOutKeywords()
+             * .optOutMessage()
+             * .privacyPolicyLink()
+             * .termsAndConditionsLink()
+             * .useCases()
+             * .volume()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
              */
             fun build(): Body =
                 Body(
-                    description,
-                    helpKeywords,
-                    helpMessage,
-                    messageFlow,
-                    optInKeywords,
-                    optInMessage,
-                    optOutKeywords,
-                    optOutMessage,
-                    privacyPolicyLink,
+                    checkRequired("description", description),
+                    checkRequired("helpKeywords", helpKeywords),
+                    checkRequired("helpMessage", helpMessage),
+                    checkRequired("messageFlow", messageFlow),
+                    checkRequired("optInKeywords", optInKeywords),
+                    checkRequired("optInMessage", optInMessage),
+                    checkRequired("optOutKeywords", optOutKeywords),
+                    checkRequired("optOutMessage", optOutMessage),
+                    checkRequired("privacyPolicyLink", privacyPolicyLink),
+                    checkRequired("termsAndConditionsLink", termsAndConditionsLink),
+                    checkRequired("useCases", useCases).map { it.toImmutable() },
+                    checkRequired("volume", volume),
                     sandbox,
-                    termsAndConditionsLink,
-                    (useCases ?: JsonMissing.of()).map { it.toImmutable() },
-                    volume,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -1418,10 +1484,10 @@ private constructor(
             optOutKeywords()
             optOutMessage()
             privacyPolicyLink()
-            sandbox()
             termsAndConditionsLink()
-            useCases().ifPresent { it.forEach { it.validate() } }
+            useCases().forEach { it.validate() }
             volume()
+            sandbox()
             validated = true
         }
 
@@ -1450,10 +1516,10 @@ private constructor(
                 (if (optOutKeywords.asKnown().isPresent) 1 else 0) +
                 (if (optOutMessage.asKnown().isPresent) 1 else 0) +
                 (if (privacyPolicyLink.asKnown().isPresent) 1 else 0) +
-                (if (sandbox.asKnown().isPresent) 1 else 0) +
                 (if (termsAndConditionsLink.asKnown().isPresent) 1 else 0) +
                 (useCases.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
-                (if (volume.asKnown().isPresent) 1 else 0)
+                (if (volume.asKnown().isPresent) 1 else 0) +
+                (if (sandbox.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -1470,10 +1536,10 @@ private constructor(
                 optOutKeywords == other.optOutKeywords &&
                 optOutMessage == other.optOutMessage &&
                 privacyPolicyLink == other.privacyPolicyLink &&
-                sandbox == other.sandbox &&
                 termsAndConditionsLink == other.termsAndConditionsLink &&
                 useCases == other.useCases &&
                 volume == other.volume &&
+                sandbox == other.sandbox &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -1488,10 +1554,10 @@ private constructor(
                 optOutKeywords,
                 optOutMessage,
                 privacyPolicyLink,
-                sandbox,
                 termsAndConditionsLink,
                 useCases,
                 volume,
+                sandbox,
                 additionalProperties,
             )
         }
@@ -1499,7 +1565,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{description=$description, helpKeywords=$helpKeywords, helpMessage=$helpMessage, messageFlow=$messageFlow, optInKeywords=$optInKeywords, optInMessage=$optInMessage, optOutKeywords=$optOutKeywords, optOutMessage=$optOutMessage, privacyPolicyLink=$privacyPolicyLink, sandbox=$sandbox, termsAndConditionsLink=$termsAndConditionsLink, useCases=$useCases, volume=$volume, additionalProperties=$additionalProperties}"
+            "Body{description=$description, helpKeywords=$helpKeywords, helpMessage=$helpMessage, messageFlow=$messageFlow, optInKeywords=$optInKeywords, optInMessage=$optInMessage, optOutKeywords=$optOutKeywords, optOutMessage=$optOutMessage, privacyPolicyLink=$privacyPolicyLink, termsAndConditionsLink=$termsAndConditionsLink, useCases=$useCases, volume=$volume, sandbox=$sandbox, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

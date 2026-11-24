@@ -21,6 +21,7 @@ internal class TemplateRefTest {
                         .putAdditionalProperty("foo", JsonValue.from("string"))
                         .build()
                 )
+                .slug("slug")
                 .build()
 
         assertThat(templateRef.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -31,6 +32,7 @@ internal class TemplateRefTest {
                     .putAdditionalProperty("foo", JsonValue.from("string"))
                     .build()
             )
+        assertThat(templateRef.slug()).contains("slug")
     }
 
     @Test
@@ -45,6 +47,7 @@ internal class TemplateRefTest {
                         .putAdditionalProperty("foo", JsonValue.from("string"))
                         .build()
                 )
+                .slug("slug")
                 .build()
 
         val roundtrippedTemplateRef =

@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms
+package dm.sent.models.channels.markets
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -10,8 +10,6 @@ import dm.sent.core.ExcludeMissing
 import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
-import dm.sent.core.checkKnown
-import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
@@ -21,10 +19,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Standard API response envelope for all v3 endpoints */
-class ApiResponseOfListOfSmsMarket
+class ApiResponseOfMarketNumbers
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val data: JsonField<List<SmsMarket>>,
+    private val data: JsonField<MarketNumbers>,
     private val error: JsonField<ErrorDetail>,
     private val meta: JsonField<ApiMeta>,
     private val success: JsonField<Boolean>,
@@ -33,19 +31,20 @@ private constructor(
 
     @JsonCreator
     private constructor(
-        @JsonProperty("data") @ExcludeMissing data: JsonField<List<SmsMarket>> = JsonMissing.of(),
+        @JsonProperty("data") @ExcludeMissing data: JsonField<MarketNumbers> = JsonMissing.of(),
         @JsonProperty("error") @ExcludeMissing error: JsonField<ErrorDetail> = JsonMissing.of(),
         @JsonProperty("meta") @ExcludeMissing meta: JsonField<ApiMeta> = JsonMissing.of(),
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
     /**
-     * The response data (null if error)
+     * The numbers a customer holds in one market: GET
+     * /v3/channels/{channel}/{country}/{type}/numbers.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun data(): Optional<List<SmsMarket>> = data.getOptional("data")
+    fun data(): Optional<MarketNumbers> = data.getOptional("data")
 
     /**
      * Error information
@@ -76,7 +75,7 @@ private constructor(
      *
      * Unlike [data], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<List<SmsMarket>> = data
+    @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<MarketNumbers> = data
 
     /**
      * Returns the raw JSON value of [error].
@@ -114,57 +113,46 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [ApiResponseOfListOfSmsMarket].
+         * Returns a mutable builder for constructing an instance of [ApiResponseOfMarketNumbers].
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ApiResponseOfListOfSmsMarket]. */
+    /** A builder for [ApiResponseOfMarketNumbers]. */
     class Builder internal constructor() {
 
-        private var data: JsonField<MutableList<SmsMarket>>? = null
+        private var data: JsonField<MarketNumbers> = JsonMissing.of()
         private var error: JsonField<ErrorDetail> = JsonMissing.of()
         private var meta: JsonField<ApiMeta> = JsonMissing.of()
         private var success: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(apiResponseOfListOfSmsMarket: ApiResponseOfListOfSmsMarket) = apply {
-            data = apiResponseOfListOfSmsMarket.data.map { it.toMutableList() }
-            error = apiResponseOfListOfSmsMarket.error
-            meta = apiResponseOfListOfSmsMarket.meta
-            success = apiResponseOfListOfSmsMarket.success
-            additionalProperties = apiResponseOfListOfSmsMarket.additionalProperties.toMutableMap()
+        internal fun from(apiResponseOfMarketNumbers: ApiResponseOfMarketNumbers) = apply {
+            data = apiResponseOfMarketNumbers.data
+            error = apiResponseOfMarketNumbers.error
+            meta = apiResponseOfMarketNumbers.meta
+            success = apiResponseOfMarketNumbers.success
+            additionalProperties = apiResponseOfMarketNumbers.additionalProperties.toMutableMap()
         }
 
-        /** The response data (null if error) */
-        fun data(data: List<SmsMarket>?) = data(JsonField.ofNullable(data))
+        /**
+         * The numbers a customer holds in one market: GET
+         * /v3/channels/{channel}/{country}/{type}/numbers.
+         */
+        fun data(data: MarketNumbers?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
-        fun data(data: Optional<List<SmsMarket>>) = data(data.getOrNull())
+        fun data(data: Optional<MarketNumbers>) = data(data.getOrNull())
 
         /**
          * Sets [Builder.data] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.data] with a well-typed `List<SmsMarket>` value instead.
+         * You should usually call [Builder.data] with a well-typed [MarketNumbers] value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun data(data: JsonField<List<SmsMarket>>) = apply {
-            this.data = data.map { it.toMutableList() }
-        }
-
-        /**
-         * Adds a single [SmsMarket] to [Builder.data].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addData(data: SmsMarket) = apply {
-            this.data =
-                (this.data ?: JsonField.of(mutableListOf())).also {
-                    checkKnown("data", it).add(data)
-                }
-        }
+        fun data(data: JsonField<MarketNumbers>) = apply { this.data = data }
 
         /** Error information */
         fun error(error: ErrorDetail?) = error(JsonField.ofNullable(error))
@@ -223,13 +211,13 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ApiResponseOfListOfSmsMarket].
+         * Returns an immutable instance of [ApiResponseOfMarketNumbers].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ApiResponseOfListOfSmsMarket =
-            ApiResponseOfListOfSmsMarket(
-                (data ?: JsonMissing.of()).map { it.toImmutable() },
+        fun build(): ApiResponseOfMarketNumbers =
+            ApiResponseOfMarketNumbers(
+                data,
                 error,
                 meta,
                 success,
@@ -247,12 +235,12 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): ApiResponseOfListOfSmsMarket = apply {
+    fun validate(): ApiResponseOfMarketNumbers = apply {
         if (validated) {
             return@apply
         }
 
-        data().ifPresent { it.forEach { it.validate() } }
+        data().ifPresent { it.validate() }
         error().ifPresent { it.validate() }
         meta().ifPresent { it.validate() }
         success()
@@ -274,7 +262,7 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (data.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+        (data.asKnown().getOrNull()?.validity() ?: 0) +
             (error.asKnown().getOrNull()?.validity() ?: 0) +
             (meta.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
@@ -284,7 +272,7 @@ private constructor(
             return true
         }
 
-        return other is ApiResponseOfListOfSmsMarket &&
+        return other is ApiResponseOfMarketNumbers &&
             data == other.data &&
             error == other.error &&
             meta == other.meta &&
@@ -299,5 +287,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ApiResponseOfListOfSmsMarket{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
+        "ApiResponseOfMarketNumbers{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
 }

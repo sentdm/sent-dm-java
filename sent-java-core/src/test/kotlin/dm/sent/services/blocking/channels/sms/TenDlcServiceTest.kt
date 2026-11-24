@@ -4,11 +4,9 @@ package dm.sent.services.blocking.channels.sms
 
 import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.core.JsonValue
-import dm.sent.models.channels.sms.SmsNumberRequest
 import dm.sent.models.channels.sms.tendlc.TenDlcAddCampaignParams
-import dm.sent.models.channels.sms.tendlc.TenDlcAddNumbersParams
 import dm.sent.models.channels.sms.tendlc.TenDlcCampaignUseCase
-import dm.sent.models.channels.sms.tendlc.TenDlcRetrieveComplianceParams
+import dm.sent.models.channels.sms.tendlc.TenDlcListCampaignsParams
 import dm.sent.models.channels.sms.tendlc.TenDlcUpdateCampaignParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -21,69 +19,53 @@ internal class TenDlcServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val tenDlcService = client.channels().sms().tenDlc()
 
-        val apiResponseOfSmsMarket =
+        val apiResponseOfChannelMarket =
             tenDlcService.addCampaign(
                 TenDlcAddCampaignParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .description("description")
+                    .description("Appointment reminders for patients who opted in when booking.")
                     .helpKeywords("help_keywords")
-                    .helpMessage("help_message")
-                    .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+                    .helpMessage("xxxxxxxxxxxxxxxxxxxx")
+                    .messageFlow("Patients opt in on the booking form by checking a consent box.")
                     .optInKeywords("opt_in_keywords")
-                    .optInMessage("opt_in_message")
+                    .optInMessage("xxxxxxxxxxxxxxxxxxxx")
                     .optOutKeywords("opt_out_keywords")
-                    .optOutMessage("opt_out_message")
+                    .optOutMessage("xxxxxxxxxxxxxxxxxxxx")
                     .privacyPolicyLink("privacy_policy_link")
-                    .sandbox(false)
                     .termsAndConditionsLink("terms_and_conditions_link")
                     .addUseCase(
                         TenDlcCampaignUseCase.builder()
-                            .addSampleMessage(JsonValue.from(mapOf<String, Any>()))
-                            .useCase(TenDlcCampaignUseCase.UseCase.MARKETING)
+                            .addSampleMessage(
+                                JsonValue.from(
+                                    "Reminder: your appointment is tomorrow at 10:00. Reply STOP to opt out."
+                                )
+                            )
+                            .useCase(TenDlcCampaignUseCase.UseCase.ACCOUNT_NOTIFICATION)
                             .build()
                     )
                     .volume("volume")
-                    .build()
-            )
-
-        apiResponseOfSmsMarket.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
-    fun addNumbers() {
-        val client = SentOkHttpClient.builder().apiKey("My API Key").build()
-        val tenDlcService = client.channels().sms().tenDlc()
-
-        val apiResponseOfSmsMarket =
-            tenDlcService.addNumbers(
-                TenDlcAddNumbersParams.builder()
-                    .idempotencyKey("req_abc123_retry1")
-                    .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .sandbox(false)
-                    .campaignId("8f14e45f-ceea-467f-a8f0-7c2a3d1b9e01")
-                    .addNumber(SmsNumberRequest.builder().areaCode("415").quantity(2).build())
                     .build()
             )
 
-        apiResponseOfSmsMarket.validate()
+        apiResponseOfChannelMarket.validate()
     }
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun retrieveCompliance() {
+    fun listCampaigns() {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val tenDlcService = client.channels().sms().tenDlc()
 
-        val apiResponseOfSuppliedCompliance =
-            tenDlcService.retrieveCompliance(
-                TenDlcRetrieveComplianceParams.builder()
+        val response =
+            tenDlcService.listCampaigns(
+                TenDlcListCampaignsParams.builder()
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 
-        apiResponseOfSuppliedCompliance.validate()
+        response.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -92,20 +74,22 @@ internal class TenDlcServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val tenDlcService = client.channels().sms().tenDlc()
 
-        val apiResponseOfSmsMarket =
+        val apiResponseOfChannelMarket =
             tenDlcService.updateCampaign(
                 TenDlcUpdateCampaignParams.builder()
                     .campaignId("3f2a6c1e-8b4d-4e2a-9c7f-1d5b0a9e4c21")
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .description("description")
+                    .description("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                     .helpKeywords("help_keywords")
-                    .helpMessage("help_message")
+                    .helpMessage(
+                        "Example Clinic: for help call +1 212 555 0100. Reply STOP to opt out."
+                    )
                     .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                     .optInKeywords("opt_in_keywords")
-                    .optInMessage("opt_in_message")
+                    .optInMessage("xxxxxxxxxxxxxxxxxxxx")
                     .optOutKeywords("opt_out_keywords")
-                    .optOutMessage("opt_out_message")
+                    .optOutMessage("xxxxxxxxxxxxxxxxxxxx")
                     .privacyPolicyLink("privacy_policy_link")
                     .sandbox(false)
                     .termsAndConditionsLink("terms_and_conditions_link")
@@ -119,6 +103,6 @@ internal class TenDlcServiceTest {
                     .build()
             )
 
-        apiResponseOfSmsMarket.validate()
+        apiResponseOfChannelMarket.validate()
     }
 }
