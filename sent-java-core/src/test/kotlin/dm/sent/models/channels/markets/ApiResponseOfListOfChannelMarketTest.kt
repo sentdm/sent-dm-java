@@ -1,24 +1,29 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms
+package dm.sent.models.channels.markets
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
+import dm.sent.models.channels.sms.SmsNumber
+import dm.sent.models.channels.sms.SuppliedCampaign
+import dm.sent.models.channels.sms.SuppliedCompliance
+import dm.sent.models.channels.sms.SuppliedDocument
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ApiResponseOfSmsMarketTest {
+internal class ApiResponseOfListOfChannelMarketTest {
 
     @Test
     fun create() {
-        val apiResponseOfSmsMarket =
-            ApiResponseOfSmsMarket.builder()
-                .data(
-                    SmsMarket.builder()
+        val apiResponseOfListOfChannelMarket =
+            ApiResponseOfListOfChannelMarket.builder()
+                .addData(
+                    ChannelMarket.builder()
                         .compliance(
                             SuppliedCompliance.builder()
                                 .brand(
@@ -57,7 +62,7 @@ internal class ApiResponseOfSmsMarketTest {
                         )
                         .reason("reason")
                         .reasonCode("reason_code")
-                        .status(SmsMarket.Status.PROVISIONING)
+                        .status(ChannelMarket.Status.PROVISIONING)
                         .build()
                 )
                 .error(
@@ -82,9 +87,9 @@ internal class ApiResponseOfSmsMarketTest {
                 .success(true)
                 .build()
 
-        assertThat(apiResponseOfSmsMarket.data())
-            .contains(
-                SmsMarket.builder()
+        assertThat(apiResponseOfListOfChannelMarket.data().getOrNull())
+            .containsExactly(
+                ChannelMarket.builder()
                     .compliance(
                         SuppliedCompliance.builder()
                             .brand(
@@ -123,10 +128,10 @@ internal class ApiResponseOfSmsMarketTest {
                     )
                     .reason("reason")
                     .reasonCode("reason_code")
-                    .status(SmsMarket.Status.PROVISIONING)
+                    .status(ChannelMarket.Status.PROVISIONING)
                     .build()
             )
-        assertThat(apiResponseOfSmsMarket.error())
+        assertThat(apiResponseOfListOfChannelMarket.error())
             .contains(
                 ErrorDetail.builder()
                     .code("code")
@@ -139,7 +144,7 @@ internal class ApiResponseOfSmsMarketTest {
                     .message("message")
                     .build()
             )
-        assertThat(apiResponseOfSmsMarket.meta())
+        assertThat(apiResponseOfListOfChannelMarket.meta())
             .contains(
                 ApiMeta.builder()
                     .requestId("request_id")
@@ -147,16 +152,16 @@ internal class ApiResponseOfSmsMarketTest {
                     .version("version")
                     .build()
             )
-        assertThat(apiResponseOfSmsMarket.success()).contains(true)
+        assertThat(apiResponseOfListOfChannelMarket.success()).contains(true)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val apiResponseOfSmsMarket =
-            ApiResponseOfSmsMarket.builder()
-                .data(
-                    SmsMarket.builder()
+        val apiResponseOfListOfChannelMarket =
+            ApiResponseOfListOfChannelMarket.builder()
+                .addData(
+                    ChannelMarket.builder()
                         .compliance(
                             SuppliedCompliance.builder()
                                 .brand(
@@ -195,7 +200,7 @@ internal class ApiResponseOfSmsMarketTest {
                         )
                         .reason("reason")
                         .reasonCode("reason_code")
-                        .status(SmsMarket.Status.PROVISIONING)
+                        .status(ChannelMarket.Status.PROVISIONING)
                         .build()
                 )
                 .error(
@@ -220,12 +225,13 @@ internal class ApiResponseOfSmsMarketTest {
                 .success(true)
                 .build()
 
-        val roundtrippedApiResponseOfSmsMarket =
+        val roundtrippedApiResponseOfListOfChannelMarket =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(apiResponseOfSmsMarket),
-                jacksonTypeRef<ApiResponseOfSmsMarket>(),
+                jsonMapper.writeValueAsString(apiResponseOfListOfChannelMarket),
+                jacksonTypeRef<ApiResponseOfListOfChannelMarket>(),
             )
 
-        assertThat(roundtrippedApiResponseOfSmsMarket).isEqualTo(apiResponseOfSmsMarket)
+        assertThat(roundtrippedApiResponseOfListOfChannelMarket)
+            .isEqualTo(apiResponseOfListOfChannelMarket)
     }
 }

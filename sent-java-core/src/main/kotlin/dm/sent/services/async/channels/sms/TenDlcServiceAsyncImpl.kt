@@ -16,11 +16,10 @@ import dm.sent.core.http.HttpResponseFor
 import dm.sent.core.http.json
 import dm.sent.core.http.parseable
 import dm.sent.core.prepareAsync
-import dm.sent.models.channels.sms.ApiResponseOfSmsMarket
-import dm.sent.models.channels.sms.tendlc.ApiResponseOfSuppliedCompliance
+import dm.sent.models.channels.markets.ApiResponseOfChannelMarket
 import dm.sent.models.channels.sms.tendlc.TenDlcAddCampaignParams
-import dm.sent.models.channels.sms.tendlc.TenDlcAddNumbersParams
-import dm.sent.models.channels.sms.tendlc.TenDlcRetrieveComplianceParams
+import dm.sent.models.channels.sms.tendlc.TenDlcListCampaignsParams
+import dm.sent.models.channels.sms.tendlc.TenDlcListCampaignsResponse
 import dm.sent.models.channels.sms.tendlc.TenDlcUpdateCampaignParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -67,29 +66,22 @@ class TenDlcServiceAsyncImpl internal constructor(private val clientOptions: Cli
     override fun addCampaign(
         params: TenDlcAddCampaignParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfSmsMarket> =
-        // post /v3/channels/sms/compliances/US/TEN_DLC/campaigns
+    ): CompletableFuture<ApiResponseOfChannelMarket> =
+        // post /v3/channels/sms/US/TEN_DLC/campaigns
         withRawResponse().addCampaign(params, requestOptions).thenApply { it.parse() }
 
-    override fun addNumbers(
-        params: TenDlcAddNumbersParams,
+    override fun listCampaigns(
+        params: TenDlcListCampaignsParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfSmsMarket> =
-        // post /v3/channels/sms/numbers/US/TEN_DLC
-        withRawResponse().addNumbers(params, requestOptions).thenApply { it.parse() }
-
-    override fun retrieveCompliance(
-        params: TenDlcRetrieveComplianceParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfSuppliedCompliance> =
-        // get /v3/channels/sms/compliances/US/TEN_DLC
-        withRawResponse().retrieveCompliance(params, requestOptions).thenApply { it.parse() }
+    ): CompletableFuture<TenDlcListCampaignsResponse> =
+        // get /v3/channels/sms/US/TEN_DLC/campaigns
+        withRawResponse().listCampaigns(params, requestOptions).thenApply { it.parse() }
 
     override fun updateCampaign(
         params: TenDlcUpdateCampaignParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfSmsMarket> =
-        // patch /v3/channels/sms/compliances/US/TEN_DLC/campaigns/{campaignId}
+    ): CompletableFuture<ApiResponseOfChannelMarket> =
+        // patch /v3/channels/sms/US/TEN_DLC/campaigns/{campaignId}
         withRawResponse().updateCampaign(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -105,26 +97,18 @@ class TenDlcServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val addCampaignHandler: Handler<ApiResponseOfSmsMarket> =
-            jsonHandler<ApiResponseOfSmsMarket>(clientOptions.jsonMapper)
+        private val addCampaignHandler: Handler<ApiResponseOfChannelMarket> =
+            jsonHandler<ApiResponseOfChannelMarket>(clientOptions.jsonMapper)
 
         override fun addCampaign(
             params: TenDlcAddCampaignParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfChannelMarket>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments(
-                        "v3",
-                        "channels",
-                        "sms",
-                        "compliances",
-                        "US",
-                        "TEN_DLC",
-                        "campaigns",
-                    )
+                    .addPathSegments("v3", "channels", "sms", "US", "TEN_DLC", "campaigns")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -144,49 +128,18 @@ class TenDlcServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 }
         }
 
-        private val addNumbersHandler: Handler<ApiResponseOfSmsMarket> =
-            jsonHandler<ApiResponseOfSmsMarket>(clientOptions.jsonMapper)
+        private val listCampaignsHandler: Handler<TenDlcListCampaignsResponse> =
+            jsonHandler<TenDlcListCampaignsResponse>(clientOptions.jsonMapper)
 
-        override fun addNumbers(
-            params: TenDlcAddNumbersParams,
+        override fun listCampaigns(
+            params: TenDlcListCampaignsParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v3", "channels", "sms", "numbers", "US", "TEN_DLC")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { addNumbersHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val retrieveComplianceHandler: Handler<ApiResponseOfSuppliedCompliance> =
-            jsonHandler<ApiResponseOfSuppliedCompliance>(clientOptions.jsonMapper)
-
-        override fun retrieveCompliance(
-            params: TenDlcRetrieveComplianceParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSuppliedCompliance>> {
+        ): CompletableFuture<HttpResponseFor<TenDlcListCampaignsResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v3", "channels", "sms", "compliances", "US", "TEN_DLC")
+                    .addPathSegments("v3", "channels", "sms", "US", "TEN_DLC", "campaigns")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -195,7 +148,7 @@ class TenDlcServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { retrieveComplianceHandler.handle(it) }
+                            .use { listCampaignsHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
@@ -205,13 +158,13 @@ class TenDlcServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 }
         }
 
-        private val updateCampaignHandler: Handler<ApiResponseOfSmsMarket> =
-            jsonHandler<ApiResponseOfSmsMarket>(clientOptions.jsonMapper)
+        private val updateCampaignHandler: Handler<ApiResponseOfChannelMarket> =
+            jsonHandler<ApiResponseOfChannelMarket>(clientOptions.jsonMapper)
 
         override fun updateCampaign(
             params: TenDlcUpdateCampaignParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> {
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfChannelMarket>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("campaignId", params.campaignId().getOrNull())
@@ -223,7 +176,6 @@ class TenDlcServiceAsyncImpl internal constructor(private val clientOptions: Cli
                         "v3",
                         "channels",
                         "sms",
-                        "compliances",
                         "US",
                         "TEN_DLC",
                         "campaigns",

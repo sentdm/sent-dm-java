@@ -5,11 +5,10 @@ package dm.sent.services.async.channels.sms
 import dm.sent.core.ClientOptions
 import dm.sent.core.RequestOptions
 import dm.sent.core.http.HttpResponseFor
-import dm.sent.models.channels.sms.ApiResponseOfSmsMarket
-import dm.sent.models.channels.sms.tendlc.ApiResponseOfSuppliedCompliance
+import dm.sent.models.channels.markets.ApiResponseOfChannelMarket
 import dm.sent.models.channels.sms.tendlc.TenDlcAddCampaignParams
-import dm.sent.models.channels.sms.tendlc.TenDlcAddNumbersParams
-import dm.sent.models.channels.sms.tendlc.TenDlcRetrieveComplianceParams
+import dm.sent.models.channels.sms.tendlc.TenDlcListCampaignsParams
+import dm.sent.models.channels.sms.tendlc.TenDlcListCampaignsResponse
 import dm.sent.models.channels.sms.tendlc.TenDlcUpdateCampaignParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -63,10 +62,10 @@ interface TenDlcServiceAsync {
      * ## What to send
      *
      * The new campaign's fields, at the top level of the body: use cases, consent narrative,
-     * volume, sample messages and keywords, under the `compliance.campaign.*` keys `GET
-     * /v3/compliance/requirements?country=US&type=TEN_DLC` lists, without that prefix. It has to be
-     * complete. A rejected field is keyed by its name (`description`). `id` and `inherit` are
-     * ignored, so an entry of `compliance.campaigns` can be sent as read.
+     * volume, sample messages and keywords, under their keys (`description`, `message_flow`,
+     * `use_cases`, `volume`, …). It has to be complete. A rejected field is keyed by its name
+     * (`description`). `id` and `inherit` are ignored, so an entry of `campaigns` can be sent as
+     * read.
      *
      * The identity is the market's and is not sent here. A market whose identity has no
      * registration yet, or one not yet submitted for review, is `400`.
@@ -75,88 +74,62 @@ interface TenDlcServiceAsync {
      *
      * The campaign is recorded and goes for review; it is not filed with The Campaign Registry by
      * this call. **It comes without numbers**: send its `id` from `compliance.campaigns` to `POST
-     * /v3/channels/sms/numbers/US/TEN_DLC` to give it some. **The campaign you already have, and
-     * its numbers, are not touched** — including a campaign you run on from your organization.
+     * /v3/channels/sms/{country}/{type}/numbers` to give it some. **The campaign you already have,
+     * and its numbers, are not touched** — including a campaign you run on from your organization.
      *
      * **Each call files a new campaign**, which is charged when it is submitted. Send an
      * `Idempotency-Key` so a retried request does not file a second one.
      *
-     * To change the campaign a market already has, use `PATCH /v3/channels/sms/US/TEN_DLC`. Once a
-     * market holds more than one campaign, that `PATCH` refuses a campaign or numbers change
-     * (`409`) rather than guess which campaign is meant; numbers are added to a named campaign with
-     * `POST /v3/channels/sms/numbers/US/TEN_DLC`.
+     * To change a campaign, use `PATCH /v3/channels/sms/US/TEN_DLC/campaigns/{campaignId}`; `PATCH
+     * /v3/channels/sms/US/TEN_DLC` changes the brand and documents only, and refuses a campaign or
+     * numbers (`400`).
      *
      * Returns **the market**, in the shape `GET /v3/channels/sms/US/TEN_DLC` returns, with `202`.
      */
-    fun addCampaign(params: TenDlcAddCampaignParams): CompletableFuture<ApiResponseOfSmsMarket> =
-        addCampaign(params, RequestOptions.none())
+    fun addCampaign(
+        params: TenDlcAddCampaignParams
+    ): CompletableFuture<ApiResponseOfChannelMarket> = addCampaign(params, RequestOptions.none())
 
     /** @see addCampaign */
     fun addCampaign(
         params: TenDlcAddCampaignParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfSmsMarket>
+    ): CompletableFuture<ApiResponseOfChannelMarket>
 
     /**
-     * Adds numbers to **one campaign of your own** on the US `TEN_DLC` market you hold, named by
-     * `campaign_id` — the `id` of an entry in the market's `compliance.campaigns`.
+     * Every campaign your US `TEN_DLC` market registers, oldest first, each with its `id`, where it
+     * stands and `inherit` (`true` for your organization's) beside its fields — the list `GET
+     * /v3/channels/sms/US/TEN_DLC` reports under `compliance.campaigns`. Add one with `POST` on
+     * this path, and change one of your own with `PATCH
+     * /v3/channels/sms/US/TEN_DLC/campaigns/{id}`.
      *
-     * ## What to send
-     * - `campaign_id` — the campaign. One you inherit from your organization is `400`: its numbers
-     *   are the organization's. One out of service — expired, deactivated or released — is `409`.
-     * - `numbers` — the list `POST /v3/channels/sms` takes, one entry per area code.
+     * Each campaign has a `status` of its own, so a market on several says which is approved:
+     * `ACTIVE` once the carriers have elected it, `PENDING_REVIEW` until then, `ACTION_NEEDED` when
+     * it came back for correction, `DECLINED` when the carriers refused it, `INACTIVE` once it has
+     * ended. Why the market is held up is the market's own `reason`, which names the campaign
+     * concerned. `status` is read-only and ignored when the entry is sent back.
      *
-     * ## What happens
-     *
-     * The entries are **added** to what the campaign already asks for. With everything it asks for,
-     * a campaign holds at most 49 numbers, counting one for each sender profile inheriting it. A
-     * campaign the carriers have not approved yet gets its numbers when they do; an approved one
-     * gets them now. Until a number is assigned it reads as `PROVISIONING` in the market's
-     * `numbers`, with the area code it was asked for.
-     *
-     * Returns **the market**, in the shape `GET /v3/channels/sms/US/TEN_DLC` returns, with `202`.
+     * A customer without a US `TEN_DLC` market is `404`.
      */
-    fun addNumbers(params: TenDlcAddNumbersParams): CompletableFuture<ApiResponseOfSmsMarket> =
-        addNumbers(params, RequestOptions.none())
+    fun listCampaigns(): CompletableFuture<TenDlcListCampaignsResponse> =
+        listCampaigns(TenDlcListCampaignsParams.none())
 
-    /** @see addNumbers */
-    fun addNumbers(
-        params: TenDlcAddNumbersParams,
+    /** @see listCampaigns */
+    fun listCampaigns(
+        params: TenDlcListCampaignsParams = TenDlcListCampaignsParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfSmsMarket>
+    ): CompletableFuture<TenDlcListCampaignsResponse>
 
-    /**
-     * Reads what the US `TEN_DLC` market you hold has registered: the `brand` it files under,
-     * **every campaign** under `campaigns` (each with its `id` and `inherit`), and its `documents`.
-     * It is the `compliance` object `GET /v3/channels/sms/US/TEN_DLC` returns, without the sender
-     * and numbers.
-     *
-     * Use a campaign's `id` to change it with `PATCH
-     * /v3/channels/sms/compliances/US/TEN_DLC/campaigns/{campaignId}`, or to add numbers to it with
-     * `POST /v3/channels/sms/numbers/US/TEN_DLC`.
-     *
-     * Send `x-profile-id` with an organization key to read one of your profiles' markets.
-     */
-    fun retrieveCompliance(): CompletableFuture<ApiResponseOfSuppliedCompliance> =
-        retrieveCompliance(TenDlcRetrieveComplianceParams.none())
+    /** @see listCampaigns */
+    fun listCampaigns(
+        params: TenDlcListCampaignsParams = TenDlcListCampaignsParams.none()
+    ): CompletableFuture<TenDlcListCampaignsResponse> = listCampaigns(params, RequestOptions.none())
 
-    /** @see retrieveCompliance */
-    fun retrieveCompliance(
-        params: TenDlcRetrieveComplianceParams = TenDlcRetrieveComplianceParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfSuppliedCompliance>
-
-    /** @see retrieveCompliance */
-    fun retrieveCompliance(
-        params: TenDlcRetrieveComplianceParams = TenDlcRetrieveComplianceParams.none()
-    ): CompletableFuture<ApiResponseOfSuppliedCompliance> =
-        retrieveCompliance(params, RequestOptions.none())
-
-    /** @see retrieveCompliance */
-    fun retrieveCompliance(
+    /** @see listCampaigns */
+    fun listCampaigns(
         requestOptions: RequestOptions
-    ): CompletableFuture<ApiResponseOfSuppliedCompliance> =
-        retrieveCompliance(TenDlcRetrieveComplianceParams.none(), requestOptions)
+    ): CompletableFuture<TenDlcListCampaignsResponse> =
+        listCampaigns(TenDlcListCampaignsParams.none(), requestOptions)
 
     /**
      * Changes **one campaign of your own** on the US `TEN_DLC` market, named by its `id` in the
@@ -164,13 +137,13 @@ interface TenDlcServiceAsync {
      *
      * ## What to send
      *
-     * The fields to change, at the top level of the body, under the `compliance.campaign.*` keys
-     * `GET /v3/compliance/requirements?country=US&type=TEN_DLC` lists, without that prefix. A field
-     * you leave out keeps its value, and a rejected one is keyed by its name. `id` and `"inherit":
-     * false` are ignored, so an entry of `compliance.campaigns` can be sent as read; `"inherit":
-     * true` is `400`, because this call changes a campaign's fields, not whose campaign you run on.
-     * The campaign only: add numbers with `POST /v3/channels/sms/numbers/US/TEN_DLC`, and change
-     * the brand or documents with `PATCH /v3/channels/sms/US/TEN_DLC`.
+     * The fields to change, at the top level of the body, under their keys (`description`,
+     * `message_flow`, `use_cases`, `help_message`, …). A field you leave out keeps its value, and a
+     * rejected one is keyed by its name. `id` and `"inherit": false` are ignored, so an entry of
+     * `campaigns` can be sent as read; `"inherit": true` is `400`, because this call changes a
+     * campaign's fields, not whose campaign you run on. The campaign only: add numbers with `POST
+     * /v3/channels/sms/US/TEN_DLC/numbers`, and change the brand or documents with `PATCH
+     * /v3/channels/sms/US/TEN_DLC`.
      *
      * ## When it can be changed
      *
@@ -182,7 +155,7 @@ interface TenDlcServiceAsync {
      *
      * Returns **the market**, in the shape `GET /v3/channels/sms/US/TEN_DLC` returns.
      */
-    fun updateCampaign(campaignId: String): CompletableFuture<ApiResponseOfSmsMarket> =
+    fun updateCampaign(campaignId: String): CompletableFuture<ApiResponseOfChannelMarket> =
         updateCampaign(campaignId, TenDlcUpdateCampaignParams.none())
 
     /** @see updateCampaign */
@@ -190,32 +163,32 @@ interface TenDlcServiceAsync {
         campaignId: String,
         params: TenDlcUpdateCampaignParams = TenDlcUpdateCampaignParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfSmsMarket> =
+    ): CompletableFuture<ApiResponseOfChannelMarket> =
         updateCampaign(params.toBuilder().campaignId(campaignId).build(), requestOptions)
 
     /** @see updateCampaign */
     fun updateCampaign(
         campaignId: String,
         params: TenDlcUpdateCampaignParams = TenDlcUpdateCampaignParams.none(),
-    ): CompletableFuture<ApiResponseOfSmsMarket> =
+    ): CompletableFuture<ApiResponseOfChannelMarket> =
         updateCampaign(campaignId, params, RequestOptions.none())
 
     /** @see updateCampaign */
     fun updateCampaign(
         params: TenDlcUpdateCampaignParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ApiResponseOfSmsMarket>
+    ): CompletableFuture<ApiResponseOfChannelMarket>
 
     /** @see updateCampaign */
     fun updateCampaign(
         params: TenDlcUpdateCampaignParams
-    ): CompletableFuture<ApiResponseOfSmsMarket> = updateCampaign(params, RequestOptions.none())
+    ): CompletableFuture<ApiResponseOfChannelMarket> = updateCampaign(params, RequestOptions.none())
 
     /** @see updateCampaign */
     fun updateCampaign(
         campaignId: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ApiResponseOfSmsMarket> =
+    ): CompletableFuture<ApiResponseOfChannelMarket> =
         updateCampaign(campaignId, TenDlcUpdateCampaignParams.none(), requestOptions)
 
     /**
@@ -233,69 +206,53 @@ interface TenDlcServiceAsync {
         ): TenDlcServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v3/channels/sms/compliances/US/TEN_DLC/campaigns`,
-         * but is otherwise the same as [TenDlcServiceAsync.addCampaign].
+         * Returns a raw HTTP response for `post /v3/channels/sms/US/TEN_DLC/campaigns`, but is
+         * otherwise the same as [TenDlcServiceAsync.addCampaign].
          */
         fun addCampaign(
             params: TenDlcAddCampaignParams
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfChannelMarket>> =
             addCampaign(params, RequestOptions.none())
 
         /** @see addCampaign */
         fun addCampaign(
             params: TenDlcAddCampaignParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfChannelMarket>>
 
         /**
-         * Returns a raw HTTP response for `post /v3/channels/sms/numbers/US/TEN_DLC`, but is
-         * otherwise the same as [TenDlcServiceAsync.addNumbers].
+         * Returns a raw HTTP response for `get /v3/channels/sms/US/TEN_DLC/campaigns`, but is
+         * otherwise the same as [TenDlcServiceAsync.listCampaigns].
          */
-        fun addNumbers(
-            params: TenDlcAddNumbersParams
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> =
-            addNumbers(params, RequestOptions.none())
+        fun listCampaigns(): CompletableFuture<HttpResponseFor<TenDlcListCampaignsResponse>> =
+            listCampaigns(TenDlcListCampaignsParams.none())
 
-        /** @see addNumbers */
-        fun addNumbers(
-            params: TenDlcAddNumbersParams,
+        /** @see listCampaigns */
+        fun listCampaigns(
+            params: TenDlcListCampaignsParams = TenDlcListCampaignsParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>>
+        ): CompletableFuture<HttpResponseFor<TenDlcListCampaignsResponse>>
 
-        /**
-         * Returns a raw HTTP response for `get /v3/channels/sms/compliances/US/TEN_DLC`, but is
-         * otherwise the same as [TenDlcServiceAsync.retrieveCompliance].
-         */
-        fun retrieveCompliance():
-            CompletableFuture<HttpResponseFor<ApiResponseOfSuppliedCompliance>> =
-            retrieveCompliance(TenDlcRetrieveComplianceParams.none())
+        /** @see listCampaigns */
+        fun listCampaigns(
+            params: TenDlcListCampaignsParams = TenDlcListCampaignsParams.none()
+        ): CompletableFuture<HttpResponseFor<TenDlcListCampaignsResponse>> =
+            listCampaigns(params, RequestOptions.none())
 
-        /** @see retrieveCompliance */
-        fun retrieveCompliance(
-            params: TenDlcRetrieveComplianceParams = TenDlcRetrieveComplianceParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSuppliedCompliance>>
-
-        /** @see retrieveCompliance */
-        fun retrieveCompliance(
-            params: TenDlcRetrieveComplianceParams = TenDlcRetrieveComplianceParams.none()
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSuppliedCompliance>> =
-            retrieveCompliance(params, RequestOptions.none())
-
-        /** @see retrieveCompliance */
-        fun retrieveCompliance(
+        /** @see listCampaigns */
+        fun listCampaigns(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSuppliedCompliance>> =
-            retrieveCompliance(TenDlcRetrieveComplianceParams.none(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<TenDlcListCampaignsResponse>> =
+            listCampaigns(TenDlcListCampaignsParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `patch
-         * /v3/channels/sms/compliances/US/TEN_DLC/campaigns/{campaignId}`, but is otherwise the
-         * same as [TenDlcServiceAsync.updateCampaign].
+         * /v3/channels/sms/US/TEN_DLC/campaigns/{campaignId}`, but is otherwise the same as
+         * [TenDlcServiceAsync.updateCampaign].
          */
         fun updateCampaign(
             campaignId: String
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfChannelMarket>> =
             updateCampaign(campaignId, TenDlcUpdateCampaignParams.none())
 
         /** @see updateCampaign */
@@ -303,33 +260,33 @@ interface TenDlcServiceAsync {
             campaignId: String,
             params: TenDlcUpdateCampaignParams = TenDlcUpdateCampaignParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfChannelMarket>> =
             updateCampaign(params.toBuilder().campaignId(campaignId).build(), requestOptions)
 
         /** @see updateCampaign */
         fun updateCampaign(
             campaignId: String,
             params: TenDlcUpdateCampaignParams = TenDlcUpdateCampaignParams.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfChannelMarket>> =
             updateCampaign(campaignId, params, RequestOptions.none())
 
         /** @see updateCampaign */
         fun updateCampaign(
             params: TenDlcUpdateCampaignParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>>
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfChannelMarket>>
 
         /** @see updateCampaign */
         fun updateCampaign(
             params: TenDlcUpdateCampaignParams
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfChannelMarket>> =
             updateCampaign(params, RequestOptions.none())
 
         /** @see updateCampaign */
         fun updateCampaign(
             campaignId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ApiResponseOfSmsMarket>> =
+        ): CompletableFuture<HttpResponseFor<ApiResponseOfChannelMarket>> =
             updateCampaign(campaignId, TenDlcUpdateCampaignParams.none(), requestOptions)
     }
 }

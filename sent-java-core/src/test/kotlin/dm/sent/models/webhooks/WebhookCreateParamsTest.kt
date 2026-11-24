@@ -16,6 +16,7 @@ internal class WebhookCreateParamsTest {
             .idempotencyKey("req_abc123_retry1")
             .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .sandbox(false)
+            .agentId(null)
             .displayName("Order Notifications")
             .endpointUrl("https://example.com/webhooks/orders")
             .eventFilters(
@@ -52,6 +53,7 @@ internal class WebhookCreateParamsTest {
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sandbox(false)
+                .agentId(null)
                 .displayName("Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders")
                 .eventFilters(
@@ -110,6 +112,7 @@ internal class WebhookCreateParamsTest {
                 .idempotencyKey("req_abc123_retry1")
                 .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sandbox(false)
+                .agentId(null)
                 .displayName("Order Notifications")
                 .endpointUrl("https://example.com/webhooks/orders")
                 .eventFilters(
@@ -144,6 +147,7 @@ internal class WebhookCreateParamsTest {
         val body = params._body()
 
         assertThat(body.sandbox()).contains(false)
+        assertThat(body.agentId()).isEmpty
         assertThat(body.displayName()).contains("Order Notifications")
         assertThat(body.endpointUrl()).contains("https://example.com/webhooks/orders")
         assertThat(body.eventFilters())
