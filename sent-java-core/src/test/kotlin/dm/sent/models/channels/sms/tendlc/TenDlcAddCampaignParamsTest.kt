@@ -25,13 +25,13 @@ internal class TenDlcAddCampaignParamsTest {
             .privacyPolicyLink("privacy_policy_link")
             .termsAndConditionsLink("terms_and_conditions_link")
             .addUseCase(
-                TenDlcAddCampaignParams.UseCase.builder()
+                TenDlcCampaignUseCase.builder()
                     .addSampleMessage(
                         JsonValue.from(
                             "Reminder: your appointment is tomorrow at 10:00. Reply STOP to opt out."
                         )
                     )
-                    .useCase(TenDlcAddCampaignParams.UseCase.InnerUseCase.ACCOUNT_NOTIFICATION)
+                    .useCase(TenDlcCampaignUseCase.UseCase.ACCOUNT_NOTIFICATION)
                     .build()
             )
             .volume("volume")
@@ -56,13 +56,13 @@ internal class TenDlcAddCampaignParamsTest {
                 .privacyPolicyLink("privacy_policy_link")
                 .termsAndConditionsLink("terms_and_conditions_link")
                 .addUseCase(
-                    TenDlcAddCampaignParams.UseCase.builder()
+                    TenDlcCampaignUseCase.builder()
                         .addSampleMessage(
                             JsonValue.from(
                                 "Reminder: your appointment is tomorrow at 10:00. Reply STOP to opt out."
                             )
                         )
-                        .useCase(TenDlcAddCampaignParams.UseCase.InnerUseCase.ACCOUNT_NOTIFICATION)
+                        .useCase(TenDlcCampaignUseCase.UseCase.ACCOUNT_NOTIFICATION)
                         .build()
                 )
                 .volume("volume")
@@ -96,13 +96,13 @@ internal class TenDlcAddCampaignParamsTest {
                 .privacyPolicyLink("privacy_policy_link")
                 .termsAndConditionsLink("terms_and_conditions_link")
                 .addUseCase(
-                    TenDlcAddCampaignParams.UseCase.builder()
+                    TenDlcCampaignUseCase.builder()
                         .addSampleMessage(
                             JsonValue.from(
                                 "Reminder: your appointment is tomorrow at 10:00. Reply STOP to opt out."
                             )
                         )
-                        .useCase(TenDlcAddCampaignParams.UseCase.InnerUseCase.ACCOUNT_NOTIFICATION)
+                        .useCase(TenDlcCampaignUseCase.UseCase.ACCOUNT_NOTIFICATION)
                         .build()
                 )
                 .volume("volume")
@@ -131,13 +131,13 @@ internal class TenDlcAddCampaignParamsTest {
                 .privacyPolicyLink("privacy_policy_link")
                 .termsAndConditionsLink("terms_and_conditions_link")
                 .addUseCase(
-                    TenDlcAddCampaignParams.UseCase.builder()
+                    TenDlcCampaignUseCase.builder()
                         .addSampleMessage(
                             JsonValue.from(
                                 "Reminder: your appointment is tomorrow at 10:00. Reply STOP to opt out."
                             )
                         )
-                        .useCase(TenDlcAddCampaignParams.UseCase.InnerUseCase.ACCOUNT_NOTIFICATION)
+                        .useCase(TenDlcCampaignUseCase.UseCase.ACCOUNT_NOTIFICATION)
                         .build()
                 )
                 .volume("volume")
@@ -160,13 +160,13 @@ internal class TenDlcAddCampaignParamsTest {
         assertThat(body.termsAndConditionsLink()).isEqualTo("terms_and_conditions_link")
         assertThat(body.useCases())
             .containsExactly(
-                TenDlcAddCampaignParams.UseCase.builder()
+                TenDlcCampaignUseCase.builder()
                     .addSampleMessage(
                         JsonValue.from(
                             "Reminder: your appointment is tomorrow at 10:00. Reply STOP to opt out."
                         )
                     )
-                    .useCase(TenDlcAddCampaignParams.UseCase.InnerUseCase.ACCOUNT_NOTIFICATION)
+                    .useCase(TenDlcCampaignUseCase.UseCase.ACCOUNT_NOTIFICATION)
                     .build()
             )
         assertThat(body.volume()).isEqualTo("volume")
@@ -189,13 +189,13 @@ internal class TenDlcAddCampaignParamsTest {
                 .privacyPolicyLink("privacy_policy_link")
                 .termsAndConditionsLink("terms_and_conditions_link")
                 .addUseCase(
-                    TenDlcAddCampaignParams.UseCase.builder()
+                    TenDlcCampaignUseCase.builder()
                         .addSampleMessage(
                             JsonValue.from(
                                 "Reminder: your appointment is tomorrow at 10:00. Reply STOP to opt out."
                             )
                         )
-                        .useCase(TenDlcAddCampaignParams.UseCase.InnerUseCase.ACCOUNT_NOTIFICATION)
+                        .useCase(TenDlcCampaignUseCase.UseCase.ACCOUNT_NOTIFICATION)
                         .build()
                 )
                 .volume("volume")
@@ -217,13 +217,13 @@ internal class TenDlcAddCampaignParamsTest {
         assertThat(body.termsAndConditionsLink()).isEqualTo("terms_and_conditions_link")
         assertThat(body.useCases())
             .containsExactly(
-                TenDlcAddCampaignParams.UseCase.builder()
+                TenDlcCampaignUseCase.builder()
                     .addSampleMessage(
                         JsonValue.from(
                             "Reminder: your appointment is tomorrow at 10:00. Reply STOP to opt out."
                         )
                     )
-                    .useCase(TenDlcAddCampaignParams.UseCase.InnerUseCase.ACCOUNT_NOTIFICATION)
+                    .useCase(TenDlcCampaignUseCase.UseCase.ACCOUNT_NOTIFICATION)
                     .build()
             )
         assertThat(body.volume()).isEqualTo("volume")

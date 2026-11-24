@@ -5,6 +5,7 @@ package dm.sent.services.blocking.channels.sms
 import dm.sent.client.okhttp.SentOkHttpClient
 import dm.sent.core.JsonValue
 import dm.sent.models.channels.sms.tendlc.TenDlcAddCampaignParams
+import dm.sent.models.channels.sms.tendlc.TenDlcCampaignUseCase
 import dm.sent.models.channels.sms.tendlc.TenDlcListCampaignsParams
 import dm.sent.models.channels.sms.tendlc.TenDlcUpdateCampaignParams
 import org.junit.jupiter.api.Disabled
@@ -34,15 +35,13 @@ internal class TenDlcServiceTest {
                     .privacyPolicyLink("privacy_policy_link")
                     .termsAndConditionsLink("terms_and_conditions_link")
                     .addUseCase(
-                        TenDlcAddCampaignParams.UseCase.builder()
+                        TenDlcCampaignUseCase.builder()
                             .addSampleMessage(
                                 JsonValue.from(
                                     "Reminder: your appointment is tomorrow at 10:00. Reply STOP to opt out."
                                 )
                             )
-                            .useCase(
-                                TenDlcAddCampaignParams.UseCase.InnerUseCase.ACCOUNT_NOTIFICATION
-                            )
+                            .useCase(TenDlcCampaignUseCase.UseCase.ACCOUNT_NOTIFICATION)
                             .build()
                     )
                     .volume("volume")
@@ -95,9 +94,9 @@ internal class TenDlcServiceTest {
                     .sandbox(false)
                     .termsAndConditionsLink("terms_and_conditions_link")
                     .addUseCase(
-                        TenDlcUpdateCampaignParams.UseCase.builder()
+                        TenDlcCampaignUseCase.builder()
                             .addSampleMessage(JsonValue.from(mapOf<String, Any>()))
-                            .useCase(TenDlcUpdateCampaignParams.UseCase.InnerUseCase.MARKETING)
+                            .useCase(TenDlcCampaignUseCase.UseCase.MARKETING)
                             .build()
                     )
                     .volume("volume")
