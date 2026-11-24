@@ -380,7 +380,8 @@ private constructor(
         fun legalName(): Optional<String> = legalName.getOptional("legal_name")
 
         /**
-         * Postal code. Required when `compliance.brand.inherit != true`.
+         * Postal code. Five digits for a US registration. Required when `compliance.brand.inherit
+         * != true`.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -425,8 +426,10 @@ private constructor(
         fun taxIdType(): Optional<String> = taxIdType.getOptional("tax_id_type")
 
         /**
-         * Website. TCR website. Optional, and worth sending: carriers weigh it when vetting, so a
-         * brand that has one and omits it is vetted on less than it could be.
+         * Website. TCR website. Required whenever the identity's fields are sent, as the dashboard
+         * requires it: carriers weigh it when vetting. Not reported as outstanding on an identity
+         * already stored without one, which may be filed and no longer changeable. Required when
+         * `compliance.brand.inherit != true`, whenever its block is written.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -790,7 +793,10 @@ private constructor(
              */
             fun legalName(legalName: JsonField<String>) = apply { this.legalName = legalName }
 
-            /** Postal code. Required when `compliance.brand.inherit != true`. */
+            /**
+             * Postal code. Five digits for a US registration. Required when
+             * `compliance.brand.inherit != true`.
+             */
             fun postalCode(postalCode: String) = postalCode(JsonField.of(postalCode))
 
             /**
@@ -862,8 +868,10 @@ private constructor(
             fun taxIdType(taxIdType: JsonField<String>) = apply { this.taxIdType = taxIdType }
 
             /**
-             * Website. TCR website. Optional, and worth sending: carriers weigh it when vetting, so
-             * a brand that has one and omits it is vetted on less than it could be.
+             * Website. TCR website. Required whenever the identity's fields are sent, as the
+             * dashboard requires it: carriers weigh it when vetting. Not reported as outstanding on
+             * an identity already stored without one, which may be filed and no longer changeable.
+             * Required when `compliance.brand.inherit != true`, whenever its block is written.
              */
             fun website(website: String) = website(JsonField.of(website))
 
@@ -1406,10 +1414,12 @@ private constructor(
         fun useCases(): Optional<List<UseCase>> = useCases.getOptional("use_cases")
 
         /**
-         * Expected monthly volume. Decides how the campaign registers and which fee tier applies:
-         * below the low-volume threshold it registers as LOW_VOLUME with sub-use-cases, above it as
-         * a single use case or MIXED. Omitting it registers the campaign at the higher-fee standard
-         * tier.
+         * Expected monthly volume. Required whenever the campaign's fields are written. A whole
+         * number of messages, e.g. 1000 or 10000. Decides how the campaign registers and which fee
+         * tier applies: below the low-volume threshold it registers as LOW_VOLUME with
+         * sub-use-cases, above it as a single use case or MIXED. Omitting it registers the campaign
+         * at the higher-fee standard tier. Required when `compliance.campaign.inherit != true`,
+         * whenever its block is written.
          *
          * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
          *   server responded with an unexpected value).
@@ -1818,10 +1828,12 @@ private constructor(
             }
 
             /**
-             * Expected monthly volume. Decides how the campaign registers and which fee tier
-             * applies: below the low-volume threshold it registers as LOW_VOLUME with
+             * Expected monthly volume. Required whenever the campaign's fields are written. A whole
+             * number of messages, e.g. 1000 or 10000. Decides how the campaign registers and which
+             * fee tier applies: below the low-volume threshold it registers as LOW_VOLUME with
              * sub-use-cases, above it as a single use case or MIXED. Omitting it registers the
-             * campaign at the higher-fee standard tier.
+             * campaign at the higher-fee standard tier. Required when `compliance.campaign.inherit
+             * != true`, whenever its block is written.
              */
             fun volume(volume: String) = volume(JsonField.of(volume))
 
@@ -1958,8 +1970,10 @@ private constructor(
             ) : this(sampleMessages, useCase, mutableMapOf())
 
             /**
-             * Sample messages. TCR sample1..sample5 for this use case. One to five, each carrying
-             * the brand name and an opt-out instruction.
+             * Sample messages. TCR sample1..sample5 for this use case. One to five, each 20 to 1024
+             * characters and carrying the brand name and an opt-out instruction. At most five
+             * across the campaign, and at least two when a high-volume campaign has a single use
+             * case.
              *
              * @throws SentInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
@@ -2037,8 +2051,10 @@ private constructor(
                 }
 
                 /**
-                 * Sample messages. TCR sample1..sample5 for this use case. One to five, each
-                 * carrying the brand name and an opt-out instruction.
+                 * Sample messages. TCR sample1..sample5 for this use case. One to five, each 20 to
+                 * 1024 characters and carrying the brand name and an opt-out instruction. At most
+                 * five across the campaign, and at least two when a high-volume campaign has a
+                 * single use case.
                  */
                 fun sampleMessages(sampleMessages: List<JsonValue>) =
                     sampleMessages(JsonField.of(sampleMessages))

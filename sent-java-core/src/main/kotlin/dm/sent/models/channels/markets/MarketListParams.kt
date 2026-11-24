@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms.tendlc
+package dm.sent.models.channels.markets
 
 import dm.sent.core.Params
 import dm.sent.core.http.Headers
@@ -10,22 +10,24 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Reads what the US `TEN_DLC` market you hold has registered: the `brand` it files under, **every
- * campaign** under `campaigns` (each with its `id` and `inherit`), and its `documents`. It is the
- * `compliance` object `GET /v3/channels/sms/US/TEN_DLC` returns, without the sender and numbers.
+ * Every market you send SMS in, each with its sender, where that sender stands, and what its
+ * compliance holds.
  *
- * Use a campaign's `id` to change it with `PATCH
- * /v3/channels/sms/compliances/US/TEN_DLC/campaigns/{campaignId}`, or to add numbers to it with
- * `POST /v3/channels/sms/numbers/US/TEN_DLC`.
+ * The same entries `GET /v3/channels` reports under `sms`, and the same shape `GET
+ * /v3/channels/sms/{country}/{type}` returns for one of them — so a list, a member read and the
+ * all-channels read cannot describe a market differently.
  *
- * Send `x-profile-id` with an organization key to read one of your profiles' markets.
+ * Send `x-profile-id` with an organization key to list one of your profiles' markets.
  */
-class TenDlcRetrieveComplianceParams
+class MarketListParams
 private constructor(
+    private val channel: String?,
     private val xProfileId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    fun channel(): Optional<String> = Optional.ofNullable(channel)
 
     fun xProfileId(): Optional<String> = Optional.ofNullable(xProfileId)
 
@@ -39,28 +41,32 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): TenDlcRetrieveComplianceParams = builder().build()
+        @JvmStatic fun none(): MarketListParams = builder().build()
 
-        /**
-         * Returns a mutable builder for constructing an instance of
-         * [TenDlcRetrieveComplianceParams].
-         */
+        /** Returns a mutable builder for constructing an instance of [MarketListParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [TenDlcRetrieveComplianceParams]. */
+    /** A builder for [MarketListParams]. */
     class Builder internal constructor() {
 
+        private var channel: String? = null
         private var xProfileId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(tenDlcRetrieveComplianceParams: TenDlcRetrieveComplianceParams) = apply {
-            xProfileId = tenDlcRetrieveComplianceParams.xProfileId
-            additionalHeaders = tenDlcRetrieveComplianceParams.additionalHeaders.toBuilder()
-            additionalQueryParams = tenDlcRetrieveComplianceParams.additionalQueryParams.toBuilder()
+        internal fun from(marketListParams: MarketListParams) = apply {
+            channel = marketListParams.channel
+            xProfileId = marketListParams.xProfileId
+            additionalHeaders = marketListParams.additionalHeaders.toBuilder()
+            additionalQueryParams = marketListParams.additionalQueryParams.toBuilder()
         }
+
+        fun channel(channel: String?) = apply { this.channel = channel }
+
+        /** Alias for calling [Builder.channel] with `channel.orElse(null)`. */
+        fun channel(channel: Optional<String>) = channel(channel.getOrNull())
 
         fun xProfileId(xProfileId: String?) = apply { this.xProfileId = xProfileId }
 
@@ -166,17 +172,24 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [TenDlcRetrieveComplianceParams].
+         * Returns an immutable instance of [MarketListParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): TenDlcRetrieveComplianceParams =
-            TenDlcRetrieveComplianceParams(
+        fun build(): MarketListParams =
+            MarketListParams(
+                channel,
                 xProfileId,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
+
+    fun _pathParam(index: Int): String =
+        when (index) {
+            0 -> channel ?: ""
+            else -> ""
+        }
 
     override fun _headers(): Headers =
         Headers.builder()
@@ -193,15 +206,16 @@ private constructor(
             return true
         }
 
-        return other is TenDlcRetrieveComplianceParams &&
+        return other is MarketListParams &&
+            channel == other.channel &&
             xProfileId == other.xProfileId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(xProfileId, additionalHeaders, additionalQueryParams)
+        Objects.hash(channel, xProfileId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "TenDlcRetrieveComplianceParams{xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "MarketListParams{channel=$channel, xProfileId=$xProfileId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

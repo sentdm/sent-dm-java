@@ -31,6 +31,7 @@ internal class WebhookServiceTest {
                     .idempotencyKey("req_abc123_retry1")
                     .xProfileId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .sandbox(false)
+                    .agentId(null)
                     .displayName("Order Notifications")
                     .endpointUrl("https://example.com/webhooks/orders")
                     .eventFilters(

@@ -31,10 +31,13 @@ private constructor(
     private val channel: JsonField<String>,
     private val messageId: JsonField<String>,
     private val outboundNumber: JsonField<String>,
+    private val parentMessageId: JsonField<String>,
     private val reason: JsonField<String>,
     private val reasonCode: JsonField<String>,
     private val scheduleReason: JsonField<String>,
     private val scheduledAt: JsonField<String>,
+    private val sentAgentId: JsonField<String>,
+    private val sentInstanceId: JsonField<String>,
     private val templateId: JsonField<String>,
     private val templateName: JsonField<String>,
     private val updatedAt: JsonField<String>,
@@ -54,6 +57,9 @@ private constructor(
         @JsonProperty("outbound_number")
         @ExcludeMissing
         outboundNumber: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("parent_message_id")
+        @ExcludeMissing
+        parentMessageId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("reason") @ExcludeMissing reason: JsonField<String> = JsonMissing.of(),
         @JsonProperty("reason_code")
         @ExcludeMissing
@@ -64,6 +70,12 @@ private constructor(
         @JsonProperty("scheduled_at")
         @ExcludeMissing
         scheduledAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("sent_agent_id")
+        @ExcludeMissing
+        sentAgentId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("sent_instance_id")
+        @ExcludeMissing
+        sentInstanceId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("template_id")
         @ExcludeMissing
         templateId: JsonField<String> = JsonMissing.of(),
@@ -79,10 +91,13 @@ private constructor(
         channel,
         messageId,
         outboundNumber,
+        parentMessageId,
         reason,
         reasonCode,
         scheduleReason,
         scheduledAt,
+        sentAgentId,
+        sentInstanceId,
         templateId,
         templateName,
         updatedAt,
@@ -151,6 +166,17 @@ private constructor(
     fun outboundNumber(): Optional<String> = outboundNumber.getOptional("outbound_number")
 
     /**
+     * When this message is another send of a message you sent earlier, the id of that original
+     * message; omitted for every other message. The new send has its own message_id, so this ties
+     * its events back to the message you sent. Always the first message, however many sends lie
+     * between them.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun parentMessageId(): Optional<String> = parentMessageId.getOptional("parent_message_id")
+
+    /**
      * A human-readable sentence for ReasonCode, for example "The recipient is not registered on
      * this channel". Omitted whenever reason_code is.
      *
@@ -193,6 +219,24 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun scheduledAt(): Optional<String> = scheduledAt.getOptional("scheduled_at")
+
+    /**
+     * The Sent agent (Sent Agents) that sent this message, when one did. Not the RCS agent_id
+     * above: that names the RCS sender agent, this names the autonomous agent running on the
+     * account.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun sentAgentId(): Optional<String> = sentAgentId.getOptional("sent_agent_id")
+
+    /**
+     * The conversation (agent × contact) the message belongs to, when a Sent agent sent it.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun sentInstanceId(): Optional<String> = sentInstanceId.getOptional("sent_instance_id")
 
     /**
      * The template the message was sent from, when it was sent from one.
@@ -273,6 +317,15 @@ private constructor(
     fun _outboundNumber(): JsonField<String> = outboundNumber
 
     /**
+     * Returns the raw JSON value of [parentMessageId].
+     *
+     * Unlike [parentMessageId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("parent_message_id")
+    @ExcludeMissing
+    fun _parentMessageId(): JsonField<String> = parentMessageId
+
+    /**
      * Returns the raw JSON value of [reason].
      *
      * Unlike [reason], this method doesn't throw if the JSON field has an unexpected type.
@@ -303,6 +356,24 @@ private constructor(
     @JsonProperty("scheduled_at")
     @ExcludeMissing
     fun _scheduledAt(): JsonField<String> = scheduledAt
+
+    /**
+     * Returns the raw JSON value of [sentAgentId].
+     *
+     * Unlike [sentAgentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("sent_agent_id")
+    @ExcludeMissing
+    fun _sentAgentId(): JsonField<String> = sentAgentId
+
+    /**
+     * Returns the raw JSON value of [sentInstanceId].
+     *
+     * Unlike [sentInstanceId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("sent_instance_id")
+    @ExcludeMissing
+    fun _sentInstanceId(): JsonField<String> = sentInstanceId
 
     /**
      * Returns the raw JSON value of [templateId].
@@ -362,10 +433,13 @@ private constructor(
         private var channel: JsonField<String> = JsonMissing.of()
         private var messageId: JsonField<String> = JsonMissing.of()
         private var outboundNumber: JsonField<String> = JsonMissing.of()
+        private var parentMessageId: JsonField<String> = JsonMissing.of()
         private var reason: JsonField<String> = JsonMissing.of()
         private var reasonCode: JsonField<String> = JsonMissing.of()
         private var scheduleReason: JsonField<String> = JsonMissing.of()
         private var scheduledAt: JsonField<String> = JsonMissing.of()
+        private var sentAgentId: JsonField<String> = JsonMissing.of()
+        private var sentInstanceId: JsonField<String> = JsonMissing.of()
         private var templateId: JsonField<String> = JsonMissing.of()
         private var templateName: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<String> = JsonMissing.of()
@@ -380,10 +454,13 @@ private constructor(
             channel = messageEventPayload.channel
             messageId = messageEventPayload.messageId
             outboundNumber = messageEventPayload.outboundNumber
+            parentMessageId = messageEventPayload.parentMessageId
             reason = messageEventPayload.reason
             reasonCode = messageEventPayload.reasonCode
             scheduleReason = messageEventPayload.scheduleReason
             scheduledAt = messageEventPayload.scheduledAt
+            sentAgentId = messageEventPayload.sentAgentId
+            sentInstanceId = messageEventPayload.sentInstanceId
             templateId = messageEventPayload.templateId
             templateName = messageEventPayload.templateName
             updatedAt = messageEventPayload.updatedAt
@@ -495,6 +572,30 @@ private constructor(
         }
 
         /**
+         * When this message is another send of a message you sent earlier, the id of that original
+         * message; omitted for every other message. The new send has its own message_id, so this
+         * ties its events back to the message you sent. Always the first message, however many
+         * sends lie between them.
+         */
+        fun parentMessageId(parentMessageId: String?) =
+            parentMessageId(JsonField.ofNullable(parentMessageId))
+
+        /** Alias for calling [Builder.parentMessageId] with `parentMessageId.orElse(null)`. */
+        fun parentMessageId(parentMessageId: Optional<String>) =
+            parentMessageId(parentMessageId.getOrNull())
+
+        /**
+         * Sets [Builder.parentMessageId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.parentMessageId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun parentMessageId(parentMessageId: JsonField<String>) = apply {
+            this.parentMessageId = parentMessageId
+        }
+
+        /**
          * A human-readable sentence for ReasonCode, for example "The recipient is not registered on
          * this channel". Omitted whenever reason_code is.
          */
@@ -577,6 +678,44 @@ private constructor(
          * value.
          */
         fun scheduledAt(scheduledAt: JsonField<String>) = apply { this.scheduledAt = scheduledAt }
+
+        /**
+         * The Sent agent (Sent Agents) that sent this message, when one did. Not the RCS agent_id
+         * above: that names the RCS sender agent, this names the autonomous agent running on the
+         * account.
+         */
+        fun sentAgentId(sentAgentId: String?) = sentAgentId(JsonField.ofNullable(sentAgentId))
+
+        /** Alias for calling [Builder.sentAgentId] with `sentAgentId.orElse(null)`. */
+        fun sentAgentId(sentAgentId: Optional<String>) = sentAgentId(sentAgentId.getOrNull())
+
+        /**
+         * Sets [Builder.sentAgentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sentAgentId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun sentAgentId(sentAgentId: JsonField<String>) = apply { this.sentAgentId = sentAgentId }
+
+        /** The conversation (agent × contact) the message belongs to, when a Sent agent sent it. */
+        fun sentInstanceId(sentInstanceId: String?) =
+            sentInstanceId(JsonField.ofNullable(sentInstanceId))
+
+        /** Alias for calling [Builder.sentInstanceId] with `sentInstanceId.orElse(null)`. */
+        fun sentInstanceId(sentInstanceId: Optional<String>) =
+            sentInstanceId(sentInstanceId.getOrNull())
+
+        /**
+         * Sets [Builder.sentInstanceId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sentInstanceId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun sentInstanceId(sentInstanceId: JsonField<String>) = apply {
+            this.sentInstanceId = sentInstanceId
+        }
 
         /** The template the message was sent from, when it was sent from one. */
         fun templateId(templateId: String?) = templateId(JsonField.ofNullable(templateId))
@@ -667,10 +806,13 @@ private constructor(
                 channel,
                 messageId,
                 outboundNumber,
+                parentMessageId,
                 reason,
                 reasonCode,
                 scheduleReason,
                 scheduledAt,
+                sentAgentId,
+                sentInstanceId,
                 templateId,
                 templateName,
                 updatedAt,
@@ -700,10 +842,13 @@ private constructor(
         channel()
         messageId()
         outboundNumber()
+        parentMessageId()
         reason()
         reasonCode()
         scheduleReason()
         scheduledAt()
+        sentAgentId()
+        sentInstanceId()
         templateId()
         templateName()
         updatedAt()
@@ -732,10 +877,13 @@ private constructor(
             (if (channel.asKnown().isPresent) 1 else 0) +
             (if (messageId.asKnown().isPresent) 1 else 0) +
             (if (outboundNumber.asKnown().isPresent) 1 else 0) +
+            (if (parentMessageId.asKnown().isPresent) 1 else 0) +
             (if (reason.asKnown().isPresent) 1 else 0) +
             (if (reasonCode.asKnown().isPresent) 1 else 0) +
             (if (scheduleReason.asKnown().isPresent) 1 else 0) +
             (if (scheduledAt.asKnown().isPresent) 1 else 0) +
+            (if (sentAgentId.asKnown().isPresent) 1 else 0) +
+            (if (sentInstanceId.asKnown().isPresent) 1 else 0) +
             (if (templateId.asKnown().isPresent) 1 else 0) +
             (if (templateName.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
@@ -753,10 +901,13 @@ private constructor(
             channel == other.channel &&
             messageId == other.messageId &&
             outboundNumber == other.outboundNumber &&
+            parentMessageId == other.parentMessageId &&
             reason == other.reason &&
             reasonCode == other.reasonCode &&
             scheduleReason == other.scheduleReason &&
             scheduledAt == other.scheduledAt &&
+            sentAgentId == other.sentAgentId &&
+            sentInstanceId == other.sentInstanceId &&
             templateId == other.templateId &&
             templateName == other.templateName &&
             updatedAt == other.updatedAt &&
@@ -772,10 +923,13 @@ private constructor(
             channel,
             messageId,
             outboundNumber,
+            parentMessageId,
             reason,
             reasonCode,
             scheduleReason,
             scheduledAt,
+            sentAgentId,
+            sentInstanceId,
             templateId,
             templateName,
             updatedAt,
@@ -786,5 +940,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "MessageEventPayload{messageStatus=$messageStatus, accountId=$accountId, agentId=$agentId, body=$body, channel=$channel, messageId=$messageId, outboundNumber=$outboundNumber, reason=$reason, reasonCode=$reasonCode, scheduleReason=$scheduleReason, scheduledAt=$scheduledAt, templateId=$templateId, templateName=$templateName, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "MessageEventPayload{messageStatus=$messageStatus, accountId=$accountId, agentId=$agentId, body=$body, channel=$channel, messageId=$messageId, outboundNumber=$outboundNumber, parentMessageId=$parentMessageId, reason=$reason, reasonCode=$reasonCode, scheduleReason=$scheduleReason, scheduledAt=$scheduledAt, sentAgentId=$sentAgentId, sentInstanceId=$sentInstanceId, templateId=$templateId, templateName=$templateName, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

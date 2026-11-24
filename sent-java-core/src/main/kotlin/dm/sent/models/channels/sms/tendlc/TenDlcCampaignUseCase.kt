@@ -36,8 +36,9 @@ private constructor(
     ) : this(sampleMessages, useCase, mutableMapOf())
 
     /**
-     * Sample messages. TCR sample1..sample5 for this use case. One to five, each carrying the brand
-     * name and an opt-out instruction.
+     * Sample messages. TCR sample1..sample5 for this use case. One to five, each 20 to 1024
+     * characters and carrying the brand name and an opt-out instruction. At most five across the
+     * campaign, and at least two when a high-volume campaign has a single use case.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type or is unexpectedly
      *   missing or null (e.g. if the server responded with an unexpected value).
@@ -109,8 +110,9 @@ private constructor(
         }
 
         /**
-         * Sample messages. TCR sample1..sample5 for this use case. One to five, each carrying the
-         * brand name and an opt-out instruction.
+         * Sample messages. TCR sample1..sample5 for this use case. One to five, each 20 to 1024
+         * characters and carrying the brand name and an opt-out instruction. At most five across
+         * the campaign, and at least two when a high-volume campaign has a single use case.
          */
         fun sampleMessages(sampleMessages: List<JsonValue>) =
             sampleMessages(JsonField.of(sampleMessages))

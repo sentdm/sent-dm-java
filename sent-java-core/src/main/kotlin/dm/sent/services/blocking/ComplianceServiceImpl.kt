@@ -45,6 +45,7 @@ class ComplianceServiceImpl internal constructor(private val clientOptions: Clie
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ComplianceService =
         ComplianceServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    @Deprecated("deprecated")
     override fun retrieveRequirements(
         params: ComplianceRetrieveRequirementsParams,
         requestOptions: RequestOptions,
@@ -68,6 +69,7 @@ class ComplianceServiceImpl internal constructor(private val clientOptions: Clie
         private val retrieveRequirementsHandler: Handler<ApiResponseOfComplianceRequirements> =
             jsonHandler<ApiResponseOfComplianceRequirements>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun retrieveRequirements(
             params: ComplianceRetrieveRequirementsParams,
             requestOptions: RequestOptions,

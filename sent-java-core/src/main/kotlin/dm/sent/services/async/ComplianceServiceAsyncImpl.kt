@@ -46,6 +46,7 @@ class ComplianceServiceAsyncImpl internal constructor(private val clientOptions:
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ComplianceServiceAsync =
         ComplianceServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    @Deprecated("deprecated")
     override fun retrieveRequirements(
         params: ComplianceRetrieveRequirementsParams,
         requestOptions: RequestOptions,
@@ -69,6 +70,7 @@ class ComplianceServiceAsyncImpl internal constructor(private val clientOptions:
         private val retrieveRequirementsHandler: Handler<ApiResponseOfComplianceRequirements> =
             jsonHandler<ApiResponseOfComplianceRequirements>(clientOptions.jsonMapper)
 
+        @Deprecated("deprecated")
         override fun retrieveRequirements(
             params: ComplianceRetrieveRequirementsParams,
             requestOptions: RequestOptions,
