@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.52.0](https://github.com/sentdm/sent-dm-java/compare/v0.51.0...v0.52.0) (2026-11-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** markets move to channels.markets and 10DLC numbers to markets.add_numbers
+
+### Features
+
+* **api:** markets move to channels.markets and 10DLC numbers to markets.add_numbers ([a3b9688](https://github.com/sentdm/sent-dm-java/commit/a3b96886dd79f200947d0dde678ace82d7ffcdd7))
+
 ## [0.51.0](https://github.com/sentdm/sent-dm-java/compare/v0.50.0...v0.51.0) (2026-11-12)
 
 
