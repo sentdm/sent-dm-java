@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms.tendlc
+package dm.sent.models.channels.markets
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -11,7 +11,6 @@ import dm.sent.core.JsonField
 import dm.sent.core.JsonMissing
 import dm.sent.core.JsonValue
 import dm.sent.errors.SentInvalidDataException
-import dm.sent.models.channels.sms.SuppliedCompliance
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
 import java.util.Collections
@@ -20,10 +19,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Standard API response envelope for all v3 endpoints */
-class ApiResponseOfSuppliedCompliance
+class ApiResponseOfChannelMarket
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val data: JsonField<SuppliedCompliance>,
+    private val data: JsonField<ChannelMarket>,
     private val error: JsonField<ErrorDetail>,
     private val meta: JsonField<ApiMeta>,
     private val success: JsonField<Boolean>,
@@ -32,35 +31,26 @@ private constructor(
 
     @JsonCreator
     private constructor(
-        @JsonProperty("data")
-        @ExcludeMissing
-        data: JsonField<SuppliedCompliance> = JsonMissing.of(),
+        @JsonProperty("data") @ExcludeMissing data: JsonField<ChannelMarket> = JsonMissing.of(),
         @JsonProperty("error") @ExcludeMissing error: JsonField<ErrorDetail> = JsonMissing.of(),
         @JsonProperty("meta") @ExcludeMissing meta: JsonField<ApiMeta> = JsonMissing.of(),
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
     ) : this(data, error, meta, success, mutableMapOf())
 
     /**
-     * What a market has been given: the identity it registers under, its programme, and any
-     * documents attached.
+     * One market the profile sends in on a channel — its sender, where that sender stands, and what
+     * the market wants. Named for no one channel, as the routes it answers are not
+     * (/v3/channels/{channel}/{country}/{type}); SMS is the channel with markets today.
      *
-     * What it does not carry is what the market asks for. That is the subject of GET
-     * /v3/compliance/requirements, and it is the same answer for every caller — a description of
-     * what a compliance regime wants, not a record of one customer's progress through it. It was
-     * reported here as well for a while, which put the same array in six response shapes and left a
-     * caller deciding which of two sources to believe.
-     *
-     * Present on a list read for markets that register (carrying brand and campaign), but with
-     * documents absent — documents are not fetched for a list, because a catalog lookup and a
-     * document read per market would multiply across a page. Absent documents is distinct from an
-     * empty list: absent says they were not fetched; empty says the market has been given none. The
-     * parent object is null only when the market registers with nobody and compliance was not
-     * computed — nothing to show at all.
+     * A profile may send in several: it is a tenant, not a market. Each carries its own status,
+     * because a profile can be live in one country and mid-registration in another — and each
+     * carries what it still owes, rather than that being reported in a separate array a caller has
+     * to join on.
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun data(): Optional<SuppliedCompliance> = data.getOptional("data")
+    fun data(): Optional<ChannelMarket> = data.getOptional("data")
 
     /**
      * Error information
@@ -91,7 +81,7 @@ private constructor(
      *
      * Unlike [data], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<SuppliedCompliance> = data
+    @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<ChannelMarket> = data
 
     /**
      * Returns the raw JSON value of [error].
@@ -129,62 +119,52 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of
-         * [ApiResponseOfSuppliedCompliance].
+         * Returns a mutable builder for constructing an instance of [ApiResponseOfChannelMarket].
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ApiResponseOfSuppliedCompliance]. */
+    /** A builder for [ApiResponseOfChannelMarket]. */
     class Builder internal constructor() {
 
-        private var data: JsonField<SuppliedCompliance> = JsonMissing.of()
+        private var data: JsonField<ChannelMarket> = JsonMissing.of()
         private var error: JsonField<ErrorDetail> = JsonMissing.of()
         private var meta: JsonField<ApiMeta> = JsonMissing.of()
         private var success: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(apiResponseOfSuppliedCompliance: ApiResponseOfSuppliedCompliance) =
-            apply {
-                data = apiResponseOfSuppliedCompliance.data
-                error = apiResponseOfSuppliedCompliance.error
-                meta = apiResponseOfSuppliedCompliance.meta
-                success = apiResponseOfSuppliedCompliance.success
-                additionalProperties =
-                    apiResponseOfSuppliedCompliance.additionalProperties.toMutableMap()
-            }
+        internal fun from(apiResponseOfChannelMarket: ApiResponseOfChannelMarket) = apply {
+            data = apiResponseOfChannelMarket.data
+            error = apiResponseOfChannelMarket.error
+            meta = apiResponseOfChannelMarket.meta
+            success = apiResponseOfChannelMarket.success
+            additionalProperties = apiResponseOfChannelMarket.additionalProperties.toMutableMap()
+        }
 
         /**
-         * What a market has been given: the identity it registers under, its programme, and any
-         * documents attached.
+         * One market the profile sends in on a channel — its sender, where that sender stands, and
+         * what the market wants. Named for no one channel, as the routes it answers are not
+         * (/v3/channels/{channel}/{country}/{type}); SMS is the channel with markets today.
          *
-         * What it does not carry is what the market asks for. That is the subject of GET
-         * /v3/compliance/requirements, and it is the same answer for every caller — a description
-         * of what a compliance regime wants, not a record of one customer's progress through it. It
-         * was reported here as well for a while, which put the same array in six response shapes
-         * and left a caller deciding which of two sources to believe.
-         *
-         * Present on a list read for markets that register (carrying brand and campaign), but with
-         * documents absent — documents are not fetched for a list, because a catalog lookup and a
-         * document read per market would multiply across a page. Absent documents is distinct from
-         * an empty list: absent says they were not fetched; empty says the market has been given
-         * none. The parent object is null only when the market registers with nobody and compliance
-         * was not computed — nothing to show at all.
+         * A profile may send in several: it is a tenant, not a market. Each carries its own status,
+         * because a profile can be live in one country and mid-registration in another — and each
+         * carries what it still owes, rather than that being reported in a separate array a caller
+         * has to join on.
          */
-        fun data(data: SuppliedCompliance?) = data(JsonField.ofNullable(data))
+        fun data(data: ChannelMarket?) = data(JsonField.ofNullable(data))
 
         /** Alias for calling [Builder.data] with `data.orElse(null)`. */
-        fun data(data: Optional<SuppliedCompliance>) = data(data.getOrNull())
+        fun data(data: Optional<ChannelMarket>) = data(data.getOrNull())
 
         /**
          * Sets [Builder.data] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.data] with a well-typed [SuppliedCompliance] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.data] with a well-typed [ChannelMarket] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun data(data: JsonField<SuppliedCompliance>) = apply { this.data = data }
+        fun data(data: JsonField<ChannelMarket>) = apply { this.data = data }
 
         /** Error information */
         fun error(error: ErrorDetail?) = error(JsonField.ofNullable(error))
@@ -243,12 +223,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ApiResponseOfSuppliedCompliance].
+         * Returns an immutable instance of [ApiResponseOfChannelMarket].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ApiResponseOfSuppliedCompliance =
-            ApiResponseOfSuppliedCompliance(
+        fun build(): ApiResponseOfChannelMarket =
+            ApiResponseOfChannelMarket(
                 data,
                 error,
                 meta,
@@ -267,7 +247,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): ApiResponseOfSuppliedCompliance = apply {
+    fun validate(): ApiResponseOfChannelMarket = apply {
         if (validated) {
             return@apply
         }
@@ -304,7 +284,7 @@ private constructor(
             return true
         }
 
-        return other is ApiResponseOfSuppliedCompliance &&
+        return other is ApiResponseOfChannelMarket &&
             data == other.data &&
             error == other.error &&
             meta == other.meta &&
@@ -319,5 +299,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ApiResponseOfSuppliedCompliance{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
+        "ApiResponseOfChannelMarket{data=$data, error=$error, meta=$meta, success=$success, additionalProperties=$additionalProperties}"
 }

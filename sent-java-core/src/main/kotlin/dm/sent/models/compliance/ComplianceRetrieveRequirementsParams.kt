@@ -10,6 +10,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
+ * **Deprecated.** Use `GET /v3/channels/{channel}/{country}/compliance` instead, and expect this to
+ * be removed in a future release. It answers exactly as before, so nothing needs to change today.
+ *
  * **Call this first.** It returns what a channel, country and sender type demand before you can
  * send there — and `setup[]`, the calls that satisfy those demands, in order, each with a body you
  * can copy and send as it stands. You never have to track forty countries' rules yourself.
@@ -68,6 +71,7 @@ import kotlin.jvm.optionals.getOrNull
  * `compliance` array at all. A `sender_id_pattern` may still be present — many markets constrain
  * the sender string without registering anything.
  */
+@Deprecated("deprecated")
 class ComplianceRetrieveRequirementsParams
 private constructor(
     private val channel: String?,

@@ -30,9 +30,11 @@ private constructor(
     private val category: JsonField<String>,
     private val channels: JsonField<List<String>>,
     private val createdAt: JsonField<OffsetDateTime>,
+    private val definition: JsonField<TemplateDefinition>,
     private val isPublished: JsonField<Boolean>,
     private val language: JsonField<String>,
     private val name: JsonField<String>,
+    private val slug: JsonField<String>,
     private val status: JsonField<String>,
     private val updatedAt: JsonField<OffsetDateTime>,
     private val variables: JsonField<List<String>>,
@@ -55,11 +57,15 @@ private constructor(
         @JsonProperty("created_at")
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("definition")
+        @ExcludeMissing
+        definition: JsonField<TemplateDefinition> = JsonMissing.of(),
         @JsonProperty("is_published")
         @ExcludeMissing
         isPublished: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("language") @ExcludeMissing language: JsonField<String> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("slug") @ExcludeMissing slug: JsonField<String> = JsonMissing.of(),
         @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
         @JsonProperty("updated_at")
         @ExcludeMissing
@@ -74,9 +80,11 @@ private constructor(
         category,
         channels,
         createdAt,
+        definition,
         isPublished,
         language,
         name,
+        slug,
         status,
         updatedAt,
         variables,
@@ -153,6 +161,14 @@ private constructor(
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
 
     /**
+     * Complete definition of a message template including header, body, footer, and buttons
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun definition(): Optional<TemplateDefinition> = definition.getOptional("definition")
+
+    /**
      * Whether the template is published and active
      *
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -175,6 +191,15 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun name(): Optional<String> = name.getOptional("name")
+
+    /**
+     * The template's slug: a stable, URL-safe name a send can use in place of the id (template.slug
+     * on POST /v3/messages). Given at creation from the name and never changed.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun slug(): Optional<String> = slug.getOptional("slug")
 
     /**
      * Template status: DRAFT, PENDING, APPROVED, REJECTED. A template created with
@@ -248,6 +273,15 @@ private constructor(
     fun _createdAt(): JsonField<OffsetDateTime> = createdAt
 
     /**
+     * Returns the raw JSON value of [definition].
+     *
+     * Unlike [definition], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("definition")
+    @ExcludeMissing
+    fun _definition(): JsonField<TemplateDefinition> = definition
+
+    /**
      * Returns the raw JSON value of [isPublished].
      *
      * Unlike [isPublished], this method doesn't throw if the JSON field has an unexpected type.
@@ -269,6 +303,13 @@ private constructor(
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+    /**
+     * Returns the raw JSON value of [slug].
+     *
+     * Unlike [slug], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("slug") @ExcludeMissing fun _slug(): JsonField<String> = slug
 
     /**
      * Returns the raw JSON value of [status].
@@ -327,9 +368,11 @@ private constructor(
         private var category: JsonField<String> = JsonMissing.of()
         private var channels: JsonField<MutableList<String>>? = null
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var definition: JsonField<TemplateDefinition> = JsonMissing.of()
         private var isPublished: JsonField<Boolean> = JsonMissing.of()
         private var language: JsonField<String> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
+        private var slug: JsonField<String> = JsonMissing.of()
         private var status: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var variables: JsonField<MutableList<String>>? = null
@@ -343,9 +386,11 @@ private constructor(
             category = template.category
             channels = template.channels.map { it.toMutableList() }
             createdAt = template.createdAt
+            definition = template.definition
             isPublished = template.isPublished
             language = template.language
             name = template.name
+            slug = template.slug
             status = template.status
             updatedAt = template.updatedAt
             variables = template.variables.map { it.toMutableList() }
@@ -474,6 +519,25 @@ private constructor(
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
 
+        /** Complete definition of a message template including header, body, footer, and buttons */
+        fun definition(definition: TemplateDefinition?) =
+            definition(JsonField.ofNullable(definition))
+
+        /** Alias for calling [Builder.definition] with `definition.orElse(null)`. */
+        fun definition(definition: Optional<TemplateDefinition>) =
+            definition(definition.getOrNull())
+
+        /**
+         * Sets [Builder.definition] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.definition] with a well-typed [TemplateDefinition] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun definition(definition: JsonField<TemplateDefinition>) = apply {
+            this.definition = definition
+        }
+
         /** Whether the template is published and active */
         fun isPublished(isPublished: Boolean) = isPublished(JsonField.of(isPublished))
 
@@ -507,6 +571,23 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { this.name = name }
+
+        /**
+         * The template's slug: a stable, URL-safe name a send can use in place of the id
+         * (template.slug on POST /v3/messages). Given at creation from the name and never changed.
+         */
+        fun slug(slug: String?) = slug(JsonField.ofNullable(slug))
+
+        /** Alias for calling [Builder.slug] with `slug.orElse(null)`. */
+        fun slug(slug: Optional<String>) = slug(slug.getOrNull())
+
+        /**
+         * Sets [Builder.slug] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.slug] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun slug(slug: JsonField<String>) = apply { this.slug = slug }
 
         /**
          * Template status: DRAFT, PENDING, APPROVED, REJECTED. A template created with
@@ -605,9 +686,11 @@ private constructor(
                 category,
                 (channels ?: JsonMissing.of()).map { it.toImmutable() },
                 createdAt,
+                definition,
                 isPublished,
                 language,
                 name,
+                slug,
                 status,
                 updatedAt,
                 (variables ?: JsonMissing.of()).map { it.toImmutable() },
@@ -636,9 +719,11 @@ private constructor(
         category()
         channels()
         createdAt()
+        definition().ifPresent { it.validate() }
         isPublished()
         language()
         name()
+        slug()
         status()
         updatedAt()
         variables()
@@ -666,9 +751,11 @@ private constructor(
             (if (category.asKnown().isPresent) 1 else 0) +
             (channels.asKnown().getOrNull()?.size ?: 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
+            (definition.asKnown().getOrNull()?.validity() ?: 0) +
             (if (isPublished.asKnown().isPresent) 1 else 0) +
             (if (language.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
+            (if (slug.asKnown().isPresent) 1 else 0) +
             (if (status.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (variables.asKnown().getOrNull()?.size ?: 0)
@@ -685,9 +772,11 @@ private constructor(
             category == other.category &&
             channels == other.channels &&
             createdAt == other.createdAt &&
+            definition == other.definition &&
             isPublished == other.isPublished &&
             language == other.language &&
             name == other.name &&
+            slug == other.slug &&
             status == other.status &&
             updatedAt == other.updatedAt &&
             variables == other.variables &&
@@ -702,9 +791,11 @@ private constructor(
             category,
             channels,
             createdAt,
+            definition,
             isPublished,
             language,
             name,
+            slug,
             status,
             updatedAt,
             variables,
@@ -715,5 +806,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Template{customerId=$customerId, id=$id, autoReplyAction=$autoReplyAction, category=$category, channels=$channels, createdAt=$createdAt, isPublished=$isPublished, language=$language, name=$name, status=$status, updatedAt=$updatedAt, variables=$variables, additionalProperties=$additionalProperties}"
+        "Template{customerId=$customerId, id=$id, autoReplyAction=$autoReplyAction, category=$category, channels=$channels, createdAt=$createdAt, definition=$definition, isPublished=$isPublished, language=$language, name=$name, slug=$slug, status=$status, updatedAt=$updatedAt, variables=$variables, additionalProperties=$additionalProperties}"
 }

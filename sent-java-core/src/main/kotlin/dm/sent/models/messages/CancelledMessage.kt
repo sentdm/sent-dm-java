@@ -38,6 +38,7 @@ private constructor(
     private val direction: JsonField<String>,
     private val events: JsonField<List<MessageStatusEvent>>,
     private val messageBody: JsonField<MessageBody>,
+    private val parentMessageId: JsonField<String>,
     private val phone: JsonField<String>,
     private val phoneInternational: JsonField<String>,
     private val price: JsonField<Double>,
@@ -73,6 +74,9 @@ private constructor(
         @JsonProperty("message_body")
         @ExcludeMissing
         messageBody: JsonField<MessageBody> = JsonMissing.of(),
+        @JsonProperty("parent_message_id")
+        @ExcludeMissing
+        parentMessageId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("phone") @ExcludeMissing phone: JsonField<String> = JsonMissing.of(),
         @JsonProperty("phone_international")
         @ExcludeMissing
@@ -108,6 +112,7 @@ private constructor(
         direction,
         events,
         messageBody,
+        parentMessageId,
         phone,
         phoneInternational,
         price,
@@ -133,6 +138,7 @@ private constructor(
             .direction(direction)
             .events(events)
             .messageBody(messageBody)
+            .parentMessageId(parentMessageId)
             .phone(phone)
             .phoneInternational(phoneInternational)
             .price(price)
@@ -208,6 +214,16 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun messageBody(): Optional<MessageBody> = messageBody.getOptional("message_body")
+
+    /**
+     * When this message is another send of a message you sent earlier, the id of that original
+     * message; null for every other message. Always the first message, however many sends lie
+     * between them.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun parentMessageId(): Optional<String> = parentMessageId.getOptional("parent_message_id")
 
     /**
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
@@ -362,6 +378,15 @@ private constructor(
     fun _messageBody(): JsonField<MessageBody> = messageBody
 
     /**
+     * Returns the raw JSON value of [parentMessageId].
+     *
+     * Unlike [parentMessageId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("parent_message_id")
+    @ExcludeMissing
+    fun _parentMessageId(): JsonField<String> = parentMessageId
+
+    /**
      * Returns the raw JSON value of [phone].
      *
      * Unlike [phone], this method doesn't throw if the JSON field has an unexpected type.
@@ -478,6 +503,7 @@ private constructor(
         private var direction: JsonField<String> = JsonMissing.of()
         private var events: JsonField<MutableList<MessageStatusEvent>>? = null
         private var messageBody: JsonField<MessageBody> = JsonMissing.of()
+        private var parentMessageId: JsonField<String> = JsonMissing.of()
         private var phone: JsonField<String> = JsonMissing.of()
         private var phoneInternational: JsonField<String> = JsonMissing.of()
         private var price: JsonField<Double> = JsonMissing.of()
@@ -502,6 +528,7 @@ private constructor(
             direction = cancelledMessage.direction
             events = cancelledMessage.events.map { it.toMutableList() }
             messageBody = cancelledMessage.messageBody
+            parentMessageId = cancelledMessage.parentMessageId
             phone = cancelledMessage.phone
             phoneInternational = cancelledMessage.phoneInternational
             price = cancelledMessage.price
@@ -660,6 +687,29 @@ private constructor(
          */
         fun messageBody(messageBody: JsonField<MessageBody>) = apply {
             this.messageBody = messageBody
+        }
+
+        /**
+         * When this message is another send of a message you sent earlier, the id of that original
+         * message; null for every other message. Always the first message, however many sends lie
+         * between them.
+         */
+        fun parentMessageId(parentMessageId: String?) =
+            parentMessageId(JsonField.ofNullable(parentMessageId))
+
+        /** Alias for calling [Builder.parentMessageId] with `parentMessageId.orElse(null)`. */
+        fun parentMessageId(parentMessageId: Optional<String>) =
+            parentMessageId(parentMessageId.getOrNull())
+
+        /**
+         * Sets [Builder.parentMessageId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.parentMessageId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun parentMessageId(parentMessageId: JsonField<String>) = apply {
+            this.parentMessageId = parentMessageId
         }
 
         fun phone(phone: String) = phone(JsonField.of(phone))
@@ -871,6 +921,7 @@ private constructor(
                 direction,
                 (events ?: JsonMissing.of()).map { it.toImmutable() },
                 messageBody,
+                parentMessageId,
                 phone,
                 phoneInternational,
                 price,
@@ -910,6 +961,7 @@ private constructor(
         direction()
         events().ifPresent { it.forEach { it.validate() } }
         messageBody().ifPresent { it.validate() }
+        parentMessageId()
         phone()
         phoneInternational()
         price()
@@ -948,6 +1000,7 @@ private constructor(
             (if (direction.asKnown().isPresent) 1 else 0) +
             (events.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (messageBody.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (parentMessageId.asKnown().isPresent) 1 else 0) +
             (if (phone.asKnown().isPresent) 1 else 0) +
             (if (phoneInternational.asKnown().isPresent) 1 else 0) +
             (if (price.asKnown().isPresent) 1 else 0) +
@@ -975,6 +1028,7 @@ private constructor(
             direction == other.direction &&
             events == other.events &&
             messageBody == other.messageBody &&
+            parentMessageId == other.parentMessageId &&
             phone == other.phone &&
             phoneInternational == other.phoneInternational &&
             price == other.price &&
@@ -1000,6 +1054,7 @@ private constructor(
             direction,
             events,
             messageBody,
+            parentMessageId,
             phone,
             phoneInternational,
             price,
@@ -1018,5 +1073,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CancelledMessage{id=$id, activeContactPrice=$activeContactPrice, channel=$channel, contactId=$contactId, createdAt=$createdAt, customerId=$customerId, direction=$direction, events=$events, messageBody=$messageBody, phone=$phone, phoneInternational=$phoneInternational, price=$price, reason=$reason, reasonCode=$reasonCode, regionCode=$regionCode, status=$status, templateCategory=$templateCategory, templateId=$templateId, templateName=$templateName, scheduledAt=$scheduledAt, additionalProperties=$additionalProperties}"
+        "CancelledMessage{id=$id, activeContactPrice=$activeContactPrice, channel=$channel, contactId=$contactId, createdAt=$createdAt, customerId=$customerId, direction=$direction, events=$events, messageBody=$messageBody, parentMessageId=$parentMessageId, phone=$phone, phoneInternational=$phoneInternational, price=$price, reason=$reason, reasonCode=$reasonCode, regionCode=$regionCode, status=$status, templateCategory=$templateCategory, templateId=$templateId, templateName=$templateName, scheduledAt=$scheduledAt, additionalProperties=$additionalProperties}"
 }

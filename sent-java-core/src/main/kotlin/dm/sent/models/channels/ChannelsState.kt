@@ -13,8 +13,8 @@ import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
+import dm.sent.models.channels.markets.ChannelMarket
 import dm.sent.models.channels.rcs.RcsAgent
-import dm.sent.models.channels.sms.SmsMarket
 import dm.sent.models.channels.voice.VoiceNumber
 import dm.sent.models.channels.whatsapp.WhatsappChannel
 import java.util.Collections
@@ -32,7 +32,7 @@ private constructor(
     private val customerId: JsonField<String>,
     private val mms: JsonField<List<MmsMarket>>,
     private val rcs: JsonField<RcsAgent>,
-    private val sms: JsonField<List<SmsMarket>>,
+    private val sms: JsonField<List<ChannelMarket>>,
     private val voice: JsonField<List<VoiceNumber>>,
     private val whatsapp: JsonField<WhatsappChannel>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -45,7 +45,7 @@ private constructor(
         customerId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("mms") @ExcludeMissing mms: JsonField<List<MmsMarket>> = JsonMissing.of(),
         @JsonProperty("rcs") @ExcludeMissing rcs: JsonField<RcsAgent> = JsonMissing.of(),
-        @JsonProperty("sms") @ExcludeMissing sms: JsonField<List<SmsMarket>> = JsonMissing.of(),
+        @JsonProperty("sms") @ExcludeMissing sms: JsonField<List<ChannelMarket>> = JsonMissing.of(),
         @JsonProperty("voice")
         @ExcludeMissing
         voice: JsonField<List<VoiceNumber>> = JsonMissing.of(),
@@ -102,7 +102,7 @@ private constructor(
      * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
      *   responded with an unexpected value).
      */
-    fun sms(): Optional<List<SmsMarket>> = sms.getOptional("sms")
+    fun sms(): Optional<List<ChannelMarket>> = sms.getOptional("sms")
 
     /**
      * The numbers this profile carries phone calls on, one entry per number, or empty when none.
@@ -148,7 +148,7 @@ private constructor(
      *
      * Unlike [sms], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("sms") @ExcludeMissing fun _sms(): JsonField<List<SmsMarket>> = sms
+    @JsonProperty("sms") @ExcludeMissing fun _sms(): JsonField<List<ChannelMarket>> = sms
 
     /**
      * Returns the raw JSON value of [voice].
@@ -188,7 +188,7 @@ private constructor(
         private var customerId: JsonField<String> = JsonMissing.of()
         private var mms: JsonField<MutableList<MmsMarket>>? = null
         private var rcs: JsonField<RcsAgent> = JsonMissing.of()
-        private var sms: JsonField<MutableList<SmsMarket>>? = null
+        private var sms: JsonField<MutableList<ChannelMarket>>? = null
         private var voice: JsonField<MutableList<VoiceNumber>>? = null
         private var whatsapp: JsonField<WhatsappChannel> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -283,25 +283,25 @@ private constructor(
          */
         fun rcs(rcs: JsonField<RcsAgent>) = apply { this.rcs = rcs }
 
-        fun sms(sms: List<SmsMarket>) = sms(JsonField.of(sms))
+        fun sms(sms: List<ChannelMarket>) = sms(JsonField.of(sms))
 
         /**
          * Sets [Builder.sms] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.sms] with a well-typed `List<SmsMarket>` value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.sms] with a well-typed `List<ChannelMarket>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun sms(sms: JsonField<List<SmsMarket>>) = apply {
+        fun sms(sms: JsonField<List<ChannelMarket>>) = apply {
             this.sms = sms.map { it.toMutableList() }
         }
 
         /**
-         * Adds a single [SmsMarket] to [Builder.sms].
+         * Adds a single [ChannelMarket] to [Builder.sms].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addSms(sms: SmsMarket) = apply {
+        fun addSms(sms: ChannelMarket) = apply {
             this.sms =
                 (this.sms ?: JsonField.of(mutableListOf())).also { checkKnown("sms", it).add(sms) }
         }

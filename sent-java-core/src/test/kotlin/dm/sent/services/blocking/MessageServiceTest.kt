@@ -131,6 +131,7 @@ internal class MessageServiceTest {
                                     .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                     .build()
                             )
+                            .slug("slug")
                             .build()
                     )
                     .text(null)

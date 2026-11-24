@@ -1,17 +1,19 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms
+package dm.sent.models.channels.markets
 
 import dm.sent.core.JsonValue
 import dm.sent.core.http.Headers
+import dm.sent.models.channels.sms.MarketCompliance
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class SmsUpdateParamsTest {
+internal class MarketUpdateParamsTest {
 
     @Test
     fun create() {
-        SmsUpdateParams.builder()
+        MarketUpdateParams.builder()
+            .channel("sms")
             .country("US")
             .type("ten_dlc")
             .idempotencyKey("req_abc123_retry1")
@@ -20,7 +22,7 @@ internal class SmsUpdateParamsTest {
                 MarketCompliance.builder()
                     .brand(
                         MarketCompliance.Brand.builder()
-                            .businessName("business_name")
+                            .businessName("xxx")
                             .city("city")
                             .contactEmail("dev@stainless.com")
                             .contactName("contact_name")
@@ -33,22 +35,22 @@ internal class SmsUpdateParamsTest {
                             .postalCode("postal_code")
                             .state("state")
                             .street("street")
-                            .taxId("tax_id")
+                            .taxId("xx")
                             .taxIdType("tax_id_type")
                             .website("website")
                             .build()
                     )
                     .campaign(
                         MarketCompliance.Campaign.builder()
-                            .description("description")
+                            .description("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                             .helpKeywords("help_keywords")
-                            .helpMessage("help_message")
+                            .helpMessage("xxxxxxxxxxxxxxxxxxxx")
                             .inherit(true)
                             .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                             .optInKeywords("opt_in_keywords")
-                            .optInMessage("opt_in_message")
+                            .optInMessage("xxxxxxxxxxxxxxxxxxxx")
                             .optOutKeywords("opt_out_keywords")
-                            .optOutMessage("opt_out_message")
+                            .optOutMessage("xxxxxxxxxxxxxxxxxxxx")
                             .privacyPolicyLink("privacy_policy_link")
                             .termsAndConditionsLink("terms_and_conditions_link")
                             .addUseCase(
@@ -70,18 +72,21 @@ internal class SmsUpdateParamsTest {
 
     @Test
     fun pathParams() {
-        val params = SmsUpdateParams.builder().country("US").type("ten_dlc").build()
+        val params =
+            MarketUpdateParams.builder().channel("sms").country("US").type("ten_dlc").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("US")
-        assertThat(params._pathParam(1)).isEqualTo("ten_dlc")
+        assertThat(params._pathParam(0)).isEqualTo("sms")
+        assertThat(params._pathParam(1)).isEqualTo("US")
+        assertThat(params._pathParam(2)).isEqualTo("ten_dlc")
         // out-of-bound path param
-        assertThat(params._pathParam(2)).isEqualTo("")
+        assertThat(params._pathParam(3)).isEqualTo("")
     }
 
     @Test
     fun headers() {
         val params =
-            SmsUpdateParams.builder()
+            MarketUpdateParams.builder()
+                .channel("sms")
                 .country("US")
                 .type("ten_dlc")
                 .idempotencyKey("req_abc123_retry1")
@@ -90,7 +95,7 @@ internal class SmsUpdateParamsTest {
                     MarketCompliance.builder()
                         .brand(
                             MarketCompliance.Brand.builder()
-                                .businessName("business_name")
+                                .businessName("xxx")
                                 .city("city")
                                 .contactEmail("dev@stainless.com")
                                 .contactName("contact_name")
@@ -103,22 +108,22 @@ internal class SmsUpdateParamsTest {
                                 .postalCode("postal_code")
                                 .state("state")
                                 .street("street")
-                                .taxId("tax_id")
+                                .taxId("xx")
                                 .taxIdType("tax_id_type")
                                 .website("website")
                                 .build()
                         )
                         .campaign(
                             MarketCompliance.Campaign.builder()
-                                .description("description")
+                                .description("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                                 .helpKeywords("help_keywords")
-                                .helpMessage("help_message")
+                                .helpMessage("xxxxxxxxxxxxxxxxxxxx")
                                 .inherit(true)
                                 .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                                 .optInKeywords("opt_in_keywords")
-                                .optInMessage("opt_in_message")
+                                .optInMessage("xxxxxxxxxxxxxxxxxxxx")
                                 .optOutKeywords("opt_out_keywords")
-                                .optOutMessage("opt_out_message")
+                                .optOutMessage("xxxxxxxxxxxxxxxxxxxx")
                                 .privacyPolicyLink("privacy_policy_link")
                                 .termsAndConditionsLink("terms_and_conditions_link")
                                 .addUseCase(
@@ -150,7 +155,8 @@ internal class SmsUpdateParamsTest {
 
     @Test
     fun headersWithoutOptionalFields() {
-        val params = SmsUpdateParams.builder().country("US").type("ten_dlc").build()
+        val params =
+            MarketUpdateParams.builder().channel("sms").country("US").type("ten_dlc").build()
 
         val headers = params._headers()
 
@@ -160,7 +166,8 @@ internal class SmsUpdateParamsTest {
     @Test
     fun body() {
         val params =
-            SmsUpdateParams.builder()
+            MarketUpdateParams.builder()
+                .channel("sms")
                 .country("US")
                 .type("ten_dlc")
                 .idempotencyKey("req_abc123_retry1")
@@ -169,7 +176,7 @@ internal class SmsUpdateParamsTest {
                     MarketCompliance.builder()
                         .brand(
                             MarketCompliance.Brand.builder()
-                                .businessName("business_name")
+                                .businessName("xxx")
                                 .city("city")
                                 .contactEmail("dev@stainless.com")
                                 .contactName("contact_name")
@@ -182,22 +189,22 @@ internal class SmsUpdateParamsTest {
                                 .postalCode("postal_code")
                                 .state("state")
                                 .street("street")
-                                .taxId("tax_id")
+                                .taxId("xx")
                                 .taxIdType("tax_id_type")
                                 .website("website")
                                 .build()
                         )
                         .campaign(
                             MarketCompliance.Campaign.builder()
-                                .description("description")
+                                .description("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                                 .helpKeywords("help_keywords")
-                                .helpMessage("help_message")
+                                .helpMessage("xxxxxxxxxxxxxxxxxxxx")
                                 .inherit(true)
                                 .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                                 .optInKeywords("opt_in_keywords")
-                                .optInMessage("opt_in_message")
+                                .optInMessage("xxxxxxxxxxxxxxxxxxxx")
                                 .optOutKeywords("opt_out_keywords")
-                                .optOutMessage("opt_out_message")
+                                .optOutMessage("xxxxxxxxxxxxxxxxxxxx")
                                 .privacyPolicyLink("privacy_policy_link")
                                 .termsAndConditionsLink("terms_and_conditions_link")
                                 .addUseCase(
@@ -223,7 +230,7 @@ internal class SmsUpdateParamsTest {
                 MarketCompliance.builder()
                     .brand(
                         MarketCompliance.Brand.builder()
-                            .businessName("business_name")
+                            .businessName("xxx")
                             .city("city")
                             .contactEmail("dev@stainless.com")
                             .contactName("contact_name")
@@ -236,22 +243,22 @@ internal class SmsUpdateParamsTest {
                             .postalCode("postal_code")
                             .state("state")
                             .street("street")
-                            .taxId("tax_id")
+                            .taxId("xx")
                             .taxIdType("tax_id_type")
                             .website("website")
                             .build()
                     )
                     .campaign(
                         MarketCompliance.Campaign.builder()
-                            .description("description")
+                            .description("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                             .helpKeywords("help_keywords")
-                            .helpMessage("help_message")
+                            .helpMessage("xxxxxxxxxxxxxxxxxxxx")
                             .inherit(true)
                             .messageFlow("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
                             .optInKeywords("opt_in_keywords")
-                            .optInMessage("opt_in_message")
+                            .optInMessage("xxxxxxxxxxxxxxxxxxxx")
                             .optOutKeywords("opt_out_keywords")
-                            .optOutMessage("opt_out_message")
+                            .optOutMessage("xxxxxxxxxxxxxxxxxxxx")
                             .privacyPolicyLink("privacy_policy_link")
                             .termsAndConditionsLink("terms_and_conditions_link")
                             .addUseCase(
@@ -272,7 +279,8 @@ internal class SmsUpdateParamsTest {
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = SmsUpdateParams.builder().country("US").type("ten_dlc").build()
+        val params =
+            MarketUpdateParams.builder().channel("sms").country("US").type("ten_dlc").build()
 
         val body = params._body()
     }
