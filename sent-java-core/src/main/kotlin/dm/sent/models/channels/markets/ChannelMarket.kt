@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms
+package dm.sent.models.channels.markets
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -14,20 +14,23 @@ import dm.sent.core.JsonValue
 import dm.sent.core.checkKnown
 import dm.sent.core.toImmutable
 import dm.sent.errors.SentInvalidDataException
+import dm.sent.models.channels.sms.SmsNumber
+import dm.sent.models.channels.sms.SuppliedCompliance
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * One SMS market the profile sends in — its sender, where that sender stands, and what the market
- * wants.
+ * One market the profile sends in on a channel — its sender, where that sender stands, and what the
+ * market wants. Named for no one channel, as the routes it answers are not
+ * (/v3/channels/{channel}/{country}/{type}); SMS is the channel with markets today.
  *
  * A profile may send in several: it is a tenant, not a market. Each carries its own status, because
  * a profile can be live in one country and mid-registration in another — and each carries what it
  * still owes, rather than that being reported in a separate array a caller has to join on.
  */
-class SmsMarket
+class ChannelMarket
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val compliance: JsonField<SuppliedCompliance>,
@@ -208,11 +211,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [SmsMarket]. */
+        /** Returns a mutable builder for constructing an instance of [ChannelMarket]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [SmsMarket]. */
+    /** A builder for [ChannelMarket]. */
     class Builder internal constructor() {
 
         private var compliance: JsonField<SuppliedCompliance> = JsonMissing.of()
@@ -225,15 +228,15 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(smsMarket: SmsMarket) = apply {
-            compliance = smsMarket.compliance
-            country = smsMarket.country
-            numberType = smsMarket.numberType
-            numbers = smsMarket.numbers.map { it.toMutableList() }
-            reason = smsMarket.reason
-            reasonCode = smsMarket.reasonCode
-            status = smsMarket.status
-            additionalProperties = smsMarket.additionalProperties.toMutableMap()
+        internal fun from(channelMarket: ChannelMarket) = apply {
+            compliance = channelMarket.compliance
+            country = channelMarket.country
+            numberType = channelMarket.numberType
+            numbers = channelMarket.numbers.map { it.toMutableList() }
+            reason = channelMarket.reason
+            reasonCode = channelMarket.reasonCode
+            status = channelMarket.status
+            additionalProperties = channelMarket.additionalProperties.toMutableMap()
         }
 
         /**
@@ -415,12 +418,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [SmsMarket].
+         * Returns an immutable instance of [ChannelMarket].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): SmsMarket =
-            SmsMarket(
+        fun build(): ChannelMarket =
+            ChannelMarket(
                 compliance,
                 country,
                 numberType,
@@ -442,7 +445,7 @@ private constructor(
      * @throws SentInvalidDataException if any value type in this object doesn't match its expected
      *   type.
      */
-    fun validate(): SmsMarket = apply {
+    fun validate(): ChannelMarket = apply {
         if (validated) {
             return@apply
         }
@@ -728,7 +731,7 @@ private constructor(
             return true
         }
 
-        return other is SmsMarket &&
+        return other is ChannelMarket &&
             compliance == other.compliance &&
             country == other.country &&
             numberType == other.numberType &&
@@ -755,5 +758,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SmsMarket{compliance=$compliance, country=$country, numberType=$numberType, numbers=$numbers, reason=$reason, reasonCode=$reasonCode, status=$status, additionalProperties=$additionalProperties}"
+        "ChannelMarket{compliance=$compliance, country=$country, numberType=$numberType, numbers=$numbers, reason=$reason, reasonCode=$reasonCode, status=$status, additionalProperties=$additionalProperties}"
 }

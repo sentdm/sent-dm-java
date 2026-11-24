@@ -444,6 +444,9 @@ private constructor(
         /** Alias for calling [eventData] with `EventData.ofCallEvent(callEvent)`. */
         fun eventData(callEvent: CallEvent) = eventData(EventData.ofCallEvent(callEvent))
 
+        /** Alias for calling [eventData] with `EventData.ofAgentEvent(agentEvent)`. */
+        fun eventData(agentEvent: AgentEvent) = eventData(EventData.ofAgentEvent(agentEvent))
+
         fun eventType(eventType: String) = eventType(JsonField.of(eventType))
 
         /**
@@ -663,6 +666,7 @@ private constructor(
         private val contactEvent: ContactEvent? = null,
         private val linkEvent: LinkEvent? = null,
         private val callEvent: CallEvent? = null,
+        private val agentEvent: AgentEvent? = null,
         private val _json: JsonValue? = null,
     ) {
 
@@ -709,6 +713,12 @@ private constructor(
          */
         fun callEvent(): Optional<CallEvent> = Optional.ofNullable(callEvent)
 
+        /**
+         * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this shape
+         * and varies only in Payload.
+         */
+        fun agentEvent(): Optional<AgentEvent> = Optional.ofNullable(agentEvent)
+
         fun isMessageEvent(): Boolean = messageEvent != null
 
         fun isInboundMessageEvent(): Boolean = inboundMessageEvent != null
@@ -722,6 +732,8 @@ private constructor(
         fun isLinkEvent(): Boolean = linkEvent != null
 
         fun isCallEvent(): Boolean = callEvent != null
+
+        fun isAgentEvent(): Boolean = agentEvent != null
 
         /**
          * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this shape
@@ -766,6 +778,12 @@ private constructor(
          */
         fun asCallEvent(): CallEvent = callEvent.getOrThrow("callEvent")
 
+        /**
+         * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this shape
+         * and varies only in Payload.
+         */
+        fun asAgentEvent(): AgentEvent = agentEvent.getOrThrow("agentEvent")
+
         fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
         /**
@@ -806,6 +824,7 @@ private constructor(
                 contactEvent != null -> visitor.visitContactEvent(contactEvent)
                 linkEvent != null -> visitor.visitLinkEvent(linkEvent)
                 callEvent != null -> visitor.visitCallEvent(callEvent)
+                agentEvent != null -> visitor.visitAgentEvent(agentEvent)
                 else -> visitor.unknown(_json)
             }
 
@@ -856,6 +875,10 @@ private constructor(
                     override fun visitCallEvent(callEvent: CallEvent) {
                         callEvent.validate()
                     }
+
+                    override fun visitAgentEvent(agentEvent: AgentEvent) {
+                        agentEvent.validate()
+                    }
                 }
             )
             validated = true
@@ -899,6 +922,8 @@ private constructor(
 
                     override fun visitCallEvent(callEvent: CallEvent) = callEvent.validity()
 
+                    override fun visitAgentEvent(agentEvent: AgentEvent) = agentEvent.validity()
+
                     override fun unknown(json: JsonValue?) = 0
                 }
             )
@@ -915,7 +940,8 @@ private constructor(
                 channelEvent == other.channelEvent &&
                 contactEvent == other.contactEvent &&
                 linkEvent == other.linkEvent &&
-                callEvent == other.callEvent
+                callEvent == other.callEvent &&
+                agentEvent == other.agentEvent
         }
 
         override fun hashCode(): Int =
@@ -927,6 +953,7 @@ private constructor(
                 contactEvent,
                 linkEvent,
                 callEvent,
+                agentEvent,
             )
 
         override fun toString(): String =
@@ -938,6 +965,7 @@ private constructor(
                 contactEvent != null -> "EventData{contactEvent=$contactEvent}"
                 linkEvent != null -> "EventData{linkEvent=$linkEvent}"
                 callEvent != null -> "EventData{callEvent=$callEvent}"
+                agentEvent != null -> "EventData{agentEvent=$agentEvent}"
                 _json != null -> "EventData{_unknown=$_json}"
                 else -> throw IllegalStateException("Invalid EventData")
             }
@@ -992,6 +1020,12 @@ private constructor(
              * shape and varies only in Payload.
              */
             @JvmStatic fun ofCallEvent(callEvent: CallEvent) = EventData(callEvent = callEvent)
+
+            /**
+             * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+             * shape and varies only in Payload.
+             */
+            @JvmStatic fun ofAgentEvent(agentEvent: AgentEvent) = EventData(agentEvent = agentEvent)
         }
 
         /**
@@ -1042,6 +1076,12 @@ private constructor(
             fun visitCallEvent(callEvent: CallEvent): T
 
             /**
+             * The envelope Sent POSTs to a subscribed webhook endpoint. Every event shares this
+             * shape and varies only in Payload.
+             */
+            fun visitAgentEvent(agentEvent: AgentEvent): T
+
+            /**
              * Maps an unknown variant of [EventData] to a value of type [T].
              *
              * An instance of [EventData] can contain an unknown variant if it was deserialized from
@@ -1084,6 +1124,9 @@ private constructor(
                             tryDeserialize(node, jacksonTypeRef<CallEvent>())?.let {
                                 EventData(callEvent = it, _json = json)
                             },
+                            tryDeserialize(node, jacksonTypeRef<AgentEvent>())?.let {
+                                EventData(agentEvent = it, _json = json)
+                            },
                         )
                         .filterNotNull()
                         .allMaxBy { it.validity() }
@@ -1117,6 +1160,7 @@ private constructor(
                     value.contactEvent != null -> generator.writeObject(value.contactEvent)
                     value.linkEvent != null -> generator.writeObject(value.linkEvent)
                     value.callEvent != null -> generator.writeObject(value.callEvent)
+                    value.agentEvent != null -> generator.writeObject(value.agentEvent)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid EventData")
                 }

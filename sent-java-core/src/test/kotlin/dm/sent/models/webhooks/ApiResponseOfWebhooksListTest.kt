@@ -35,6 +35,7 @@ internal class ApiResponseOfWebhooksListTest {
                         .addWebhook(
                             WebhookResponse.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .consecutiveFailures(0)
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -119,6 +120,7 @@ internal class ApiResponseOfWebhooksListTest {
                     .addWebhook(
                         WebhookResponse.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                            .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .consecutiveFailures(0)
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -207,6 +209,7 @@ internal class ApiResponseOfWebhooksListTest {
                         .addWebhook(
                             WebhookResponse.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .consecutiveFailures(0)
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .customerId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

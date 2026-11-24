@@ -135,6 +135,7 @@ internal class MessageServiceAsyncTest {
                                     .putAdditionalProperty("order_id", JsonValue.from("12345"))
                                     .build()
                             )
+                            .slug("slug")
                             .build()
                     )
                     .text(null)
