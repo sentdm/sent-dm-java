@@ -32,6 +32,8 @@ class SenderProfile
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
+    private val agentError: JsonField<String>,
+    private val agentId: JsonField<String>,
     private val apiKey: JsonField<String>,
     private val billing: JsonField<SenderProfileBilling>,
     private val channels: JsonField<ChannelsState>,
@@ -48,6 +50,10 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("agent_error")
+        @ExcludeMissing
+        agentError: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("agent_id") @ExcludeMissing agentId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("api_key") @ExcludeMissing apiKey: JsonField<String> = JsonMissing.of(),
         @JsonProperty("billing")
         @ExcludeMissing
@@ -74,6 +80,8 @@ private constructor(
         @JsonProperty("short_name") @ExcludeMissing shortName: JsonField<String> = JsonMissing.of(),
     ) : this(
         id,
+        agentError,
+        agentId,
         apiKey,
         billing,
         channels,
@@ -92,6 +100,25 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun id(): Optional<String> = id.getOptional("id")
+
+    /**
+     * Why no agent was made from agent_template_id, when the profile was created and the agent
+     * could not be: the profile stands, and the agent can be made with POST /v3/agents and
+     * template_id.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun agentError(): Optional<String> = agentError.getOptional("agent_error")
+
+    /**
+     * The draft agent made from agent_template_id when the profile was created. Only on that
+     * answer, and left out when none was asked for.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun agentId(): Optional<String> = agentId.getOptional("agent_id")
 
     /**
      * The API key for this profile.
@@ -200,6 +227,20 @@ private constructor(
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
 
     /**
+     * Returns the raw JSON value of [agentError].
+     *
+     * Unlike [agentError], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("agent_error") @ExcludeMissing fun _agentError(): JsonField<String> = agentError
+
+    /**
+     * Returns the raw JSON value of [agentId].
+     *
+     * Unlike [agentId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("agent_id") @ExcludeMissing fun _agentId(): JsonField<String> = agentId
+
+    /**
      * Returns the raw JSON value of [apiKey].
      *
      * Unlike [apiKey], this method doesn't throw if the JSON field has an unexpected type.
@@ -301,6 +342,8 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
+        private var agentError: JsonField<String> = JsonMissing.of()
+        private var agentId: JsonField<String> = JsonMissing.of()
         private var apiKey: JsonField<String> = JsonMissing.of()
         private var billing: JsonField<SenderProfileBilling> = JsonMissing.of()
         private var channels: JsonField<ChannelsState> = JsonMissing.of()
@@ -316,6 +359,8 @@ private constructor(
         @JvmSynthetic
         internal fun from(senderProfile: SenderProfile) = apply {
             id = senderProfile.id
+            agentError = senderProfile.agentError
+            agentId = senderProfile.agentId
             apiKey = senderProfile.apiKey
             billing = senderProfile.billing
             channels = senderProfile.channels
@@ -338,6 +383,42 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
+
+        /**
+         * Why no agent was made from agent_template_id, when the profile was created and the agent
+         * could not be: the profile stands, and the agent can be made with POST /v3/agents and
+         * template_id.
+         */
+        fun agentError(agentError: String?) = agentError(JsonField.ofNullable(agentError))
+
+        /** Alias for calling [Builder.agentError] with `agentError.orElse(null)`. */
+        fun agentError(agentError: Optional<String>) = agentError(agentError.getOrNull())
+
+        /**
+         * Sets [Builder.agentError] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentError] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun agentError(agentError: JsonField<String>) = apply { this.agentError = agentError }
+
+        /**
+         * The draft agent made from agent_template_id when the profile was created. Only on that
+         * answer, and left out when none was asked for.
+         */
+        fun agentId(agentId: String?) = agentId(JsonField.ofNullable(agentId))
+
+        /** Alias for calling [Builder.agentId] with `agentId.orElse(null)`. */
+        fun agentId(agentId: Optional<String>) = agentId(agentId.getOrNull())
+
+        /**
+         * Sets [Builder.agentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun agentId(agentId: JsonField<String>) = apply { this.agentId = agentId }
 
         /**
          * The API key for this profile.
@@ -555,6 +636,8 @@ private constructor(
         fun build(): SenderProfile =
             SenderProfile(
                 id,
+                agentError,
+                agentId,
                 apiKey,
                 billing,
                 channels,
@@ -585,6 +668,8 @@ private constructor(
         }
 
         id()
+        agentError()
+        agentId()
         apiKey()
         billing().ifPresent { it.validate() }
         channels().ifPresent { it.validate() }
@@ -614,6 +699,8 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
+            (if (agentError.asKnown().isPresent) 1 else 0) +
+            (if (agentId.asKnown().isPresent) 1 else 0) +
             (if (apiKey.asKnown().isPresent) 1 else 0) +
             (billing.asKnown().getOrNull()?.validity() ?: 0) +
             (channels.asKnown().getOrNull()?.validity() ?: 0) +
@@ -632,6 +719,8 @@ private constructor(
 
         return other is SenderProfile &&
             id == other.id &&
+            agentError == other.agentError &&
+            agentId == other.agentId &&
             apiKey == other.apiKey &&
             billing == other.billing &&
             channels == other.channels &&
@@ -648,6 +737,8 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             id,
+            agentError,
+            agentId,
             apiKey,
             billing,
             channels,
@@ -665,5 +756,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SenderProfile{id=$id, apiKey=$apiKey, billing=$billing, channels=$channels, compliance=$compliance, createdAt=$createdAt, description=$description, name=$name, notifications=$notifications, organizationId=$organizationId, shortName=$shortName, additionalProperties=$additionalProperties}"
+        "SenderProfile{id=$id, agentError=$agentError, agentId=$agentId, apiKey=$apiKey, billing=$billing, channels=$channels, compliance=$compliance, createdAt=$createdAt, description=$description, name=$name, notifications=$notifications, organizationId=$organizationId, shortName=$shortName, additionalProperties=$additionalProperties}"
 }

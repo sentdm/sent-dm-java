@@ -30,6 +30,7 @@ internal class SenderProfileServiceAsyncTest {
                 SenderProfileCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
                     .sandbox(false)
+                    .agentTemplateId(null)
                     .billing(SenderProfileBillingRequest.builder().inherit(true).build())
                     .channels(
                         SenderProfileChannels.builder()
