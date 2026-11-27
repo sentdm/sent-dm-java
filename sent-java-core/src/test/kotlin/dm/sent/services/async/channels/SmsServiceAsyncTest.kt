@@ -18,7 +18,7 @@ internal class SmsServiceAsyncTest {
         val client = SentOkHttpClientAsync.builder().apiKey("My API Key").build()
         val smsServiceAsync = client.channels().sms()
 
-        val smsFuture =
+        val apiResponseOfChannelMarketFuture =
             smsServiceAsync.create(
                 SmsCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
@@ -81,7 +81,7 @@ internal class SmsServiceAsyncTest {
                     .build()
             )
 
-        val sms = smsFuture.get()
-        sms.validate()
+        val apiResponseOfChannelMarket = apiResponseOfChannelMarketFuture.get()
+        apiResponseOfChannelMarket.validate()
     }
 }

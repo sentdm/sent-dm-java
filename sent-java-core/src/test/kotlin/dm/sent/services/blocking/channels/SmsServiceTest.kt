@@ -18,7 +18,7 @@ internal class SmsServiceTest {
         val client = SentOkHttpClient.builder().apiKey("My API Key").build()
         val smsService = client.channels().sms()
 
-        val sms =
+        val apiResponseOfChannelMarket =
             smsService.create(
                 SmsCreateParams.builder()
                     .idempotencyKey("req_abc123_retry1")
@@ -81,6 +81,6 @@ internal class SmsServiceTest {
                     .build()
             )
 
-        sms.validate()
+        apiResponseOfChannelMarket.validate()
     }
 }

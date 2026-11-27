@@ -17,6 +17,7 @@ internal class SenderProfileCreateParamsTest {
         SenderProfileCreateParams.builder()
             .idempotencyKey("req_abc123_retry1")
             .sandbox(false)
+            .agentTemplateId(null)
             .billing(SenderProfileBillingRequest.builder().inherit(true).build())
             .channels(
                 SenderProfileChannels.builder()
@@ -139,6 +140,7 @@ internal class SenderProfileCreateParamsTest {
             SenderProfileCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .sandbox(false)
+                .agentTemplateId(null)
                 .billing(SenderProfileBillingRequest.builder().inherit(true).build())
                 .channels(
                     SenderProfileChannels.builder()
@@ -278,6 +280,7 @@ internal class SenderProfileCreateParamsTest {
             SenderProfileCreateParams.builder()
                 .idempotencyKey("req_abc123_retry1")
                 .sandbox(false)
+                .agentTemplateId(null)
                 .billing(SenderProfileBillingRequest.builder().inherit(true).build())
                 .channels(
                     SenderProfileChannels.builder()
@@ -399,6 +402,7 @@ internal class SenderProfileCreateParamsTest {
         val body = params._body()
 
         assertThat(body.sandbox()).contains(false)
+        assertThat(body.agentTemplateId()).isEmpty
         assertThat(body.billing())
             .contains(SenderProfileBillingRequest.builder().inherit(true).build())
         assertThat(body.channels())

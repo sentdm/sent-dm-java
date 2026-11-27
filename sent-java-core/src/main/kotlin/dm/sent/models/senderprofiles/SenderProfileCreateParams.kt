@@ -190,6 +190,16 @@ import kotlin.jvm.optionals.getOrNull
  * submitted in one go so the carrier review has everything it needs. A carrier approval no API call
  * can trigger is arranged offline, so the status reports `PROVISIONING` until it is.
  *
+ * ## An agent
+ *
+ * `agent_template_id` (optional) names one of your organization's agent templates (`GET
+ * /v3/agents/templates`). As soon as the profile exists, a draft agent is made from it on the
+ * profile, and the answer's `agent_id` is that agent: give it the profile's numbers and activate it
+ * through `/v3/agents` with the profile's `x-profile-id`. The template is checked before the
+ * profile is made: one that is not your organization's is a `404`, agents not enabled a `403`, and
+ * no profile is made. Should the agent fail once the profile exists, the profile stands and
+ * `agent_error` says why; make the agent with `POST /v3/agents` and `template_id`.
+ *
  * ## Responses
  *
  * `201` when the profile is complete on return — the fully-inherited case, where nothing needs
@@ -219,6 +229,18 @@ private constructor(
      *   responded with an unexpected value).
      */
     fun sandbox(): Optional<Boolean> = body.sandbox()
+
+    /**
+     * One of the organization's agent templates (GET /v3/agents/templates with the organization's
+     * key) to make an agent from on the new profile as soon as it exists. The agent is a draft with
+     * the template's definition; give it the profile's numbers and activate it through /v3/agents
+     * with the profile's x-profile-id. Agents must be enabled for the organization. A sender
+     * profile's own template cannot be used: it is that profile's alone.
+     *
+     * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the server
+     *   responded with an unexpected value).
+     */
+    fun agentTemplateId(): Optional<String> = body.agentTemplateId()
 
     /**
      * Who pays for what a sender profile sends.
@@ -303,6 +325,13 @@ private constructor(
      * Unlike [sandbox], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sandbox(): JsonField<Boolean> = body._sandbox()
+
+    /**
+     * Returns the raw JSON value of [agentTemplateId].
+     *
+     * Unlike [agentTemplateId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _agentTemplateId(): JsonField<String> = body._agentTemplateId()
 
     /**
      * Returns the raw JSON value of [billing].
@@ -401,10 +430,10 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [sandbox]
+         * - [agentTemplateId]
          * - [billing]
          * - [channels]
          * - [compliance]
-         * - [description]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -422,6 +451,33 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun sandbox(sandbox: JsonField<Boolean>) = apply { body.sandbox(sandbox) }
+
+        /**
+         * One of the organization's agent templates (GET /v3/agents/templates with the
+         * organization's key) to make an agent from on the new profile as soon as it exists. The
+         * agent is a draft with the template's definition; give it the profile's numbers and
+         * activate it through /v3/agents with the profile's x-profile-id. Agents must be enabled
+         * for the organization. A sender profile's own template cannot be used: it is that
+         * profile's alone.
+         */
+        fun agentTemplateId(agentTemplateId: String?) = apply {
+            body.agentTemplateId(agentTemplateId)
+        }
+
+        /** Alias for calling [Builder.agentTemplateId] with `agentTemplateId.orElse(null)`. */
+        fun agentTemplateId(agentTemplateId: Optional<String>) =
+            agentTemplateId(agentTemplateId.getOrNull())
+
+        /**
+         * Sets [Builder.agentTemplateId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.agentTemplateId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun agentTemplateId(agentTemplateId: JsonField<String>) = apply {
+            body.agentTemplateId(agentTemplateId)
+        }
 
         /**
          * Who pays for what a sender profile sends.
@@ -715,6 +771,7 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val sandbox: JsonField<Boolean>,
+        private val agentTemplateId: JsonField<String>,
         private val billing: JsonField<SenderProfileBillingRequest>,
         private val channels: JsonField<SenderProfileChannels>,
         private val compliance: JsonField<MarketCompliance>,
@@ -728,6 +785,9 @@ private constructor(
         @JsonCreator
         private constructor(
             @JsonProperty("sandbox") @ExcludeMissing sandbox: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("agent_template_id")
+            @ExcludeMissing
+            agentTemplateId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("billing")
             @ExcludeMissing
             billing: JsonField<SenderProfileBillingRequest> = JsonMissing.of(),
@@ -749,6 +809,7 @@ private constructor(
             shortName: JsonField<String> = JsonMissing.of(),
         ) : this(
             sandbox,
+            agentTemplateId,
             billing,
             channels,
             compliance,
@@ -770,6 +831,19 @@ private constructor(
          *   server responded with an unexpected value).
          */
         fun sandbox(): Optional<Boolean> = sandbox.getOptional("sandbox")
+
+        /**
+         * One of the organization's agent templates (GET /v3/agents/templates with the
+         * organization's key) to make an agent from on the new profile as soon as it exists. The
+         * agent is a draft with the template's definition; give it the profile's numbers and
+         * activate it through /v3/agents with the profile's x-profile-id. Agents must be enabled
+         * for the organization. A sender profile's own template cannot be used: it is that
+         * profile's alone.
+         *
+         * @throws SentInvalidDataException if the JSON field has an unexpected type (e.g. if the
+         *   server responded with an unexpected value).
+         */
+        fun agentTemplateId(): Optional<String> = agentTemplateId.getOptional("agent_template_id")
 
         /**
          * Who pays for what a sender profile sends.
@@ -858,6 +932,16 @@ private constructor(
         @JsonProperty("sandbox") @ExcludeMissing fun _sandbox(): JsonField<Boolean> = sandbox
 
         /**
+         * Returns the raw JSON value of [agentTemplateId].
+         *
+         * Unlike [agentTemplateId], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("agent_template_id")
+        @ExcludeMissing
+        fun _agentTemplateId(): JsonField<String> = agentTemplateId
+
+        /**
          * Returns the raw JSON value of [billing].
          *
          * Unlike [billing], this method doesn't throw if the JSON field has an unexpected type.
@@ -939,6 +1023,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var sandbox: JsonField<Boolean> = JsonMissing.of()
+            private var agentTemplateId: JsonField<String> = JsonMissing.of()
             private var billing: JsonField<SenderProfileBillingRequest> = JsonMissing.of()
             private var channels: JsonField<SenderProfileChannels> = JsonMissing.of()
             private var compliance: JsonField<MarketCompliance> = JsonMissing.of()
@@ -951,6 +1036,7 @@ private constructor(
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 sandbox = body.sandbox
+                agentTemplateId = body.agentTemplateId
                 billing = body.billing
                 channels = body.channels
                 compliance = body.compliance
@@ -975,6 +1061,32 @@ private constructor(
              * supported value.
              */
             fun sandbox(sandbox: JsonField<Boolean>) = apply { this.sandbox = sandbox }
+
+            /**
+             * One of the organization's agent templates (GET /v3/agents/templates with the
+             * organization's key) to make an agent from on the new profile as soon as it exists.
+             * The agent is a draft with the template's definition; give it the profile's numbers
+             * and activate it through /v3/agents with the profile's x-profile-id. Agents must be
+             * enabled for the organization. A sender profile's own template cannot be used: it is
+             * that profile's alone.
+             */
+            fun agentTemplateId(agentTemplateId: String?) =
+                agentTemplateId(JsonField.ofNullable(agentTemplateId))
+
+            /** Alias for calling [Builder.agentTemplateId] with `agentTemplateId.orElse(null)`. */
+            fun agentTemplateId(agentTemplateId: Optional<String>) =
+                agentTemplateId(agentTemplateId.getOrNull())
+
+            /**
+             * Sets [Builder.agentTemplateId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.agentTemplateId] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun agentTemplateId(agentTemplateId: JsonField<String>) = apply {
+                this.agentTemplateId = agentTemplateId
+            }
 
             /**
              * Who pays for what a sender profile sends.
@@ -1150,6 +1262,7 @@ private constructor(
             fun build(): Body =
                 Body(
                     sandbox,
+                    agentTemplateId,
                     billing,
                     channels,
                     compliance,
@@ -1178,6 +1291,7 @@ private constructor(
             }
 
             sandbox()
+            agentTemplateId()
             billing().ifPresent { it.validate() }
             channels().ifPresent { it.validate() }
             compliance().ifPresent { it.validate() }
@@ -1205,6 +1319,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (sandbox.asKnown().isPresent) 1 else 0) +
+                (if (agentTemplateId.asKnown().isPresent) 1 else 0) +
                 (billing.asKnown().getOrNull()?.validity() ?: 0) +
                 (channels.asKnown().getOrNull()?.validity() ?: 0) +
                 (compliance.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1220,6 +1335,7 @@ private constructor(
 
             return other is Body &&
                 sandbox == other.sandbox &&
+                agentTemplateId == other.agentTemplateId &&
                 billing == other.billing &&
                 channels == other.channels &&
                 compliance == other.compliance &&
@@ -1233,6 +1349,7 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 sandbox,
+                agentTemplateId,
                 billing,
                 channels,
                 compliance,
@@ -1247,7 +1364,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sandbox=$sandbox, billing=$billing, channels=$channels, compliance=$compliance, description=$description, name=$name, notifications=$notifications, shortName=$shortName, additionalProperties=$additionalProperties}"
+            "Body{sandbox=$sandbox, agentTemplateId=$agentTemplateId, billing=$billing, channels=$channels, compliance=$compliance, description=$description, name=$name, notifications=$notifications, shortName=$shortName, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

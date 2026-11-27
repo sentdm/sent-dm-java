@@ -7,6 +7,7 @@ import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
 import dm.sent.models.channels.ChannelsState
 import dm.sent.models.channels.MmsMarket
+import dm.sent.models.channels.markets.ChannelMarket
 import dm.sent.models.channels.rcs.RcsAddress
 import dm.sent.models.channels.rcs.RcsAgent
 import dm.sent.models.channels.sms.SmsNumber
@@ -30,6 +31,8 @@ internal class ApiResponseOfSenderProfileTest {
                 .data(
                     SenderProfile.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .agentError("agent_error")
+                        .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .apiKey("api_key")
                         .billing(SenderProfileBilling.builder().inherit(true).build())
                         .channels(
@@ -84,7 +87,7 @@ internal class ApiResponseOfSenderProfileTest {
                                         .build()
                                 )
                                 .addSms(
-                                    ChannelsState.Sms.builder()
+                                    ChannelMarket.builder()
                                         .compliance(
                                             SuppliedCompliance.builder()
                                                 .brand(
@@ -134,7 +137,7 @@ internal class ApiResponseOfSenderProfileTest {
                                         )
                                         .reason("reason")
                                         .reasonCode("reason_code")
-                                        .status(ChannelsState.Sms.Status.PROVISIONING)
+                                        .status(ChannelMarket.Status.PROVISIONING)
                                         .build()
                                 )
                                 .addVoice(
@@ -222,6 +225,8 @@ internal class ApiResponseOfSenderProfileTest {
             .contains(
                 SenderProfile.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .agentError("agent_error")
+                    .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .apiKey("api_key")
                     .billing(SenderProfileBilling.builder().inherit(true).build())
                     .channels(
@@ -276,7 +281,7 @@ internal class ApiResponseOfSenderProfileTest {
                                     .build()
                             )
                             .addSms(
-                                ChannelsState.Sms.builder()
+                                ChannelMarket.builder()
                                     .compliance(
                                         SuppliedCompliance.builder()
                                             .brand(
@@ -326,7 +331,7 @@ internal class ApiResponseOfSenderProfileTest {
                                     )
                                     .reason("reason")
                                     .reasonCode("reason_code")
-                                    .status(ChannelsState.Sms.Status.PROVISIONING)
+                                    .status(ChannelMarket.Status.PROVISIONING)
                                     .build()
                             )
                             .addVoice(
@@ -420,6 +425,8 @@ internal class ApiResponseOfSenderProfileTest {
                 .data(
                     SenderProfile.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .agentError("agent_error")
+                        .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .apiKey("api_key")
                         .billing(SenderProfileBilling.builder().inherit(true).build())
                         .channels(
@@ -474,7 +481,7 @@ internal class ApiResponseOfSenderProfileTest {
                                         .build()
                                 )
                                 .addSms(
-                                    ChannelsState.Sms.builder()
+                                    ChannelMarket.builder()
                                         .compliance(
                                             SuppliedCompliance.builder()
                                                 .brand(
@@ -524,7 +531,7 @@ internal class ApiResponseOfSenderProfileTest {
                                         )
                                         .reason("reason")
                                         .reasonCode("reason_code")
-                                        .status(ChannelsState.Sms.Status.PROVISIONING)
+                                        .status(ChannelMarket.Status.PROVISIONING)
                                         .build()
                                 )
                                 .addVoice(

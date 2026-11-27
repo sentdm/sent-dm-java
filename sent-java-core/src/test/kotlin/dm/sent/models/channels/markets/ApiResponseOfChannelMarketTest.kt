@@ -1,24 +1,28 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package dm.sent.models.channels.sms
+package dm.sent.models.channels.markets
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import dm.sent.core.JsonValue
 import dm.sent.core.jsonMapper
+import dm.sent.models.channels.sms.SmsNumber
+import dm.sent.models.channels.sms.SuppliedCampaign
+import dm.sent.models.channels.sms.SuppliedCompliance
+import dm.sent.models.channels.sms.SuppliedDocument
 import dm.sent.models.webhooks.ApiMeta
 import dm.sent.models.webhooks.ErrorDetail
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class SmsCreateResponseTest {
+internal class ApiResponseOfChannelMarketTest {
 
     @Test
     fun create() {
-        val smsCreateResponse =
-            SmsCreateResponse.builder()
+        val apiResponseOfChannelMarket =
+            ApiResponseOfChannelMarket.builder()
                 .data(
-                    SmsCreateResponse.Data.builder()
+                    ChannelMarket.builder()
                         .compliance(
                             SuppliedCompliance.builder()
                                 .brand(
@@ -57,7 +61,7 @@ internal class SmsCreateResponseTest {
                         )
                         .reason("reason")
                         .reasonCode("reason_code")
-                        .status(SmsCreateResponse.Data.Status.PROVISIONING)
+                        .status(ChannelMarket.Status.PROVISIONING)
                         .build()
                 )
                 .error(
@@ -82,9 +86,9 @@ internal class SmsCreateResponseTest {
                 .success(true)
                 .build()
 
-        assertThat(smsCreateResponse.data())
+        assertThat(apiResponseOfChannelMarket.data())
             .contains(
-                SmsCreateResponse.Data.builder()
+                ChannelMarket.builder()
                     .compliance(
                         SuppliedCompliance.builder()
                             .brand(
@@ -123,10 +127,10 @@ internal class SmsCreateResponseTest {
                     )
                     .reason("reason")
                     .reasonCode("reason_code")
-                    .status(SmsCreateResponse.Data.Status.PROVISIONING)
+                    .status(ChannelMarket.Status.PROVISIONING)
                     .build()
             )
-        assertThat(smsCreateResponse.error())
+        assertThat(apiResponseOfChannelMarket.error())
             .contains(
                 ErrorDetail.builder()
                     .code("code")
@@ -139,7 +143,7 @@ internal class SmsCreateResponseTest {
                     .message("message")
                     .build()
             )
-        assertThat(smsCreateResponse.meta())
+        assertThat(apiResponseOfChannelMarket.meta())
             .contains(
                 ApiMeta.builder()
                     .requestId("request_id")
@@ -147,16 +151,16 @@ internal class SmsCreateResponseTest {
                     .version("version")
                     .build()
             )
-        assertThat(smsCreateResponse.success()).contains(true)
+        assertThat(apiResponseOfChannelMarket.success()).contains(true)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val smsCreateResponse =
-            SmsCreateResponse.builder()
+        val apiResponseOfChannelMarket =
+            ApiResponseOfChannelMarket.builder()
                 .data(
-                    SmsCreateResponse.Data.builder()
+                    ChannelMarket.builder()
                         .compliance(
                             SuppliedCompliance.builder()
                                 .brand(
@@ -195,7 +199,7 @@ internal class SmsCreateResponseTest {
                         )
                         .reason("reason")
                         .reasonCode("reason_code")
-                        .status(SmsCreateResponse.Data.Status.PROVISIONING)
+                        .status(ChannelMarket.Status.PROVISIONING)
                         .build()
                 )
                 .error(
@@ -220,12 +224,12 @@ internal class SmsCreateResponseTest {
                 .success(true)
                 .build()
 
-        val roundtrippedSmsCreateResponse =
+        val roundtrippedApiResponseOfChannelMarket =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(smsCreateResponse),
-                jacksonTypeRef<SmsCreateResponse>(),
+                jsonMapper.writeValueAsString(apiResponseOfChannelMarket),
+                jacksonTypeRef<ApiResponseOfChannelMarket>(),
             )
 
-        assertThat(roundtrippedSmsCreateResponse).isEqualTo(smsCreateResponse)
+        assertThat(roundtrippedApiResponseOfChannelMarket).isEqualTo(apiResponseOfChannelMarket)
     }
 }
