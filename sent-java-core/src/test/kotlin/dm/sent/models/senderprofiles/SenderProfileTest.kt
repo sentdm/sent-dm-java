@@ -27,6 +27,8 @@ internal class SenderProfileTest {
         val senderProfile =
             SenderProfile.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .agentError("agent_error")
+                .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .apiKey("api_key")
                 .billing(SenderProfileBilling.builder().inherit(true).build())
                 .channels(
@@ -183,6 +185,8 @@ internal class SenderProfileTest {
                 .build()
 
         assertThat(senderProfile.id()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(senderProfile.agentError()).contains("agent_error")
+        assertThat(senderProfile.agentId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(senderProfile.apiKey()).contains("api_key")
         assertThat(senderProfile.billing())
             .contains(SenderProfileBilling.builder().inherit(true).build())
@@ -348,6 +352,8 @@ internal class SenderProfileTest {
         val senderProfile =
             SenderProfile.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .agentError("agent_error")
+                .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .apiKey("api_key")
                 .billing(SenderProfileBilling.builder().inherit(true).build())
                 .channels(

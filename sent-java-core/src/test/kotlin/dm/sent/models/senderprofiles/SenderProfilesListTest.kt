@@ -44,6 +44,8 @@ internal class SenderProfilesListTest {
                 .addSenderProfile(
                     SenderProfile.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .agentError("agent_error")
+                        .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .apiKey("api_key")
                         .billing(SenderProfileBilling.builder().inherit(true).build())
                         .channels(
@@ -227,6 +229,8 @@ internal class SenderProfilesListTest {
             .containsExactly(
                 SenderProfile.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .agentError("agent_error")
+                    .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .apiKey("api_key")
                     .billing(SenderProfileBilling.builder().inherit(true).build())
                     .channels(
@@ -415,6 +419,8 @@ internal class SenderProfilesListTest {
                 .addSenderProfile(
                     SenderProfile.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .agentError("agent_error")
+                        .agentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .apiKey("api_key")
                         .billing(SenderProfileBilling.builder().inherit(true).build())
                         .channels(
